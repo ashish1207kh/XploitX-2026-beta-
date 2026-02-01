@@ -747,7 +747,7 @@
 
         .logo-marquee-content {
             display: inline-block;
-            animation: marqueeScroll 60s linear infinite;
+            animation: marqueeScroll 80s linear infinite;
         }
 
         .logo-marquee-content img {

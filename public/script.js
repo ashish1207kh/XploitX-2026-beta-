@@ -481,7 +481,7 @@ function initPaymentPage() {
                 .then(data => {
                     if (data.success) {
                         showCustomAlert("Payment proof submitted successfully!\n\nPlease check your Team Leader's Email for Login Credentials to access the Dashboard.", () => {
-                            window.location.href = 'index.html';
+                            window.location.href = 'login.html';
                         });
                     } else {
                         showCustomAlert("Upload Failed: " + (data.error || "Unknown Error"));
