@@ -78,11 +78,20 @@ setInterval(draw, 35);
 // 1. If file:// protocol, use localhost:3000
 // 2. If running on localhost or 127.0.0.1 (e.g. Live Server port 5500), use localhost:3000
 // 3. If running on a public tunnel (loca.lt, ngrok), use relative path ''
-const isLocal = window.location.protocol === 'file:' ||
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1';
+const hostname = window.location.hostname;
+let API_BASE_URL = '';
 
-const API_BASE_URL = isLocal ? 'http://localhost:3000' : '';
+if (window.location.protocol === 'file:') {
+    API_BASE_URL = 'http://localhost:3000';
+} else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    API_BASE_URL = 'http://localhost:3000';
+} else if (hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
+    // If on LAN (mobile testing), assume backend is on same IP at port 3000
+    API_BASE_URL = `http://${hostname}:3000`;
+} else {
+    // Production or public URL (assume relative path / proxy)
+    API_BASE_URL = '';
+}
 console.log("Global API_BASE_URL:", API_BASE_URL);
 
 // Form handling
@@ -91,7 +100,7 @@ if (regForm) {
     // Configuration
     const EVENT_CONFIG = {
         '24 Hrs Hackathon': { min: 2, max: 4, fee: 250, perHead: true },
-        'paper_presentation': { min: 3, max: 3, fee: 150, perHead: false },
+        'paper_presentation': { min: 1, max: 3, fee: 150, perHead: false },
         'digital_forensics': { min: 2, max: 2, fee: 0, perHead: false },
         'network_defense': { min: 2, max: 2, fee: 0, perHead: false }
     };
@@ -168,7 +177,81 @@ if (regForm) {
 
                 membersContainer.appendChild(clone);
 
-                membersContainer.appendChild(clone);
+                // --- NEW: Sync Logic for New Member ---
+                // Make Member College/District ReadOnly and sync with Leader
+                const mName = `member${newIndex}`;
+                // Select by name attribute
+                // Note: The clone is already appended, we can search within clone
+                const colInput = clone.querySelector(`input[name$="_college"]`);
+                const distInput = clone.querySelector(`input[name$="_district"]`);
+
+                // Get leader values
+                const lColVal = document.querySelector('input[name="member1_college"]').value;
+                const lDistVal = document.querySelector('input[name="member1_district"]').value;
+
+                if (colInput) {
+                    colInput.readOnly = true;
+                    colInput.value = lColVal;
+                    colInput.style.backgroundColor = "rgba(0,0,0,0.3)";
+                    colInput.style.color = "#aaa";
+                    colInput.style.border = "1px dashed #333";
+                }
+                if (distInput) {
+                    distInput.readOnly = true;
+                    distInput.value = lDistVal;
+                    distInput.style.backgroundColor = "rgba(0,0,0,0.3)";
+                    distInput.style.color = "#aaa";
+                    distInput.style.border = "1px dashed #333";
+                }
+            });
+        }
+
+        // --- EXCLUSIVE COLLEGE/DISTRICT LOGIC (Outside Add Member) ---
+        const leaderCollege = document.querySelector('input[name="member1_college"]');
+        const leaderDistrict = document.querySelector('input[name="member1_district"]');
+
+        function syncMemberFields() {
+            const allCollege = document.querySelectorAll('input[name*="_college"]');
+            const allDistrict = document.querySelectorAll('input[name*="_district"]');
+
+            const lColVal = leaderCollege.value;
+            const lDistVal = leaderDistrict.value;
+
+            // Update College
+            allCollege.forEach((inp, idx) => {
+                if (inp === leaderCollege) return; // Skip leader
+                inp.value = lColVal;
+                inp.readOnly = true; // Ensure they stay readOnly
+                inp.style.backgroundColor = "rgba(0,0,0,0.3)";
+            });
+
+            // Update District
+            allDistrict.forEach((inp, idx) => {
+                if (inp === leaderDistrict) return; // Skip leader
+                inp.value = lDistVal;
+                inp.readOnly = true;
+                inp.style.backgroundColor = "rgba(0,0,0,0.3)";
+            });
+        }
+
+        if (leaderCollege) {
+            leaderCollege.addEventListener('input', function () {
+                // Auto-Broadcast changes
+                syncMemberFields();
+            });
+        }
+
+        if (leaderDistrict) {
+            leaderDistrict.addEventListener('input', function () {
+                // Rule: "if the leader gives the district as Tn then all the members district place it show TN"
+                // Strict Case Force
+                if (this.value.toLowerCase() === 'tn') {
+                    // We don't force change the leader's input UI immediately to avoid typing interuption, 
+                    // but we can ensure the broadcasted value is 'TN' if we want.
+                    // The requirement says "it show TN". Let's update the value itself if exact match.
+                    this.value = 'TN';
+                }
+                syncMemberFields();
             });
         }
 

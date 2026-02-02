@@ -131,9 +131,9 @@
                     <tr style="border-bottom: 2px solid var(--neon-green); text-align: left;">
                         <th style="padding: 10px;">ID</th>
                         <th style="padding: 10px;">Team ID</th>
-                        <th style="padding: 10px;">Team Name</th>
-                        <th style="padding: 10px;">Leader</th>
-                        <th style="padding: 10px;">Phone</th>
+                        <th style="padding: 10px;">Member Name</th>
+                        <th style="padding: 10px;">Role</th>
+                        <th style="padding: 10px;">College</th>
                         <th style="padding: 10px;">Status</th>
                         <th style="padding: 10px;">Time</th>
                     </tr>
@@ -161,10 +161,20 @@
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
         // Define API Base URL
-        const isLocal = window.location.protocol === 'file:' ||
-            window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1';
-        const API_BASE_URL = isLocal ? 'http://localhost:3000' : '';
+        let API_BASE_URL = '';
+        const hostname = window.location.hostname;
+
+        if (window.location.protocol === 'file:') {
+            API_BASE_URL = 'http://localhost:3000';
+        } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            API_BASE_URL = 'http://localhost:3000';
+        } else if (hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
+            // If on LAN (mobile testing), assume backend is on same IP at port 3000
+            API_BASE_URL = `http://${hostname}:3000`;
+        } else {
+            // Production or public URL (assume relative path / proxy)
+            API_BASE_URL = ''; 
+        }
 
         // Initialize Tab
         function switchTab(tab) {
@@ -273,42 +283,88 @@
             const resultBox = document.getElementById('result');
             
             resultBox.style.display = 'block';
-            feedbackEl.innerHTML = '<span class="loading-text">PROCESSING...</span>';
+            feedbackEl.innerHTML = '<span class="loading-text">FETCHING DATA...</span>';
             detailsEl.innerHTML = '';
             
             try {
-                console.log("Sending request for Team ID:", teamId);
-                const response = await fetch(`${API_BASE_URL}/api/attendance/mark_present`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ teamId: teamId })
-                });
+                console.log("Fetching Info for Team ID:", teamId);
+                const response = await fetch(`${API_BASE_URL}/api/attendance/scan_info/${teamId}`);
+                
+                if(!response.ok) {
+                    throw new Error("Team Not Found or Server Error");
+                }
 
-                const text = await response.text();
+                const data = await response.json();
+                const team = data.team;
+                const members = data.members;
+
+                feedbackEl.innerHTML = `<h3 class="success-text">TEAM FOUND</h3>`;
                 
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    throw new Error("Invalid JSON: " + text.substring(0, 100));
-                }
-                
-                if(response.ok) {
-                    feedbackEl.innerHTML = `<h3 class="success-text"><i class="fas fa-check-circle"></i> ATTENDANCE MARKED</h3>`;
-                    detailsEl.innerHTML = `
-                        <p><strong>Team ID:</strong> ${teamId}</p>
-                        <p><strong>Status:</strong> PRESENT</p>
-                        <p style="color: #aaa;">${data.message}</p>
-                    `;
-                } else {
-                    feedbackEl.innerHTML = `<h3 class="error-text"><i class="fas fa-times-circle"></i> FAILED</h3>`;
-                    detailsEl.innerHTML = `<p>${data.error || 'Unknown Error'}</p>`;
-                }
+                let memberRows = members.map(m => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px dashed #333;">
+                        <div>
+                            <div style="color: #fff; font-weight: bold;">${m.name}</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">${m.college || 'No College Info'}</div>
+                        </div>
+                        <label style="cursor: pointer; display: flex; align-items: center;">
+                            <input type="checkbox" class="attendance-checkbox" data-id="${m.id}" ${m.status === 'PRESENT' ? 'checked' : ''} style="transform: scale(1.5); accent-color: var(--neon-green);">
+                            <span style="margin-left: 10px; font-size: 0.8rem; color: var(--neon-green);">PRESENT</span>
+                        </label>
+                    </div>
+                `).join('');
+
+                detailsEl.innerHTML = `
+                    <div style="margin-bottom: 20px; border: 1px solid var(--neon-green); padding: 15px;">
+                        <h3 style="color: var(--neon-green); margin-top: 0;">${team.name}</h3>
+                        <p><strong>Team ID:</strong> <span style="color: #fff;">${team.id}</span></p>
+                        <p><strong>Leader:</strong> ${team.leaderName}</p>
+                        <p><strong>College:</strong> ${team.college}</p>
+                    </div>
+
+                    <h4 style="border-bottom: 1px solid #555; padding-bottom: 5px;">MEMBER ATTENDANCE</h4>
+                    <div id="member-list" style="margin-bottom: 20px;">
+                        ${memberRows}
+                    </div>
+
+                    <button onclick="submitMemberAttendance('${team.id}')" class="cta-btn" style="width: 100%; background: var(--neon-green); color: black;">
+                        CONFIRM ATTENDANCE
+                    </button>
+                    <div id="submit-feedback" style="margin-top: 10px; text-align: center;"></div>
+                `;
                 
             } catch (err) {
                 console.error("Attendance Error:", err);
-                feedbackEl.innerHTML = `<h3 class="error-text">NETWORK/SERVER ERROR</h3>`;
+                feedbackEl.innerHTML = `<h3 class="error-text">ERROR</h3>`;
                 detailsEl.innerHTML = `<p>${err.message}</p>`;
+            }
+        }
+
+        async function submitMemberAttendance(teamId) {
+            const checkboxes = document.querySelectorAll('.attendance-checkbox');
+            const memberStatuses = Array.from(checkboxes).map(cb => ({
+                id: cb.getAttribute('data-id'),
+                status: cb.checked ? 'PRESENT' : 'ABSENT'
+            }));
+
+            const feedback = document.getElementById('submit-feedback');
+            feedback.innerHTML = '<span class="loading-text">UPDATING...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/attendance/mark_members`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ teamId, memberStatuses })
+                });
+
+                const resData = await response.json();
+
+                if(response.ok) {
+                    feedback.innerHTML = '<span style="color: var(--neon-green);">SUCCESSFULLY UPDATED</span>';
+                } else {
+                    feedback.innerHTML = `<span style="color: red;">Failed: ${resData.error}</span>`;
+                }
+            } catch(e) {
+                feedback.innerHTML = `<span style="color: red;">Error: ${e.message}</span>`;
             }
         }
 
@@ -350,16 +406,16 @@
                 // Prepare Table Rows
                 const tableData = data.map(r => [
                     r.team_id || '-',
-                    r.team_name || '-',
-                    r.team_leader_name || '-',
-                    r.team_leader_phone || '-',
+                    r.member_name || r.name || '-',
+                    r.role || '-',
+                    r.college || '-',
                     r.status || 'ABSENT',
                     r.entry_time ? new Date(r.entry_time.replace(' ', 'T') + 'Z').toLocaleString() : '-'
                 ]);
 
                 // AutoTable
                 doc.autoTable({
-                    head: [['Team ID', 'Team Name', 'Leader', 'Phone', 'Status', 'Time']],
+                    head: [['Team ID', 'Name', 'Role', 'College', 'Status', 'Time']],
                     body: tableData,
                     startY: 40,
                     theme: 'grid',
@@ -414,9 +470,9 @@
                     <tr style="border-bottom: 1px solid #333;">
                         <td style="padding: 10px;">${r.id}</td>
                         <td style="padding: 10px; color: var(--neon-green);">${r.team_id || '-'}</td>
-                        <td style="padding: 10px;">${r.team_name || '-'}</td>
-                        <td style="padding: 10px;">${r.team_leader_name || '-'}</td>
-                        <td style="padding: 10px;">${r.team_leader_phone || '-'}</td>
+                        <td style="padding: 10px;">${r.member_name || r.name || '-'}</td>
+                        <td style="padding: 10px;">${r.role || '-'}</td>
+                        <td style="padding: 10px;">${r.college || '-'}</td>
                         <td style="padding: 10px;">
                             <span style="color: ${r.status === 'PRESENT' ? '#00FF41' : '#ff3333'}">${r.status || 'ABSENT'}</span>
                         </td>
@@ -430,6 +486,7 @@
                 tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error: ${e.message}</td></tr>`;
             }
         }
+
 
         // Start default
         // Start scanner only after interaction usually, but let's try auto since user asked.
