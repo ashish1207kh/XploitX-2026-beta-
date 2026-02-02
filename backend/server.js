@@ -250,22 +250,7 @@ app.post('/api/auth/register', async (req, res) => {
         }
 
         // Email Sending Logic (Preserved but simplified for structure)
-        (async () => {
-            // ... email logic ...
-            // Reusing existing sendEmail function calls
-            // Omitted for brevity: Use exact logic from before
-            // Just ensuring db calls are replaced.
-            const subject = "Confirmation: Your Registration for XploitX 2k26 Cyberfest!";
-            for (let i = 0; i < members.length; i++) {
-                const m = members[i];
-                if (m.email) {
-                    let eventDateStr = event === "24 Hrs Hackathon" ? "March 13th & 14th, 2026" : "March 14th, 2026";
-                    let body = `Dear ${m.name},\n\nRegistration confirmed.\nTeam ID: ${teamIdStr}\nPass: ${password}\nDates: ${eventDateStr}`;
-                    // Send simplified to ensure it works, user has own content logic in mind but I should try to preserve if possible.
-                    // Actually, I should use the Full Body content as it was valuable.
-                }
-            }
-        })();
+
 
         // Let's create a Helper for the Full Email Content to not lose it
         await sendRegistrationEmails(members, teamIdStr, password, event);
@@ -285,36 +270,69 @@ async function sendRegistrationEmails(members, teamIdStr, password, event) {
     for (let i = 0; i < members.length; i++) {
         const m = members[i];
         const isLeader = (i === 0);
-        let eventDateStr = event === "24 Hrs Hackathon" ? "March 13th & 14th, 2026" : "March 14th, 2026";
 
-        let body = `Dear ${m.name},
-
-Thank you for registering for *XploitX 2k26*!
-
-This email confirms that your registration has been successfully received.`;
-
-        if (isLeader) {
-            body += `
-
-**Your Action Required - Login Credentials:**
-Team ID  : ${teamIdStr}
-Password : ${password}`;
+        // Determine event details based on event type
+        let isMainHackathon = false;
+        if (event && (event.toLowerCase().includes("main") || event.toLowerCase().includes("24"))) {
+            isMainHackathon = true;
         }
 
-        body += `
+        const dateStr = isMainHackathon ? "March 13th & 14th, 2026" : "March 14th, 2026";
+        const timeStr = "8:30 AM";
 
-*Event Details:*
-* Event: ${event}
-* Dates: ${eventDateStr}
-* Venue: Prathyusha Engineering College Campus
-* Check-in Starts: 8:30 AM
+        // Single Source of Content (HTML)
+        let htmlBody = `<p>Dear ${m.name},</p>
+<p>Thank you for registering for <b>XploitX 2k26</b>, the Department of Cyber Security's premier cyberfest! We are thrilled to have you join us for this high-energy technical exchange.</p>
+<p>This email confirms that your registration has been successfully received. We are hard at work preparing an incredible lineup of events, challenges, and workshops designed to push your technical boundaries.</p>`;
 
-We look forward to seeing you there!
+        if (isLeader) {
+            htmlBody += `
+            <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <h3 style="margin-top:0;">Your Login Credentials</h3>
+                <p><b>Team ID:</b> ${teamIdStr}<br>
+                <b>Password:</b> ${password}</p>
+                <p><small>Please use these credentials to login to the team dashboard.</small></p>
+            </div>`;
+        }
 
-Best regards,
-XploitX 2k26 Organizing Committee`;
+        htmlBody += `
+<p><b>Event Details:</b></p>
+<ul>
+    <li><b>Event:</b> ${event || "XploitX 2k26 Event"}</li>
+    <li><b>Dates:</b> ${dateStr}</li>
+    <li><b>Venue:</b> Prathyusha Engineering College Campus</li>
+    <li><b>Check-in Starts:</b> ${timeStr}</li>
+</ul>
 
-        if (m.email) await sendEmail(m.email, subject, body);
+<p>We truly appreciate your interest and presence at our event. Your participation is what makes XploitX a hub for innovation and cybersecurity excellence.</p>
+
+<p><b>Next Steps:</b></p>
+<ul>
+    <li>Keep an eye on your inbox for the detailed event schedule and specific competition guidelines.</li>
+    <li>Make sure to bring your college ID card and a copy of this confirmation email (digital or printed) for a smooth check-in process.</li>
+</ul>
+
+<p>We look forward to seeing you there and witnessing your skills in action!</p>
+
+<p>Best regards,</p>
+<p><b>The XploitX 2k26 Organizing Committee</b><br>
+Department of Cyber Security<br>
+Prathyusha Engineering College</p>`;
+
+        // Derive simple text version to avoid duplication in code and content
+        // This ensures the user receives one cohesive message format if their client supports it,
+        // and a clean fallback if not.
+        const textBody = htmlBody
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove styles
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/p>/gi, '\n\n')
+            .replace(/<\/li>/gi, '\n')
+            .replace(/<li>/gi, ' - ')
+            .replace(/<[^>]+>/g, '') // Strip remaining tags
+            .replace(/\n\s*\n/g, '\n\n') // Fix multiple newlines
+            .trim();
+
+        if (m.email) await sendEmail(m.email, subject, textBody, htmlBody);
     }
 }
 
@@ -437,7 +455,7 @@ app.post('/api/admin/verify_payment', async (req, res) => {
             const odPdfBuffer = await generateODPdfInternal(teamData.id); // Helper function I will create below
 
             const attachments = [{
-                filename: 'header-qrcode.png',
+                filename: `${teamId}.png`,
                 content: qrImage.split("base64,")[1],
                 encoding: 'base64',
                 cid: 'event-qr-code'
@@ -445,19 +463,42 @@ app.post('/api/admin/verify_payment', async (req, res) => {
 
             if (odPdfBuffer) attachments.push({ filename: 'OD_Letter.pdf', content: odPdfBuffer });
 
-            await sendEmail(leader.email, "XploitX-2026: Entry Pass & OD", "Your Entry Pass and OD Letter are attached.", `
-                <h1>Access Granted</h1>
-                <p>Team: ${teamId}</p>
-                <img src="cid:event-qr-code" style="width:200px;"/>
-             `, attachments); // Need to update sendEmail to accept attachments or handle here. 
-            // Note: sendEmail signature is (to, subject, text, html). 
-            // Use transporter directly for attachments.
+            const whatsappLink = "https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t"; // Placeholder - User should update if specific link needed
+
+            const htmlContent = `
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2 style="color: #00FF41;">ACCESS_GRANTED</h2>
+                    <p>Dear ${leader.name},</p>
+                    <p>Your payment for team <b>${teamData.name}</b> (${teamId}) has been successfully verified.</p>
+                    
+                    <div style="text-align: center; margin: 20px 0; border: 2px dashed #00FF41; padding: 20px; display: inline-block;">
+                        <h3 style="margin-top: 0;">YOUR EVENT ENTRY PASS</h3>
+                        <p>Scan this QR code at the venue help desk</p>
+                        <img src="cid:event-qr-code" style="width: 200px; height: 200px;" alt="Entry QR Code" />
+                        <p><b>${teamId}</b></p>
+                    </div>
+
+                    <p>Follow this link to join the official WhatsApp group: <a href="${whatsappLink}" style="color: #007bff; font-weight: bold; text-decoration: underline;">Click here to join</a></p>
+
+                    <p>Your slot for <b>XploitX-2026</b> is now fully confirmed.</p>
+
+                    <p>
+                        <b>STATUS:</b> <span style="color: #00FF41; font-weight: bold;">CONFIRMED</span><br>
+                        <b>ACCESS_LEVEL:</b> <span style="color: #00FF41; font-weight: bold;">GRANTED</span>
+                    </p>
+
+                    <p>See you at the event!</p>
+                    
+                    <p>Regards,<br>
+                    <b>XploitX Team</b></p>
+                </div>
+            `;
 
             await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: leader.email,
-                subject: "XploitX-2026: Entry Pass & OD",
-                html: `<h1>Access Granted</h1><p>Team: ${teamId}</p><img src="cid:event-qr-code" style="width:200px;"/>`,
+                subject: `ACCESS_GRANTED: Payment Verified for ${teamData.name}`,
+                html: htmlContent,
                 attachments: attachments
             });
         }
@@ -465,26 +506,135 @@ app.post('/api/admin/verify_payment', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Helper for PDF (Re-implementation of logic)
+// Helper for PDF (Professional OD Letter)
 async function generateODPdfInternal(teamDbId) {
-    // Requires recreating the logic inside view_file Step 103 but adapted for sqlite wrapper
-    // Since I can't see the full logic easily without re-coding, I'll do a basic implementation 
-    // that fetches members and generates a simple PDF to satisfy the feature.
-    // Ideally I would copy the previous implementation exactly.
-    // Given the constraints, I will do a best-effort simpler PDF or try to remember the fields.
     const PDFDocument = require('pdfkit');
-    const doc = new PDFDocument();
+    const path = require('path');
+    const fs = require('fs');
+
+    // Tighter margins to fit on one page
+    const doc = new PDFDocument({ margin: 35 });
     let buffers = [];
     doc.on('data', buffers.push.bind(buffers));
 
-    // Fetch members
+    const team = await db.get('SELECT * FROM teams WHERE id = ?', [teamDbId]);
     const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [teamDbId]);
+    if (!team || !members || members.length === 0) {
+        doc.end();
+        return null;
+    }
 
-    doc.fontSize(20).text('On-Duty Letter Request', { align: 'center' });
-    doc.moveDown();
-    members.forEach((m, i) => doc.fontSize(12).text(`${i + 1}. ${m.name}`));
+    const eventName = team.event || "XploitX 2026 Event";
+    const studentCollege = members[0].college || "YOUR COLLEGE";
+
+    // Date Logic
+    let odDate = "14-03-2026";
+    const evLower = eventName.toLowerCase();
+    if (evLower.includes("main") || evLower.includes("hackathon") || evLower.includes("24")) {
+        odDate = "13-03-2026 to 14-03-2026";
+    } else if (evLower.includes("paper") || evLower.includes("network") || evLower.includes("defense") || evLower.includes("digital") || evLower.includes("forensics")) {
+        odDate = "14-03-2026";
+    }
+
+    const publicDir = path.join(__dirname, '../public');
+    const header1Path = path.join(publicDir, 'Header(1st).jpeg');
+    const header2Path = path.join(publicDir, 'Header(2nd).jpeg');
+    const signImgPath = path.join(publicDir, 'Sign.jpeg');
+    const sealImgPath = path.join(publicDir, 'Seal.jpeg');
+
+    // --- Compact Header Section ---
+    let currentY = 30;
+    if (fs.existsSync(header1Path)) {
+        try {
+            doc.image(header1Path, 35, currentY, { width: 525 });
+            currentY += 85;
+        } catch (e) { }
+    }
+    if (fs.existsSync(header2Path)) {
+        try {
+            doc.image(header2Path, 35, currentY, { width: 525 });
+            currentY += 65;
+        } catch (e) { }
+    }
+
+    doc.y = currentY + 10;
+
+    // Department Info (Smaller Font)
+    doc.font('Helvetica-Bold').fontSize(11).text('Team XPLOITX 2026', { align: 'left' });
+    doc.fontSize(10).text('Department of Cyber Security', { align: 'left' });
+    doc.text('Prathyusha Engineering College', { align: 'left' });
+    doc.text('Tiruvallur-602 025', { align: 'left' });
+    doc.moveDown(0.5);
+
+    // Salutation & Subject
+    doc.font('Helvetica').fontSize(11).text('Respected Sir/Madam,', { align: 'left' });
+    doc.moveDown(0.3);
+
+    doc.font('Helvetica-Bold').fontSize(11).text(`Subject: Requesting "On-Duty" permission for your student to participate in Our National Technical Cyberfest XPLOITX 2k26 - ${eventName}.`, { align: 'left' });
+    doc.moveDown(0.5);
+
+    // Body
+    doc.font('Helvetica').fontSize(11).text('Greetings from Prathyusha Engineering College.', { align: 'left' });
+    doc.moveDown(0.3);
+
+    doc.text('We are pleased to inform you that the Department of Cyber Security is organizing a National Technical Cyberfest on ', { continued: true });
+    doc.font('Helvetica-Bold').text(odDate, { continued: true });
+    doc.font('Helvetica').text(' at ', { continued: true });
+    doc.font('Helvetica-Bold').text('PRATHYUSHA ENGINEERING COLLEGE', { continued: true });
+    doc.font('Helvetica').text(', Tiruvallur. In this regard, we kindly request you to grant On-Duty permission to the participating students from ', { continued: true });
+    doc.font('Helvetica-Bold').text(studentCollege.toUpperCase(), { continued: true });
+    doc.font('Helvetica').text(' to enable them to attend and actively take part in the Cyberfest.');
+    doc.moveDown(1);
+
+    doc.font('Helvetica-Bold').text('List of Participants:', { underline: true });
+    doc.moveDown(0.3);
+
+    const tableTop = doc.y;
+    const nameX = 80;
+    const collegeX = 330;
+
+    doc.fontSize(10);
+    doc.text('Name', nameX, tableTop, { bold: true });
+    doc.text('College Name', collegeX, tableTop, { bold: true });
+    doc.moveTo(35, tableTop + 13).lineTo(560, tableTop + 13).stroke();
+
+    let yRow = tableTop + 18;
+    doc.font('Helvetica').fontSize(10);
+    members.forEach((m, i) => {
+        doc.text(`${i + 1}. ${m.name}`, nameX - 15, yRow);
+        doc.text(m.college || "-", collegeX, yRow);
+        yRow += 16;
+    });
+
+    // --- Compact Footer Section ---
+    doc.y = yRow + 20;
+
+    const leftX = 35;
+    const rightX = 420;
+    const footerY = doc.y;
+
+    doc.fontSize(11).font('Helvetica').text('Yours Sincerely', leftX, footerY);
+
+    // Position signature and seal
+    const signY = footerY + 15;
+    if (fs.existsSync(signImgPath)) {
+        try {
+            doc.image(signImgPath, leftX, signY, { width: 90, height: 40 });
+        } catch (e) { }
+    }
+
+    if (fs.existsSync(sealImgPath)) {
+        try {
+            // Seal placed to the right
+            doc.image(sealImgPath, rightX, signY - 10, { width: 80, height: 80 });
+        } catch (e) { }
+    }
+
+    doc.y = signY + 45;
+    doc.font('Helvetica-Bold').fontSize(11).text('Dr. M D Boomija', leftX, doc.y);
+    doc.font('Helvetica').fontSize(10).text('Head of the Department', leftX, doc.y + 13);
+
     doc.end();
-
     return new Promise(resolve => doc.on('end', () => resolve(Buffer.concat(buffers))));
 }
 
