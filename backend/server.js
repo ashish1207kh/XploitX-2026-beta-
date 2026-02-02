@@ -42,7 +42,6 @@ const DBPath = path.join(__dirname, 'hackathon.db');
 
 const initialiseDBAndServer = async () => {
     try {
-        console.log("Database Path:", DBPath);
         db = await open({
             filename: DBPath,
             driver: sqlite3.Database,
