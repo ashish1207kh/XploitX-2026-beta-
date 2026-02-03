@@ -144,15 +144,17 @@ async function sendEmail(to, subject, text, html = null) {
 // API Routes
 
 // [NEW] Admin Login
+// [NEW] Admin Login
 app.post('/api/admin/login', (req, res) => {
-    const { password } = req.body;
+    const { username, password } = req.body;
     const adminPass = process.env.ADMIN_PASSWORD;
 
     if (!adminPass) {
         return res.status(500).json({ error: 'Admin configuration error' });
     }
 
-    if (password === adminPass) {
+    // Hardcoded username 'admin' for simplicity as requested
+    if (username === 'admin' && password === adminPass) {
         res.json({ success: true, token: 'admin-authorized' });
     } else {
         res.status(401).json({ error: 'Invalid Credentials' });
@@ -196,6 +198,8 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
         <h1 style="color: #00FF41;">${otp}</h1>
         <p>If you didn't request this, ignore this email.</p>
     </div>`;
+
+    const text = `Email Verification\n\nHi There,\n\nUse the code below to verify your email address for XploitX 2k26 registration:\n\n${otp}\n\nIf you didn't request this, ignore this email.`;
 
     if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
         const sent = await sendEmail(email, subject, text, html);

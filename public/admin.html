@@ -472,6 +472,7 @@
             // ----------------------------------------------------
 
             async function checkAdmin() {
+                const u = document.getElementById('admin-user').value.trim();
                 const p = document.getElementById('admin-pass').value.trim();
                 const btn = document.querySelector('.login-btn');
                 const originalText = btn.innerText;
@@ -483,7 +484,7 @@
                     const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                          method: 'POST',
                          headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ password: p })
+                         body: JSON.stringify({ username: u, password: p })
                     });
                      
                     const text = await res.text();
@@ -1005,6 +1006,7 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2 class="login-title">ADMIN ACCESS</h2>
+            <input type="text" id="admin-user" class="login-input" placeholder="Enter Username" onkeypress="handleLoginKey(event)">
             <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password"
                 onkeypress="handleLoginKey(event)">
             <button onclick="checkAdmin()" class="login-btn">UNLOCK</button>

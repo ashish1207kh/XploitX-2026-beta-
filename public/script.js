@@ -162,18 +162,15 @@ if (regForm) {
                 });
 
                 // Reset Verification State for Clone
+                // Remove Verification Elements for additional members (Only Leader needs to verify)
                 const otpSection = clone.querySelector('.otp-section');
-                if (otpSection) otpSection.style.display = 'none';
+                if (otpSection) otpSection.remove();
 
                 const verifiedBadge = clone.querySelector('.email-verified-badge');
-                if (verifiedBadge) verifiedBadge.style.display = 'none';
+                if (verifiedBadge) verifiedBadge.remove();
 
                 const verifyBtn = clone.querySelector('.verify-email-btn');
-                if (verifyBtn) {
-                    verifyBtn.style.display = 'inline-block'; // or block
-                    verifyBtn.disabled = false;
-                    verifyBtn.innerText = "[ VERIFY ]";
-                }
+                if (verifyBtn) verifyBtn.remove();
 
                 membersContainer.appendChild(clone);
 
@@ -321,7 +318,8 @@ if (regForm) {
             const memberInputs = membersContainer.querySelectorAll('.member-email-input');
 
             for (let i = 0; i < memberInputs.length; i++) {
-                if (memberInputs[i].dataset.verified !== "true") {
+                // Only enforce verification for Leader (Index 0)
+                if (i === 0 && memberInputs[i].dataset.verified !== "true") {
                     allVerified = false;
                     const memberName = memberInputs[i].closest('.member-card').querySelector('h4').innerText;
                     showCustomAlert(`Please verify the Email ID for ${memberName} before proceeding.`);
@@ -532,20 +530,33 @@ function initPaymentPage() {
         confirmBtn.replaceWith(confirmBtn.cloneNode(true));
         const newConfirmBtn = document.getElementById('confirm-payment-btn');
 
+        // Initial State: Disabled
+        newConfirmBtn.disabled = true;
+        newConfirmBtn.style.opacity = '0.5';
+        newConfirmBtn.style.cursor = 'not-allowed';
+
+        const fileInput = document.getElementById('payment-proof-file');
+        const utrInput = document.getElementById('utr-number');
+
+        function validateInputs() {
+            const utrValue = utrInput.value.trim();
+            const fileValue = fileInput.files.length > 0;
+
+            if (utrValue && fileValue) {
+                newConfirmBtn.disabled = false;
+                newConfirmBtn.style.opacity = '1';
+                newConfirmBtn.style.cursor = 'pointer';
+            } else {
+                newConfirmBtn.disabled = true;
+                newConfirmBtn.style.opacity = '0.5';
+                newConfirmBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        if (utrInput) utrInput.addEventListener('input', validateInputs);
+        if (fileInput) fileInput.addEventListener('change', validateInputs);
+
         newConfirmBtn.addEventListener('click', () => {
-            const fileInput = document.getElementById('payment-proof-file');
-            const utrInput = document.getElementById('utr-number');
-
-            if (!utrInput || !utrInput.value.trim()) {
-                showCustomAlert("Please enter the UTR / Transaction Number.");
-                return;
-            }
-
-            if (!fileInput || fileInput.files.length === 0) {
-                showCustomAlert("Please upload the payment proof screenshot.");
-                return;
-            }
-
             const file = fileInput.files[0];
             const formData = new FormData();
 
@@ -570,7 +581,11 @@ function initPaymentPage() {
                     } else {
                         showCustomAlert("Upload Failed: " + (data.error || "Unknown Error"));
                         newConfirmBtn.innerHTML = "[ UPLOAD PROOF & FINISH ]";
-                        newConfirmBtn.disabled = false;
+                        newConfirmBtn.disabled = false; // Re-enable if failed but inputs are still valid?
+                        // Actually, if failed, we should probably re-validate or just leave it enabled if inputs didn't change.
+                        // Since inputs are still filled, we can enable it.
+                        newConfirmBtn.style.opacity = '1';
+                        newConfirmBtn.style.cursor = 'pointer';
                     }
                 })
                 .catch(err => {
@@ -578,6 +593,8 @@ function initPaymentPage() {
                     showCustomAlert("Network Error during upload.");
                     newConfirmBtn.innerHTML = "[ UPLOAD PROOF & FINISH ]";
                     newConfirmBtn.disabled = false;
+                    newConfirmBtn.style.opacity = '1';
+                    newConfirmBtn.style.cursor = 'pointer';
                 });
         });
     }
