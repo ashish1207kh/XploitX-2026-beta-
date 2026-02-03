@@ -106,6 +106,7 @@ async function initDb() {
     try { await db.run(`ALTER TABLE attendance ADD COLUMN entry_time DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) { }
     try { await db.run(`ALTER TABLE attendance ADD COLUMN status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
     try { await db.run(`ALTER TABLE members ADD COLUMN attendance_status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
+    try { await db.run(`ALTER TABLE members ADD COLUMN entry_time DATETIME`); } catch (e) { }
 
     console.log('Database initialized.');
 }
@@ -187,9 +188,14 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     verificationOtps[email] = otp;
 
-    const subject = "Verify Your Email - XploitX 2k26";
-    const text = `Your verification OTP is: ${otp}`;
-    const html = `<h2>Email Verification</h2><p>OTP: <h1 style="color: #00FF41;">${otp}</h1></p>`;
+    const subject = "Email Verification";
+    const html = `<div style="font-family: Arial, sans-serif; color: #333;">
+        <h2>Email Verification</h2>
+        <p>Hi There,</p>
+        <p>Use the code below to verify your email address for XploitX 2k26 registration:</p>
+        <h1 style="color: #00FF41;">${otp}</h1>
+        <p>If you didn't request this, ignore this email.</p>
+    </div>`;
 
     if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
         const sent = await sendEmail(email, subject, text, html);
@@ -351,7 +357,33 @@ app.post('/api/auth/request-password-reset', async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         otpStore[teamId] = { otp, expires: Date.now() + 600000 };
 
-        await sendEmail(leader.email, 'Password Reset OTP', `OTP: ${otp}`);
+        const subject = "🔐 Password Reset Request";
+        const emailHtml = `<div style="font-family: Arial, sans-serif; color: #333;">
+            <h2>🔐 Password Reset Request</h2>
+            <p>Dear Participant,</p>
+            <p>We received a request to reset the password for your XploitX-2026 account.</p>
+            <p>Please use the following One-Time Password (OTP) to proceed with changing your password:</p>
+            <h1 style="color: #00FF41; letter-spacing: 5px;">${otp}</h1>
+            <p>This OTP is valid for 10 minutes. For your security, please do not share this OTP with anyone.</p>
+            <p>If you did not request a password reset, please ignore this email. Your account will remain secure.</p>
+            <br>
+            <p>Best regards,<br>
+            <b>The XploitX-2026 Organizing Committee</b><br>
+            Department of Cyber Security<br>
+            Prathyusha Engineering College</p>
+        </div>`;
+
+        const emailText = emailHtml
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/p>/gi, '\n\n')
+            .replace(/<\/li>/gi, '\n')
+            .replace(/<li>/gi, ' - ')
+            .replace(/<[^>]+>/g, '')
+            .replace(/\n\s*\n/g, '\n\n')
+            .trim();
+
+        await sendEmail(leader.email, subject, emailText, emailHtml);
         res.json({ success: true, message: 'OTP sent' });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -395,6 +427,35 @@ app.get('/api/team/:id', async (req, res) => {
         const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
         res.json({ team, members });
     } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// [NEW] Admin Update Team
+app.post('/api/admin/update_team', async (req, res) => {
+    const { teamId, name, event, password, members } = req.body;
+    console.log(`Admin updating team ${teamId}...`);
+    try {
+        const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
+        if (!team) return res.status(404).json({ error: 'Team not found' });
+
+        // Update Team Details
+        await db.run(`UPDATE teams SET name = ?, event = ?, password = ? WHERE id = ?`, [name, event, password, team.id]);
+
+        // Update Members (Full Refresh)
+        await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i];
+            // Ensure LEADER role is preserved or set if missing, though Admin UI sends it.
+            const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
+            await db.run(
+                `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+            );
+        }
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Update Error:", e);
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.post('/api/team/:id/update', async (req, res) => {
@@ -463,8 +524,7 @@ app.post('/api/admin/verify_payment', async (req, res) => {
 
             if (odPdfBuffer) attachments.push({ filename: 'OD_Letter.pdf', content: odPdfBuffer });
 
-            const whatsappLink = "https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t"; // Placeholder - User should update if specific link needed
-
+            const whatsappLink = "https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t";
             const htmlContent = `
                 <div style="font-family: Arial, sans-serif; color: #333;">
                     <h2 style="color: #00FF41;">ACCESS_GRANTED</h2>
@@ -649,5 +709,73 @@ app.post('/api/admin/delete_team', async (req, res) => {
             await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
         }
         res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// --- ATTENDANCE SYSTEM ROUTES ---
+
+app.get('/api/attendance/scan_info/:teamId', async (req, res) => {
+    const { teamId } = req.params;
+    try {
+        const team = await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
+        if (!team) return res.status(404).json({ error: 'Team not found' });
+
+        const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [team.id]);
+
+        // Find leader for convenience
+        const leader = members.find(m => m.role === 'LEADER') || members[0] || {};
+
+        res.json({
+            team: {
+                id: team.team_id,
+                name: team.name,
+                leaderName: leader.name || 'Unknown',
+                college: leader.college || 'Unknown'
+            },
+            members: members.map(m => ({
+                id: m.id,
+                name: m.name,
+                college: m.college,
+                status: m.attendance_status || 'ABSENT'
+            }))
+        });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/attendance/mark_members', async (req, res) => {
+    const { teamId, memberStatuses } = req.body; // memberStatuses = [{ id, status }]
+    try {
+        // Validate team exists
+        const team = await db.get('SELECT id FROM teams WHERE team_id = ?', [teamId]);
+        if (!team) return res.status(404).json({ error: 'Team not found' });
+
+        for (const item of memberStatuses) {
+            // Update member
+            await db.run(
+                `UPDATE members SET attendance_status = ?, entry_time = CURRENT_TIMESTAMP WHERE id = ?`,
+                [item.status, item.id]
+            );
+        }
+
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/attendance/all', async (req, res) => {
+    try {
+        const rows = await db.all(`
+            SELECT 
+                m.id, 
+                t.team_id, 
+                m.name, 
+                m.role, 
+                m.college, 
+                m.attendance_status as status, 
+                m.entry_time 
+            FROM members m 
+            JOIN teams t ON m.team_db_id = t.id 
+            ORDER BY m.entry_time DESC, t.team_id ASC
+        `);
+        res.json(rows);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });

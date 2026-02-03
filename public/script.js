@@ -477,20 +477,21 @@ function initPaymentPage() {
     // Show Per Head Cost for Hackathon
     const merchantInfo = document.getElementById('merchant-info');
     if (merchantInfo && !document.getElementById('per-head-msg')) {
-        let msgText = "";
+        const perHeadMsg = document.createElement('p');
+        perHeadMsg.id = 'per-head-msg';
+        perHeadMsg.style.marginBottom = "10px";
+        perHeadMsg.style.marginTop = "5px";
+
         if (eventName === '24 Hrs Hackathon') {
-            msgText = "RS 250 PER HEAD";
-        } else if (eventName === 'paper_presentation') {
-            msgText = "RS 150";
+            perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
+        } else if (eventName === 'paper_presentation' || eventName === 'Paper Presentation') {
+            perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
+            perHeadMsg.style.color = "#00e5ff";
+            perHeadMsg.style.fontSize = "0.9rem";
+            perHeadMsg.style.fontFamily = "'Share Tech Mono'";
         }
 
-        if (msgText) {
-            const perHeadMsg = document.createElement('p');
-            perHeadMsg.id = 'per-head-msg';
-            perHeadMsg.innerText = msgText;
-            perHeadMsg.style.color = "#aaa";
-            perHeadMsg.style.fontSize = "0.9rem";
-            perHeadMsg.style.marginBottom = "5px";
+        if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
             merchantInfo.parentNode.insertBefore(perHeadMsg, merchantInfo.nextSibling);
         }
     }
