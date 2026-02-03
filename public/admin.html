@@ -352,13 +352,16 @@
         <h1>> SYSTEM_ADMINISTRATOR_VIEW</h1>
         <div id="stats">Total Teams: Loading...</div>
 
-        <div style="margin: 20px 0;">
+        <div style="margin: 20px 0; position: relative; z-index: 50;">
             <button onclick="downloadCSV()"
-                style="padding: 10px; background: #00FF41; border: none; font-weight: bold; cursor: pointer; margin-right: 10px;">[
+                style="padding: 10px; background: #00FF41; border: none; font-weight: bold; cursor: pointer; margin-right: 10px; position: relative; z-index: 51;">[
                 DOWNLOAD CSV ]</button>
             <button onclick="printPDF()"
-                style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer;">[
+                style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer; position: relative; z-index: 51;">[
                 PRINT / SAVE PDF ]</button>
+            <button id="activity-log-btn" onclick="openLogModal()"
+                style="display:none; padding: 10px; background: #00e5ff; color: black; border: none; font-weight: bold; cursor: pointer; margin-left: 10px; position: relative; z-index: 51;">[
+                ACTIVITY LOG ]</button>
         </div>
 
         <div class="table-responsive">
@@ -498,6 +501,14 @@
                     
                     if (data.success) {
                         document.getElementById('login-overlay').style.display = 'none';
+                        showCustomAlert('ACCESS GRANTED: WELCOME ' + data.user);
+
+                        // Show Log Button ONLY for Administrator
+                        if (data.user === 'Administrator') {
+                            const logBtn = document.getElementById('activity-log-btn');
+                            if(logBtn) logBtn.style.display = 'inline-block';
+                        }
+
                         loadData();
                     } else {
                         showCustomAlert('ACCESS DENIED: ' + (data.error || 'Invalid Credentials'));
@@ -634,6 +645,30 @@
 
             function closeVerifyModal() {
                  document.getElementById('verify-modal').style.display = 'none';
+            }
+
+            // Log Modal Functions
+            async function openLogModal() {
+                 const modal = document.getElementById('log-modal');
+                 const content = document.getElementById('log-content');
+                 content.innerText = "Loading system logs...";
+                 modal.style.display = 'flex';
+
+                 try {
+                     const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
+                     const data = await res.json();
+                     if (data.log) {
+                         content.innerText = data.log;
+                     } else {
+                         content.innerText = "No data received.";
+                     }
+                 } catch (e) {
+                     content.innerText = "Error fetching logs: " + e.message;
+                 }
+            }
+
+            function closeLogModal() {
+                 document.getElementById('log-modal').style.display = 'none';
             }
 
             async function performVerification(teamId) {
@@ -945,31 +980,49 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Staff Coordinators -->
-                <div class="node-card">
-                    <div class="node-avatar-placeholder">
-                        <i class="fas fa-id-card-alt"></i>
-                    </div>
-                    <div class="node-content-wrapper">
-                        <div class="node-category">STAFF COORDS</div>
-                        <span class="node-role-label">Cyber Security Department</span>
-
-                        <ul class="node-list">
-                            <li class="node-item">
-                                <strong>Dr. M D Boomija</strong>
-                                <span class="node-role-sublabel">HOD</span>
-                                <a href="tel:+917358028970">+91 7358028970</a>
-                            </li>
-                            <li class="node-item">
-                                <strong>Mrs. Anithalakshmi</strong>
-                                <span class="node-role-sublabel">Assistant
-                                    Professor</span>
-                                <a href="tel:+919840268454">+91 9840268454</a>
-                            </li>
-                        </ul>
-                    </div>
+            <!-- Card 2: Staff Coordinators -->
+            <div class="node-card">
+                <div class="node-avatar-placeholder">
+                    <i class="fas fa-id-card-alt"></i>
                 </div>
+                <div class="node-content-wrapper">
+                    <div class="node-category">STAFF COORDS</div>
+                    <span class="node-role-label">Cyber Security Department</span>
 
+                    <ul class="node-list">
+                        <li class="node-item">
+                            <strong>Dr. M D Boomija</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">HOD</span>
+                            <a href="tel:+917358028970">+91 7358028970</a>
+                        </li>
+                        <li class="node-item">
+                            <strong>Mrs. Anithalakshmi</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
+                            <a href="tel:+919840268454">+91 9840268454</a>
+                        </li>
+                        <li class="node-item">
+                            <strong>Mrs. G Ramya</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
+                            <a href="tel:+919150567478">+91 9150567478</a>
+                        </li>
+                        <li class="node-item">
+                            <strong>Mrs. S Devi</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
+                            <a href="tel:+919940592672">+91 9940592672</a>
+                        </li>
+                        <li class="node-item">
+                            <strong>Mrs. S Rama Mathrasi</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
+                            <a href="tel:+918778136639">+91 8778136639</a>
+                        </li>
+                        <li class="node-item">
+                            <strong>Mrs. Aswini</strong>
+                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
+                            <a href="tel:+919042315995">+91 9042315995</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
                 <!-- Card 3: Registration Coordinators -->
                 <div class="node-card">
                     <div class="node-avatar-placeholder">
@@ -1010,6 +1063,17 @@
             <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password"
                 onkeypress="handleLoginKey(event)">
             <button onclick="checkAdmin()" class="login-btn">UNLOCK</button>
+        </div>
+    </div>
+
+    <!-- Log Modal -->
+    <div id="log-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 20000; align-items: center; justify-content: center;">
+        <div style="background: #050505; border: 2px solid #00e5ff; padding: 20px; width: 80%; max-width: 800px; height: 80%; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                <h2 style="color: #00e5ff; margin: 0;">> SERVER_ACTIVITY_LOG</h2>
+                <button onclick="closeLogModal()" style="background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 5px 15px; cursor: pointer; font-family: monospace;">[ CLOSE ]</button>
+            </div>
+            <pre id="log-content" style="flex: 1; overflow-y: auto; color: #ccc; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: #000; padding: 15px; border: 1px solid #333; white-space: pre-wrap;"></pre>
         </div>
     </div>
     <script src="script.js"></script>

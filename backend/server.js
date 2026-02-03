@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const bodyParser = require('body-parser');
@@ -20,7 +21,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Multer Storage
 const multer = require('multer');
-const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -147,17 +147,49 @@ async function sendEmail(to, subject, text, html = null) {
 // [NEW] Admin Login
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
-    const adminPass = process.env.ADMIN_PASSWORD;
 
-    if (!adminPass) {
-        return res.status(500).json({ error: 'Admin configuration error' });
-    }
+    // Defined Admin Credentials
+    const admins = {
+        "Madhumitha": "Madhumitha@xploitx",
+        "Jesin Milesh": "Jesin@xploitx",
+        "Harish": "Harish@xploitx",
+        "Abhiram": "Abhiram@xploitx",
+        "Subashini": "Subashini@xploitx",
+        "Rubika": "Rubika@xploitx",
+        "Ramya": "Ramya@xploitx",
+        "Nirmal Raj": "Nirmal@xploitx",
+        "Ashish": "Ashish@xploitx",
+        "Administrator": process.env.ADMIN_PASSWORD // Keeping original admin as master backup
+    };
 
-    // Hardcoded username 'admin' for simplicity as requested
-    if (username === 'admin' && password === adminPass) {
-        res.json({ success: true, token: 'admin-authorized' });
+    if (admins.hasOwnProperty(username) && admins[username] === password) {
+        // [LOGGING] Record admin access
+        const timestamp = new Date().toLocaleString();
+        const logEntry = `[${timestamp}] USER LOGIN: ${username}\n`;
+        const logPath = path.join(__dirname, 'admin_activity.log');
+
+        fs.appendFile(logPath, logEntry, (err) => {
+            if (err) console.error('Error writing to admin log:', err);
+        });
+
+        res.json({ success: true, token: 'admin-authorized', user: username });
     } else {
         res.status(401).json({ error: 'Invalid Credentials' });
+    }
+});
+
+// [NEW] Get Admin Activity Log
+app.get('/api/admin/activity-log', (req, res) => {
+    const logPath = path.join(__dirname, 'admin_activity.log');
+    if (fs.existsSync(logPath)) {
+        fs.readFile(logPath, 'utf8', (err, data) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to read log file' });
+            }
+            res.json({ log: data });
+        });
+    } else {
+        res.json({ log: 'No activity recorded yet.' });
     }
 });
 
