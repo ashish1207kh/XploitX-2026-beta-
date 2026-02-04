@@ -295,8 +295,8 @@ app.post('/api/auth/register', async (req, res) => {
         // Email Sending Logic (Preserved but simplified for structure)
 
 
-        // Let's create a Helper for the Full Email Content to not lose it
-        await sendRegistrationEmails(members, teamIdStr, password, event);
+        // Email Sending Logic DISABLED here as per request (moved to payment upload)
+        // await sendRegistrationEmails(members, teamIdStr, password, event);
 
         res.json({ message: 'Registration successful', teamId: teamIdStr, teamName: teamName });
 
@@ -324,21 +324,15 @@ async function sendRegistrationEmails(members, teamIdStr, password, event) {
         const timeStr = "8:30 AM";
 
         // Single Source of Content (HTML)
-        let htmlBody = `<p>Dear ${m.name},</p>
+        const htmlBody = `<p>Dear ${m.name},</p>
 <p>Thank you for registering for <b>XploitX 2k26</b>, the Department of Cyber Security's premier cyberfest! We are thrilled to have you join us for this high-energy technical exchange.</p>
-<p>This email confirms that your registration has been successfully received. We are hard at work preparing an incredible lineup of events, challenges, and workshops designed to push your technical boundaries.</p>`;
+<p>This email confirms that your registration has been successfully received. We are hard at work preparing an incredible lineup of events, challenges, and workshops designed to push your technical boundaries.</p>
 
-        if (isLeader) {
-            htmlBody += `
-            <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                <h3 style="margin-top:0;">Your Login Credentials</h3>
-                <p><b>Team ID:</b> ${teamIdStr}<br>
-                <b>Password:</b> ${password}</p>
-                <p><small>Please use these credentials to login to the team dashboard.</small></p>
-            </div>`;
-        }
+<div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin: 20px 0;">
+    <p><b>Your Team ID:</b> ${teamIdStr}</p>
+    <p><small>Please quote this Team ID for all future correspondence.</small></p>
+</div>
 
-        htmlBody += `
 <p><b>Event Details:</b></p>
 <ul>
     <li><b>Event:</b> ${event || "XploitX 2k26 Event"}</li>
@@ -381,23 +375,31 @@ Prathyusha Engineering College</p>`;
 
 const otpStore = {};
 
-app.post('/api/auth/request-password-reset', async (req, res) => {
-    const { teamId, oldPassword } = req.body;
+app.post('/api/auth/forgot-password', async (req, res) => {
+    const { email } = req.body;
     try {
-        const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
-        if (!team) return res.status(404).json({ error: 'Team not found' });
-        if (team.password !== oldPassword) return res.status(401).json({ error: 'Incorrect old password' });
+        // Find team/member by email
+        // Logic: Check teams table first, then members (leader)
+        let team = await db.get(`SELECT * FROM teams WHERE email = ?`, [email]);
 
-        const leader = await db.get(`SELECT * FROM members WHERE team_db_id = ? AND role = 'LEADER'`, [team.id]);
-        if (!leader || !leader.email) return res.status(400).json({ error: 'Leader email not found.' });
+        // If not found in teams, check members and link to team
+        if (!team) {
+            const member = await db.get(`SELECT * FROM members WHERE email = ?`, [email]);
+            if (member) {
+                team = await db.get(`SELECT * FROM teams WHERE id = ?`, [member.team_db_id]);
+            }
+        }
+
+        if (!team) return res.status(404).json({ error: 'No account found with this email.' });
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        otpStore[teamId] = { otp, expires: Date.now() + 600000 };
+        // Store OTP keyed by EMAIL
+        otpStore[email] = { otp, teamId: team.team_id, expires: Date.now() + 600000 };
 
         const subject = "🔐 Password Reset Request";
         const emailHtml = `<div style="font-family: Arial, sans-serif; color: #333;">
             <h2>🔐 Password Reset Request</h2>
-            <p>Dear Participant,</p>
+            <p>Dear Participant (${team.name}),</p>
             <p>We received a request to reset the password for your XploitX-2026 account.</p>
             <p>Please use the following One-Time Password (OTP) to proceed with changing your password:</p>
             <h1 style="color: #00FF41; letter-spacing: 5px;">${otp}</h1>
@@ -410,28 +412,38 @@ app.post('/api/auth/request-password-reset', async (req, res) => {
             Prathyusha Engineering College</p>
         </div>`;
 
-        const emailText = emailHtml
-            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-            .replace(/<br\s*\/?>/gi, '\n')
-            .replace(/<\/p>/gi, '\n\n')
-            .replace(/<\/li>/gi, '\n')
-            .replace(/<li>/gi, ' - ')
-            .replace(/<[^>]+>/g, '')
-            .replace(/\n\s*\n/g, '\n\n')
-            .trim();
+        const emailText = `Password Reset Request\nOTP: ${otp}\nValid for 10 minutes.`;
 
-        await sendEmail(leader.email, subject, emailText, emailHtml);
-        res.json({ success: true, message: 'OTP sent' });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+        await sendEmail(email, subject, emailText, emailHtml);
+        res.json({ success: true, message: 'OTP sent to ' + email });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.post('/api/auth/verify-reset-otp', async (req, res) => {
-    const { teamId, otp, newPassword } = req.body;
-    if (!otpStore[teamId] || otpStore[teamId].otp !== otp) return res.status(400).json({ error: 'Invalid OTP' });
+    const { email, otp, newPassword } = req.body;
 
-    await db.run(`UPDATE teams SET password = ? WHERE team_id = ?`, [newPassword, teamId]);
-    delete otpStore[teamId];
-    res.json({ success: true });
+    const record = otpStore[email];
+
+    if (!record) return res.status(400).json({ error: 'OTP expired or request not found.' });
+    if (record.otp !== otp) return res.status(400).json({ error: 'Invalid OTP' });
+    if (Date.now() > record.expires) {
+        delete otpStore[email];
+        return res.status(400).json({ error: 'OTP expired' });
+    }
+
+    try {
+        await db.run(`UPDATE teams SET password = ? WHERE team_id = ?`, [newPassword, record.teamId]);
+        delete otpStore[email];
+
+        // Optional: Send confirmation email?
+
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -528,6 +540,20 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
 
     const filePath = '/uploads/' + file.filename;
     await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [filePath, utrNumber || "NOT_PROVIDED", teamId]);
+
+    // [NEW] Send Confirmation Email NOW (After Payment Upload)
+    try {
+        const team = await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
+        if (team) {
+            const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [team.id]);
+            // Send the registration confirmation email (with credentials) now
+            await sendRegistrationEmails(members, team.team_id, team.password, team.event);
+        }
+    } catch (err) {
+        console.error("Error sending email after payment upload:", err);
+        // Don't fail the request if email fails, as upload was successful
+    }
+
     res.json({ success: true });
 });
 
@@ -603,7 +629,25 @@ app.post('/api/admin/verify_payment', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Helper for PDF (Professional OD Letter)
+// [NEW] Reject Payment
+app.post('/api/admin/reject_payment', async (req, res) => {
+    const { teamId } = req.body;
+    try {
+        await db.run(`UPDATE teams SET payment_verified = -1 WHERE team_id = ?`, [teamId]);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// [NEW] Restore Payment (Undo Reject)
+app.post('/api/admin/restore_payment', async (req, res) => {
+    const { teamId } = req.body;
+    try {
+        // Reset to 0 (Pending/Standby)
+        await db.run(`UPDATE teams SET payment_verified = 0 WHERE team_id = ?`, [teamId]);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 async function generateODPdfInternal(teamDbId) {
     const PDFDocument = require('pdfkit');
     const path = require('path');

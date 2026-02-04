@@ -82,7 +82,6 @@
                 <a href="index.html"><i class="fas fa-home"></i> [ HOME ]</a>
                 <a href="about.html"><i class="fas fa-info-circle"></i> [ ABOUT ]</a>
                 <a href="rules.html"><i class="fas fa-gavel"></i> [ RULES ]</a>
-                <a href="login.html"><i class="fas fa-sign-in-alt"></i> [ LOGIN ]</a>
                 <a href="register.html"><i class="fas fa-user-plus"></i> [ REGISTER ]</a>
                 <a href="prizes.html"><i class="fas fa-trophy"></i> [ PRIZES ]</a>
             </div>
@@ -210,11 +209,11 @@
                 </div>
             </div>
 
-            <!-- Payment Modal -->
+            <!-- Payment Section (Inline) -->
             <div id="payment-modal"
-                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+                style="display: none; width: 100%; margin-top: 40px; z-index: 10; justify-content: center; align-items: center; padding-bottom: 20px;">
                 <div
-                    style="background: #000; border: 2px solid var(--neon-green); padding: 30px; border-radius: 10px; width: 90%; max-width: 450px; box-shadow: 0 0 30px rgba(0,255,65,0.2); text-align: center;">
+                    style="background: rgba(0,0,0,0.8); border: 2px solid var(--neon-green); padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0,255,65,0.15); text-align: center;">
                     <h2 style="color: var(--neon-green); margin-bottom: 20px;">>_ PAYMENT GATEWAY</h2>
 
                     <!-- QR Code Section -->
@@ -227,10 +226,15 @@
                     <p style="color: #fff; font-size: 0.9rem; margin-bottom: 15px;">SCAN TO PAY VIA UPI</p>
 
                     <div style="text-align: left; margin-bottom: 20px; font-family: monospace; color: #fff;">
-                        <p>MERCHANT: XploitX</p>
+                        <p id="merchant-info">MERCHANT: XploitX-2026</p>
                         <p id="payment-amount-display"
                             style="font-size: 1.2rem; font-weight: bold; color: var(--neon-green);">AMOUNT: ₹ 400.00</p>
                         <hr style="border-color: var(--dark-green); margin: 10px 0;">
+
+                        <p style="margin-bottom: 5px; color: #aaa;">UTR / TRANSACTION NUMBER:</p>
+                        <input type="text" id="utr-number" placeholder="Enter UPI Ref ID / UTR"
+                            style="width: 100%; padding: 10px; margin-bottom: 15px; background: #111; border: 1px solid var(--neon-green); color: #fff; font-family: 'Share Tech Mono';">
+
 
                         <p style="margin-bottom: 5px; color: #aaa;">UPLOAD PAYMENT PROOF:</p>
                         <p style="margin-bottom: 5px; font-size: 0.8rem; color: #666;">(Screenshot of Transaction)</p>
@@ -239,9 +243,7 @@
                     </div>
                     <button type="button" id="confirm-payment-btn" class="jack-in-btn" style="width: 100%;">[ INITIATE
                         TRANSFER ]</button>
-                    <button type="button" id="cancel-payment-btn"
-                        style="background: none; border: none; color: #666; margin-top: 15px; cursor: pointer;">[ CANCEL
-                        TRANSACTION ]</button>
+
                 </div>
             </div>
 

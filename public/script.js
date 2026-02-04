@@ -433,8 +433,111 @@ if (regForm) {
                         totalAmount = currentFee * members.length;
                     }
 
-                    // Direct Redirect (No Alert)
-                    window.location.href = `payment.html?teamId=${data.teamId}&amount=${totalAmount}&event=${encodeURIComponent(event)}&members=${members.length}`;
+                    // --- IN-PAGE PAYMENT MODAL LOGIC ---
+                    const pModal = document.getElementById('payment-modal');
+                    const pAmount = document.getElementById('payment-amount-display');
+                    const pQr = pModal.querySelector('img[alt="Payment QR"]');
+                    const pUtr = document.getElementById('utr-number');
+                    const pFile = document.getElementById('payment-proof-file');
+                    const pConfirm = document.getElementById('confirm-payment-btn');
+                    const pMerchantInfo = document.getElementById('merchant-info');
+
+                    // Set Amount
+                    if (pAmount) pAmount.innerText = `AMOUNT: ₹ ${totalAmount}.00`;
+
+                    // Add Early Bird / Fee Info if missing
+                    if (pMerchantInfo && !document.getElementById('per-head-msg-reg')) {
+                        const perHeadMsg = document.createElement('p');
+                        perHeadMsg.id = 'per-head-msg-reg';
+                        perHeadMsg.style.marginBottom = "10px";
+                        perHeadMsg.style.marginTop = "5px";
+
+                        if (event === '24 Hrs Hackathon') {
+                            perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
+                        } else if (event === 'paper_presentation' || event === 'Paper Presentation') {
+                            perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
+                            perHeadMsg.style.color = "#00e5ff";
+                            perHeadMsg.style.fontSize = "0.9rem";
+                            perHeadMsg.style.fontFamily = "'Share Tech Mono'";
+                        }
+                        if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
+                            pMerchantInfo.parentNode.insertBefore(perHeadMsg, pMerchantInfo.nextSibling);
+                        }
+                    }
+
+                    // Set QR Code
+                    if (pQr) {
+                        if (event === '24 Hrs Hackathon') {
+                            if (members.length === 2) pQr.src = 'Main%20Hack(2%20head).jpeg';
+                            else if (members.length === 3) pQr.src = 'Main%20Hack(3%20head).jpeg';
+                            else if (members.length === 4) pQr.src = 'Main%20Hack(4%20head).jpeg';
+                            else pQr.src = 'Main%20Hack(4%20head).jpeg';
+                        } else if (event === 'paper_presentation') {
+                            pQr.src = 'Paper%20Presentation.jpeg';
+                        }
+                    }
+
+                    // Show Payment Section
+                    pModal.style.display = 'flex';
+
+                    // Scroll to Payment Section
+                    setTimeout(() => {
+                        pModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+
+                    // Hide the "Proceed to Payment" button now that we moved on
+                    const proceedBtn = document.querySelector('#team-form button[type="submit"]');
+                    if (proceedBtn) proceedBtn.style.display = 'none';
+
+                    // Input Validation
+                    function checkInputs() {
+                        if (pUtr.value.trim() && pFile.files.length > 0) {
+                            pConfirm.disabled = false;
+                            pConfirm.style.opacity = '1';
+                            pConfirm.style.cursor = 'pointer';
+                        } else {
+                            pConfirm.disabled = true;
+                            pConfirm.style.opacity = '0.5';
+                            pConfirm.style.cursor = 'not-allowed';
+                        }
+                    }
+                    pUtr.oninput = checkInputs;
+                    pFile.onchange = checkInputs;
+                    checkInputs(); // Initial check
+
+                    // Upload Action
+                    pConfirm.onclick = () => {
+                        const formData = new FormData();
+                        formData.append('teamId', data.teamId);
+                        formData.append('utrNumber', pUtr.value.trim());
+                        formData.append('paymentProof', pFile.files[0]);
+
+                        pConfirm.innerHTML = "[ UPLOADING... ]";
+                        pConfirm.disabled = true;
+
+                        fetch(`${API_BASE_URL}/api/payment/upload`, {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(r => r.json())
+                            .then(d => {
+                                if (d.success) {
+                                    showCustomAlert("PAYMENT INITIATED!\nCONFIRMATION EMAIL SENT.\n\n We will Reach you within 72 hours...", () => {
+                                        window.location.href = 'index.html';
+                                    });
+                                } else {
+                                    showCustomAlert("Upload Failed: " + (d.error || "Unknown"));
+                                    pConfirm.innerHTML = "[ UPLOAD PROOF & FINISH ]";
+                                    pConfirm.disabled = false;
+                                }
+                            })
+                            .catch(e => {
+                                showCustomAlert("Network Error");
+                                pConfirm.innerHTML = "[ UPLOAD PROOF & FINISH ]";
+                                pConfirm.disabled = false;
+                            });
+                    };
+
                 } else {
                     throw new Error(data.error || "Registration failed");
                 }
@@ -452,153 +555,7 @@ if (regForm) {
     init();
 } // End of if (regForm)
 
-// Check if we are on payment page (Global check, outside regForm)
-if (window.location.pathname.includes('payment.html')) {
-    initPaymentPage();
-}
 
-// Payment Page Logic (Global Function)
-// Payment Page Logic (Global Function)
-function initPaymentPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const teamId = urlParams.get('teamId');
-    const amount = urlParams.get('amount');
-    const eventName = urlParams.get('event'); // Get event name
-
-    const amountDisplay = document.getElementById('payment-amount-display');
-    const confirmBtn = document.getElementById('confirm-payment-btn');
-    const cancelBtn = document.getElementById('cancel-payment-btn');
-
-    // Update Amount
-    if (amountDisplay) amountDisplay.innerText = `AMOUNT: ₹ ${amount}.00`;
-
-    // Show Per Head Cost for Hackathon
-    const merchantInfo = document.getElementById('merchant-info');
-    if (merchantInfo && !document.getElementById('per-head-msg')) {
-        const perHeadMsg = document.createElement('p');
-        perHeadMsg.id = 'per-head-msg';
-        perHeadMsg.style.marginBottom = "10px";
-        perHeadMsg.style.marginTop = "5px";
-
-        if (eventName === '24 Hrs Hackathon') {
-            perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
-        } else if (eventName === 'paper_presentation' || eventName === 'Paper Presentation') {
-            perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
-            perHeadMsg.style.color = "#00e5ff";
-            perHeadMsg.style.fontSize = "0.9rem";
-            perHeadMsg.style.fontFamily = "'Share Tech Mono'";
-        }
-
-        if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
-            merchantInfo.parentNode.insertBefore(perHeadMsg, merchantInfo.nextSibling);
-        }
-    }
-
-    // Determine Member Count for Logic (Pass 'members' count via URL)
-    const memberCount = parseInt(urlParams.get('members')) || 1;
-
-    // Update QR Code & Amount Logic based on Event & Head Count
-    const qrImg = document.querySelector('img[alt="Payment QR"]');
-    if (qrImg) {
-        if (eventName === '24 Hrs Hackathon') {
-            if (memberCount === 2) {
-                qrImg.src = 'Main%20Hack(2%20head).jpeg';
-                if (amountDisplay) amountDisplay.innerText = `AMOUNT: ₹ 500.00`;
-            } else if (memberCount === 3) {
-                qrImg.src = 'Main%20Hack(3%20head).jpeg';
-                if (amountDisplay) amountDisplay.innerText = `AMOUNT: ₹ 750.00`;
-            } else if (memberCount === 4) {
-                qrImg.src = 'Main%20Hack(4%20head).jpeg';
-                if (amountDisplay) amountDisplay.innerText = `AMOUNT: ₹ 1000.00`;
-            } else {
-                // Fallback (Default to 4 head if count is unexpected)
-                qrImg.src = 'Main%20Hack(4%20head).jpeg';
-            }
-        } else if (eventName === 'paper_presentation' || eventName === 'Paper Presentation') {
-            qrImg.src = 'Paper%20Presentation.jpeg';
-        }
-    }
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
-    }
-
-    if (confirmBtn) {
-        // Remove existing listeners to be safe (though cloning is better, we'll just add new one and assume clean state)
-        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
-        const newConfirmBtn = document.getElementById('confirm-payment-btn');
-
-        // Initial State: Disabled
-        newConfirmBtn.disabled = true;
-        newConfirmBtn.style.opacity = '0.5';
-        newConfirmBtn.style.cursor = 'not-allowed';
-
-        const fileInput = document.getElementById('payment-proof-file');
-        const utrInput = document.getElementById('utr-number');
-
-        function validateInputs() {
-            const utrValue = utrInput.value.trim();
-            const fileValue = fileInput.files.length > 0;
-
-            if (utrValue && fileValue) {
-                newConfirmBtn.disabled = false;
-                newConfirmBtn.style.opacity = '1';
-                newConfirmBtn.style.cursor = 'pointer';
-            } else {
-                newConfirmBtn.disabled = true;
-                newConfirmBtn.style.opacity = '0.5';
-                newConfirmBtn.style.cursor = 'not-allowed';
-            }
-        }
-
-        if (utrInput) utrInput.addEventListener('input', validateInputs);
-        if (fileInput) fileInput.addEventListener('change', validateInputs);
-
-        newConfirmBtn.addEventListener('click', () => {
-            const file = fileInput.files[0];
-            const formData = new FormData();
-
-            // IMPORTANT: Append text fields BEFORE the file so Multer can access them in filename callback
-            formData.append('teamId', teamId);
-            formData.append('utrNumber', utrInput.value.trim());
-            formData.append('paymentProof', file);
-
-            newConfirmBtn.innerHTML = "[ UPLOADING... ]";
-            newConfirmBtn.disabled = true;
-
-            fetch(`${API_BASE_URL}/api/payment/upload`, {
-                method: 'POST',
-                body: formData
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        showCustomAlert("Payment proof submitted successfully!\n\nPlease check your Team Leader's Email for Login Credentials to access the Dashboard.", () => {
-                            window.location.href = 'login.html';
-                        });
-                    } else {
-                        showCustomAlert("Upload Failed: " + (data.error || "Unknown Error"));
-                        newConfirmBtn.innerHTML = "[ UPLOAD PROOF & FINISH ]";
-                        newConfirmBtn.disabled = false; // Re-enable if failed but inputs are still valid?
-                        // Actually, if failed, we should probably re-validate or just leave it enabled if inputs didn't change.
-                        // Since inputs are still filled, we can enable it.
-                        newConfirmBtn.style.opacity = '1';
-                        newConfirmBtn.style.cursor = 'pointer';
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showCustomAlert("Network Error during upload.");
-                    newConfirmBtn.innerHTML = "[ UPLOAD PROOF & FINISH ]";
-                    newConfirmBtn.disabled = false;
-                    newConfirmBtn.style.opacity = '1';
-                    newConfirmBtn.style.cursor = 'pointer';
-                });
-        });
-    }
-}
 
 
 // Custom Cursor: Green Dot & Circle

@@ -67,8 +67,8 @@
             font-family: 'Share Tech Mono', monospace;
             overflow-x: hidden;
             line-height: 1.6;
-            cursor: none;
-            /* Hide default for Custom CSS Cursor */
+            cursor: default;
+            /* Default cursor visible with custom outline effect */
         }
 
         /* Custom Cursor Elements */
@@ -88,6 +88,7 @@
             height: 8px;
             background-color: white;
             box-shadow: 0 0 10px var(--neon-green);
+            z-index: 10000;
         }
 
         .cursor-outline {
