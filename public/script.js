@@ -99,10 +99,11 @@ const regForm = document.getElementById('team-form');
 if (regForm) {
     // Configuration
     const EVENT_CONFIG = {
-        '24 Hrs Hackathon': { min: 2, max: 4, fee: 250, perHead: true },
-        'paper_presentation': { min: 1, max: 3, fee: 150, perHead: false },
-        'digital_forensics': { min: 2, max: 2, fee: 0, perHead: false },
-        'network_defense': { min: 2, max: 2, fee: 0, perHead: false }
+        'CTF (24 Hours)': { min: 2, max: 4, fee: 250, perHead: true }, // Day 1
+        'Workshop': { min: 1, max: 1, fee: 150, perHead: true }, // Day 1 
+        'paper_presentation': { min: 1, max: 4, fee: 150, perHead: false }, // Day 2
+        'digital_forensics': { min: 1, max: 4, fee: 50, perHead: true }, // Day 2
+        'network_defense': { min: 1, max: 4, fee: 50, perHead: true } // Day 2
     };
 
     let currentFee = 0;
@@ -110,7 +111,12 @@ if (regForm) {
     let currentMax = 5;
 
     // Elements
-    const eventSelect = document.getElementById('event-select');
+    const daySelect = document.getElementById('day-select');
+    const dynamicOptions = document.getElementById('dynamic-event-options');
+    // NOTE: eventSelect is now a hidden input, but we keep the variable name for compatibility with logic below if we update it correctly
+    const eventSelectInput = document.getElementById('event-select');
+
+    // Legacy element references
     const membersContainer = document.getElementById('members-container');
     const addMemberBtn = document.getElementById('add-member-btn');
     const removeMemberBtn = document.getElementById('remove-member-btn');
@@ -123,6 +129,231 @@ if (regForm) {
     // Run Init
     function init() {
 
+        // DAY SELECTION LOGIC
+        if (daySelect) {
+            daySelect.addEventListener('change', () => {
+                const day = daySelect.value;
+                renderEventOptions(day);
+            });
+        }
+
+        function renderEventOptions(day) {
+            if (!dynamicOptions) return;
+            dynamicOptions.innerHTML = '';
+            eventSelectInput.value = ''; // Reset hidden input
+
+            if (day === 'Day 1') {
+                const opts = ['CTF (24 Hours)', 'Workshop'];
+                opts.forEach(opt => {
+                    const label = document.createElement('label');
+                    label.style.display = 'flex';
+                    label.style.alignItems = 'center';
+                    label.style.color = '#fff';
+                    label.style.cursor = 'pointer';
+                    label.style.marginRight = '20px'; // Spacing between options
+
+                    label.innerHTML = `
+                        <input type="radio" name="day1_event_radio" value="${opt}" style="margin: 0; margin-right: 8px; accent-color: var(--neon-green); transform: scale(1.2);">
+                        <span style="font-family: 'Share Tech Mono'; font-size: 0.9rem; white-space: nowrap;">${opt}</span>
+                    `;
+                    dynamicOptions.appendChild(label);
+
+                    // Listener
+                    const input = label.querySelector('input');
+                    input.addEventListener('change', () => {
+                        handleSelectionChange();
+                    });
+                });
+            } else if (day === 'Day 2') {
+                // Checkboxes: Paper Presentation, Network Defense, Digital Forensics
+                const opts = [
+                    { val: 'paper_presentation', txt: 'Paper Presentation' },
+                    { val: 'network_defense', txt: 'Network Defense' },
+                    { val: 'digital_forensics', txt: 'Digital Forensics' }
+                ];
+                opts.forEach(opt => {
+                    const label = document.createElement('label');
+                    label.style.display = 'flex';
+                    label.style.alignItems = 'center';
+                    label.style.color = '#fff';
+                    label.style.cursor = 'pointer';
+                    label.style.marginRight = '20px'; // Spacing between options
+
+                    label.innerHTML = `
+                        <input type="checkbox" name="day2_event_check" value="${opt.val}" style="margin-right: 8px; accent-color: var(--neon-green); transform: scale(1.2);">
+                        <span style="font-family: 'Share Tech Mono'; font-size: 0.9rem;">${opt.txt}</span>
+                    `;
+                    dynamicOptions.appendChild(label);
+
+                    // Listener
+                    const input = label.querySelector('input');
+                    input.addEventListener('change', handleSelectionChange);
+                });
+
+            }
+        }
+
+        function handleSelectionChange() {
+            // 0. Pre-Cleanup (Day 1 Bonus Logic)
+            // If in Day 1 mode (radios exist) and CTF is NOT selected, remove bonus options immediately so they aren't gathered incorrectly.
+            const day1Radios = document.querySelectorAll('input[name="day1_event_radio"]');
+            if (day1Radios.length > 0) {
+                const ctfChecked = document.querySelector('input[name="day1_event_radio"][value="CTF (24 Hours)"]:checked');
+                const bonusContainer = document.getElementById('ctf-bonus-container');
+                if (!ctfChecked && bonusContainer) {
+                    bonusContainer.remove();
+                }
+            }
+
+            // 1. Gather selected values
+            const radios = document.querySelectorAll('input[name="day1_event_radio"]:checked');
+            const checks = document.querySelectorAll('input[name="day2_event_check"]:checked');
+
+            const selectedEvents = [];
+            radios.forEach(r => selectedEvents.push(r.value));
+            checks.forEach(c => selectedEvents.push(c.value));
+
+            // 2. Update hidden input
+            const finalVal = selectedEvents.join(',');
+            eventSelectInput.value = finalVal;
+            // Save to Cookie (2 Minutes)
+            setCookieMinutes('selected_events_v2', encodeURIComponent(finalVal), 2);
+
+            // 4. CTF Bonus Options Logic (Render Day 2 events if CTF selected)
+            // We do this BEFORE label updates so they can be targeted
+            const isCTF = selectedEvents.includes('CTF (24 Hours)');
+            if (isCTF) {
+                if (!document.getElementById('ctf-bonus-container')) {
+                    const bonusContainer = document.createElement('div');
+                    bonusContainer.id = 'ctf-bonus-container';
+                    bonusContainer.style.width = '100%';
+                    bonusContainer.style.marginTop = '15px';
+                    bonusContainer.style.padding = '10px';
+                    bonusContainer.style.border = '1px dashed var(--neon-green)';
+                    bonusContainer.style.background = 'rgba(0, 255, 65, 0.05)';
+                    bonusContainer.innerHTML = '<div style="color:var(--neon-green); font-size:0.9rem; margin-bottom:10px;">> OPTIONAL ADD-ONS (FREE WITH CTF):</div><div id="ctf-bonus-inner" style="display:flex; gap:20px; flex-wrap:wrap;"></div>';
+                    dynamicOptions.appendChild(bonusContainer);
+
+                    const inner = bonusContainer.querySelector('#ctf-bonus-inner');
+                    const bonusOpts = [
+                        { val: 'network_defense', txt: 'Network Defense' },
+                        { val: 'digital_forensics', txt: 'Digital Forensics' }
+                    ];
+
+                    bonusOpts.forEach(opt => {
+                        const label = document.createElement('label');
+                        label.style.display = 'flex';
+                        label.style.alignItems = 'center';
+                        label.style.color = '#fff';
+                        label.style.cursor = 'pointer';
+                        label.innerHTML = `
+                            <input type="checkbox" name="day2_event_check" value="${opt.val}" style="margin-right: 8px; accent-color: var(--neon-green);">
+                            <span style="font-family: 'Share Tech Mono'; font-size: 0.9rem;">${opt.txt}</span>
+                        `;
+                        inner.appendChild(label);
+                        // Add Listener
+                        label.querySelector('input').addEventListener('change', handleSelectionChange);
+                    });
+                }
+            }
+
+            // Update UI Labels for Day 2 Discount
+            const isFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('CTF (24 Hours)');
+            ['network_defense', 'digital_forensics'].forEach(evt => {
+                const cbs = document.querySelectorAll(`input[name="day2_event_check"][value="${evt}"]`);
+                cbs.forEach(cb => {
+                    const span = cb.nextElementSibling;
+                    const baseText = evt === 'network_defense' ? 'Network Defense' : 'Digital Forensics';
+                    if (isFreeAccess) {
+                        span.innerHTML = `${baseText} <span style="color:var(--neon-green); font-weight:bold; margin-left:5px;">(FREE)</span>`;
+                    } else {
+                        span.innerText = baseText;
+                    }
+                });
+            });
+
+            // 3. Calculate Config (Fee, Min, Max)
+            recalculateConfig(selectedEvents);
+        }
+
+        function recalculateConfig(events) {
+            currentFee = 0;
+            // Defaults (broadest range)
+            let minP = 1;
+            let maxP = 10;
+
+            // If no event, reset
+            if (events.length === 0) {
+                currentMin = 1;
+                currentMax = 5;
+                return;
+            }
+
+            // Logic: strict intersection for Min/Max? 
+            // Or "Max of Mins" and "Min of Maxes"?
+            // Example: Event A (2-4), Event B (1-3).
+            // Valid size must satisfy both? => 2-3.
+
+            let strictMin = 0;
+            let strictMax = 999;
+
+            const hasPaper = events.includes('paper_presentation');
+
+            events.forEach(ev => {
+                const conf = EVENT_CONFIG[ev];
+                if (conf) {
+                    if (conf.min > strictMin) strictMin = conf.min;
+                    if (conf.max < strictMax) strictMax = conf.max;
+
+                    // Accumulate Fee
+                    if (conf.fee) {
+                        // Logic: If Paper Presentation is selected, Digital Forensics and Network Defense are free
+                        if (hasPaper && (ev === 'digital_forensics' || ev === 'network_defense')) {
+                            currentFee += 0;
+                        } else {
+                            currentFee += conf.fee;
+                        }
+                    }
+                }
+            });
+
+            currentMin = strictMin;
+            currentMax = strictMax;
+
+            if (currentMin > currentMax) {
+                // Conflict
+                showCustomAlert("Error: Selected events have conflicting team size requirements.");
+            }
+
+            // Trigger Member Update
+            updateMemberConstraints();
+        }
+
+        function updateMemberConstraints() {
+            const cards = membersContainer.querySelectorAll('.member-card');
+            const currentCount = cards.length;
+
+            // Add if below min
+            const needed = currentMin - currentCount;
+            if (needed > 0) {
+                for (let i = 0; i < needed; i++) {
+                    if (addWorkshopMemberFallback()) { /* manual add */ }
+                    else if (addMemberBtn) addMemberBtn.click();
+                }
+            }
+            // Remove if above max
+            else if (currentCount > currentMax) {
+                const removeCount = currentCount - currentMax;
+                for (let i = 0; i < removeCount; i++) {
+                    if (removeMemberBtn) removeMemberBtn.click();
+                }
+            }
+        }
+
+        // Helper to simulate click if btn hidden or logic complex
+        // We reuse the existing click handler by just calling click() on button
+        // But need to ensure button exists
+        function addWorkshopMemberFallback() { return false; }
 
 
         // 2. Add Member Logic
@@ -266,39 +497,7 @@ if (regForm) {
             });
         }
 
-        // 2. Event Change Logic (Updates Constants & UI)
-        eventSelect.addEventListener('change', () => {
-            const config = EVENT_CONFIG[eventSelect.value];
-            if (config) {
-                currentFee = config.fee;
-                currentMin = config.min;
-                currentMax = config.max;
 
-                // Auto-Adjust Team Size
-                const cards = membersContainer.querySelectorAll('.member-card');
-                const currentCount = cards.length;
-
-                // Add if below min
-                const needed = currentMin - currentCount;
-                if (needed > 0) {
-                    for (let i = 0; i < needed; i++) {
-                        if (addMemberBtn) addMemberBtn.click();
-                    }
-                }
-                // Remove if above max
-                else if (currentCount > currentMax) {
-                    const removeCount = currentCount - currentMax;
-                    for (let i = 0; i < removeCount; i++) {
-                        if (removeMemberBtn) removeMemberBtn.click();
-                    }
-                }
-            }
-        });
-
-        // Trigger once to set initial state
-        if (eventSelect.value) {
-            eventSelect.dispatchEvent(new Event('change'));
-        }
 
         // 3. Submit Registration
         regForm.addEventListener('submit', async (e) => {
@@ -333,7 +532,7 @@ if (regForm) {
             try {
                 // Collect Data
                 const teamName = document.getElementById('team-name').value;
-                const event = eventSelect.value;
+                const event = eventSelectInput.value;
                 const members = [];
 
                 document.querySelectorAll('.member-card').forEach(card => {
@@ -405,142 +604,189 @@ if (regForm) {
                 const payload = {
                     teamName,
                     email: members[0].email,
-                    password: Math.random().toString(36).slice(-8), // Auto-gen password
                     event,
                     transactionId: "PENDING",
                     members
                 };
 
-                const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                // --- CHANGED LOGIC: DEFER SUBMISSION UNTIL PAYMENT ---
+                // Store payload for later
+                window.pendingRegistrationPayload = payload;
+
+                // Move directly to Payment Modal logic (simulate success)
+
+                // Calculate Total Amount Correctly (Handling multiple events)
+                const selectedEvents = event.split(',');
+                let totalAmount = 0;
+                const hasFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('CTF (24 Hours)');
+
+                selectedEvents.forEach(ev => {
+                    const conf = EVENT_CONFIG[ev];
+                    if (conf) {
+                        let fee = conf.fee;
+                        // Discount Logic: Paper Presentation OR CTF makes Digital Forensics & Network Defense free
+                        if (hasFreeAccess && (ev === 'digital_forensics' || ev === 'network_defense')) {
+                            fee = 0;
+                        }
+
+                        if (conf.perHead) {
+                            totalAmount += fee * members.length;
+                        } else {
+                            totalAmount += fee;
+                        }
+                    }
                 });
 
-                const text = await res.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    console.error("Non-JSON Response:", text);
-                    throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+                // --- IN-PAGE PAYMENT MODAL LOGIC ---
+                const pModal = document.getElementById('payment-modal');
+                const pAmount = document.getElementById('payment-amount-display');
+                const pQr = pModal.querySelector('img[alt="Payment QR"]');
+                const pUtr = document.getElementById('utr-number');
+                const pFile = document.getElementById('payment-proof-file');
+                const pConfirm = document.getElementById('confirm-payment-btn');
+                const pMerchantInfo = document.getElementById('merchant-info');
+
+                // Set Amount
+                if (pAmount) pAmount.innerText = `AMOUNT: ₹ ${totalAmount}.00`;
+
+                // Add Early Bird / Fee Info if missing
+                if (pMerchantInfo && !document.getElementById('per-head-msg-reg')) {
+                    const perHeadMsg = document.createElement('p');
+                    perHeadMsg.id = 'per-head-msg-reg';
+                    perHeadMsg.style.marginBottom = "10px";
+                    perHeadMsg.style.marginTop = "5px";
+
+                    if (event === 'CTF (24 Hours)') {
+                        perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
+                    } else if (event.includes('paper_presentation') || event === 'Workshop') {
+                        perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
+                        perHeadMsg.style.color = "#00e5ff";
+                        perHeadMsg.style.fontSize = "0.9rem";
+                        perHeadMsg.style.fontFamily = "'Share Tech Mono'";
+                    }
+                    if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
+                        pMerchantInfo.parentNode.insertBefore(perHeadMsg, pMerchantInfo.nextSibling);
+                    }
                 }
 
-                if (res.ok && data.teamId) {
-                    // Calculate Total Amount based on head count if applicable
-                    let totalAmount = currentFee;
-                    if (EVENT_CONFIG[event] && EVENT_CONFIG[event].perHead) {
-                        totalAmount = currentFee * members.length;
+                // Set QR Code based on count
+                if (pQr) {
+                    if (selectedEvents.includes('CTF (24 Hours)')) {
+                        if (members.length === 2) pQr.src = '500.jpeg';
+                        else if (members.length === 3) pQr.src = '750.jpeg';
+                        else if (members.length === 4) pQr.src = '1000.jpeg';
+                        else pQr.src = '1000.jpeg'; // Fallback
+                    } else if (selectedEvents.includes('paper_presentation')) {
+                        pQr.src = '150.jpeg';
+                    } else if (selectedEvents.includes('Workshop')) {
+                        pQr.src = '150.jpeg';
+                    } else if (selectedEvents.includes('network_defense') && selectedEvents.includes('digital_forensics')) {
+                        // Both selected and NOT free (since CTF/Paper checks failed above)
+                        if (members.length === 1) pQr.src = '100.jpeg';
+                        else if (members.length === 2) pQr.src = '200.jpeg';
+                        else if (members.length === 3) pQr.src = '300.jpeg';
+                        else if (members.length === 4) pQr.src = '400.jpeg';
+                        else pQr.src = '100.jpeg';
+                    } else if (selectedEvents.includes('network_defense')) {
+                        if (members.length === 1) pQr.src = '50.jpeg';
+                        else if (members.length === 2) pQr.src = '100.jpeg';
+                        else if (members.length === 3) pQr.src = '150.jpeg';
+                        else if (members.length === 4) pQr.src = '200.jpeg';
+                        else pQr.src = '50.jpeg';
+                    } else if (selectedEvents.includes('digital_forensics')) {
+                        if (members.length === 1) pQr.src = '50.jpeg';
+                        else if (members.length === 2) pQr.src = '100.jpeg';
+                        else if (members.length === 3) pQr.src = '150.jpeg';
+                        else if (members.length === 4) pQr.src = '200.jpeg';
+                        else pQr.src = '50.jpeg';
                     }
+                }
 
-                    // --- IN-PAGE PAYMENT MODAL LOGIC ---
-                    const pModal = document.getElementById('payment-modal');
-                    const pAmount = document.getElementById('payment-amount-display');
-                    const pQr = pModal.querySelector('img[alt="Payment QR"]');
-                    const pUtr = document.getElementById('utr-number');
-                    const pFile = document.getElementById('payment-proof-file');
-                    const pConfirm = document.getElementById('confirm-payment-btn');
-                    const pMerchantInfo = document.getElementById('merchant-info');
+                // Show Payment Section
+                pModal.style.display = 'flex';
 
-                    // Set Amount
-                    if (pAmount) pAmount.innerText = `AMOUNT: ₹ ${totalAmount}.00`;
+                // Scroll to Payment Section
+                setTimeout(() => {
+                    pModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
 
-                    // Add Early Bird / Fee Info if missing
-                    if (pMerchantInfo && !document.getElementById('per-head-msg-reg')) {
-                        const perHeadMsg = document.createElement('p');
-                        perHeadMsg.id = 'per-head-msg-reg';
-                        perHeadMsg.style.marginBottom = "10px";
-                        perHeadMsg.style.marginTop = "5px";
+                // Hide the "Proceed to Payment" button now that we moved on
+                const proceedBtn = document.querySelector('#team-form button[type="submit"]');
+                if (proceedBtn) proceedBtn.style.display = 'none';
 
-                        if (event === '24 Hrs Hackathon') {
-                            perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
-                        } else if (event === 'paper_presentation' || event === 'Paper Presentation') {
-                            perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
-                            perHeadMsg.style.color = "#00e5ff";
-                            perHeadMsg.style.fontSize = "0.9rem";
-                            perHeadMsg.style.fontFamily = "'Share Tech Mono'";
-                        }
-                        if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
-                            pMerchantInfo.parentNode.insertBefore(perHeadMsg, pMerchantInfo.nextSibling);
-                        }
-                    }
-
-                    // Set QR Code
-                    if (pQr) {
-                        if (event === '24 Hrs Hackathon') {
-                            if (members.length === 2) pQr.src = 'Main%20Hack(2%20head).jpeg';
-                            else if (members.length === 3) pQr.src = 'Main%20Hack(3%20head).jpeg';
-                            else if (members.length === 4) pQr.src = 'Main%20Hack(4%20head).jpeg';
-                            else pQr.src = 'Main%20Hack(4%20head).jpeg';
-                        } else if (event === 'paper_presentation') {
-                            pQr.src = 'Paper%20Presentation.jpeg';
-                        }
-                    }
-
-                    // Show Payment Section
-                    pModal.style.display = 'flex';
-
-                    // Scroll to Payment Section
-                    setTimeout(() => {
-                        pModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
-
-                    // Hide the "Proceed to Payment" button now that we moved on
-                    const proceedBtn = document.querySelector('#team-form button[type="submit"]');
-                    if (proceedBtn) proceedBtn.style.display = 'none';
-
-                    // Input Validation
-                    function checkInputs() {
-                        if (pUtr.value.trim() && pFile.files.length > 0) {
-                            pConfirm.disabled = false;
-                            pConfirm.style.opacity = '1';
-                            pConfirm.style.cursor = 'pointer';
-                        } else {
-                            pConfirm.disabled = true;
-                            pConfirm.style.opacity = '0.5';
-                            pConfirm.style.cursor = 'not-allowed';
-                        }
-                    }
-                    pUtr.oninput = checkInputs;
-                    pFile.onchange = checkInputs;
-                    checkInputs(); // Initial check
-
-                    // Upload Action
-                    pConfirm.onclick = () => {
-                        const formData = new FormData();
-                        formData.append('teamId', data.teamId);
-                        formData.append('utrNumber', pUtr.value.trim());
-                        formData.append('paymentProof', pFile.files[0]);
-
-                        pConfirm.innerHTML = "[ UPLOADING... ]";
+                // Input Validation
+                function checkInputs() {
+                    if (pUtr.value.trim() && pFile.files.length > 0) {
+                        pConfirm.disabled = false;
+                        pConfirm.style.opacity = '1';
+                        pConfirm.style.cursor = 'pointer';
+                    } else {
                         pConfirm.disabled = true;
-
-                        fetch(`${API_BASE_URL}/api/payment/upload`, {
-                            method: 'POST',
-                            body: formData
-                        })
-                            .then(r => r.json())
-                            .then(d => {
-                                if (d.success) {
-                                    showCustomAlert("PAYMENT INITIATED!\nCONFIRMATION EMAIL SENT.\n\n We will Reach you within 72 hours...", () => {
-                                        window.location.href = 'index.html';
-                                    });
-                                } else {
-                                    showCustomAlert("Upload Failed: " + (d.error || "Unknown"));
-                                    pConfirm.innerHTML = "[ UPLOAD PROOF & FINISH ]";
-                                    pConfirm.disabled = false;
-                                }
-                            })
-                            .catch(e => {
-                                showCustomAlert("Network Error");
-                                pConfirm.innerHTML = "[ UPLOAD PROOF & FINISH ]";
-                                pConfirm.disabled = false;
-                            });
-                    };
-
-                } else {
-                    throw new Error(data.error || "Registration failed");
+                        pConfirm.style.opacity = '0.5';
+                        pConfirm.style.cursor = 'not-allowed';
+                    }
                 }
+                pUtr.oninput = checkInputs;
+                pFile.onchange = checkInputs;
+                checkInputs(); // Initial check
+
+                // Upload Action (FINAL REGISTRATION)
+                pConfirm.onclick = () => {
+                    if (!window.pendingRegistrationPayload) {
+                        showCustomAlert("Error: Registration data lost. Please refresh and try again.");
+                        return;
+                    }
+
+                    const finalPayload = window.pendingRegistrationPayload;
+                    const formData = new FormData();
+
+                    // Append JSON fields
+                    formData.append('teamName', finalPayload.teamName);
+                    formData.append('email', finalPayload.email);
+                    formData.append('event', finalPayload.event);
+                    formData.append('members', JSON.stringify(finalPayload.members));
+
+                    // Append Payment fields
+                    formData.append('utrNumber', pUtr.value.trim());
+                    formData.append('paymentProof', pFile.files[0]);
+
+                    pConfirm.innerHTML = "[ PROCESSING REGISTRATION... ]";
+                    pConfirm.disabled = true;
+
+                    fetch(`${API_BASE_URL}/api/auth/register-with-payment`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.success) {
+                                showCustomAlert(`REGISTRATION SUCCESSFUL!\nTeam ID: ${d.teamId}\n\nCheck your email for confirmation... We will reach you within 72 hours`, () => {
+                                    // Clear Cookies
+                                    document.cookie = "xploitx_reg_data_v2=; max-age=0; path=/";
+                                    document.cookie = "selected_events_v2=; max-age=0; path=/";
+                                    document.cookie = "leader_email_verified_v2=; max-age=0; path=/";
+
+                                    window.location.href = 'index.html';
+                                });
+                            } else {
+                                showCustomAlert("Registration Failed: " + (d.error || "Unknown"));
+                                // Reset UI to allow correction
+                                pModal.style.display = 'none';
+                                const proceedBtn = document.querySelector('#team-form button[type="submit"]');
+                                if (proceedBtn) {
+                                    proceedBtn.style.display = 'block';
+                                    proceedBtn.innerHTML = "[ PROCEED TO PAYMENT ]";
+                                    proceedBtn.disabled = false;
+                                }
+                            }
+                        })
+                        .catch(e => {
+                            console.error(e);
+                            showCustomAlert("Network Error: " + e.message);
+                            pConfirm.innerHTML = "[ TRY AGAIN ]";
+                            pConfirm.disabled = false;
+                        });
+                };
 
             } catch (err) {
                 console.error(err);
@@ -552,6 +798,115 @@ if (regForm) {
     }
 
     // Run Init
+
+    // --- Persistence Logic (Save/Restore Form Data) ---
+    // --- Persistence Logic (Save/Restore Form Data) ---
+    function saveToStorage() {
+        const formData = {};
+        // Collect all inputs
+        const inputs = regForm.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (input.name) {
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    if (input.checked) {
+                        if (!formData[input.name]) formData[input.name] = [];
+                        formData[input.name].push(input.value);
+                    }
+                } else {
+                    formData[input.name] = input.value;
+                }
+            }
+        });
+        // Save to COOKIE (2 Minutes Expiry) - Encoded to handle special chars
+        setCookieMinutes('xploitx_reg_data_v2', encodeURIComponent(JSON.stringify(formData)), 2);
+    }
+
+    function restoreFromStorage() {
+        // 1. Restore Events from Cookie
+        const eventCookie = getCookie("selected_events_v2");
+        if (eventCookie) {
+            const events = decodeURIComponent(eventCookie).split(',');
+            const daySel = document.getElementById('day-select');
+
+            if (daySel && events.length > 0) {
+                // Determine Day
+                const day1Events = ['CTF (24 Hours)', 'Workshop'];
+                const isDay1 = events.some(e => day1Events.includes(e));
+
+                // Set Day and Trigger Change
+                daySel.value = isDay1 ? 'Day 1' : 'Day 2';
+                daySel.dispatchEvent(new Event('change'));
+
+                // Reliable Restoration loop
+                let attempts = 0;
+                const restoreInterval = setInterval(() => {
+                    attempts++;
+                    let allFound = true;
+
+                    // Try to toggle the saved events
+                    events.forEach(val => {
+                        // Check Radio
+                        const rad = document.querySelector(`input[name="day1_event_radio"][value="${val}"]`);
+                        if (rad) {
+                            if (!rad.checked) {
+                                rad.checked = true;
+                                rad.dispatchEvent(new Event('change')); // Trigger logic
+                            }
+                        } else {
+                            // Check Checkbox
+                            const chk = document.querySelector(`input[name="day2_event_check"][value="${val}"]`);
+                            if (chk) {
+                                if (!chk.checked) {
+                                    chk.checked = true;
+                                    chk.dispatchEvent(new Event('change')); // Trigger logic
+                                }
+                            } else {
+                                // Element not found yet
+                                allFound = false;
+                            }
+                        }
+                    });
+
+                    // Stop if all done or timeout (2 seconds)
+                    if (allFound || attempts > 20) {
+                        clearInterval(restoreInterval);
+                    }
+                }, 100);
+            }
+        }
+
+        // 2. Restore other data from COOKIE (Form Data)
+        let saved = getCookie('xploitx_reg_data_v2');
+        if (saved) {
+            try {
+                saved = decodeURIComponent(saved);
+                const data = JSON.parse(saved);
+                for (const key in data) {
+                    if (key === 'daySelect' || key === 'day1_event_radio' || key === 'day2_event_check') continue;
+
+                    const inputs = document.getElementsByName(key);
+                    if (inputs.length > 0) {
+                        const val = data[key];
+                        // Handle Text Inputs
+                        if (inputs[0].type !== 'radio' && inputs[0].type !== 'checkbox') {
+                            inputs[0].value = val;
+                            inputs[0].dispatchEvent(new Event('input'));
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing cookie data", e);
+            }
+        }
+    }
+
+    // Auto-Save on any input change
+    regForm.addEventListener('input', saveToStorage);
+    regForm.addEventListener('change', saveToStorage); // For selects/checks
+
+    // Restore on Load
+    restoreFromStorage();
+
     init();
 } // End of if (regForm)
 
@@ -845,7 +1200,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/* 2. TYPEWRITER EFFECT */
+// Helper Functions for Cookies
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function setCookieMinutes(name, value, minutes) {
+    let expires = "";
+    if (minutes) {
+        const date = new Date();
+        date.setTime(date.getTime() + (minutes * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// Restore State from Cookies on Load
+document.addEventListener('DOMContentLoaded', () => {
+    // Check Email Verification
+    const isVerified = getCookie("leader_email_verified_v2");
+    if (isVerified === "true") {
+        const leaderEmailInput = document.querySelector('input[name="member1_email"]');
+        if (leaderEmailInput) {
+            leaderEmailInput.dataset.verified = "true";
+            // Update UI
+            const container = leaderEmailInput.closest('.form-group');
+            const badge = container.querySelector('.email-verified-badge');
+            const verifyBtn = container.querySelector('.verify-email-btn');
+            const otpSection = container.querySelector('.otp-section');
+
+            if (badge) badge.style.display = 'block';
+            if (verifyBtn) verifyBtn.style.display = 'none';
+            if (otpSection) otpSection.style.display = 'none';
+        }
+    }
+});
 function typeWriter(element, text, speed = 50) {
     if (!element) return;
     element.innerHTML = '';

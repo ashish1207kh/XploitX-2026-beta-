@@ -385,7 +385,7 @@
                         <th>Payment Proof</th>
                         <th>Leader Details</th>
                         <th>All Members</th>
-                        <th>Password</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -594,9 +594,7 @@
                         ${leader ? (leader.whatsapp || 'N/A') : ''} ${waLink}
                     </td>
                     <td class="member-list">${membersHtml}</td>
-                    <td title="${t.password}">
-                        ${t.password && t.password.length > 15 ? t.password.substring(0, 15) + '...' : t.password}
-                    </td>
+
                     <td style="text-align:center;">${checkBtnHtml}</td>
                     <td><button onclick="openEditModal('${t.team_id}')" style="background:#003300; color:#0f0; border:1px solid #0f0; padding:5px; cursor:pointer;">[ EDIT ]</button></td>
                     <td><button onclick="deleteTeam('${t.team_id}')" style="background:#330000; color:#ff0000; border:1px solid #ff0000; padding:5px; cursor:pointer;">[ DELETE ]</button></td>
@@ -644,7 +642,7 @@
                     <th>Payment Proof</th>
                     <th>Leader Details</th>
                     <th>All Members</th>
-                    <th>Password</th>
+
                     <th>CHECK <br><span style="font-size:0.7em">(Admin)</span></th>
                     <th>EDIT</th>
                     <th>DELETE</th>
@@ -821,7 +819,6 @@
                 document.getElementById('edit-team-db-id').value = team.team_id; // Using string ID
                 document.getElementById('edit-team-name').value = team.name;
                 document.getElementById('edit-team-event').value = team.event;
-                document.getElementById('edit-team-pass').value = team.password; // Add Password
 
                 const membersContainer = document.getElementById('edit-members-container');
                 membersContainer.innerHTML = '';
@@ -898,7 +895,6 @@
                 const teamId = document.getElementById('edit-team-db-id').value;
                 const name = document.getElementById('edit-team-name').value;
                 const event = document.getElementById('edit-team-event').value;
-                const password = document.getElementById('edit-team-pass').value;
 
                 const memberDivs = document.querySelectorAll('#edit-members-container > div');
                 const members = [];
@@ -924,7 +920,7 @@
                     return;
                 }
 
-                const payload = { teamId, name, event, password, members };
+                const payload = { teamId, name, event, members };
                 console.log("Payload:", payload);
 
                 try {
@@ -1024,16 +1020,16 @@
                 <div>
                     <label style="color:#aaa; display:block; margin-bottom:5px;">Event</label>
                     <select id="edit-team-event" style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
-                        <option value="24 Hrs Hackathon">24 Hrs Hackathon</option>
+                        <option value="CTF (24 Hours)">CTF (24 Hours)</option>
+                        <option value="Workshop">Workshop</option>
                         <option value="paper_presentation">Paper Presentation</option>
                         <option value="digital_forensics">Digital Forensics</option>
                         <option value="network_defense">Network Defense</option>
+                        <option value="CTF (24 Hours),network_defense">CTF (24 Hours) + Network Defense</option>
+                        <option value="CTF (24 Hours),network_defense,digital_forensics">CTF (24 Hours) + Network Defense + Digital Forensics</option>
+                        <option value="paper_presentation,network_defense,digital_forensics">Paper Presentation + Network Defense + Digital Forensics</option>
+                        <option value="paper_presentation,network_defense">Paper Presentation + Network Defense</option>
                     </select>
-                </div>
-                <!-- Password Field -->
-                <div>
-                    <label style="color:#aaa; display:block; margin-bottom:5px;">Password</label>
-                    <input id="edit-team-pass" style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
                 </div>
             </div>
             

@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        #dynamic-event-options label::before {
+            content: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -130,16 +135,19 @@
                             </div>
                             <!-- Password Field Removed as per Activation Flow -->
                             <div class="form-group">
-                                <label>EVENT PARTICIPATING</label>
-                                <select id="event-select" name="eventSelect"
-                                    style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-green); color: white; border-radius: 4px;"
+                                <label>SELECT DAY</label>
+                                <select id="day-select" name="daySelect"
+                                    style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-green); color: white; border-radius: 4px; margin-bottom: 15px;"
                                     required>
-                                    <option value="" disabled selected>Select Event Phase</option>
-                                    <option value="24 Hrs Hackathon">Main Hackathon (24h) - Early Bird Offer</option>
-                                    <option value="paper_presentation">Paper Presentation</option>
-                                    <option value="digital_forensics">Digital Forensics</option>
-                                    <option value="network_defense">Network Defense</option>
+                                    <option value="" disabled selected>Select Day</option>
+                                    <option value="Day 1">Day 1 (March 13)</option>
+                                    <option value="Day 2">Day 2 (March 14)</option>
                                 </select>
+
+                                <div id="dynamic-event-options" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 20px; align-items: center;">
+                                    <!-- Options injected via JS -->
+                                </div>
+                                <input type="hidden" id="event-select" name="eventSelect" required>
                             </div>
                         </div>
 

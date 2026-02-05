@@ -114,6 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Mark EMAIL input as verified using a data attribute
                     emailInput.dataset.verified = "true";
 
+                    // Save Verification State to Cookie (2 Minutes)
+                    if (window.setCookieMinutes) {
+                        setCookieMinutes("leader_email_verified_v2", "true", 2);
+                    } else if (window.setCookie) {
+                        setCookie("leader_email_verified_v2", "true", 0.00138);
+                        document.cookie = "leader_email_verified_v2=true; max-age=120; path=/";
+                    } else {
+                        document.cookie = "leader_email_verified_v2=true; max-age=120; path=/";
+                    }
+
                     showCustomAlert(`Email (${email}) Verified Successfully!`);
                 } else {
                     showCustomAlert(data.error || "Incorrect OTP. Please try again.");

@@ -64,7 +64,6 @@ async function initDb() {
         team_id TEXT UNIQUE, 
         name TEXT,
         email TEXT UNIQUE,
-        password TEXT,
         event TEXT,
         transaction_id TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -107,6 +106,7 @@ async function initDb() {
     try { await db.run(`ALTER TABLE attendance ADD COLUMN status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
     try { await db.run(`ALTER TABLE members ADD COLUMN attendance_status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
     try { await db.run(`ALTER TABLE members ADD COLUMN entry_time DATETIME`); } catch (e) { }
+    try { await db.run(`ALTER TABLE teams DROP COLUMN password`); } catch (e) { }
 
     console.log('Database initialized.');
 }
@@ -116,10 +116,15 @@ initialiseDBAndServer();
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
@@ -214,10 +219,12 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     }
 
     const existingTeam = await db.get('SELECT id FROM teams WHERE email = ?', [email]);
-    const existingMember = await db.get('SELECT id FROM members WHERE email = ?', [email]);
 
-    if (existingTeam || existingMember) {
-        return res.status(400).json({ error: 'This email is already registered.' });
+    // As per request, only Team Leader email (team email) must be unique.
+    // Member emails can be duplicates (e.g., if a student joins multiple events/teams). 
+
+    if (existingTeam) {
+        return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -255,7 +262,7 @@ app.post('/api/auth/verify-email-otp', (req, res) => {
 });
 
 app.post('/api/auth/register', async (req, res) => {
-    const { teamName, email, password, event, transactionId, members } = req.body;
+    const { teamName, email, event, transactionId, members } = req.body;
     if (!teamName || !members) return res.status(400).json({ error: 'Missing fields' });
 
     const existingTeamName = await db.get('SELECT id FROM teams WHERE name = ? COLLATE NOCASE', [teamName]);
@@ -263,20 +270,22 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Validations... (Skipping some detailed loops for brevity, focusing on DB logic)
 
-    // Check phones unique
+    // Check phones unique - DISABLED as per looser constraints request (allowing same students in different events)
+    /*
     for (const m of members) {
         if (m.phone) {
             const existingPhone = await db.get('SELECT id FROM members WHERE phone = ?', [m.phone]);
             if (existingPhone) return res.status(400).json({ error: `Phone ${m.phone} already registered.` });
         }
     }
+    */
 
     const tempId = 'TEMP_' + Date.now();
 
     try {
         const result = await db.run(
-            `INSERT INTO teams (team_id, name, email, password, event, transaction_id) VALUES (?, ?, ?, ?, ?, ?)`,
-            [tempId, teamName, email, password, event, transactionId]
+            `INSERT INTO teams (team_id, name, email, event, transaction_id) VALUES (?, ?, ?, ?, ?)`,
+            [tempId, teamName, email, event, transactionId]
         );
         const teamDbId = result.lastID;
         const teamIdStr = `Xctf26te${String(teamDbId).padStart(4, '0')}`;
@@ -296,7 +305,7 @@ app.post('/api/auth/register', async (req, res) => {
 
 
         // Email Sending Logic DISABLED here as per request (moved to payment upload)
-        // await sendRegistrationEmails(members, teamIdStr, password, event);
+        // await sendRegistrationEmails(members, teamIdStr, event);
 
         res.json({ message: 'Registration successful', teamId: teamIdStr, teamName: teamName });
 
@@ -306,7 +315,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-async function sendRegistrationEmails(members, teamIdStr, password, event) {
+async function sendRegistrationEmails(members, teamIdStr, event) {
     if (!process.env.EMAIL_USER) return;
     const subject = "Confirmation: Your Registration for XploitX 2k26 Cyberfest!";
 
@@ -375,87 +384,7 @@ Prathyusha Engineering College</p>`;
 
 const otpStore = {};
 
-app.post('/api/auth/forgot-password', async (req, res) => {
-    const { email } = req.body;
-    try {
-        // Find team/member by email
-        // Logic: Check teams table first, then members (leader)
-        let team = await db.get(`SELECT * FROM teams WHERE email = ?`, [email]);
 
-        // If not found in teams, check members and link to team
-        if (!team) {
-            const member = await db.get(`SELECT * FROM members WHERE email = ?`, [email]);
-            if (member) {
-                team = await db.get(`SELECT * FROM teams WHERE id = ?`, [member.team_db_id]);
-            }
-        }
-
-        if (!team) return res.status(404).json({ error: 'No account found with this email.' });
-
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        // Store OTP keyed by EMAIL
-        otpStore[email] = { otp, teamId: team.team_id, expires: Date.now() + 600000 };
-
-        const subject = "🔐 Password Reset Request";
-        const emailHtml = `<div style="font-family: Arial, sans-serif; color: #333;">
-            <h2>🔐 Password Reset Request</h2>
-            <p>Dear Participant (${team.name}),</p>
-            <p>We received a request to reset the password for your XploitX-2026 account.</p>
-            <p>Please use the following One-Time Password (OTP) to proceed with changing your password:</p>
-            <h1 style="color: #00FF41; letter-spacing: 5px;">${otp}</h1>
-            <p>This OTP is valid for 10 minutes. For your security, please do not share this OTP with anyone.</p>
-            <p>If you did not request a password reset, please ignore this email. Your account will remain secure.</p>
-            <br>
-            <p>Best regards,<br>
-            <b>The XploitX-2026 Organizing Committee</b><br>
-            Department of Cyber Security<br>
-            Prathyusha Engineering College</p>
-        </div>`;
-
-        const emailText = `Password Reset Request\nOTP: ${otp}\nValid for 10 minutes.`;
-
-        await sendEmail(email, subject, emailText, emailHtml);
-        res.json({ success: true, message: 'OTP sent to ' + email });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: e.message });
-    }
-});
-
-app.post('/api/auth/verify-reset-otp', async (req, res) => {
-    const { email, otp, newPassword } = req.body;
-
-    const record = otpStore[email];
-
-    if (!record) return res.status(400).json({ error: 'OTP expired or request not found.' });
-    if (record.otp !== otp) return res.status(400).json({ error: 'Invalid OTP' });
-    if (Date.now() > record.expires) {
-        delete otpStore[email];
-        return res.status(400).json({ error: 'OTP expired' });
-    }
-
-    try {
-        await db.run(`UPDATE teams SET password = ? WHERE team_id = ?`, [newPassword, record.teamId]);
-        delete otpStore[email];
-
-        // Optional: Send confirmation email?
-
-        res.json({ success: true });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-    const { loginId, password } = req.body;
-    try {
-        const team = await db.get(`SELECT * FROM teams WHERE team_id = ? OR name = ?`, [loginId, loginId]);
-        if (!team) return res.status(401).json({ error: 'Team ID not found' });
-        if (team.password !== password) return res.status(401).json({ error: 'Incorrect password' });
-
-        res.json({ success: true, team: { id: team.team_id, name: team.name, email: team.email, event: team.event } });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
 
 app.get('/api/admin/data', async (req, res) => {
     try {
@@ -479,15 +408,16 @@ app.get('/api/team/:id', async (req, res) => {
 });
 
 // [NEW] Admin Update Team
+// [NEW] Admin Update Team
 app.post('/api/admin/update_team', async (req, res) => {
-    const { teamId, name, event, password, members } = req.body;
+    const { teamId, name, event, members } = req.body;
     console.log(`Admin updating team ${teamId}...`);
     try {
         const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
         if (!team) return res.status(404).json({ error: 'Team not found' });
 
         // Update Team Details
-        await db.run(`UPDATE teams SET name = ?, event = ?, password = ? WHERE id = ?`, [name, event, password, team.id]);
+        await db.run(`UPDATE teams SET name = ?, event = ? WHERE id = ?`, [name, event, team.id]);
 
         // Update Members (Full Refresh)
         await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
@@ -526,6 +456,87 @@ app.post('/api/team/:id/update', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async (req, res) => {
+    try {
+        const { teamName, email, event, utrNumber } = req.body;
+        let members;
+        try {
+            members = JSON.parse(req.body.members);
+        } catch (e) {
+            return res.status(400).json({ error: 'Invalid members data format' });
+        }
+
+        const file = req.file;
+        if (!teamName || !members || !file) return res.status(400).json({ error: 'Missing fields or payment proof' });
+
+        // Validations
+        const existingTeamName = await db.get('SELECT id FROM teams WHERE name = ? COLLATE NOCASE', [teamName]);
+        if (existingTeamName) return res.status(400).json({ error: 'Team Name taken.' });
+
+        const existingTeamEmail = await db.get('SELECT id FROM teams WHERE email = ?', [email]);
+        if (existingTeamEmail) {
+            return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
+        }
+
+        if (utrNumber) {
+            const existingUTR = await db.get('SELECT team_id FROM teams WHERE transaction_id = ?', [utrNumber]);
+            if (existingUTR) {
+                return res.status(400).json({ error: 'UTR already used.' });
+            }
+        }
+
+        // Insert Team
+        const tempId = 'TEMP_' + Date.now();
+        const filePath = '/uploads/' + file.filename;
+
+        const result = await db.run(
+            `INSERT INTO teams (team_id, name, email, event, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, 0)`,
+            [tempId, teamName, email, event, utrNumber || "NOT_PROVIDED", filePath]
+        );
+
+        const teamDbId = result.lastID;
+        const teamIdStr = `Xctf26te${String(teamDbId).padStart(4, '0')}`;
+        await db.run(`UPDATE teams SET team_id = ? WHERE id = ?`, [teamIdStr, teamDbId]);
+
+        // Rename Payment Proof File to match Team ID
+        const oldPath = file.path;
+        const ext = path.extname(file.originalname);
+        const newFilename = teamIdStr + ext;
+        const newPath = path.join(path.dirname(oldPath), newFilename);
+
+        try {
+            if (fs.existsSync(oldPath)) {
+                fs.renameSync(oldPath, newPath);
+                // Update DB with new path
+                const newDbPath = '/uploads/' + newFilename;
+                await db.run(`UPDATE teams SET payment_proof = ? WHERE id = ?`, [newDbPath, teamDbId]);
+            }
+        } catch (renameErr) {
+            console.error("File Rename Error:", renameErr);
+            // Proceed without failing request, file remains with temp name
+        }
+
+        // Insert Members
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i];
+            const role = i === 0 ? 'LEADER' : 'MEMBER';
+            await db.run(
+                `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [teamDbId, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+            );
+        }
+
+        // Send Confirmation Email
+        await sendRegistrationEmails(members, teamIdStr, event);
+
+        res.json({ success: true, teamId: teamIdStr });
+
+    } catch (err) {
+        console.error("Registration Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) => {
     const { teamId, utrNumber } = req.body;
     const file = req.file;
@@ -541,18 +552,8 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
     const filePath = '/uploads/' + file.filename;
     await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [filePath, utrNumber || "NOT_PROVIDED", teamId]);
 
-    // [NEW] Send Confirmation Email NOW (After Payment Upload)
-    try {
-        const team = await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
-        if (team) {
-            const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [team.id]);
-            // Send the registration confirmation email (with credentials) now
-            await sendRegistrationEmails(members, team.team_id, team.password, team.event);
-        }
-    } catch (err) {
-        console.error("Error sending email after payment upload:", err);
-        // Don't fail the request if email fails, as upload was successful
-    }
+    // Note: Confirmation email is now primarily handled in register-with-payment. 
+    // This endpoint remains for re-uploads or admin updates if needed.
 
     res.json({ success: true });
 });
