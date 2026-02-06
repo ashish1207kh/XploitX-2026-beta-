@@ -618,21 +618,37 @@ if (regForm) {
                 // Calculate Total Amount Correctly (Handling multiple events)
                 const selectedEvents = event.split(',');
                 let totalAmount = 0;
+                let originalTotalAmount = 0; // For Strike-through display
+
+                // Base fees for "Original Price" before Early Bird
+                const BASE_FEES = {
+                    'CTF (24 Hours)': 350,
+                    'Workshop': 500,
+                    'paper_presentation': 300,
+                    'digital_forensics': 100,
+                    'network_defense': 100
+                };
+
                 const hasFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('CTF (24 Hours)');
 
                 selectedEvents.forEach(ev => {
                     const conf = EVENT_CONFIG[ev];
                     if (conf) {
                         let fee = conf.fee;
+                        let originalFee = BASE_FEES[ev] || fee;
+
                         // Discount Logic: Paper Presentation OR CTF makes Digital Forensics & Network Defense free
                         if (hasFreeAccess && (ev === 'digital_forensics' || ev === 'network_defense')) {
                             fee = 0;
+                            originalFee = 0; // Exclude from original amount sum if free
                         }
 
                         if (conf.perHead) {
                             totalAmount += fee * members.length;
+                            originalTotalAmount += originalFee * members.length;
                         } else {
                             totalAmount += fee;
+                            originalTotalAmount += originalFee;
                         }
                     }
                 });
@@ -646,25 +662,56 @@ if (regForm) {
                 const pConfirm = document.getElementById('confirm-payment-btn');
                 const pMerchantInfo = document.getElementById('merchant-info');
 
-                // Set Amount
-                if (pAmount) pAmount.innerText = `AMOUNT: ₹ ${totalAmount}.00`;
+                // Set Amount with Strikethrough if applicable
+                if (pAmount) {
+                    if (originalTotalAmount > totalAmount) {
+                        pAmount.innerHTML = `AMOUNT: <span style="text-decoration: line-through; color: #ff4444; margin-right: 15px; font-size: 0.9em;">₹ ${originalTotalAmount}.00</span> ₹ ${totalAmount}.00`;
+                    } else {
+                        pAmount.innerText = `AMOUNT: ₹ ${totalAmount}.00`;
+                    }
+                }
 
                 // Add Early Bird / Fee Info if missing
                 if (pMerchantInfo && !document.getElementById('per-head-msg-reg')) {
-                    const perHeadMsg = document.createElement('p');
+                    const perHeadMsg = document.createElement('div');
                     perHeadMsg.id = 'per-head-msg-reg';
                     perHeadMsg.style.marginBottom = "10px";
                     perHeadMsg.style.marginTop = "5px";
 
-                    if (event === 'CTF (24 Hours)') {
-                        perHeadMsg.innerHTML = `<span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">EARLY BIRD OFFER: ₹ 250 PER HEAD</span>`;
-                    } else if (event.includes('paper_presentation') || event === 'Workshop') {
-                        perHeadMsg.innerText = "REGISTRATION FEE: ₹ 150";
-                        perHeadMsg.style.color = "#00e5ff";
-                        perHeadMsg.style.fontSize = "0.9rem";
-                        perHeadMsg.style.fontFamily = "'Share Tech Mono'";
+                    let msgHtml = '';
+
+                    // DAY 1 EVENTS
+                    if (selectedEvents.includes('CTF (24 Hours)')) {
+                        const ctfOfferAmount = 250 * members.length;
+                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
                     }
-                    if (perHeadMsg.innerHTML || perHeadMsg.innerText) {
+                    if (selectedEvents.includes('Workshop')) {
+                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">WORKSHOP: EARLY BIRD OFFER ₹ 150</span></div>`;
+                    }
+
+                    // DAY 2 EVENTS
+                    if (selectedEvents.includes('paper_presentation')) {
+                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">PAPER PRESENTATION: EARLY BIRD OFFER ₹ 150</span></div>`;
+                    }
+
+                    if (selectedEvents.includes('digital_forensics')) {
+                        if (!hasFreeAccess) {
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">DIGITAL FORENSICS: EARLY BIRD OFFER ₹ 50</span></div>`;
+                        } else {
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-size: 0.85rem;">DIGITAL FORENSICS: FREE WITH COMBO</span></div>`;
+                        }
+                    }
+                    if (selectedEvents.includes('network_defense')) {
+                        if (!hasFreeAccess) {
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">NETWORK DEFENSE: EARLY BIRD OFFER ₹ 50</span></div>`;
+                        } else {
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-size: 0.85rem;">NETWORK DEFENSE: FREE WITH COMBO</span></div>`;
+                        }
+                    }
+
+                    perHeadMsg.innerHTML = msgHtml;
+
+                    if (perHeadMsg.innerHTML) {
                         pMerchantInfo.parentNode.insertBefore(perHeadMsg, pMerchantInfo.nextSibling);
                     }
                 }

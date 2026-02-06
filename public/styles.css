@@ -748,7 +748,7 @@
 
         .logo-marquee-content {
             display: inline-block;
-            animation: marqueeScroll 80s linear infinite;
+            animation: marqueeScroll 35s linear infinite;
         }
 
         .logo-marquee-content img {
@@ -799,7 +799,7 @@
         }
 
         .news-marquee-content a:hover span {
-            color: #FFFFFF;
+            color: #00FFFF;
             text-shadow: 0 0 15px #00FFFF, 0 0 30px #00FFFF;
         }
 
