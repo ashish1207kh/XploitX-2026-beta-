@@ -888,18 +888,26 @@
 
         /* Layout Stacking */
         .countdown-container {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
+            width: 100%;
+            padding: 0 10px;
         }
 
         .time-box {
-            min-width: 70px;
-            padding: 10px;
+            min-width: auto;
+            flex: 1;
+            padding: 8px 4px;
+            max-width: 80px;
         }
 
         .time-val {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
+        }
+
+        .time-label {
+            font-size: 0.7rem;
         }
 
         /* Navigation Adjustments */
@@ -1668,6 +1676,19 @@
             right: 20px;
             z-index: 9999;
             animation: bounce 2s infinite;
+            text-align: center; /* Center content */
+        }
+
+        .early-bird-msg {
+            display: block;
+            color: #FFFF00; /* Yellow */
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 8px; /* Space between text and button */
+            text-shadow: 0 0 8px #FFD700;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            animation: textFlicker 2s infinite alternate;
         }
 
         .register-badge a {
@@ -1931,6 +1952,110 @@
             caret-color: var(--neon-green);
         }
 
+        /* --- EVENT FLOWCHART (Tree Diagram) --- */
+        .event-tree {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .event-tree ul {
+            padding-top: 20px;
+            position: relative;
+            transition: all 0.5s;
+            display: flex;
+            justify-content: center;
+            padding-left: 0; /* Reset default ul padding */
+        }
+        
+        /* Remove padding from the very top UL so 'EVENTS' doesn't have space above it */
+        .event-tree > ul {
+            padding-top: 0;
+        }
+
+        .event-tree li {
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 10px 0 10px;
+            transition: all 0.5s;
+        }
+
+        /* Connectors */
+        .event-tree li::before, .event-tree li::after{
+            content: '';
+            position: absolute; top: 0; right: 50%;
+            border-top: 1px solid var(--neon-green);
+            width: 50%; height: 20px;
+        }
+        .event-tree li::after{
+            right: auto; left: 50%;
+            border-left: 1px solid var(--neon-green);
+        }
+
+        /* Remove connectors/padding from the very top root node to clean up desktop view */
+        .event-tree > ul > li {
+            padding-top: 0;
+        }
+        .event-tree > ul > li::before, 
+        .event-tree > ul > li::after {
+            display: none !important;
+            border: none !important;
+        }
+
+        /* Remove connectors from outer half of first/last elements */
+        .event-tree li:first-child::before, .event-tree li:last-child::after{
+            border: 0 none;
+        }
+        .event-tree li:last-child::before{
+            border-right: 1px solid var(--neon-green);
+            border-radius: 0 5px 0 0;
+        }
+        .event-tree li:first-child::after{
+            border-radius: 5px 0 0 0;
+        }
+
+        /* Vertical line down from single parent */
+        .event-tree ul ul::before{
+            content: '';
+            position: absolute; top: 0; left: 50%;
+            border-left: 1px solid var(--neon-green);
+            width: 0; height: 20px;
+        }
+
+        .node-box {
+            border: 1px solid var(--neon-green);
+            padding: 8px 12px;
+            text-decoration: none;
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            display: inline-block;
+            background: rgba(0,20,0,0.8);
+            border-radius: 4px;
+            transition: all 0.3s;
+            min-width: 100px;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            position: relative; 
+            z-index: 2;
+        }
+
+        .day-node {
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0, 50, 0, 0.9);
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        .event-node:hover, .day-node:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+            transform: scale(1.05);
+        }
+
         /* --- MOBILE RESPONSIVENESS OVERHAUL --- */
         @media screen and (max-width: 768px) {
 
@@ -1990,6 +2115,155 @@
                 display: flex;
             }
 
+            /* Event Tree Mobile Fix - Vertical Layout */
+            .event-tree {
+                transform: none;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                width: 100%;
+                display: block; /* Switch to block for vertical stacking */
+                padding: 0 20px;
+            }
+
+            .event-tree ul {
+                display: flex;
+                flex-direction: column;
+                padding-top: 0;
+                align-items: center; /* Center the 'Event' root */
+            }
+            
+            /* The root UL inside event-tree is special, we want its immediate children (Day 1, Day 2 branches) to stack vertically or split */
+            /* Actually, the current structure is: Root UL -> LI (Events) -> UL -> LI (Day1), LI (Day2) */
+            
+            /* We need to target the UL that holds Day1 and Day 2 */
+            /* WE NEED TO TARGET THE UL THAT HOLDS DAY 1 AND DAY 2 NODES */
+            .event-tree > ul > li > ul {
+                display: flex !important;
+                flex-direction: row !important; /* Force side-by-side */
+                flex-wrap: nowrap !important; /* Prevent wrapping */
+                justify-content: center !important;
+                align-items: flex-start !important; /* Ensure both start at the top */
+                width: 100% !important;
+                padding-top: 20px !important;
+                gap: 10px !important; /* Small gap between days */
+            }
+
+            /* The LI elements representing Day 1 and Day 2 branches */
+            .event-tree > ul > li > ul > li {
+                flex: 1; /* Equal width */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0 !important; /* Remove inherited padding */
+            }
+
+            /* EVENTS LIST UNDER EACH DAY */
+            .event-tree li ul li ul {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 20px;
+                width: 100%;
+                position: relative;
+            }
+
+            /* VERTICAL LINE FOR EVENTS */
+            .event-tree li ul li ul::before {
+                content: '';
+                display: block; /* Force show */
+                position: absolute;
+                height: calc(100% - 25px); /* Stop before the very bottom */
+                width: 1px;
+                background: var(--neon-green);
+                left: 50%;
+                top: 0;
+                transform: translateX(-50%);
+            }
+
+            /* Event Items */
+            .event-tree li ul li ul li {
+                width: 100%;
+                padding: 10px 0;
+                position: relative;
+            }
+
+            /* Disable connectors for outer items */
+            .event-tree li ul li ul li::before, 
+            .event-tree li ul li ul li::after {
+                display: none;
+            }
+
+            .node-box {
+                font-size: 0.8rem;
+                min-width: unset;
+                width: auto;
+                max-width: 120px;
+                position: relative;
+                z-index: 2;
+                background: rgba(0, 20, 0, 0.95);
+                margin-bottom: 5px;
+                white-space: normal; /* Allow text wrap */
+                line-height: 1.2;
+            }
+            
+            /* Reset Global Tree Styles for Mobile */
+            .event-tree li::before, .event-tree li::after,
+            .event-tree ul ul::before {
+                display: none; /* Hide global connectors in mobile to avoid mess */
+            }
+            
+            /* Restore specific connectors if needed, but we are using custom ones above */
+            /* We need the connector from EVENTS to the split. */
+            .event-tree > ul > li::after {
+                display: none;
+            }
+            
+            /* EVENTS node to Day1/Day2 connector */
+            /* We can simulate this with a simple border on the UL or pseudo element */
+            .event-tree > ul > li > ul::before {
+                 content: '';
+                 display: block; /* Force show */
+                 position: absolute;
+                 top: 0;
+                 left: 50%;
+                 width: 1px;
+                 height: 20px;
+                 background: var(--neon-green);
+                 transform: translateX(-50%);
+            }
+            /* And horizontal line spanning the two days? */
+            .event-tree > ul > li > ul::after {
+                 content: '';
+                 display: block; /* Force show */
+                 position: absolute;
+                 top: 20px; /* At the bottom of vertical stem */
+                 left: 25%; /* Start middle of left side */
+                 right: 25%; /* End middle of right side */
+                 height: 1px;
+                 background: var(--neon-green);
+                 width: 50%;
+            }
+            /* Connect horizontal line to top of Day 1 and Day 2 */
+            .event-tree > ul > li > ul > li {
+                padding-top: 20px !important; /* Space for vertical connector */
+                position: relative; 
+            }
+            .event-tree > ul > li > ul > li::before {
+                content: '';
+                display: block; /* Force show */
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: 1px;
+                height: 20px;
+                background: var(--neon-green);
+                transform: translateX(-50%);
+            }
+
+            .event-tree li {
+                padding: 0 5px;
+            }
+
             .nav-links a {
                 font-size: 1.2rem;
                 /* Smaller to fit all */
@@ -2047,11 +2321,11 @@
             }
 
             .hero {
-                padding-top: 35% !important;
+                padding-top: 10px !important;
             }
 
             .hero-logo-container {
-                margin: 0 auto 40px auto !important;
+                margin: 0 auto 20px auto !important;
             }
 
             .hero-logo {
@@ -2060,16 +2334,30 @@
                 filter: drop-shadow(0 0 25px var(--neon-green)) !important;
             }
 
+            .pill-badge {
+                margin-top: 0 !important;
+            }
+
             .countdown-container {
-                gap: 15px !important;
+                gap: 5px !important;
+                flex-wrap: nowrap !important;
+                width: 100% !important;
+                justify-content: center !important;
             }
 
-            .time-unit {
-                width: 70px !important;
+            .time-box {
+                min-width: 0 !important;
+                flex: 1 !important;
+                width: auto !important;
+                padding: 5px !important;
             }
 
-            .time-value {
-                font-size: 1.8rem !important;
+            .time-val {
+                font-size: 1.2rem !important;
+            }
+            
+            .time-label {
+                font-size: 0.7rem !important;
             }
 
             /* TERMINAL WINDOWS */
@@ -2144,6 +2432,8 @@
         border-top: 1px solid var(--neon-green);
         animation: none; /* Disable bounce on mobile */
         display: flex;
+        flex-direction: column; /* Stack items vertically */
+        align-items: center;    /* Center items horizontally */
         justify-content: center;
         box-shadow: 0 -5px 20px rgba(0, 255, 65, 0.2);
     }

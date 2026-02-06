@@ -24,6 +24,7 @@
 
     <!-- Register Badge -->
     <div class="register-badge">
+        <div class="early-bird-msg">⚠️ EARLY BIRD OFFER ⚠️</div>
         <a href="register.html">[ REGISTER NOW ]</a>
     </div>
 
@@ -115,36 +116,45 @@
         <!-- Cyber Fee Badge -->
         <div class="cyber-fee-badge">
             <span class="fee-icon"><i class="fas fa-bolt text-yellow"></i></span>
-            <span class="cyber-glitch-text"><span class="text-white">REGISTRATION FEE:</span> <span
-                    class="text-yellow">₹ 250 PER HEAD</span></span>
+            <span class="cyber-glitch-text">
+                <span class="text-white">EARLY BIRD:</span> 
+                <span style="text-decoration: line-through; color: #aaa; margin-right: 5px;">₹ 350</span>
+                <span class="text-yellow">₹ 250 PER HEAD</span>
+            </span>
         </div>
         <br>
 
         <a href="register.html" class="cta-btn"><i class="fas fa-rocket"></i> [ REGISTER NOW FOR CYBER FEST ]</a>
 
-        <div style="margin-bottom: 20px; font-size: 0.9rem; color: #ffffff; margin-top: 30px;">[
-            <span class="text-alert"
-                style="color: #ff0000; text-shadow: 0 0 5px red;">TIME_TO_TOTAL_SYSTEM_FAILURE</span> ]
+        <!-- Event Flowchart -->
+        <!-- Event Flowchart -->
+        <div class="event-tree">
+            <ul>
+                <li>
+                    <span class="node-box day-node" style="background: rgba(0, 100, 0, 0.9); font-size: 1.2rem;">EVENTS</span>
+                    <ul>
+                        <!-- Day 1 Branch -->
+                        <li>
+                            <span class="node-box day-node">DAY 1</span>
+                            <ul>
+                                <li><span class="node-box event-node">CTF<br>(24 Hours)</span></li>
+                                <li><span class="node-box event-node">Workshop</span></li>
+                            </ul>
+                        </li>
+                        <!-- Day 2 Branch -->
+                        <li>
+                            <span class="node-box day-node">DAY 2</span>
+                            <ul>
+                                <li><span class="node-box event-node">Paper<br>Presentation</span></li>
+                                <li><span class="node-box event-node">Network<br>Defense</span></li>
+                                <li><span class="node-box event-node">Digital<br>Forensics</span></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
 
-        <div class="countdown-container">
-            <div class="time-box">
-                <span class="time-val" id="days">29</span>
-                <span class="time-label">Days</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="hours">23</span>
-                <span class="time-label">Hours</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="mins">59</span>
-                <span class="time-label">Mins</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="secs">32</span>
-                <span class="time-label">Secs</span>
-            </div>
-        </div>
     </section>
 
     <div class="container">
@@ -223,6 +233,33 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Moved Countdown Section -->
+            <div style="text-align: center; margin-bottom: 50px;">
+                <div style="margin-bottom: 20px; font-size: 0.9rem; color: #ffffff;">[
+                    <span class="text-alert"
+                        style="color: #ff0000; text-shadow: 0 0 5px red;">TIME_TO_TOTAL_SYSTEM_FAILURE</span> ]
+                </div>
+
+                <div class="countdown-container">
+                    <div class="time-box">
+                        <span class="time-val" id="days">29</span>
+                        <span class="time-label">Days</span>
+                    </div>
+                    <div class="time-box">
+                        <span class="time-val" id="hours">23</span>
+                        <span class="time-label">Hours</span>
+                    </div>
+                    <div class="time-box">
+                        <span class="time-val" id="mins">59</span>
+                        <span class="time-label">Mins</span>
+                    </div>
+                    <div class="time-box">
+                        <span class="time-val" id="secs">32</span>
+                        <span class="time-label">Secs</span>
+                    </div>
+                </div>
+            </div>
 
             <h2 class="section-header">>_ MISSION BRIEFING</h2>
             <div class="container mission-interactive"
