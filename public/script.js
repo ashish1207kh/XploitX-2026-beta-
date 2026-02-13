@@ -99,7 +99,7 @@ const regForm = document.getElementById('team-form');
 if (regForm) {
     // Configuration
     const EVENT_CONFIG = {
-        'CTF (24 Hours)': { min: 2, max: 4, fee: 250, perHead: true }, // Day 1
+        'CTF (24 Hours)': { min: 2, max: 4, fee: 150, perHead: true }, // Day 1
         'Workshop': { min: 1, max: 1, fee: 150, perHead: true }, // Day 1 
         'paper_presentation': { min: 1, max: 4, fee: 150, perHead: false }, // Day 2
         'digital_forensics': { min: 1, max: 4, fee: 50, perHead: true }, // Day 2
@@ -682,7 +682,7 @@ if (regForm) {
 
                     // DAY 1 EVENTS
                     if (selectedEvents.includes('CTF (24 Hours)')) {
-                        const ctfOfferAmount = 250 * members.length;
+                        const ctfOfferAmount = 150 * members.length;
                         msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
                     }
                     if (selectedEvents.includes('Workshop')) {
@@ -719,10 +719,10 @@ if (regForm) {
                 // Set QR Code based on count
                 if (pQr) {
                     if (selectedEvents.includes('CTF (24 Hours)')) {
-                        if (members.length === 2) pQr.src = '500.jpeg';
-                        else if (members.length === 3) pQr.src = '750.jpeg';
-                        else if (members.length === 4) pQr.src = '1000.jpeg';
-                        else pQr.src = '1000.jpeg'; // Fallback
+                        if (members.length === 2) pQr.src = 'Early(300).jpeg';
+                        else if (members.length === 3) pQr.src = 'Early(450).jpeg';
+                        else if (members.length === 4) pQr.src = 'Early(600).jpeg';
+                        else pQr.src = 'Early(300).jpeg'; // Fallback
                     } else if (selectedEvents.includes('paper_presentation')) {
                         pQr.src = '150.jpeg';
                     } else if (selectedEvents.includes('Workshop')) {
