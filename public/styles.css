@@ -2786,3 +2786,26 @@ h1.glitch-title {
     }
 }
 
+
+
+/* LOADING SCREEN MOBILE OPTIMIZATION */
+@media(max-width: 768px) {
+    .loader-logo {
+        width: 100% !important;
+        max-width: 95vw !important; /* Make it almost full width on mobile */
+    }
+    
+    .loader-message {
+        font-size: 1.1rem !important; /* Slightly smaller to fit Better */
+        margin-top: 10px !important;
+        padding: 0 15px; /* Add some padding so it doesn't hit edges */
+    }
+}
+
+
+
+/* Increase Loader Logo for Desktop as well */
+.loader-logo {
+    width: 800px !important; /* Increased from 650px */
+}
+

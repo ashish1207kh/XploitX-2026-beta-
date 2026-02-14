@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Idea 3: Broadcast Breach
 function shareBreach() {
-    const text = "I've just joined the resistance at XploitX 2026. Only the brave survive. Can you hack the planet? Join me: https://xploitx.com";
+    const text = "I've just joined the resistance at XploitX 2026. Only the brave survive. Can you hack the planet? Join me: https://xploitxctf.me/";
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
