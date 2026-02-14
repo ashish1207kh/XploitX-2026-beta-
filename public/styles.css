@@ -1397,7 +1397,8 @@
                 font-size: 1.4rem !important;
                 letter-spacing: 1px;
                 margin-top: 20px;
-                white-space: normal; /* Allow wrapping */
+                white-space: normal;
+                /* Allow wrapping */
                 width: 100%;
                 overflow: visible;
                 display: block;
@@ -1676,15 +1677,18 @@
             right: 20px;
             z-index: 9999;
             animation: bounce 2s infinite;
-            text-align: center; /* Center content */
+            text-align: center;
+            /* Center content */
         }
 
         .early-bird-msg {
             display: block;
-            color: #FFFF00; /* Yellow */
+            color: #FFFF00;
+            /* Yellow */
             font-size: 0.85rem;
             font-weight: bold;
-            margin-bottom: 8px; /* Space between text and button */
+            margin-bottom: 8px;
+            /* Space between text and button */
             text-shadow: 0 0 8px #FFD700;
             font-family: 'Share Tech Mono', monospace;
             letter-spacing: 1px;
@@ -1966,11 +1970,12 @@
             transition: all 0.5s;
             display: flex;
             justify-content: center;
-            padding-left: 0; /* Reset default ul padding */
+            padding-left: 0;
+            /* Reset default ul padding */
         }
-        
+
         /* Remove padding from the very top UL so 'EVENTS' doesn't have space above it */
-        .event-tree > ul {
+        .event-tree>ul {
             padding-top: 0;
         }
 
@@ -1983,45 +1988,58 @@
         }
 
         /* Connectors */
-        .event-tree li::before, .event-tree li::after{
+        .event-tree li::before,
+        .event-tree li::after {
             content: '';
-            position: absolute; top: 0; right: 50%;
+            position: absolute;
+            top: 0;
+            right: 50%;
             border-top: 1px solid var(--neon-green);
-            width: 50%; height: 20px;
+            width: 50%;
+            height: 20px;
         }
-        .event-tree li::after{
-            right: auto; left: 50%;
+
+        .event-tree li::after {
+            right: auto;
+            left: 50%;
             border-left: 1px solid var(--neon-green);
         }
 
         /* Remove connectors/padding from the very top root node to clean up desktop view */
-        .event-tree > ul > li {
+        .event-tree>ul>li {
             padding-top: 0;
         }
-        .event-tree > ul > li::before, 
-        .event-tree > ul > li::after {
+
+        .event-tree>ul>li::before,
+        .event-tree>ul>li::after {
             display: none !important;
             border: none !important;
         }
 
         /* Remove connectors from outer half of first/last elements */
-        .event-tree li:first-child::before, .event-tree li:last-child::after{
+        .event-tree li:first-child::before,
+        .event-tree li:last-child::after {
             border: 0 none;
         }
-        .event-tree li:last-child::before{
+
+        .event-tree li:last-child::before {
             border-right: 1px solid var(--neon-green);
             border-radius: 0 5px 0 0;
         }
-        .event-tree li:first-child::after{
+
+        .event-tree li:first-child::after {
             border-radius: 5px 0 0 0;
         }
 
         /* Vertical line down from single parent */
-        .event-tree ul ul::before{
+        .event-tree ul ul::before {
             content: '';
-            position: absolute; top: 0; left: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
             border-left: 1px solid var(--neon-green);
-            width: 0; height: 20px;
+            width: 0;
+            height: 20px;
         }
 
         .node-box {
@@ -2032,12 +2050,12 @@
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.85rem;
             display: inline-block;
-            background: rgba(0,20,0,0.8);
+            background: rgba(0, 20, 0, 0.8);
             border-radius: 4px;
             transition: all 0.3s;
             min-width: 100px;
             box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
-            position: relative; 
+            position: relative;
             z-index: 2;
         }
 
@@ -2049,7 +2067,8 @@
             padding: 10px 20px;
         }
 
-        .event-node:hover, .day-node:hover {
+        .event-node:hover,
+        .day-node:hover {
             background: var(--neon-green);
             color: #000;
             box-shadow: 0 0 20px var(--neon-green);
@@ -2121,7 +2140,8 @@
                 margin-top: 20px;
                 margin-bottom: 20px;
                 width: 100%;
-                display: block; /* Switch to block for vertical stacking */
+                display: block;
+                /* Switch to block for vertical stacking */
                 padding: 0 20px;
             }
 
@@ -2129,32 +2149,39 @@
                 display: flex;
                 flex-direction: column;
                 padding-top: 0;
-                align-items: center; /* Center the 'Event' root */
+                align-items: center;
+                /* Center the 'Event' root */
             }
-            
+
             /* The root UL inside event-tree is special, we want its immediate children (Day 1, Day 2 branches) to stack vertically or split */
             /* Actually, the current structure is: Root UL -> LI (Events) -> UL -> LI (Day1), LI (Day2) */
-            
+
             /* We need to target the UL that holds Day1 and Day 2 */
             /* WE NEED TO TARGET THE UL THAT HOLDS DAY 1 AND DAY 2 NODES */
-            .event-tree > ul > li > ul {
+            .event-tree>ul>li>ul {
                 display: flex !important;
-                flex-direction: row !important; /* Force side-by-side */
-                flex-wrap: nowrap !important; /* Prevent wrapping */
+                flex-direction: row !important;
+                /* Force side-by-side */
+                flex-wrap: nowrap !important;
+                /* Prevent wrapping */
                 justify-content: center !important;
-                align-items: flex-start !important; /* Ensure both start at the top */
+                align-items: flex-start !important;
+                /* Ensure both start at the top */
                 width: 100% !important;
                 padding-top: 20px !important;
-                gap: 10px !important; /* Small gap between days */
+                gap: 10px !important;
+                /* Small gap between days */
             }
 
             /* The LI elements representing Day 1 and Day 2 branches */
-            .event-tree > ul > li > ul > li {
-                flex: 1; /* Equal width */
+            .event-tree>ul>li>ul>li {
+                flex: 1;
+                /* Equal width */
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding: 0 !important; /* Remove inherited padding */
+                padding: 0 !important;
+                /* Remove inherited padding */
             }
 
             /* EVENTS LIST UNDER EACH DAY */
@@ -2170,9 +2197,11 @@
             /* VERTICAL LINE FOR EVENTS */
             .event-tree li ul li ul::before {
                 content: '';
-                display: block; /* Force show */
+                display: block;
+                /* Force show */
                 position: absolute;
-                height: calc(100% - 25px); /* Stop before the very bottom */
+                height: calc(100% - 25px);
+                /* Stop before the very bottom */
                 width: 1px;
                 background: var(--neon-green);
                 left: 50%;
@@ -2188,7 +2217,7 @@
             }
 
             /* Disable connectors for outer items */
-            .event-tree li ul li ul li::before, 
+            .event-tree li ul li ul li::before,
             .event-tree li ul li ul li::after {
                 display: none;
             }
@@ -2202,55 +2231,68 @@
                 z-index: 2;
                 background: rgba(0, 20, 0, 0.95);
                 margin-bottom: 5px;
-                white-space: normal; /* Allow text wrap */
+                white-space: normal;
+                /* Allow text wrap */
                 line-height: 1.2;
             }
-            
+
             /* Reset Global Tree Styles for Mobile */
-            .event-tree li::before, .event-tree li::after,
+            .event-tree li::before,
+            .event-tree li::after,
             .event-tree ul ul::before {
-                display: none; /* Hide global connectors in mobile to avoid mess */
+                display: none;
+                /* Hide global connectors in mobile to avoid mess */
             }
-            
+
             /* Restore specific connectors if needed, but we are using custom ones above */
             /* We need the connector from EVENTS to the split. */
-            .event-tree > ul > li::after {
+            .event-tree>ul>li::after {
                 display: none;
             }
-            
+
             /* EVENTS node to Day1/Day2 connector */
             /* We can simulate this with a simple border on the UL or pseudo element */
-            .event-tree > ul > li > ul::before {
-                 content: '';
-                 display: block; /* Force show */
-                 position: absolute;
-                 top: 0;
-                 left: 50%;
-                 width: 1px;
-                 height: 20px;
-                 background: var(--neon-green);
-                 transform: translateX(-50%);
-            }
-            /* And horizontal line spanning the two days? */
-            .event-tree > ul > li > ul::after {
-                 content: '';
-                 display: block; /* Force show */
-                 position: absolute;
-                 top: 20px; /* At the bottom of vertical stem */
-                 left: 25%; /* Start middle of left side */
-                 right: 25%; /* End middle of right side */
-                 height: 1px;
-                 background: var(--neon-green);
-                 width: 50%;
-            }
-            /* Connect horizontal line to top of Day 1 and Day 2 */
-            .event-tree > ul > li > ul > li {
-                padding-top: 20px !important; /* Space for vertical connector */
-                position: relative; 
-            }
-            .event-tree > ul > li > ul > li::before {
+            .event-tree>ul>li>ul::before {
                 content: '';
-                display: block; /* Force show */
+                display: block;
+                /* Force show */
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: 1px;
+                height: 20px;
+                background: var(--neon-green);
+                transform: translateX(-50%);
+            }
+
+            /* And horizontal line spanning the two days? */
+            .event-tree>ul>li>ul::after {
+                content: '';
+                display: block;
+                /* Force show */
+                position: absolute;
+                top: 20px;
+                /* At the bottom of vertical stem */
+                left: 25%;
+                /* Start middle of left side */
+                right: 25%;
+                /* End middle of right side */
+                height: 1px;
+                background: var(--neon-green);
+                width: 50%;
+            }
+
+            /* Connect horizontal line to top of Day 1 and Day 2 */
+            .event-tree>ul>li>ul>li {
+                padding-top: 20px !important;
+                /* Space for vertical connector */
+                position: relative;
+            }
+
+            .event-tree>ul>li>ul>li::before {
+                content: '';
+                display: block;
+                /* Force show */
                 position: absolute;
                 top: 0;
                 left: 50%;
@@ -2315,7 +2357,8 @@
             .nodes-grid,
             .grid-2,
             .about-content,
-            .dashboard-members {
+            .dashboard-members,
+            .perks-list {
                 grid-template-columns: 1fr !important;
                 gap: 25px !important;
             }
@@ -2355,7 +2398,7 @@
             .time-val {
                 font-size: 1.2rem !important;
             }
-            
+
             .time-label {
                 font-size: 0.7rem !important;
             }
@@ -2393,18 +2436,21 @@
             /* ADMIN SPECIFIC */
             /* ADMIN SPECIFIC */
             .admin-container {
-                margin-top: 220px !important; /* Adjusted for mobile header height */
+                margin-top: 220px !important;
+                /* Adjusted for mobile header height */
                 padding: 10px !important;
             }
 
             .table-responsive {
                 width: 100%;
                 overflow-x: auto;
-                -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+                -webkit-overflow-scrolling: touch;
+                /* Smooth scrolling on iOS */
             }
 
             table {
-                min-width: 800px; /* Force table to retain width so it scrolls */
+                min-width: 800px;
+                /* Force table to retain width so it scrolls */
             }
         }
 
@@ -2414,37 +2460,113 @@
             display: none;
         }
 
-@keyframes pulseRed {
-    0% { transform: scale(1); box-shadow: 0 0 10px #ff3333; }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px #ff3333; }
-    100% { transform: scale(1); box-shadow: 0 0 10px #ff3333; }
-}
+        @keyframes pulseRed {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 10px #ff3333;
+            }
 
-/* Mobile Register Badge Override */
-@media (max-width: 768px) {
-    .register-badge {
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        padding: 15px;
-        background: rgba(0, 0, 0, 0.95);
-        border-top: 1px solid var(--neon-green);
-        animation: none; /* Disable bounce on mobile */
-        display: flex;
-        flex-direction: column; /* Stack items vertically */
-        align-items: center;    /* Center items horizontally */
-        justify-content: center;
-        box-shadow: 0 -5px 20px rgba(0, 255, 65, 0.2);
-    }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px #ff3333;
+            }
 
-    .register-badge a {
-        width: 100%;
-        text-align: center;
-        display: block;
-        padding: 15px;
-        font-size: 1.1rem;
-        border-radius: 4px; /* Keep consistent with design */
-        box-sizing: border-box; /* Ensure padding doesn't overflow width */
-    }
-}
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px #ff3333;
+            }
+        }
+
+        /* Mobile Register Badge Override */
+        @media (max-width: 768px) {
+            .register-badge {
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                padding: 8px 10px;
+                /* Compact padding */
+                background: rgba(0, 5, 0, 0.98);
+                /* Less transparent background */
+                border-top: 1px solid var(--neon-green);
+                animation: none;
+                /* Disable bounce on mobile */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 -5px 20px rgba(0, 255, 65, 0.15);
+                z-index: 9999;
+                gap: 5px;
+                /* Minimal gap between elements */
+            }
+
+            /* Compact Counter Box */
+            .register-badge .registration-counter-mini {
+                padding: 4px 8px !important;
+                margin-bottom: 0 !important;
+                /* Handled by parent gap */
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                /* Row layout for counter to save height */
+                justify-content: space-between;
+                align-items: center;
+                background: rgba(0, 20, 0, 0.6) !important;
+            }
+
+            .register-badge .registration-counter-mini div {
+                font-size: 0.8rem !important;
+                margin: 0 !important;
+            }
+
+            /* Adjust font sizes inside counter for row layout */
+            .register-badge .registration-counter-mini div:nth-child(1) {
+                order: 1;
+                font-size: 0.7rem !important;
+            }
+
+            /* Label */
+            .register-badge .registration-counter-mini div:nth-child(2) {
+                order: 2;
+                font-size: 1rem !important;
+            }
+
+            /* Count */
+            .register-badge .registration-counter-mini div:nth-child(3) {
+                display: none !important;
+            }
+
+            /* Hide 'Filling Fast' to save space/clutter */
+
+            .early-bird-msg {
+                margin-bottom: 0 !important;
+                font-size: 0.75rem !important;
+                text-align: center;
+            }
+
+            .register-badge a {
+                width: 100%;
+                text-align: center;
+                display: block;
+                padding: 10px;
+                /* Reduced button padding */
+                font-size: 1rem;
+                background: rgba(0, 40, 0, 0.8);
+                border: 1px solid var(--neon-green);
+                border-radius: 4px;
+            }
+
+            /* Cyber Fee Badge Mobile Fix */
+            .cyber-fee-badge {
+                font-size: 0.9rem !important;
+                padding: 8px 15px !important;
+                white-space: normal !important;
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+                width: 90%;
+                margin: 0 auto;
+            }
+        }

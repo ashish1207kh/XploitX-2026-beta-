@@ -94,6 +94,57 @@ if (window.location.protocol === 'file:') {
 }
 console.log("Global API_BASE_URL:", API_BASE_URL);
 
+// Registration Counter Logic
+async function fetchRegistrationCount() {
+    // Select all elements with class 'reg-count' (e.g. Hero + Floating Badge)
+    const countElements = document.querySelectorAll('.reg-count');
+    if (countElements.length === 0) return;
+
+    try {
+        const url = `${API_BASE_URL}/api/registration/count`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.count !== undefined) {
+            const realCount = data.count;
+            // Hype logic: User requested 40/60 base. 
+            // We use max(realCount, 40) so it never drops below 40 but still increments if authentic signups happen.
+            const displayCount = Math.max(realCount, 40);
+            const end = displayCount;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const ease = 1 - Math.pow(1 - progress, 4); // Ease out quart
+                const current = Math.floor(0 + (end - 0) * ease); // Start from 0
+
+                countElements.forEach(el => {
+                    el.innerText = current;
+                });
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    countElements.forEach(el => {
+                        el.innerText = end;
+                    });
+                }
+            }
+            requestAnimationFrame(update);
+        }
+    } catch (error) {
+        console.error('Error fetching registration count:', error);
+        countElements.forEach(el => {
+            el.innerText = '40'; // Fallback hype number
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchRegistrationCount);
+
 // Form handling
 const regForm = document.getElementById('team-form');
 if (regForm) {

@@ -407,6 +407,16 @@ app.get('/api/team/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// [NEW] Get Total Registration Count
+app.get('/api/registration/count', async (req, res) => {
+    try {
+        const result = await db.get('SELECT COUNT(*) as count FROM teams');
+        res.json({ count: result.count });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // [NEW] Admin Update Team
 // [NEW] Admin Update Team
 app.post('/api/admin/update_team', async (req, res) => {
