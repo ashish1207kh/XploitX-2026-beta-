@@ -811,6 +811,71 @@
 
             // --- EDIT MODAL LOGIC ---
             
+            function checkEmailChange(input) {
+                const parent = input.parentElement;
+                const btn = parent.querySelector('.resend-mail-btn');
+                const cleanVal = input.value.trim();
+                if(cleanVal !== input.dataset.orig && cleanVal.length > 5) {
+                    btn.style.display = 'block';
+                } else {
+                    btn.style.display = 'none';
+                }
+            }
+
+            async function triggerResendMail(btn) {
+                const parent = btn.parentElement;
+                const emailInput = parent.querySelector('.edit-m-email');
+                const email = emailInput.value.trim();
+                
+                // Navigate to siblings to find Name
+                const gridDiv = parent.parentElement;
+                const nameInput = gridDiv.querySelector('.edit-m-name');
+                const name = nameInput ? nameInput.value.trim() : "Member";
+                
+                const teamId = document.getElementById('edit-team-db-id').value;
+                const event = document.getElementById('edit-team-event').value;
+                
+                if(!email) return;
+
+                const originalText = "[ RESEND CONFIRMATION TO NEW EMAIL ]";
+                btn.innerText = "[ SENDING... ]";
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/admin/resend_confirmation`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ teamId, memberName: name, email, event })
+                    });
+                    const data = await res.json();
+                    
+                    if(data.success) {
+                        if(window.showCustomAlert) showCustomAlert(`EMAIL SENT TO ${email}`);
+                        else alert(`EMAIL SENT TO ${email}`);
+                        
+                        btn.innerText = "[ SENT! ]";
+                        // Update original to prevent button showing again unless changed
+                        emailInput.dataset.orig = email;
+                        
+                        setTimeout(() => {
+                            btn.style.display = 'none';
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                        }, 2000);
+                    } else {
+                        if(window.showCustomAlert) showCustomAlert("Error: " + data.error);
+                        else alert("Error: " + data.error);
+                        btn.innerText = "[ RETRY ]";
+                        btn.disabled = false;
+                    }
+                } catch(e) {
+                    console.error(e);
+                    if(window.showCustomAlert) showCustomAlert("Network Error");
+                    btn.innerText = "[ ERROR ]";
+                    btn.disabled = false;
+                }
+            }
+
             function openEditModal(teamId) {
                 const team = window.teamsData.find(t => t.team_id === teamId);
                 if (!team) return;
@@ -832,7 +897,10 @@
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                             <input type="text" class="edit-m-name" placeholder="Name" value="${m.name || ''}">
                             <input type="text" class="edit-m-age" placeholder="Age" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.age || ''}">
-                            <input type="email" class="edit-m-email" placeholder="Email" maxlength="30" value="${m.email || ''}">
+                            <div style="position:relative;">
+                                <input type="email" class="edit-m-email" placeholder="Email" maxlength="30" value="${m.email || ''}" data-orig="${m.email || ''}" oninput="checkEmailChange(this)">
+                                <button class="resend-mail-btn" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:10px; background:#003300; color:#0f0; border:2px solid #0f0; padding:10px; font-size:0.9rem; font-weight:bold; cursor:pointer; font-family:'Share Tech Mono'; box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);">[ RESEND CONFIRMATION TO NEW EMAIL ]</button>
+                            </div>
                             <input type="text" class="edit-m-phone" placeholder="Phone" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.phone || ''}">
                             <input type="text" class="edit-m-whatsapp" placeholder="WhatsApp" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.whatsapp || ''}">
                             <input type="text" class="edit-m-college" placeholder="College" value="${m.college || ''}">
@@ -1025,9 +1093,11 @@
                         <option value="digital_forensics">Digital Forensics</option>
                         <option value="network_defense">Network Defense</option>
                         <option value="CTF (24 Hours),network_defense">CTF (24 Hours) + Network Defense</option>
+                        <option value="CTF (24 Hours),digital_forensics">CTF (24 Hours) + Digital Forensics</option>
                         <option value="CTF (24 Hours),network_defense,digital_forensics">CTF (24 Hours) + Network Defense + Digital Forensics</option>
                         <option value="paper_presentation,network_defense,digital_forensics">Paper Presentation + Network Defense + Digital Forensics</option>
                         <option value="paper_presentation,network_defense">Paper Presentation + Network Defense</option>
+                        <option value="paper_presentation,digital_forensics">Paper Presentation + Digital Forensics</option>
                         <option value="network_defense,digital_forensics">Network Defense + Digital Forensics</option>
                     </select>
                 </div>

@@ -639,6 +639,20 @@ app.post('/api/admin/reject_payment', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// [NEW] Resend Confirmation Email
+app.post('/api/admin/resend_confirmation', async (req, res) => {
+    const { teamId, memberName, email, event } = req.body;
+    console.log(`Resending confirmation to ${email} for team ${teamId}`);
+    try {
+        const memberObj = { name: memberName, email: email };
+        await sendRegistrationEmails([memberObj], teamId, event);
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Resend Email Error:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // [NEW] Restore Payment (Undo Reject)
 app.post('/api/admin/restore_payment', async (req, res) => {
     const { teamId } = req.body;
