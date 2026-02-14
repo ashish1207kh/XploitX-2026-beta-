@@ -143,7 +143,59 @@ async function fetchRegistrationCount() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchRegistrationCount);
+document.addEventListener('DOMContentLoaded', () => {
+    fetchRegistrationCount();
+    initUrgencyTicker();
+});
+
+// Idea 3: Broadcast Breach
+function shareBreach() {
+    const text = "I've just joined the resistance at XploitX 2026. Only the brave survive. Can you hack the planet? Join me: https://xploitx.com";
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+// Idea 6: Live Urgency Ticker Logic
+function initUrgencyTicker() {
+    const tickerEl = document.getElementById('urgency-ticker');
+    const textEl = document.getElementById('urgency-text');
+    if (!tickerEl || !textEl) return;
+
+    tickerEl.classList.remove('hidden-el'); // Show it
+
+    const messages = [
+        "⚠️ SYSTEM OVERLOAD: Only 4 slots remaining for Digital Forensics",
+        "⚠️ CRITICAL: CTF Team slots filling up fast (85%)",
+        "⚡ ALERT: Early Bird Phase 1 ending soon",
+        "⚠️ BREACH: 12 new agents joined in the last hour",
+        "⚡ STATUS: Workshop capacity critical"
+    ];
+
+    let index = 0;
+
+    // Cycle every 4 seconds
+    setInterval(() => {
+        // Glitch effect before change
+        textEl.style.textShadow = "2px 0 red, -2px 0 blue";
+        textEl.innerText = generateRandomString(15); // visual noise
+
+        setTimeout(() => {
+            textEl.style.textShadow = "none";
+            textEl.innerText = messages[index];
+            index = (index + 1) % messages.length;
+        }, 300);
+
+    }, 4000);
+}
+
+function generateRandomString(length) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
 
 // Form handling
 const regForm = document.getElementById('team-form');

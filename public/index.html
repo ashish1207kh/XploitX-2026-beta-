@@ -17,9 +17,13 @@
 
     <!-- Loading Screen -->
     <div id="loader-overlay"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s;">
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s;">
         <img src="load.png" alt="Loading..."
             style="width: 650px; max-width: 90vw; height: auto; animation: pulse 1.5s infinite;">
+        <div
+            style="margin-top: 20px; font-family: 'Share Tech Mono', monospace; font-size: 1.5rem; color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); animation: blink 1s infinite; letter-spacing: 2px; text-transform: uppercase; text-align: center;">
+            ⚠️ EARLY BIRD OFFERS ARE LIVE ⚠️
+        </div>
     </div>
 
     <!-- Register Badge -->
@@ -110,6 +114,8 @@
                 <a href="rules.html"><i class="fas fa-gavel"></i> [ RULES ]</a>
                 <a href="register.html"><i class="fas fa-user-plus"></i> [ REGISTER ]</a>
                 <a href="prizes.html"><i class="fas fa-trophy"></i> [ PRIZES ]</a>
+                <a href="https://prathyusha.edu.in/wp-content/uploads/2025/facilities/transport-routs.pdf"
+                    target="_blank"><i class="fas fa-bus"></i> [ BUS ROUTES ]</a>
             </div>
         </div>
     </nav>
@@ -137,6 +143,13 @@
                 Engineering College</span>
         </p>
 
+
+        <!-- Idea 6: Live Urgency Ticker (Moved Here) -->
+        <div id="urgency-ticker" class="urgency-ticker hidden-el" style="margin-bottom: 20px;">
+            <span class="ticker-icon">⚠️</span>
+            <span id="urgency-text">SYSTEM STATUS: SCANNING...</span>
+        </div>
+
         <!-- Cyber Fee Badge -->
         <div class="cyber-fee-badge">
             <span class="fee-icon"><i class="fas fa-bolt text-yellow"></i></span>
@@ -149,6 +162,15 @@
         <br>
 
         <a href="register.html" class="cta-btn"><i class="fas fa-rocket"></i> [ REGISTER NOW FOR CYBER FEST ]</a>
+
+        <!-- Idea 3: Broadcast Breach Button (Moved Up & Enhanced) -->
+        <div style="margin-top: 25px;">
+            <button onclick="shareBreach()" class="breach-btn prominent-breach">
+                <i class="fas fa-bullhorn"></i> [ BROADCAST BREACH ]
+            </button>
+        </div>
+
+
 
 
         <!-- Event Flowchart -->
@@ -564,6 +586,11 @@
                         <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
                             <a href="register.html" style="color: var(--neon-green); text-decoration: none;"><i
                                     class="fas fa-user-plus"></i> [ REGISTER ]</a>
+                        </li>
+                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
+                            <a href="https://prathyusha.edu.in/wp-content/uploads/2025/facilities/transport-routs.pdf"
+                                target="_blank" style="color: var(--neon-green); text-decoration: none;"><i
+                                    class="fas fa-bus"></i> [ BUS ROUTES ]</a>
                         </li>
                     </ul>
                 </div>

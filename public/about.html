@@ -17,9 +17,13 @@
 
     <!-- Loading Screen -->
     <div id="loader-overlay"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s;">
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s;">
         <img src="load.png" alt="Loading..."
             style="width: 650px; max-width: 90vw; height: auto; animation: pulse 1.5s infinite;">
+        <div
+            style="margin-top: 20px; font-family: 'Share Tech Mono', monospace; font-size: 1.5rem; color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); animation: blink 1s infinite; letter-spacing: 2px; text-transform: uppercase; text-align: center;">
+            ⚠️ EARLY BIRD OFFERS ARE LIVE ⚠️
+        </div>
     </div>
 
     <!-- Register Badge -->

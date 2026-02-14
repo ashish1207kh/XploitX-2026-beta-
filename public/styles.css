@@ -2581,3 +2581,208 @@
                 margin: 0 auto;
             }
         }
+
+/* --- BROADCAST BREACH BUTTON --- */
+.breach-btn {
+    display: inline-block;
+    color: var(--neon-orange);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: 0.3s;
+    padding: 10px 20px;
+    border: 1px solid var(--neon-orange);
+    border-radius: 4px;
+    background: rgba(30, 10, 0, 0.7);
+    box-shadow: 0 0 5px rgba(255, 85, 0, 0.2);
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.breach-btn:hover {
+    background: rgba(255, 85, 0, 0.2);
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+    text-shadow: 2px 0 blue; /* Glitch hint */
+}
+
+/* --- URGENCY TICKER --- */
+.urgency-ticker {
+    margin-top: 15px;
+    border: 1px dashed var(--neon-yellow);
+    background: rgba(20, 20, 0, 0.8);
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--neon-yellow);
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 4px;
+    animation: blink 2s infinite;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#urgency-text {
+    min-width: 300px;
+    text-align: left;
+}
+
+
+
+/* --- MISSION BRIEFING MOBILE TWEAKS --- */
+@media (max-width: 768px) {
+    .mission-interactive p {
+        font-size: 1rem !important; /* Decrease font size */
+        line-height: 1.5 !important;
+    }
+    .mission-interactive {
+        padding: 20px !important; /* Reduce padding to save space */
+    }
+}
+
+
+
+/* Ensure Bus Routes link stands out similarly in nav */
+.nav-links a:last-child {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+.nav-links a:last-child:hover {
+    background: rgba(0, 229, 255, 0.15);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+    text-shadow: 0 0 8px var(--neon-cyan);
+}
+
+
+
+/* Override Main Title Size as requested */
+h1.glitch-title {
+    font-size: 3.5rem !important;
+}
+
+
+
+/* Enhanced Broadcast Breach Button */
+.breach-btn.prominent-breach {
+    font-size: 1.3rem; /* Increased size */
+    padding: 15px 40px; /* Bigger button area */
+    border-width: 2px;
+    background: rgba(40, 15, 0, 0.85);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    width: auto;
+    min-width: 300px; /* Ensure it's substantial */
+}
+
+.breach-btn.prominent-breach:hover {
+    transform: scale(1.05); /* Grow effect */
+    box-shadow: 0 0 25px rgba(255, 85, 0, 0.6);
+}
+
+
+
+/* Responsive Hide - maybe hide one logo on mobile if too crowded */
+@media (max-width: 768px) {
+    #loader-overlay img:first-child {
+        width: 100px !important; /* Smaller on mobile */
+        margin-bottom: 10px !important;
+    }
+}
+
+
+
+/* Urgency Ticker Hero Specifics */
+.urgency-ticker {
+    margin-top: 5px;  /* Reduced since it's now embedded in flow */
+    margin-bottom: 25px; /* Spacing below to badge */
+    max-width: 600px; /* Width constraint */
+    border-style: solid; /* Make sure it pops */
+    background: rgba(40, 40, 0, 0.9);
+}
+
+
+
+/* Gap Reduction */
+.pill-badge {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.hero-logo {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.conducts-text {
+    margin-bottom: -5px !important;
+}
+
+
+
+/* REDUCE LOGO SIZE - OVERRIDE */
+.hero-logo {
+    width: 600px !important;  /* Reduced from 850px */
+}
+
+@media(max-width: 768px) {
+    .hero-logo {
+        max-width: 200px !important; /* Reduced from 300px */
+    }
+}
+
+
+
+/* FINAL ADJUSTMENTS: Logo Size & Spacing */
+.hero-logo-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    line-height: 0; /* Remove inline block gap */
+}
+
+.hero-logo {
+    width: 500px !important; /* Further reduced from 600px */
+    margin-top: -10px !important; /* Pull up closer to CONDUCTS */
+}
+
+.conducts-text {
+    margin-bottom: -10px !important; /* Pull down towards logo */
+}
+
+@media(max-width: 768px) {
+    .hero-logo {
+        max-width: 180px !important; /* Further reduced from 200px */
+        margin-top: -5px !important;
+    }
+    
+    .conducts-text {
+        margin-bottom: -5px !important;
+    }
+}
+
+
+
+/* RE-OVERRIDE: Logo Size Adjustment */
+/* Increase Desktop Logo Size */
+.hero-logo {
+    width: 700px !important;  /* Increased from 500px to 700px */
+}
+
+/* Decrease Mobile Title Size but Increase Mobile Logo */
+@media(max-width: 768px) {
+    /* Decrease title size */
+    h1.glitch-title {
+        font-size: 2rem !important; /* Decrease title size */
+    }
+    
+    /* Increase Mobile Logo Size */
+    .hero-logo {
+        max-width: 300px !important; /* Increased from 180px to 300px */
+    }
+}
+
