@@ -1053,7 +1053,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'hackathon_teams.csv';
+                a.download = '24_hrs_ctf_teams.csv';
                 a.click();
             }
 
@@ -1118,15 +1118,18 @@
                         <label style="color:#aaa; display:block; margin-bottom:5px;">Event</label>
                         <select id="edit-team-event"
                             style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
-                            <option value="24 HRS HACKATHON">24 HRS HACKATHON</option>
+                            <option value="24 HRS CAPTURE THE FLAG (CTF)">24 HRS CAPTURE THE FLAG (CTF)</option>
                             <option value="Workshop">Workshop</option>
                             <option value="paper_presentation">Paper Presentation</option>
                             <option value="digital_forensics">Digital Forensics</option>
                             <option value="network_defense">Network Defense</option>
-                            <option value="24 HRS HACKATHON,network_defense">24 HRS HACKATHON + Network Defense</option>
-                            <option value="24 HRS HACKATHON,digital_forensics">24 HRS HACKATHON + Digital Forensics
+                            <option value="24 HRS CAPTURE THE FLAG (CTF),network_defense">24 HRS CAPTURE THE FLAG (CTF)
+                                + Network Defense</option>
+                            <option value="24 HRS CAPTURE THE FLAG (CTF),digital_forensics">24 HRS CAPTURE THE FLAG
+                                (CTF) + Digital Forensics
                             </option>
-                            <option value="24 HRS HACKATHON,network_defense,digital_forensics">24 HRS HACKATHON +
+                            <option value="24 HRS CAPTURE THE FLAG (CTF),network_defense,digital_forensics">24 HRS
+                                CAPTURE THE FLAG (CTF) +
                                 Network
                                 Defense + Digital Forensics</option>
                             <option value="paper_presentation,network_defense,digital_forensics">Paper Presentation +
