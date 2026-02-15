@@ -169,7 +169,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.8) 90%);
+            /* Removed black radial gradient for better visibility */
+            background: transparent;
             pointer-events: none;
             z-index: 0;
         }
@@ -2582,230 +2583,440 @@
             }
         }
 
-/* --- BROADCAST BREACH BUTTON --- */
-.breach-btn {
-    display: inline-block;
-    color: var(--neon-orange);
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: 0.3s;
-    padding: 10px 20px;
-    border: 1px solid var(--neon-orange);
-    border-radius: 4px;
-    background: rgba(30, 10, 0, 0.7);
-    box-shadow: 0 0 5px rgba(255, 85, 0, 0.2);
-    cursor: pointer;
-    font-family: 'Share Tech Mono', monospace;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-}
+        /* --- BROADCAST BREACH BUTTON --- */
+        .breach-btn {
+            display: inline-block;
+            color: var(--neon-orange);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            padding: 10px 20px;
+            border: 1px solid var(--neon-orange);
+            border-radius: 4px;
+            background: rgba(30, 10, 0, 0.7);
+            box-shadow: 0 0 5px rgba(255, 85, 0, 0.2);
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
 
-.breach-btn:hover {
-    background: rgba(255, 85, 0, 0.2);
-    box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
-    text-shadow: 2px 0 blue; /* Glitch hint */
-}
+        .breach-btn:hover {
+            background: rgba(255, 85, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+            text-shadow: 2px 0 blue;
+            /* Glitch hint */
+        }
 
-/* --- URGENCY TICKER --- */
-.urgency-ticker {
-    margin-top: 15px;
-    border: 1px dashed var(--neon-yellow);
-    background: rgba(20, 20, 0, 0.8);
-    padding: 8px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: var(--neon-yellow);
-    font-size: 0.9rem;
-    font-weight: bold;
-    border-radius: 4px;
-    animation: blink 2s infinite;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
+        /* --- URGENCY TICKER --- */
+        .urgency-ticker {
+            margin-top: 15px;
+            border: 1px dashed var(--neon-yellow);
+            background: rgba(20, 20, 0, 0.8);
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--neon-yellow);
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 4px;
+            animation: blink 2s infinite;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-#urgency-text {
-    min-width: 300px;
-    text-align: left;
-}
-
-
-
-/* --- MISSION BRIEFING MOBILE TWEAKS --- */
-@media (max-width: 768px) {
-    .mission-interactive p {
-        font-size: 1rem !important; /* Decrease font size */
-        line-height: 1.5 !important;
-    }
-    .mission-interactive {
-        padding: 20px !important; /* Reduce padding to save space */
-    }
-}
+        #urgency-text {
+            min-width: 300px;
+            text-align: left;
+        }
 
 
 
-/* Ensure Bus Routes link stands out similarly in nav */
-.nav-links a:last-child {
-    border-color: var(--neon-cyan);
-    color: var(--neon-cyan);
-}
-.nav-links a:last-child:hover {
-    background: rgba(0, 229, 255, 0.15);
-    box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
-    text-shadow: 0 0 8px var(--neon-cyan);
-}
+        /* --- MISSION BRIEFING MOBILE TWEAKS --- */
+        @media (max-width: 768px) {
+            .mission-interactive p {
+                font-size: 1rem !important;
+                /* Decrease font size */
+                line-height: 1.5 !important;
+            }
+
+            .mission-interactive {
+                padding: 20px !important;
+                /* Reduce padding to save space */
+            }
+        }
 
 
 
-/* Override Main Title Size as requested */
-h1.glitch-title {
-    font-size: 3.5rem !important;
-}
+        /* Ensure Bus Routes link stands out similarly in nav */
+        .nav-links a:last-child {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .nav-links a:last-child:hover {
+            background: rgba(0, 229, 255, 0.15);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+            text-shadow: 0 0 8px var(--neon-cyan);
+        }
 
 
 
-/* Enhanced Broadcast Breach Button */
-.breach-btn.prominent-breach {
-    font-size: 1.3rem; /* Increased size */
-    padding: 15px 40px; /* Bigger button area */
-    border-width: 2px;
-    background: rgba(40, 15, 0, 0.85);
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-    width: auto;
-    min-width: 300px; /* Ensure it's substantial */
-}
-
-.breach-btn.prominent-breach:hover {
-    transform: scale(1.05); /* Grow effect */
-    box-shadow: 0 0 25px rgba(255, 85, 0, 0.6);
-}
+        /* Override Main Title Size as requested */
+        h1.glitch-title {
+            font-size: 3.5rem !important;
+        }
 
 
 
-/* Responsive Hide - maybe hide one logo on mobile if too crowded */
-@media (max-width: 768px) {
-    #loader-overlay img:first-child {
-        width: 100px !important; /* Smaller on mobile */
-        margin-bottom: 10px !important;
-    }
-}
+        /* Enhanced Broadcast Breach Button */
+        .breach-btn.prominent-breach {
+            font-size: 1.3rem;
+            /* Increased size */
+            padding: 15px 40px;
+            /* Bigger button area */
+            border-width: 2px;
+            background: rgba(40, 15, 0, 0.85);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            width: auto;
+            min-width: 300px;
+            /* Ensure it's substantial */
+        }
+
+        .breach-btn.prominent-breach:hover {
+            transform: scale(1.05);
+            /* Grow effect */
+            box-shadow: 0 0 25px rgba(255, 85, 0, 0.6);
+        }
 
 
 
-/* Urgency Ticker Hero Specifics */
-.urgency-ticker {
-    margin-top: 5px;  /* Reduced since it's now embedded in flow */
-    margin-bottom: 25px; /* Spacing below to badge */
-    max-width: 600px; /* Width constraint */
-    border-style: solid; /* Make sure it pops */
-    background: rgba(40, 40, 0, 0.9);
-}
+        /* Responsive Hide - maybe hide one logo on mobile if too crowded */
+        @media (max-width: 768px) {
+            #loader-overlay img:first-child {
+                width: 100px !important;
+                /* Smaller on mobile */
+                margin-bottom: 10px !important;
+            }
+        }
 
 
 
-/* Gap Reduction */
-.pill-badge {
-    margin-top: 5px !important;
-    margin-bottom: 5px !important;
-}
-
-.hero-logo {
-    margin-top: 0px !important;
-    margin-bottom: 0px !important;
-}
-
-.conducts-text {
-    margin-bottom: -5px !important;
-}
+        /* Urgency Ticker Hero Specifics */
+        .urgency-ticker {
+            margin-top: 5px;
+            /* Reduced since it's now embedded in flow */
+            margin-bottom: 25px;
+            /* Spacing below to badge */
+            max-width: 600px;
+            /* Width constraint */
+            border-style: solid;
+            /* Make sure it pops */
+            background: rgba(40, 40, 0, 0.9);
+        }
 
 
 
-/* REDUCE LOGO SIZE - OVERRIDE */
-.hero-logo {
-    width: 600px !important;  /* Reduced from 850px */
-}
+        /* Gap Reduction */
+        .pill-badge {
+            margin-top: 5px !important;
+            margin-bottom: 5px !important;
+        }
 
-@media(max-width: 768px) {
-    .hero-logo {
-        max-width: 200px !important; /* Reduced from 300px */
-    }
-}
+        .hero-logo {
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+        }
 
-
-
-/* FINAL ADJUSTMENTS: Logo Size & Spacing */
-.hero-logo-container {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    line-height: 0; /* Remove inline block gap */
-}
-
-.hero-logo {
-    width: 500px !important; /* Further reduced from 600px */
-    margin-top: -10px !important; /* Pull up closer to CONDUCTS */
-}
-
-.conducts-text {
-    margin-bottom: -10px !important; /* Pull down towards logo */
-}
-
-@media(max-width: 768px) {
-    .hero-logo {
-        max-width: 180px !important; /* Further reduced from 200px */
-        margin-top: -5px !important;
-    }
-    
-    .conducts-text {
-        margin-bottom: -5px !important;
-    }
-}
+        .conducts-text {
+            margin-bottom: -5px !important;
+        }
 
 
 
-/* RE-OVERRIDE: Logo Size Adjustment */
-/* Increase Desktop Logo Size */
-.hero-logo {
-    width: 700px !important;  /* Increased from 500px to 700px */
-}
+        /* REDUCE LOGO SIZE - OVERRIDE */
+        .hero-logo {
+            width: 600px !important;
+            /* Reduced from 850px */
+        }
 
-/* Decrease Mobile Title Size but Increase Mobile Logo */
-@media(max-width: 768px) {
-    /* Decrease title size */
-    h1.glitch-title {
-        font-size: 2rem !important; /* Decrease title size */
-    }
-    
-    /* Increase Mobile Logo Size */
-    .hero-logo {
-        max-width: 300px !important; /* Increased from 180px to 300px */
-    }
-}
+        @media(max-width: 768px) {
+            .hero-logo {
+                max-width: 200px !important;
+                /* Reduced from 300px */
+            }
+        }
 
 
 
-/* LOADING SCREEN MOBILE OPTIMIZATION */
-@media(max-width: 768px) {
-    .loader-logo {
-        width: 100% !important;
-        max-width: 95vw !important; /* Make it almost full width on mobile */
-    }
-    
-    .loader-message {
-        font-size: 1.1rem !important; /* Slightly smaller to fit Better */
-        margin-top: 10px !important;
-        padding: 0 15px; /* Add some padding so it doesn't hit edges */
-    }
-}
+        /* FINAL ADJUSTMENTS: Logo Size & Spacing */
+        .hero-logo-container {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            line-height: 0;
+            /* Remove inline block gap */
+        }
+
+        .hero-logo {
+            width: 500px !important;
+            /* Further reduced from 600px */
+            margin-top: -10px !important;
+            /* Pull up closer to CONDUCTS */
+        }
+
+        .conducts-text {
+            margin-bottom: -10px !important;
+            /* Pull down towards logo */
+        }
+
+        @media(max-width: 768px) {
+            .hero-logo {
+                max-width: 180px !important;
+                /* Further reduced from 200px */
+                margin-top: -5px !important;
+            }
+
+            .conducts-text {
+                margin-bottom: -5px !important;
+            }
+        }
 
 
 
-/* Increase Loader Logo for Desktop as well */
-.loader-logo {
-    width: 800px !important; /* Increased from 650px */
-}
+        /* RE-OVERRIDE: Logo Size Adjustment */
+        /* Increase Desktop Logo Size */
+        .hero-logo {
+            width: 700px !important;
+            /* Increased from 500px to 700px */
+        }
 
+        /* Decrease Mobile Title Size but Increase Mobile Logo */
+        @media(max-width: 768px) {
+
+            /* Decrease title size */
+            h1.glitch-title {
+                font-size: 2rem !important;
+                /* Decrease title size */
+            }
+
+            /* Increase Mobile Logo Size */
+            .hero-logo {
+                max-width: 300px !important;
+                /* Increased from 180px to 300px */
+            }
+        }
+
+
+
+        /* LOADING SCREEN MOBILE OPTIMIZATION */
+        @media(max-width: 768px) {
+            .loader-logo {
+                width: 100% !important;
+                max-width: 95vw !important;
+                /* Make it almost full width on mobile */
+            }
+
+            .loader-message {
+                font-size: 1.1rem !important;
+                /* Slightly smaller to fit Better */
+                margin-top: 10px !important;
+                padding: 0 15px;
+                /* Add some padding so it doesn't hit edges */
+            }
+        }
+
+
+
+        /* Increase Loader Logo for Desktop as well */
+        .loader-logo {
+            width: 800px !important;
+            /* Increased from 650px */
+        }
+
+        /* --- ORGANIZING NODES MOBILE ALIGNMENT --- */
+        @media (max-width: 768px) {
+            .node-card {
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+            }
+
+            .node-list {
+                text-align: center !important;
+            }
+
+            .node-item {
+                align-items: center !important;
+                text-align: center !important;
+            }
+
+            .node-avatar-placeholder {
+                padding-top: 0 !important;
+                margin-bottom: 10px;
+            }
+
+            /* --- JOINTLY ORGANIZED PROFESSIONAL REFINEMENT --- */
+            .joint-organizer-section {
+                text-align: center;
+                margin: 80px auto !important;
+                padding: 40px 0;
+                position: relative;
+                background: rgba(0, 20, 0, 0.4);
+                border-top: 1px solid rgba(0, 255, 65, 0.1);
+                border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+                width: 100%;
+            }
+
+            .joint-organizer-section h2 {
+                font-size: 1.8rem !important;
+                margin-bottom: 50px !important;
+                letter-spacing: 4px !important;
+                color: #fff !important;
+                text-shadow: 0 0 10px rgba(0, 255, 65, 0.3) !important;
+            }
+
+            .joint-organizer-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 60px;
+                max-width: 1200px;
+                margin: 0 auto;
+                flex-wrap: wrap;
+                padding: 0 20px;
+            }
+
+            .org-unit {
+                display: flex;
+                align-items: center;
+                gap: 25px;
+                transition: transform 0.3s ease;
+            }
+
+            .org-unit:hover {
+                transform: translateY(-5px);
+            }
+
+            .joint-logo {
+                height: 110px !important;
+                width: 110px !important;
+                object-fit: contain;
+                border-radius: 50%;
+                border: 3px solid var(--neon-green) !important;
+                box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+                background: rgba(0, 0, 0, 0.5);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            /* Specifically for the Association logo which is often square */
+            .joint-logo-square {
+                border-radius: 12px !important;
+            }
+
+            .joint-text {
+                color: var(--neon-green) !important;
+                font-size: 1.6rem !important;
+                font-weight: bold !important;
+                font-family: 'Share Tech Mono', monospace !important;
+                text-shadow: 0 0 10px var(--neon-green);
+                letter-spacing: 2px !important;
+                text-align: left !important;
+                max-width: 350px;
+                line-height: 1.2 !important;
+            }
+
+            .joint-and {
+                color: white !important;
+                font-size: 2.5rem !important;
+                font-weight: bold !important;
+                font-family: 'Share Tech Mono', monospace !important;
+                text-shadow: 0 0 15px white !important;
+                opacity: 0.8;
+                padding: 0 10px;
+            }
+
+            @media (max-width: 992px) {
+                .joint-organizer-container {
+                    gap: 30px;
+                }
+
+                .joint-text {
+                    font-size: 1.3rem !important;
+                    max-width: 250px;
+                }
+
+                .joint-logo {
+                    height: 90px !important;
+                    width: 90px !important;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .joint-organizer-section {
+                    margin: 40px auto !important;
+                    padding: 30px 10px;
+                }
+
+                .joint-organizer-container {
+                    flex-direction: column;
+                    gap: 25px;
+                }
+
+                .org-unit {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 15px;
+                }
+
+                .joint-text {
+                    text-align: center !important;
+                    font-size: 1.1rem !important;
+                    max-width: 100%;
+                }
+
+                .joint-logo {
+                    height: 80px !important;
+                    width: 80px !important;
+                }
+
+                .joint-and {
+                    margin: 5px 0;
+                    font-size: 1.8rem !important;
+                }
+            }
+        }
+
+        /* --- STAFF COORDINATORS MOBILE ALIGNMENT --- */
+        @media (max-width: 768px) {
+            .organizers-section {
+                padding: 30px 15px !important;
+            }
+
+            .organizers-section>div {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 35px !important;
+            }
+
+            .organizer-node {
+                margin-bottom: 20px !important;
+                width: 100% !important;
+                text-align: center !important;
+            }
+
+            .organizer-node img {
+                width: 200px !important;
+                height: 200px !important;
+                margin-bottom: 15px !important;
+            }
+
+            .organizers-section h3 {
+                text-align: center !important;
+            }
+        }

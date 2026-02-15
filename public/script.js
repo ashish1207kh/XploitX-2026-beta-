@@ -165,7 +165,7 @@ function initUrgencyTicker() {
 
     const messages = [
         "⚠️ SYSTEM OVERLOAD: Only 4 slots remaining for Digital Forensics",
-        "⚠️ CRITICAL: CTF Team slots filling up fast (85%)",
+        "⚠️ CRITICAL: Hackathon Team slots filling up fast (85%)",
         "⚡ ALERT: Early Bird Phase 1 ending soon",
         "⚠️ BREACH: 12 new agents joined in the last hour",
         "⚡ STATUS: Workshop capacity critical"
@@ -202,7 +202,7 @@ const regForm = document.getElementById('team-form');
 if (regForm) {
     // Configuration
     const EVENT_CONFIG = {
-        'CTF (24 Hours)': { min: 2, max: 4, fee: 150, perHead: true }, // Day 1
+        '24 HRS HACKATHON': { min: 2, max: 4, fee: 150, perHead: true }, // Day 1
         'Workshop': { min: 1, max: 1, fee: 150, perHead: true }, // Day 1 
         'paper_presentation': { min: 1, max: 4, fee: 150, perHead: false }, // Day 2
         'digital_forensics': { min: 1, max: 4, fee: 50, perHead: true }, // Day 2
@@ -246,7 +246,7 @@ if (regForm) {
             eventSelectInput.value = ''; // Reset hidden input
 
             if (day === 'Day 1') {
-                const opts = ['CTF (24 Hours)', 'Workshop'];
+                const opts = ['24 HRS HACKATHON', 'Workshop'];
                 opts.forEach(opt => {
                     const label = document.createElement('label');
                     label.style.display = 'flex';
@@ -301,7 +301,7 @@ if (regForm) {
             // If in Day 1 mode (radios exist) and CTF is NOT selected, remove bonus options immediately so they aren't gathered incorrectly.
             const day1Radios = document.querySelectorAll('input[name="day1_event_radio"]');
             if (day1Radios.length > 0) {
-                const ctfChecked = document.querySelector('input[name="day1_event_radio"][value="CTF (24 Hours)"]:checked');
+                const ctfChecked = document.querySelector('input[name="day1_event_radio"][value="24 HRS HACKATHON"]:checked');
                 const bonusContainer = document.getElementById('ctf-bonus-container');
                 if (!ctfChecked && bonusContainer) {
                     bonusContainer.remove();
@@ -324,7 +324,7 @@ if (regForm) {
 
             // 4. CTF Bonus Options Logic (Render Day 2 events if CTF selected)
             // We do this BEFORE label updates so they can be targeted
-            const isCTF = selectedEvents.includes('CTF (24 Hours)');
+            const isCTF = selectedEvents.includes('24 HRS HACKATHON');
             if (isCTF) {
                 if (!document.getElementById('ctf-bonus-container')) {
                     const bonusContainer = document.createElement('div');
@@ -361,7 +361,7 @@ if (regForm) {
             }
 
             // Update UI Labels for Day 2 Discount
-            const isFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('CTF (24 Hours)');
+            const isFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('24 HRS HACKATHON');
             ['network_defense', 'digital_forensics'].forEach(evt => {
                 const cbs = document.querySelectorAll(`input[name="day2_event_check"][value="${evt}"]`);
                 cbs.forEach(cb => {
@@ -725,14 +725,14 @@ if (regForm) {
 
                 // Base fees for "Original Price" before Early Bird
                 const BASE_FEES = {
-                    'CTF (24 Hours)': 350,
+                    '24 HRS HACKATHON': 350,
                     'Workshop': 500,
                     'paper_presentation': 300,
                     'digital_forensics': 100,
                     'network_defense': 100
                 };
 
-                const hasFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('CTF (24 Hours)');
+                const hasFreeAccess = selectedEvents.includes('paper_presentation') || selectedEvents.includes('24 HRS HACKATHON');
 
                 selectedEvents.forEach(ev => {
                     const conf = EVENT_CONFIG[ev];
@@ -784,9 +784,9 @@ if (regForm) {
                     let msgHtml = '';
 
                     // DAY 1 EVENTS
-                    if (selectedEvents.includes('CTF (24 Hours)')) {
+                    if (selectedEvents.includes('24 HRS HACKATHON')) {
                         const ctfOfferAmount = 150 * members.length;
-                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
+                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">HACKATHON: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
                     }
                     if (selectedEvents.includes('Workshop')) {
                         msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">WORKSHOP: EARLY BIRD OFFER ₹ 150</span></div>`;
@@ -821,7 +821,7 @@ if (regForm) {
 
                 // Set QR Code based on count
                 if (pQr) {
-                    if (selectedEvents.includes('CTF (24 Hours)')) {
+                    if (selectedEvents.includes('24 HRS HACKATHON')) {
                         if (members.length === 2) pQr.src = 'Early(300).jpeg';
                         else if (members.length === 3) pQr.src = 'Early(450).jpeg';
                         else if (members.length === 4) pQr.src = 'Early(600).jpeg';
@@ -980,7 +980,7 @@ if (regForm) {
 
             if (daySel && events.length > 0) {
                 // Determine Day
-                const day1Events = ['CTF (24 Hours)', 'Workshop'];
+                const day1Events = ['24 HRS HACKATHON', 'Workshop'];
                 const isDay1 = events.some(e => day1Events.includes(e));
 
                 // Set Day and Trigger Change

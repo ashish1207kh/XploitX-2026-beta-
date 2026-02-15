@@ -20,7 +20,8 @@
             max-width: 1400px;
             /* margin: 480px auto 0;  <-- REMOVED INLINE, HANDLED IN CSS */
             margin: 0 auto;
-            margin-top: 480px; /* Default Desktop */
+            margin-top: 480px;
+            /* Default Desktop */
             position: relative;
             z-index: 10;
         }
@@ -251,7 +252,11 @@
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
-                    <span>EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... </span>
+                    <span>EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
+                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
+                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
+                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
+                        ... </span>
                 </a>
             </div>
         </div>
@@ -350,13 +355,22 @@
         <h1>> SYSTEM_ADMINISTRATOR_VIEW</h1>
         <div id="stats">Total Teams: Loading...</div>
 
-        <div style="margin: 20px 0; position: relative; z-index: 50; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div
+            style="margin: 20px 0; position: relative; z-index: 50; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <!-- Left Side: Status Filters -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="filterStatus('PENDING')" style="padding: 10px; background: #FFA500; color: black; border: none; font-weight: bold; cursor: pointer;">[ PENDING ]</button>
-                <button onclick="filterStatus('STANDBY')" style="padding: 10px; background: #00BFFF; color: black; border: none; font-weight: bold; cursor: pointer;">[ STANDBY ]</button>
-                <button onclick="filterStatus('READY')" style="padding: 10px; background: #00FF41; color: black; border: none; font-weight: bold; cursor: pointer;">[ READY TO JOIN ]</button>
-                <button onclick="filterStatus('UNTRACKED')" style="padding: 10px; background: #555; color: white; border: none; font-weight: bold; cursor: pointer;">[ UNTRACKED ]</button>
+                <button onclick="filterStatus('PENDING')"
+                    style="padding: 10px; background: #FFA500; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                    PENDING ]</button>
+                <button onclick="filterStatus('STANDBY')"
+                    style="padding: 10px; background: #00BFFF; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                    STANDBY ]</button>
+                <button onclick="filterStatus('READY')"
+                    style="padding: 10px; background: #00FF41; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                    READY TO JOIN ]</button>
+                <button onclick="filterStatus('UNTRACKED')"
+                    style="padding: 10px; background: #555; color: white; border: none; font-weight: bold; cursor: pointer;">[
+                    UNTRACKED ]</button>
             </div>
 
             <!-- Right Side: Actions -->
@@ -398,10 +412,10 @@
             // 1. If file:// protocol, use localhost:3000
             // 2. If running on localhost or 127.0.0.1 (e.g. Live Server port 5500), use localhost:3000
             // 3. If running on a public tunnel (loca.lt, ngrok), use relative path ''
-            const isLocal = window.location.protocol === 'file:' || 
-                            window.location.hostname === 'localhost' || 
-                            window.location.hostname === '127.0.0.1';
-            
+            const isLocal = window.location.protocol === 'file:' ||
+                window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1';
+
             // If on localhost:3000 (Express served), relative is fine, but absolute localhost:3000 is also fine.
             const API_BASE_URL = isLocal ? 'http://localhost:3000' : '';
             console.log("Admin Panel API_BASE_URL:", API_BASE_URL);
@@ -411,7 +425,7 @@
 
             window.closeCustomAlert = function () {
                 const overlay = document.getElementById('custom-alert-overlay');
-                if(overlay) overlay.style.display = 'none';
+                if (overlay) overlay.style.display = 'none';
                 if (window.currentAlertCallback) {
                     window.currentAlertCallback();
                     window.currentAlertCallback = null;
@@ -439,7 +453,7 @@
                     document.body.appendChild(overlay);
                 }
                 const msgDiv = document.getElementById('custom-alert-msg');
-                if(msgDiv) msgDiv.innerText = message;
+                if (msgDiv) msgDiv.innerText = message;
                 overlay.style.display = 'flex';
             };
 
@@ -450,7 +464,7 @@
 
             window.closeCustomConfirm = function () {
                 const overlay = document.getElementById('custom-confirm-overlay');
-                if(overlay) overlay.style.display = 'none';
+                if (overlay) overlay.style.display = 'none';
                 window.currentConfirmCallback = null;
             };
 
@@ -486,26 +500,26 @@
                 const p = document.getElementById('admin-pass').value.trim();
                 const btn = document.querySelector('.login-btn');
                 const originalText = btn.innerText;
-                
+
                 btn.innerText = "AUTHENTICATING...";
                 btn.disabled = true;
 
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ username: u, password: p })
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: u, password: p })
                     });
-                     
+
                     const text = await res.text();
                     let data;
                     try {
                         data = JSON.parse(text);
-                    } catch(e) {
+                    } catch (e) {
                         console.error("Non-JSON Response:", text);
                         throw new Error(`Server returned non-JSON: ${text.substring(0, 50)}...`);
                     }
-                    
+
                     if (data.success) {
                         document.getElementById('login-overlay').style.display = 'none';
                         showCustomAlert('ACCESS GRANTED: WELCOME ' + data.user);
@@ -513,7 +527,7 @@
                         // Show Log Button ONLY for Administrator
                         if (data.user === 'Administrator') {
                             const logBtn = document.getElementById('activity-log-btn');
-                            if(logBtn) logBtn.style.display = 'inline-block';
+                            if (logBtn) logBtn.style.display = 'inline-block';
                         }
 
                         loadData();
@@ -538,7 +552,7 @@
             function renderTable(data) {
                 const tbody = document.querySelector('#teams-table tbody');
                 tbody.innerHTML = '';
-                
+
                 // Update stats count based on filtered data
                 document.getElementById('stats').innerText = `Showing: ${data.length} / Total: ${window.teamsData.length}`;
 
@@ -547,7 +561,7 @@
 
                     const leader = t.members.find(m => m.role === 'LEADER') || t.members[0];
                     const waLink = leader && leader.whatsapp ? `<a href="https://wa.me/${leader.whatsapp}" target="_blank" class="wa-link">[WA]</a>` : '';
-                    
+
                     let proofHtml = '<span style="color: grey;">Pending</span>';
                     if (t.payment_proof) {
                         const proofUrl = `${API_BASE_URL}${t.payment_proof}`;
@@ -556,7 +570,7 @@
 
                     let membersHtml = '';
                     t.members.forEach((m, idx) => {
-                         membersHtml += `
+                        membersHtml += `
                             <div style="border-bottom:1px dashed #333; margin-bottom:5px; padding-bottom:5px; font-size: 0.85em;">
                                 <strong style="color:#00FF41;">${m.name}</strong> <span style="color:#aaa;">(${m.role})</span><br>
                                 <span style="color:#ddd;">
@@ -571,13 +585,13 @@
                     const verifiedStatus = parseInt(t.payment_verified, 10);
                     let checkBtnHtml = '';
                     if (!isNaN(verifiedStatus) && verifiedStatus === 1) {
-                         checkBtnHtml = `<span style="color:#00FF41; font-weight:bold;">[ VERIFIED ]</span>`;
+                        checkBtnHtml = `<span style="color:#00FF41; font-weight:bold;">[ VERIFIED ]</span>`;
                     } else if (verifiedStatus === -1) {
-                         checkBtnHtml = `<span style="color:#FF0000; font-weight:bold;">[ WRONG DETAILS ]</span><br>
+                        checkBtnHtml = `<span style="color:#FF0000; font-weight:bold;">[ WRONG DETAILS ]</span><br>
                                          <button onclick="performRestore('${t.team_id}')" style="margin-top:5px; background:#00BFFF; color:#000; border:none; padding:3px 8px; font-weight:bold; cursor:pointer; font-size:0.8rem;">[ RESTORE ]</button>`;
                     } else {
-                         // Default to check button if 0, null, or undefined
-                         checkBtnHtml = `<button onclick="openVerifyModal('${t.team_id}')" style="background:#FFA500; color:#000; border:none; padding:5px 10px; font-weight:bold; cursor:pointer;">[ CHECK ]</button>`;
+                        // Default to check button if 0, null, or undefined
+                        checkBtnHtml = `<button onclick="openVerifyModal('${t.team_id}')" style="background:#FFA500; color:#000; border:none; padding:5px 10px; font-weight:bold; cursor:pointer;">[ CHECK ]</button>`;
                     }
 
                     const tr = document.createElement('tr');
@@ -602,10 +616,10 @@
                 });
             }
 
-            window.filterStatus = function(status) {
+            window.filterStatus = function (status) {
                 if (!window.teamsData) return;
                 let filtered = [];
-                
+
                 if (status === 'READY') {
                     // Verified (1)
                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === 1);
@@ -613,13 +627,13 @@
                     // PaidButUnverified: Proof Exists AND Not Verified AND Not Rejected (-1)
                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && parseInt(t.payment_verified, 10) !== -1 && t.payment_proof);
                 } else if (status === 'PENDING') {
-                     // Register + Unpaid: No Proof AND Not Verified (and typically not rejected if we assume rejected implies reviewed)
-                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && !t.payment_proof);
+                    // Register + Unpaid: No Proof AND Not Verified (and typically not rejected if we assume rejected implies reviewed)
+                    filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && !t.payment_proof);
                 } else if (status === 'UNTRACKED') {
-                     // WRONG DETAILS (Rejected / -1)
-                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === -1);
+                    // WRONG DETAILS (Rejected / -1)
+                    filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === -1);
                 }
-                
+
                 renderTable(filtered);
             };
 
@@ -630,7 +644,7 @@
                 } catch (e) { console.error(e); return; }
 
                 // document.getElementById('stats').innerText = `Total Teams: ${window.teamsData.length}`; // Moved to renderTable
-                
+
                 // Initialize Table Header (Done once or in render? Better here to keep render clean for rows)
                 const theadRow = document.querySelector('#teams-table thead tr');
                 theadRow.innerHTML = `
@@ -661,7 +675,7 @@
 
                 document.getElementById('verify-team-id').innerText = team.team_id;
                 document.getElementById('verify-utr').innerText = team.transaction_id || "NOT PROVIDED";
-                
+
                 const imgContainer = document.getElementById('verify-img-container');
                 imgContainer.innerHTML = '';
                 if (proofUrl) {
@@ -682,39 +696,39 @@
             }
 
             function closeVerifyModal() {
-                 document.getElementById('verify-modal').style.display = 'none';
+                document.getElementById('verify-modal').style.display = 'none';
             }
 
             // Log Modal Functions
             async function openLogModal() {
-                 const modal = document.getElementById('log-modal');
-                 const content = document.getElementById('log-content');
-                 content.innerText = "Loading system logs...";
-                 modal.style.display = 'flex';
+                const modal = document.getElementById('log-modal');
+                const content = document.getElementById('log-content');
+                content.innerText = "Loading system logs...";
+                modal.style.display = 'flex';
 
-                 try {
-                     const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
-                     const data = await res.json();
-                     if (data.log) {
-                         content.innerText = data.log;
-                     } else {
-                         content.innerText = "No data received.";
-                     }
-                 } catch (e) {
-                     content.innerText = "Error fetching logs: " + e.message;
-                 }
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
+                    const data = await res.json();
+                    if (data.log) {
+                        content.innerText = data.log;
+                    } else {
+                        content.innerText = "No data received.";
+                    }
+                } catch (e) {
+                    content.innerText = "Error fetching logs: " + e.message;
+                }
             }
 
             function closeLogModal() {
-                 document.getElementById('log-modal').style.display = 'none';
+                document.getElementById('log-modal').style.display = 'none';
             }
 
             function performVerification(teamId) {
                 showCustomConfirm(
-                    "Are you sure you want to VERIFY payment?\nThis will SEND the Access Grant email immediately.", 
+                    "Are you sure you want to VERIFY payment?\nThis will SEND the Access Grant email immediately.",
                     async () => {
                         const btn = document.getElementById('do-verify-btn');
-                        let orig = "[ VERIFY & SEND MAIL ]"; 
+                        let orig = "[ VERIFY & SEND MAIL ]";
                         if (btn) {
                             orig = btn.innerHTML;
                             btn.innerHTML = "[ VERIFYING... ]";
@@ -728,15 +742,15 @@
                                 body: JSON.stringify({ teamId })
                             });
                             const data = await res.json();
-                            
+
                             if (data.success) {
                                 showCustomAlert("PAYMENT VERIFIED & EMAIL SENT!");
                                 closeVerifyModal();
-                                loadData(); 
+                                loadData();
                             } else {
                                 showCustomAlert("ERROR: " + data.error);
                             }
-                        } catch(e) {
+                        } catch (e) {
                             showCustomAlert("Network Error");
                         } finally {
                             if (btn) {
@@ -767,15 +781,15 @@
                             body: JSON.stringify({ teamId })
                         });
                         const data = await res.json();
-                        
+
                         if (data.success) {
                             showCustomAlert("MARKED AS WRONG DETAILS.");
                             closeVerifyModal();
-                            loadData(); 
+                            loadData();
                         } else {
                             showCustomAlert("ERROR: " + data.error);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         showCustomAlert("Network Error");
                     } finally {
                         if (btn) {
@@ -795,14 +809,14 @@
                             body: JSON.stringify({ teamId })
                         });
                         const data = await res.json();
-                        
+
                         if (data.success) {
                             showCustomAlert("TEAM RESTORED TO ACTIVE LIST.");
-                            loadData(); 
+                            loadData();
                         } else {
                             showCustomAlert("ERROR: " + data.error);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         showCustomAlert("Network Error");
                     }
                 }, "YES, RESTORE");
@@ -810,12 +824,12 @@
 
 
             // --- EDIT MODAL LOGIC ---
-            
+
             function checkEmailChange(input) {
                 const parent = input.parentElement;
                 const btn = parent.querySelector('.resend-mail-btn');
                 const cleanVal = input.value.trim();
-                if(cleanVal !== input.dataset.orig && cleanVal.length > 5) {
+                if (cleanVal !== input.dataset.orig && cleanVal.length > 5) {
                     btn.style.display = 'block';
                 } else {
                     btn.style.display = 'none';
@@ -826,16 +840,16 @@
                 const parent = btn.parentElement;
                 const emailInput = parent.querySelector('.edit-m-email');
                 const email = emailInput.value.trim();
-                
+
                 // Navigate to siblings to find Name
                 const gridDiv = parent.parentElement;
                 const nameInput = gridDiv.querySelector('.edit-m-name');
                 const name = nameInput ? nameInput.value.trim() : "Member";
-                
+
                 const teamId = document.getElementById('edit-team-db-id').value;
                 const event = document.getElementById('edit-team-event').value;
-                
-                if(!email) return;
+
+                if (!email) return;
 
                 const originalText = "[ RESEND CONFIRMATION TO NEW EMAIL ]";
                 btn.innerText = "[ SENDING... ]";
@@ -844,33 +858,33 @@
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/admin/resend_confirmation`, {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ teamId, memberName: name, email, event })
                     });
                     const data = await res.json();
-                    
-                    if(data.success) {
-                        if(window.showCustomAlert) showCustomAlert(`EMAIL SENT TO ${email}`);
+
+                    if (data.success) {
+                        if (window.showCustomAlert) showCustomAlert(`EMAIL SENT TO ${email}`);
                         else alert(`EMAIL SENT TO ${email}`);
-                        
+
                         btn.innerText = "[ SENT! ]";
                         // Update original to prevent button showing again unless changed
                         emailInput.dataset.orig = email;
-                        
+
                         setTimeout(() => {
                             btn.style.display = 'none';
                             btn.innerText = originalText;
                             btn.disabled = false;
                         }, 2000);
                     } else {
-                        if(window.showCustomAlert) showCustomAlert("Error: " + data.error);
+                        if (window.showCustomAlert) showCustomAlert("Error: " + data.error);
                         else alert("Error: " + data.error);
                         btn.innerText = "[ RETRY ]";
                         btn.disabled = false;
                     }
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
-                    if(window.showCustomAlert) showCustomAlert("Network Error");
+                    if (window.showCustomAlert) showCustomAlert("Network Error");
                     btn.innerText = "[ ERROR ]";
                     btn.disabled = false;
                 }
@@ -893,7 +907,7 @@
                     div.style.padding = '10px';
                     div.style.border = '1px dashed #333';
                     div.innerHTML = `
-                        <div style="font-weight:bold; color:var(--neon-green); margin-bottom:5px;">MEMBER ${idx+1} (${m.role})</div>
+                        <div style="font-weight:bold; color:var(--neon-green); margin-bottom:5px;">MEMBER ${idx + 1} (${m.role})</div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                             <input type="text" class="edit-m-name" placeholder="Name" value="${m.name || ''}">
                             <input type="text" class="edit-m-age" placeholder="Age" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.age || ''}">
@@ -920,40 +934,40 @@
 
             function deleteTeam(teamId) {
                 showCustomConfirm(`ARE YOU SURE YOU WANT TO DELETE TEAM ${teamId}? THIS ACTION CANNOT BE UNDONE.`, () => {
-                     // Second confirmation - let's keep it simple or use another custom confirm?
-                     // Using standard confirm for the "really really sure" check or just proceed since the custom one is quite red and scary.
-                     // Let's just go ahead with deletion after the red dialog, or if we want double safety:
-                     performDelete(teamId);
+                    // Second confirmation - let's keep it simple or use another custom confirm?
+                    // Using standard confirm for the "really really sure" check or just proceed since the custom one is quite red and scary.
+                    // Let's just go ahead with deletion after the red dialog, or if we want double safety:
+                    performDelete(teamId);
                 });
             }
 
             async function performDelete(teamId) {
-                 try {
+                try {
                     const res = await fetch(`${API_BASE_URL}/api/admin/delete_team`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ teamId })
                     });
                     const data = await res.json();
-                    
+
                     if (data.success) {
-                        if(window.showCustomAlert) showCustomAlert("TEAM DELETED SUCCESSFULLY.", () => loadData());
+                        if (window.showCustomAlert) showCustomAlert("TEAM DELETED SUCCESSFULLY.", () => loadData());
                         else { alert("TEAM DELETED SUCCESSFULLY."); loadData(); }
                     } else {
-                        if(window.showCustomAlert) showCustomAlert("ERROR: " + data.error);
+                        if (window.showCustomAlert) showCustomAlert("ERROR: " + data.error);
                         else alert("ERROR: " + data.error);
                     }
                 } catch (e) {
                     console.error("Delete Network Error:", e);
-                    if(window.showCustomAlert) showCustomAlert("NETWORK ERROR: " + e.message);
+                    if (window.showCustomAlert) showCustomAlert("NETWORK ERROR: " + e.message);
                     else alert("NETWORK ERROR: " + e.message);
                 }
             }
-            
+
             async function saveEditChanges() {
                 const btn = document.getElementById('save-changes-btn');
                 const originalText = btn ? btn.innerText : "[ SAVE CHANGES ]";
-                if(btn) {
+                if (btn) {
                     btn.innerText = "[ SAVING... ]";
                     btn.disabled = true;
                 }
@@ -979,11 +993,11 @@
                             role: div.querySelector('.edit-m-role').value
                         });
                     });
-                } catch(err) {
+                } catch (err) {
                     console.error("Error gathering member data:", err);
-                    if(window.showCustomAlert) showCustomAlert("Client Error: " + err.message);
+                    if (window.showCustomAlert) showCustomAlert("Client Error: " + err.message);
                     else alert("Client Error: " + err.message);
-                    if(btn) { btn.innerText = originalText; btn.disabled = false; }
+                    if (btn) { btn.innerText = originalText; btn.disabled = false; }
                     return;
                 }
 
@@ -997,9 +1011,9 @@
                         body: JSON.stringify(payload)
                     });
                     const data = await res.json();
-                    
+
                     if (data.success) {
-                        if(window.showCustomAlert) {
+                        if (window.showCustomAlert) {
                             showCustomAlert("Success: The details updated successfully", () => {
                                 closeEditModal();
                                 loadData(); // Reload table
@@ -1010,15 +1024,15 @@
                             loadData();
                         }
                     } else {
-                        if(window.showCustomAlert) showCustomAlert("ERROR: " + data.error);
+                        if (window.showCustomAlert) showCustomAlert("ERROR: " + data.error);
                         else alert("ERROR: " + data.error);
                     }
                 } catch (e) {
                     console.error("Save Network Error:", e);
-                    if(window.showCustomAlert) showCustomAlert("NETWORK ERROR: " + e.message);
+                    if (window.showCustomAlert) showCustomAlert("NETWORK ERROR: " + e.message);
                     else alert("NETWORK ERROR: " + e.message);
                 } finally {
-                    if(btn) {
+                    if (btn) {
                         btn.innerText = originalText;
                         btn.disabled = false;
                     }
@@ -1048,72 +1062,102 @@
             }
         </script>
 
-    <!-- VERIFY MODAL -->
-    <div id="verify-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; overflow-y:auto; padding-top: 50px;">
-        <div style="background:#050505; margin:0 auto 50px; padding:30px; width:90%; max-width:600px; border:2px solid #FFA500; box-shadow: 0 0 50px rgba(255,165,0,0.2); text-align:center;">
-            <h2 style="color:#FFA500; border-bottom: 2px solid #FFA500; padding-bottom: 15px; margin-bottom: 20px;">> VERIFY PAYMENT</h2>
-            
-            <div style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
-                TEAM ID: <span id="verify-team-id" style="color: var(--neon-green);"></span>
-            </div>
-            
-             <div style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
-                UTR NUMBER: <span id="verify-utr" style="color: #00BFFF; font-weight: bold; background: #111; padding: 5px 10px;"></span>
-            </div>
+        <!-- VERIFY MODAL -->
+        <div id="verify-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; overflow-y:auto; padding-top: 50px;">
+            <div
+                style="background:#050505; margin:0 auto 50px; padding:30px; width:90%; max-width:600px; border:2px solid #FFA500; box-shadow: 0 0 50px rgba(255,165,0,0.2); text-align:center;">
+                <h2 style="color:#FFA500; border-bottom: 2px solid #FFA500; padding-bottom: 15px; margin-bottom: 20px;">
+                    > VERIFY PAYMENT</h2>
 
-            <div id="verify-img-container" style="margin-bottom: 30px; min-height: 200px; background: #111; display:flex; align-items:center; justify-content:center;">
-                <!-- Image goes here -->
-            </div>
-
-            <div style="display:flex; justify-content:center; gap:20px;">
-                 <button onclick="closeVerifyModal()" style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:15px 30px; cursor:pointer; font-weight:bold;">[ CANCEL ]</button>
-                 <button id="do-reject-btn" style="background:#330000; color:#FF0000; border:1px solid #FF0000; padding:15px 20px; font-weight:bold; cursor:pointer;">[ WRONG DETAILS ]</button>
-                 <button id="do-verify-btn" style="background:#FFA500; color:#000; border:none; padding:15px 30px; font-weight:bold; cursor:pointer; box-shadow: 0 0 20px rgba(255,165,0,0.5);">[ VERIFY PAYMENT ]</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT MODAL -->
-    <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; overflow-y:auto; padding-top: 50px;">
-        <div style="background:#050505; margin:0 auto 50px; padding:30px; width:90%; max-width:800px; border:2px solid var(--neon-green); box-shadow: 0 0 50px rgba(0,255,0,0.2);">
-            <h2 style="color:var(--neon-green); border-bottom: 2px solid var(--dark-green); padding-bottom: 15px; margin-bottom: 20px;">> EDIT TEAM DATA</h2>
-            <input type="hidden" id="edit-team-db-id">
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom: 30px;">
-                <div>
-                    <label style="color:#aaa; display:block; margin-bottom:5px;">Team Name</label>
-                    <input id="edit-team-name" style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
+                <div style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
+                    TEAM ID: <span id="verify-team-id" style="color: var(--neon-green);"></span>
                 </div>
-                <div>
-                    <label style="color:#aaa; display:block; margin-bottom:5px;">Event</label>
-                    <select id="edit-team-event" style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
-                        <option value="CTF (24 Hours)">CTF (24 Hours)</option>
-                        <option value="Workshop">Workshop</option>
-                        <option value="paper_presentation">Paper Presentation</option>
-                        <option value="digital_forensics">Digital Forensics</option>
-                        <option value="network_defense">Network Defense</option>
-                        <option value="CTF (24 Hours),network_defense">CTF (24 Hours) + Network Defense</option>
-                        <option value="CTF (24 Hours),digital_forensics">CTF (24 Hours) + Digital Forensics</option>
-                        <option value="CTF (24 Hours),network_defense,digital_forensics">CTF (24 Hours) + Network Defense + Digital Forensics</option>
-                        <option value="paper_presentation,network_defense,digital_forensics">Paper Presentation + Network Defense + Digital Forensics</option>
-                        <option value="paper_presentation,network_defense">Paper Presentation + Network Defense</option>
-                        <option value="paper_presentation,digital_forensics">Paper Presentation + Digital Forensics</option>
-                        <option value="network_defense,digital_forensics">Network Defense + Digital Forensics</option>
-                    </select>
+
+                <div style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
+                    UTR NUMBER: <span id="verify-utr"
+                        style="color: #00BFFF; font-weight: bold; background: #111; padding: 5px 10px;"></span>
+                </div>
+
+                <div id="verify-img-container"
+                    style="margin-bottom: 30px; min-height: 200px; background: #111; display:flex; align-items:center; justify-content:center;">
+                    <!-- Image goes here -->
+                </div>
+
+                <div style="display:flex; justify-content:center; gap:20px;">
+                    <button onclick="closeVerifyModal()"
+                        style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:15px 30px; cursor:pointer; font-weight:bold;">[
+                        CANCEL ]</button>
+                    <button id="do-reject-btn"
+                        style="background:#330000; color:#FF0000; border:1px solid #FF0000; padding:15px 20px; font-weight:bold; cursor:pointer;">[
+                        WRONG DETAILS ]</button>
+                    <button id="do-verify-btn"
+                        style="background:#FFA500; color:#000; border:none; padding:15px 30px; font-weight:bold; cursor:pointer; box-shadow: 0 0 20px rgba(255,165,0,0.5);">[
+                        VERIFY PAYMENT ]</button>
                 </div>
             </div>
-            
-            <h3 style="color:#fff; margin-bottom:15px; border-bottom: 1px dashed #333; padding-bottom:5px;">> MEMBERS CONF</h3>
-            <div id="edit-members-container" style="max-height: 400px; overflow-y: auto;">
-                <!-- Members injected here -->
-            </div>
-            
-            <div style="margin-top:30px; text-align:right; border-top: 1px solid #333; padding-top: 20px; display:flex; justify-content:flex-end; gap:20px;">
-                 <button onclick="closeEditModal()" style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 20px; cursor:pointer;">[ CANCEL ]</button>
-                 <button id="save-changes-btn" onclick="saveEditChanges()" style="background:var(--neon-green); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">[ SAVE CHANGES ]</button>
+        </div>
+
+        <!-- EDIT MODAL -->
+        <div id="edit-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; overflow-y:auto; padding-top: 50px;">
+            <div
+                style="background:#050505; margin:0 auto 50px; padding:30px; width:90%; max-width:800px; border:2px solid var(--neon-green); box-shadow: 0 0 50px rgba(0,255,0,0.2);">
+                <h2
+                    style="color:var(--neon-green); border-bottom: 2px solid var(--dark-green); padding-bottom: 15px; margin-bottom: 20px;">
+                    > EDIT TEAM DATA</h2>
+                <input type="hidden" id="edit-team-db-id">
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom: 30px;">
+                    <div>
+                        <label style="color:#aaa; display:block; margin-bottom:5px;">Team Name</label>
+                        <input id="edit-team-name"
+                            style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
+                    </div>
+                    <div>
+                        <label style="color:#aaa; display:block; margin-bottom:5px;">Event</label>
+                        <select id="edit-team-event"
+                            style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff;">
+                            <option value="24 HRS HACKATHON">24 HRS HACKATHON</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="paper_presentation">Paper Presentation</option>
+                            <option value="digital_forensics">Digital Forensics</option>
+                            <option value="network_defense">Network Defense</option>
+                            <option value="24 HRS HACKATHON,network_defense">24 HRS HACKATHON + Network Defense</option>
+                            <option value="24 HRS HACKATHON,digital_forensics">24 HRS HACKATHON + Digital Forensics
+                            </option>
+                            <option value="24 HRS HACKATHON,network_defense,digital_forensics">24 HRS HACKATHON +
+                                Network
+                                Defense + Digital Forensics</option>
+                            <option value="paper_presentation,network_defense,digital_forensics">Paper Presentation +
+                                Network Defense + Digital Forensics</option>
+                            <option value="paper_presentation,network_defense">Paper Presentation + Network Defense
+                            </option>
+                            <option value="paper_presentation,digital_forensics">Paper Presentation + Digital Forensics
+                            </option>
+                            <option value="network_defense,digital_forensics">Network Defense + Digital Forensics
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3 style="color:#fff; margin-bottom:15px; border-bottom: 1px dashed #333; padding-bottom:5px;">>
+                    MEMBERS CONF</h3>
+                <div id="edit-members-container" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Members injected here -->
+                </div>
+
+                <div
+                    style="margin-top:30px; text-align:right; border-top: 1px solid #333; padding-top: 20px; display:flex; justify-content:flex-end; gap:20px;">
+                    <button onclick="closeEditModal()"
+                        style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 20px; cursor:pointer;">[
+                        CANCEL ]</button>
+                    <button id="save-changes-btn" onclick="saveEditChanges()"
+                        style="background:var(--neon-green); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">[
+                        SAVE CHANGES ]</button>
+                </div>
             </div>
         </div>
-    </div>
 
         <!-- Organizing Nodes Section (Coordinators) -->
         <footer class="organizing-nodes-section">
@@ -1150,70 +1194,87 @@
                                 <a href="tel:+919150985783">+91 9150985783</a>
                             </li>
                             <li class="node-item">
-                            <strong>R Divya Dharshini</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+917092729115">+91 7092729115</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>J Raghul</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+916382394558">+91 6382394558</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>M Jesin Milesh</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+917418431480">+91 7418431480</a>
-                        </li>
+                                <strong>R Divya Dharshini</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
+                                <a href="tel:+917092729115">+91 7092729115</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>J Raghul</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
+                                <a href="tel:+916382394558">+91 6382394558</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>M Jesin Milesh</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
+                                <a href="tel:+917418431480">+91 7418431480</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>K Johnknox</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
+                                <a href="tel:+919182597274">+91 91825 97274</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
 
-            <!-- Card 2: Staff Coordinators -->
-            <div class="node-card">
-                <div class="node-avatar-placeholder">
-                    <i class="fas fa-id-card-alt"></i>
-                </div>
-                <div class="node-content-wrapper">
-                    <div class="node-category">STAFF COORDS</div>
-                    <span class="node-role-label">Cyber Security Department</span>
+                <!-- Card 2: Staff Coordinators -->
+                <div class="node-card">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-id-card-alt"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">STAFF COORDS</div>
+                        <span class="node-role-label">Cyber Security Department</span>
 
-                    <ul class="node-list">
-                        <li class="node-item">
-                            <strong>Dr. M D Boomija</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">HOD</span>
-                            <a href="tel:+917358028970">+91 7358028970</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. Anithalakshmi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
-                            <a href="tel:+919840268454">+91 9840268454</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. G Ramya</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
-                            <a href="tel:+919150567478">+91 9150567478</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. S Devi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
-                            <a href="tel:+919940592672">+91 9940592672</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. S Rama Mathrasi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
-                            <a href="tel:+918778136639">+91 8778136639</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. Aswini</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant Professor</span>
-                            <a href="tel:+919042315995">+91 9042315995</a>
-                        </li>
-                    </ul>
+                        <ul class="node-list">
+                            <li class="node-item">
+                                <strong>Dr. M D Boomija</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">HOD</span>
+                                <a href="tel:+917358028970">+91 7358028970</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Anithalakshmi</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
+                                    Professor</span>
+                                <a href="tel:+919840268454">+91 9840268454</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. G Ramya</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
+                                    Professor</span>
+                                <a href="tel:+919150567478">+91 9150567478</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Devi</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
+                                    Professor</span>
+                                <a href="tel:+919940592672">+91 9940592672</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Rama Mathrasi</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
+                                    Professor</span>
+                                <a href="tel:+918778136639">+91 8778136639</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Aswini</strong>
+                                <span
+                                    style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
+                                    Professor</span>
+                                <a href="tel:+919042315995">+91 9042315995</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
                 <!-- Card 3: Registration Coordinators -->
                 <div class="node-card">
                     <div class="node-avatar-placeholder">
@@ -1250,7 +1311,8 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2 class="login-title">ADMIN ACCESS</h2>
-            <input type="text" id="admin-user" class="login-input" placeholder="Enter Username" onkeypress="handleLoginKey(event)">
+            <input type="text" id="admin-user" class="login-input" placeholder="Enter Username"
+                onkeypress="handleLoginKey(event)">
             <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password"
                 onkeypress="handleLoginKey(event)">
             <button onclick="checkAdmin()" class="login-btn">UNLOCK</button>
@@ -1258,13 +1320,19 @@
     </div>
 
     <!-- Log Modal -->
-    <div id="log-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 20000; align-items: center; justify-content: center;">
-        <div style="background: #050505; border: 2px solid #00e5ff; padding: 20px; width: 80%; max-width: 800px; height: 80%; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+    <div id="log-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 20000; align-items: center; justify-content: center;">
+        <div
+            style="background: #050505; border: 2px solid #00e5ff; padding: 20px; width: 80%; max-width: 800px; height: 80%; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
                 <h2 style="color: #00e5ff; margin: 0;">> SERVER_ACTIVITY_LOG</h2>
-                <button onclick="closeLogModal()" style="background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 5px 15px; cursor: pointer; font-family: monospace;">[ CLOSE ]</button>
+                <button onclick="closeLogModal()"
+                    style="background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 5px 15px; cursor: pointer; font-family: monospace;">[
+                    CLOSE ]</button>
             </div>
-            <pre id="log-content" style="flex: 1; overflow-y: auto; color: #ccc; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: #000; padding: 15px; border: 1px solid #333; white-space: pre-wrap;"></pre>
+            <pre id="log-content"
+                style="flex: 1; overflow-y: auto; color: #ccc; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: #000; padding: 15px; border: 1px solid #333; white-space: pre-wrap;"></pre>
         </div>
     </div>
     <script src="script.js"></script>
