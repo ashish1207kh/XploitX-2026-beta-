@@ -2860,140 +2860,161 @@
                 padding-top: 0 !important;
                 margin-bottom: 10px;
             }
+        }
 
-            /* --- JOINTLY ORGANIZED PROFESSIONAL REFINEMENT --- */
-            .joint-organizer-section {
-                text-align: center;
-                margin: 80px auto !important;
-                padding: 40px 0;
-                position: relative;
-                background: rgba(0, 20, 0, 0.4);
-                border-top: 1px solid rgba(0, 255, 65, 0.1);
-                border-bottom: 1px solid rgba(0, 255, 65, 0.1);
-                width: 100%;
-            }
+        /* --- JOINTLY ORGANIZED PROFESSIONAL REFINEMENT (Desktop First) --- */
+        .joint-organizer-section {
+            text-align: center;
+            margin: 80px auto;
+            padding: 60px 0;
+            position: relative;
+            background: rgba(0, 20, 0, 0.4);
+            border-top: 1px solid rgba(0, 255, 65, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+            width: 100%;
+        }
 
-            .joint-organizer-section h2 {
-                font-size: 1.8rem !important;
-                margin-bottom: 50px !important;
-                letter-spacing: 4px !important;
-                color: #fff !important;
-                text-shadow: 0 0 10px rgba(0, 255, 65, 0.3) !important;
-            }
+        .joint-organizer-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 50px;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+            text-transform: uppercase;
+        }
 
+        .joint-organizer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            flex-wrap: nowrap;
+            /* Prevent wrapping on desktop if possible */
+        }
+
+        .org-unit {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: transform 0.3s ease;
+            flex: 1;
+            /* Allow equal expansion */
+            justify-content: center;
+        }
+
+        .org-unit:hover {
+            transform: translateY(-5px);
+        }
+
+        .joint-logo {
+            height: 120px;
+            width: 120px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 3px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .joint-logo-square {
+            border-radius: 12px;
+        }
+
+        .joint-text {
+            color: var(--neon-green);
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-green);
+            letter-spacing: 2px;
+            text-align: left;
+            max-width: 350px;
+            line-height: 1.2;
+        }
+
+        .joint-and {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 15px white;
+            opacity: 0.8;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
             .joint-organizer-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 60px;
-                max-width: 1200px;
-                margin: 0 auto;
                 flex-wrap: wrap;
-                padding: 0 20px;
+                gap: 40px;
             }
 
             .org-unit {
-                display: flex;
-                align-items: center;
-                gap: 25px;
-                transition: transform 0.3s ease;
-            }
-
-            .org-unit:hover {
-                transform: translateY(-5px);
-            }
-
-            .joint-logo {
-                height: 110px !important;
-                width: 110px !important;
-                object-fit: contain;
-                border-radius: 50%;
-                border: 3px solid var(--neon-green) !important;
-                box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
-                background: rgba(0, 0, 0, 0.5);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            /* Specifically for the Association logo which is often square */
-            .joint-logo-square {
-                border-radius: 12px !important;
-            }
-
-            .joint-text {
-                color: var(--neon-green) !important;
-                font-size: 1.6rem !important;
-                font-weight: bold !important;
-                font-family: 'Share Tech Mono', monospace !important;
-                text-shadow: 0 0 10px var(--neon-green);
-                letter-spacing: 2px !important;
-                text-align: left !important;
-                max-width: 350px;
-                line-height: 1.2 !important;
-            }
-
-            .joint-and {
-                color: white !important;
-                font-size: 2.5rem !important;
-                font-weight: bold !important;
-                font-family: 'Share Tech Mono', monospace !important;
-                text-shadow: 0 0 15px white !important;
-                opacity: 0.8;
-                padding: 0 10px;
-            }
-
-            @media (max-width: 992px) {
-                .joint-organizer-container {
-                    gap: 30px;
-                }
-
-                .joint-text {
-                    font-size: 1.3rem !important;
-                    max-width: 250px;
-                }
-
-                .joint-logo {
-                    height: 90px !important;
-                    width: 90px !important;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .joint-organizer-section {
-                    margin: 40px auto !important;
-                    padding: 30px 10px;
-                }
-
-                .joint-organizer-container {
-                    flex-direction: column;
-                    gap: 25px;
-                }
-
-                .org-unit {
-                    flex-direction: column;
-                    text-align: center;
-                    gap: 15px;
-                }
-
-                .joint-text {
-                    text-align: center !important;
-                    font-size: 1.1rem !important;
-                    max-width: 100%;
-                }
-
-                .joint-logo {
-                    height: 80px !important;
-                    width: 80px !important;
-                }
-
-                .joint-and {
-                    margin: 5px 0;
-                    font-size: 1.8rem !important;
-                }
+                flex: none;
             }
         }
 
-        /* --- STAFF COORDINATORS MOBILE ALIGNMENT --- */
+        @media (max-width: 1100px) {
+            .joint-text {
+                font-size: 1.3rem;
+                max-width: 250px;
+            }
+
+            .joint-logo {
+                height: 100px;
+                width: 100px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .joint-organizer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .org-unit {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .joint-text {
+                text-align: center;
+                max-width: 100%;
+            }
+
+            .joint-and {
+                padding: 10px 0;
+            }
+        }
+
         @media (max-width: 768px) {
+            .joint-organizer-section {
+                margin: 40px auto;
+                padding: 40px 10px;
+            }
+
+            .joint-organizer-section h2 {
+                font-size: 1.8rem;
+                margin-bottom: 40px;
+            }
+
+            .joint-logo {
+                height: 90px;
+                width: 90px;
+            }
+
+            .joint-text {
+                font-size: 1.1rem;
+            }
+
+            .joint-and {
+                font-size: 1.8rem;
+            }
+
+            /* --- STAFF COORDINATORS MOBILE ALIGNMENT --- */
             .organizers-section {
                 padding: 30px 15px !important;
             }
