@@ -2972,8 +2972,8 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            width: 180px;
-            /* Standardize card width */
+            width: 200px;
+            /* Increased to accommodate larger logos */
             transition: all 0.3s ease;
         }
 
@@ -2982,14 +2982,15 @@
         }
 
         .partner-logo {
-            height: 150px;
-            width: 150px;
+            height: 175px;
+            width: 175px;
             object-fit: contain;
             border-radius: 12px;
             border: 2px solid var(--neon-green);
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
             background: rgba(255, 255, 255, 0.95);
-            padding: 10px;
+            padding: 5px;
+            /* Reduced padding to make logo fit better */
             transition: all 0.3s ease;
         }
 
@@ -3006,6 +3007,7 @@
         .partner-card:hover .partner-logo {
             box-shadow: 0 0 30px rgba(0, 255, 65, 0.5);
             border-color: #fff;
+            transform: scale(1.15);
         }
 
         .partner-name {
@@ -3081,12 +3083,12 @@
             }
 
             .partner-logo {
-                height: 130px;
-                width: 130px;
+                height: 150px;
+                width: 150px;
             }
 
             .partner-card {
-                width: 150px;
+                width: 170px;
             }
 
             .partner-name {
@@ -3110,12 +3112,12 @@
             }
 
             .partner-card {
-                width: 140px;
+                width: 150px;
             }
 
             .partner-logo {
-                height: 120px;
-                width: 120px;
+                height: 130px;
+                width: 130px;
             }
         }
 

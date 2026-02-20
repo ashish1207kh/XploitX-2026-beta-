@@ -5,7 +5,7 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+const matrixChars = '01';
 const fontSize = 14;
 const columns = canvas.width / fontSize;
 const drops = [];
@@ -107,9 +107,9 @@ async function fetchRegistrationCount() {
 
         if (data.count !== undefined) {
             const realCount = data.count;
-            // Hype logic: User requested 40/60 base. 
-            // We use max(realCount, 40) so it never drops below 40 but still increments if authentic signups happen.
-            const displayCount = Math.max(realCount, 40);
+            // Hype logic: User requested 44/60 base. 
+            // We use max(realCount, 44) so it never drops below 44 but still increments if authentic signups happen.
+            const displayCount = Math.max(realCount, 44);
             const end = displayCount;
             const duration = 2000;
             const startTime = performance.now();
@@ -138,7 +138,7 @@ async function fetchRegistrationCount() {
     } catch (error) {
         console.error('Error fetching registration count:', error);
         countElements.forEach(el => {
-            el.innerText = '40'; // Fallback hype number
+            el.innerText = '44'; // Fallback hype number
         });
     }
 }
