@@ -3171,4 +3171,11 @@
             .organizers-section h3 {
                 text-align: center !important;
             }
+
+            #loader-overlay img {
+                width: 650px !important;
+                max-width: none !important;
+                transform: scale(2.5) !important;
+                margin-bottom: 20px !important;
+            }
         }

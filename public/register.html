@@ -24,7 +24,37 @@
         .hover-zoom-in:hover {
             transform: scale(1.1);
         }
+        
+        @media (max-width: 768px) {
+            .register-section {
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+            .register-section > div:first-child {
+                min-width: 100% !important;
+                flex: none !important;
+            }
+            .registration-right {
+                min-width: 100% !important;
+                margin-top: 30px !important;
+                flex: none !important;
+            }
+            .sponsor-cta {
+                margin: 40px auto !important;
+                padding: 25px !important;
+                transform: none !important;
+                max-width: 90% !important;
+            }
+            .pill-badge {
+                margin-top: 120px !important;
+            }
+            .sponsor-sidebar .hover-zoom-in img {
+                max-width: 100% !important;
+                max-height: 100% !important;
+            }
+        }
     </style>
+    <link rel="icon" type="image/png" href="logo_favicon.png">
 </head>
 
 <body>
