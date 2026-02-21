@@ -373,6 +373,11 @@
                     UNTRACKED ]</button>
             </div>
 
+            <!-- Center Side: Search Filter -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="admin-search-input" placeholder="Team ID, Team Name ..." style="padding: 10px; width: 250px; background: rgba(0,20,0,0.8); border: 1px solid #00FF41; color: #eee; font-family: 'Share Tech Mono', monospace;" oninput="performSearch()">
+            </div>
+
             <!-- Right Side: Actions -->
             <div style="display: flex; gap: 10px; align-items: center;">
                 <button onclick="downloadCSV()"
@@ -634,6 +639,30 @@
                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === -1);
                 }
 
+                renderTable(filtered);
+            };
+
+            window.performSearch = function() {
+                if (!window.teamsData) return;
+                const query = document.getElementById('admin-search-input').value.toLowerCase().trim();
+                
+                // Clear active status filters visually if we want
+                // But simple enough is just to filter the whole dataset 
+                if (!query) {
+                    renderTable(window.teamsData);
+                    return;
+                }
+                
+                const filtered = window.teamsData.filter(t => {
+                    if (t.team_id && t.team_id.toLowerCase().includes(query)) return true;
+                    if (t.name && t.name.toLowerCase().includes(query)) return true;
+                    if (t.members) {
+                        for (let m of t.members) {
+                            if (m.name && m.name.toLowerCase().includes(query)) return true;
+                        }
+                    }
+                    return false;
+                });
                 renderTable(filtered);
             };
 

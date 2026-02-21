@@ -15,6 +15,15 @@
         #dynamic-event-options label::before {
             content: none !important;
         }
+        
+        .hover-zoom-in {
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .hover-zoom-in:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
@@ -102,23 +111,26 @@
 
     <section class="hero">
         <div class="matrix-overlay"></div>
-        <div class="pill-badge">
+        <div class="pill-badge" style="margin-top: 250px;">
             INITIALIZE CONNECTION • XploitX-2026
         </div>
 
         <h1 class="glitch-title">JOIN THE RESISTANCE</h1>
 
-        <p style="text-align: justify; max-width: 800px; margin: 0 auto 20px auto;">
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 20px auto;">
             Ready to unplug from the ordinary? Register now and become part of the digital revolution.
         </p>
     </section>
 
-    <div class="container">
-        <section class="register-section">
-            <h2 class="section-header">REGISTRATION TERMINAL</h2>
-            <p class="sub-header">Enter your credentials to access the simulation</p>
+    <div class="container" style="display: flex; justify-content: flex-start; margin-left: 0; max-width: 100%;">
+        <section class="register-section" style="text-align: left; width: 100%; padding-left: 0; display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start;">
+            <div style="flex: 2; min-width: 600px;">
+                <div style="max-width: 1000px; text-align: center;">
+                <h2 class="section-header" style="margin-bottom: 20px; text-align: center;">REGISTRATION TERMINAL</h2>
+                <p class="sub-header" style="margin-bottom: 40px; display: block; text-align: center;">Enter your credentials to access the simulation</p>
+            </div>
 
-            <div class="terminal-window" style="max-width: 1000px;">
+            <div class="terminal-window" style="max-width: 1000px; margin: 0; display: inline-block; width: 100%;">
                 <div class="terminal-bar">
                     <div class="dots">
                         <div class="dot red"></div>
@@ -239,9 +251,9 @@
 
             <!-- Payment Section (Inline) -->
             <div id="payment-modal"
-                style="display: none; width: 100%; margin-top: 40px; z-index: 10; justify-content: center; align-items: center; padding-bottom: 20px;">
+                style="display: none; width: 100%; margin-top: 40px; z-index: 10; justify-content: flex-start; align-items: flex-start; padding-bottom: 20px;">
                 <div
-                    style="background: rgba(0,0,0,0.8); border: 2px solid var(--neon-green); padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0,255,65,0.15); text-align: center;">
+                    style="background: rgba(0,0,0,0.8); border: 2px solid var(--neon-green); padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; margin-left: 0; box-shadow: 0 0 30px rgba(0,255,65,0.15); text-align: center;">
                     <h2 style="color: var(--neon-green); margin-bottom: 20px;">>_ PAYMENT GATEWAY</h2>
 
                     <!-- QR Code Section -->
@@ -275,112 +287,64 @@
                 </div>
             </div>
 
-            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--dark-green);">
+            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--dark-green); text-align: left;">
                 By registering, you accept the red pill and agree to our terms of the simulation.
             </p>
+            </div>
+            
+            <div class="registration-right" style="flex: 1; min-width: 300px; margin-top: 130px;">
+                <div class="sponsor-sidebar" style="padding: 20px; background: rgba(0,20,0,0.5); border: 1px solid var(--neon-green); border-radius: 10px;">
+                    <h3 style="color: var(--neon-yellow); text-align: center; margin-bottom: 20px;">> OUR SPONSORS</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px;">
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="Knowafest.png" alt="Knowafest" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="Devnovate.jpg" alt="Devnovate" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="Townscript.png" alt="Townscript" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="K7 Security.jpeg" alt="K7 Security" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
 
-
+                    <h3 style="color: var(--neon-green); text-align: center; margin-bottom: 20px;">> OUR MOU PARTNERS</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="cyber sanskar.jpg" alt="Cyber Sanskar" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="cyber heals.jpg" alt="Cyber Heals" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="Junisys.png" alt="Junisys" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="hover-zoom-in" style="background: white; padding: 15px; border-radius: 15px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);">
+                            <img src="Rocheston.png" alt="Rocheston" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 
-    <!-- Jointly Organized By Section -->
-    <section class="joint-organizer-section">
-        <h2 class="section-header">JOINTLY ORGANIZED BY</h2>
-
-        <div class="joint-organizer-container">
-            <!-- Ethical Hacking -->
-            <div class="org-unit">
-                <img src="Ethical Hacking Logo.jpeg" alt="Ethical Hacking" class="joint-logo">
-                <span class="joint-text">ETHICAL HACKING CLUB</span>
-            </div>
-
-            <!-- AND -->
-            <div class="joint-and">AND</div>
-
-            <!-- Hackshield -->
-            <div class="org-unit">
-                <img src="Hackshield.jpeg" alt="Hackshield" class="joint-logo joint-logo-square">
-                <span class="joint-text">HACKSHIELD (STUDENT ASSOCIATION)</span>
-            </div>
+    <div class="container">
+        <!-- SPONSOR CTA -->
+        <div class="sponsor-cta" style="text-align: center; margin: 60px auto 60px 48%; padding: 40px; background: rgba(0, 20, 0, 0.5); border: 1px solid var(--neon-green); border-radius: 10px; max-width: 800px; transform: translateX(-50%);">
+            <h3 class="text-yellow" style="color: var(--neon-yellow); margin-bottom: 15px; font-size: 1.5rem;">> BECOME A SPONSOR</h3>
+            <p style="margin-bottom: 30px; color: #eee; text-align: justify; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                24 hrs capture the flag (CTF) — it is to amplify your impact. Download our sponsorship brochure to
+                explore the various tiers and benefits available for your organization.
+            </p>
+            <a href="sponsors.pdf" target="_blank" class="cta-btn" style="font-size: 1.1rem; padding: 15px 30px;"><i
+                    class="fas fa-file-pdf"></i> [ VIEW SPONSOR BROCHURE ]</a>
         </div>
-    </section>
-
-
-
-    <section class="partners-section info-section hidden-el">
-        <div class="container">
-            <h2 class="section-header">[ PARTNERS IN CRIME ]</h2>
-
-            <!-- MEDIA PARTNERS -->
-            <div class="partner-group">
-                <h3 class="partner-title">MEDIA PARTNER</h3>
-                <div class="partner-container">
-                    <a href="https://knowafest.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Knowafest.png" alt="Knowafest" class="partner-logo">
-                        </div>
-                    </a>
-
-                    <a href="https://devnovate.co/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Devnovate.jpg" alt="Devnovate" class="partner-logo">
-                        </div>
-                    </a>
-
-                    <a href="https://townscript.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Townscript.png" alt="Townscript" class="partner-logo">
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MoU PARTNERS -->
-            <div class="partner-group">
-                <h3 class="partner-title">OUR MoU PARTNERS</h3>
-                <div class="partner-container">
-                    <a href="https://cybersanskar.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="cyber sanskar.jpg" alt="Cyber Sanskar" class="partner-logo">
-                        </div>
-                    </a>
-
-                    <a href="https://cyberheals.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="cyber heals.jpg" alt="Cyber Heals" class="partner-logo zoom-logo">
-                        </div>
-                    </a>
-
-                    <a href="https://junisys.net/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Junisys.png" alt="Junisys" class="partner-logo">
-                        </div>
-                    </a>
-
-                    <a href="https://rocheston.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Rocheston.png" alt="Rocheston" class="partner-logo">
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <!-- SPONSOR CTA -->
-            <div class="sponsor-cta">
-                <h3 class="text-yellow" style="margin-bottom: 15px;">BECOME A SPONSOR</h3>
-                <p style="margin-bottom: 20px; color: #eee; text-align: justify;">
-                    24 hrs capture the flag (CTF) — it is to amplify your impact. Download our sponsorship
-                    brochure to
-                    explore the various
-                    tiers and benefits available for your organization.
-                </p>
-                <a href="sponsors.pdf" target="_blank" class="cta-btn" style="font-size: 1rem;"><i
-                        class="fas fa-file-pdf"></i> [ VIEW SPONSOR BROCHURE ]</a>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <!-- Organizing Nodes Section (Coordinators) -->
-
 
     <footer class="organizing-nodes-section">
         <h2 class="nodes-header">>_ ORGANIZING NODES</h2>
