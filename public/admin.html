@@ -613,6 +613,7 @@
                     <td>${t.team_id}</td>
                     <td>${t.name}</td>
                     <td>${t.event}</td>
+                    <td>${t.day || 'N/A'}</td>
                     <td>${t.transaction_id || 'PENDING'}</td>
                     <td>${proofHtml}</td>
                     <td>
@@ -689,6 +690,7 @@
                     <th>ID</th>
                     <th>Team Name</th>
                     <th>Event</th>
+                    <th>Day</th>
                     <th>UTR / Trans ID</th>
                     <th>Payment Proof</th>
                     <th>Leader Details</th>
@@ -1078,21 +1080,65 @@
             }
 
             function downloadCSV() {
-                if (!window.teamsData) return;
-                let csv = 'Team ID,Team Name,Event,Leader Name,Leader Phone,Leader WhatsApp,Member Count,Verified\n';
+                if (!window.teamsData || window.teamsData.length === 0) return;
 
+                // 1. Determine the maximum number of members to create enough columns
+                let maxMembers = 0;
                 window.teamsData.forEach(t => {
-                    const leader = t.members.find(m => m.role === 'LEADER') || t.members[0];
-                    // Using "=""Value""" syntax to force Excel to treat numbers as text and avoid scientific notation
-                    csv += `${t.team_id},"${t.name}","${t.event}","${leader ? leader.name : ''}","=""${leader ? leader.phone : ''}""","=""${leader ? leader.whatsapp : ''}""",${t.members.length},${t.payment_verified ? 'Yes' : 'No'}\n`;
+                    if (t.members.length > maxMembers) maxMembers = t.members.length;
+                });
+
+                // 2. Build Header
+                let csv = 'Team ID,Team Name,Event,Day,UTR / Trans ID,Verified,Created At,Payment Proof URL';
+                for (let i = 1; i <= maxMembers; i++) {
+                    csv += `,M${i} Name,M${i} Role,M${i} Age,M${i} Email,M${i} Phone,M${i} WhatsApp,M${i} College,M${i} District`;
+                }
+                csv += '\n';
+
+                // 3. Build Rows
+                window.teamsData.forEach(t => {
+                    // Team Level Data
+                    const teamId = t.team_id || '';
+                    const teamName = (t.name || '').replace(/"/g, '""');
+                    const event = (t.event || '').replace(/"/g, '""');
+                    const day = (t.day || '').replace(/"/g, '""');
+                    const transId = (t.transaction_id || '').replace(/"/g, '""');
+                    const verified = parseInt(t.payment_verified) === 1 ? 'Yes' : (parseInt(t.payment_verified) === -1 ? 'Wrong' : 'No');
+                    const createdAt = t.created_at || '';
+                    const proofUrl = t.payment_proof ? `${API_BASE_URL}${t.payment_proof}` : 'None';
+
+                    let row = `${teamId},"${teamName}","${event}","${day}","${transId}",${verified},"${createdAt}","${proofUrl}"`;
+
+                    // Member Level Data
+                    for (let i = 0; i < maxMembers; i++) {
+                        const m = t.members[i];
+                        if (m) {
+                            const name = (m.name || '').replace(/"/g, '""');
+                            const role = (m.role || '').replace(/"/g, '""');
+                            const age = m.age || '';
+                            const email = (m.email || '').replace(/"/g, '""');
+                            const phone = m.phone || '';
+                            const whatsapp = m.whatsapp || '';
+                            const college = (m.college || '').replace(/"/g, '""');
+                            const district = (m.district || '').replace(/"/g, '""');
+
+                            // Using "=""Value""" for phone numbers to prevent scientific notation in Excel
+                            row += `,"${name}","${role}",${age},"${email}","=""${phone}""","=""${whatsapp}""","${college}","${district}"`;
+                        } else {
+                            // Empty columns for teams with fewer members
+                            row += ',,,,,,,,';
+                        }
+                    }
+                    csv += row + '\n';
                 });
 
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = '24_hrs_ctf_teams.csv';
+                a.download = 'XploitX_2026_Full_Data.csv';
                 a.click();
+                window.URL.revokeObjectURL(url);
             }
 
             function printPDF() {
