@@ -1498,6 +1498,11 @@
                 right: 10px;
             }
 
+            .social-floating-badge {
+                bottom: 110px;
+                right: 10px;
+            }
+
             .register-badge a {
                 padding: 8px 16px;
                 font-size: 0.9rem;
@@ -1691,6 +1696,17 @@
             animation: bounce 2s infinite;
             text-align: center;
             /* Center content */
+        }
+
+        /* SOCIAL FLOATING BADGE */
+        .social-floating-badge {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            z-index: 9999;
+            animation: bounce 2s infinite;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .early-bird-msg {
