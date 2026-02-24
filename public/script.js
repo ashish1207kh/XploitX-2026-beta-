@@ -708,6 +708,7 @@ if (regForm) {
                     teamName,
                     email: members[0].email,
                     event,
+                    day: document.getElementById('day-select').value,
                     transactionId: "PENDING",
                     members
                 };

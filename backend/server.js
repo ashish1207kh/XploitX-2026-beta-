@@ -76,6 +76,7 @@ async function initDb() {
     // We catch errors if column exists.
     try { await db.run(`ALTER TABLE teams ADD COLUMN payment_proof TEXT`); } catch (e) { }
     try { await db.run(`ALTER TABLE teams ADD COLUMN payment_verified INTEGER DEFAULT 0`); } catch (e) { }
+    try { await db.run(`ALTER TABLE teams ADD COLUMN day TEXT`); } catch (e) { }
 
     await db.run(`CREATE TABLE IF NOT EXISTS members (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -284,8 +285,8 @@ app.post('/api/auth/register', async (req, res) => {
 
     try {
         const result = await db.run(
-            `INSERT INTO teams (team_id, name, email, event, transaction_id) VALUES (?, ?, ?, ?, ?)`,
-            [tempId, teamName, email, event, transactionId]
+            `INSERT INTO teams (team_id, name, email, event, day, transaction_id) VALUES (?, ?, ?, ?, ?, ?)`,
+            [tempId, teamName, email, event, req.body.day || "N/A", transactionId]
         );
         const teamDbId = result.lastID;
         const teamIdStr = `Xctf26te${String(teamDbId).padStart(4, '0')}`;
@@ -500,8 +501,8 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
         const filePath = '/uploads/' + file.filename;
 
         const result = await db.run(
-            `INSERT INTO teams (team_id, name, email, event, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, 0)`,
-            [tempId, teamName, email, event, utrNumber || "NOT_PROVIDED", filePath]
+            `INSERT INTO teams (team_id, name, email, event, day, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
+            [tempId, teamName, email, event, req.body.day || "N/A", utrNumber || "NOT_PROVIDED", filePath]
         );
 
         const teamDbId = result.lastID;
