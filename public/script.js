@@ -726,8 +726,8 @@ if (regForm) {
 
                 // Base fees for "Original Price" before Early Bird
                 const BASE_FEES = {
-                    '24 HRS CAPTURE THE FLAG (CTF)': 350,
-                    'Workshop': 500,
+                    '24 HRS CAPTURE THE FLAG (CTF)': 250,
+                    'Workshop': 300,
                     'paper_presentation': 300,
                     'digital_forensics': 100,
                     'network_defense': 100
@@ -747,7 +747,13 @@ if (regForm) {
                             originalFee = 0; // Exclude from original amount sum if free
                         }
 
-                        if (conf.perHead) {
+                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
+                        let isPrathyushaCtf = (ev === '24 HRS CAPTURE THE FLAG (CTF)' && leaderCollege === 'prathyusha engineering college');
+
+                        if (isPrathyushaCtf) {
+                            totalAmount += 250;
+                            originalTotalAmount += originalFee * members.length;
+                        } else if (conf.perHead) {
                             totalAmount += fee * members.length;
                             originalTotalAmount += originalFee * members.length;
                         } else {
@@ -786,8 +792,13 @@ if (regForm) {
 
                     // DAY 1 EVENTS
                     if (selectedEvents.includes('24 HRS CAPTURE THE FLAG (CTF)')) {
-                        const ctfOfferAmount = 150 * members.length;
-                        msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
+                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
+                        if (leaderCollege === 'prathyusha engineering college') {
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EXCLUSIVE OFFER ₹ 250 PER TEAM</span></div>`;
+                        } else {
+                            const ctfOfferAmount = 150 * members.length;
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
+                        }
                     }
                     if (selectedEvents.includes('Workshop')) {
                         msgHtml += `<div style="margin-bottom: 5px;"><span style="color: #00e5ff; font-weight: bold; background: rgba(0, 229, 255, 0.1); padding: 4px 10px; border: 1px solid #00e5ff; border-radius: 4px; font-size: 0.9rem;">WORKSHOP: EARLY BIRD OFFER ₹ 150</span></div>`;
@@ -823,10 +834,19 @@ if (regForm) {
                 // Set QR Code based on count
                 if (pQr) {
                     if (selectedEvents.includes('24 HRS CAPTURE THE FLAG (CTF)')) {
-                        if (members.length === 2) pQr.src = 'Early(300).jpeg';
-                        else if (members.length === 3) pQr.src = 'Early(450).jpeg';
-                        else if (members.length === 4) pQr.src = 'Early(600).jpeg';
-                        else pQr.src = 'Early(300).jpeg'; // Fallback
+                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
+                        if (leaderCollege === 'prathyusha engineering college') {
+                            if (members.length === 2 || members.length === 3 || members.length === 4) {
+                                pQr.src = 'Internalclg(250).jpeg';
+                            } else {
+                                pQr.src = 'Internalclg(250).jpeg'; // Fallback
+                            }
+                        } else {
+                            if (members.length === 2) pQr.src = 'Early(300).jpeg';
+                            else if (members.length === 3) pQr.src = 'Early(450).jpeg';
+                            else if (members.length === 4) pQr.src = 'Early(600).jpeg';
+                            else pQr.src = 'Early(300).jpeg'; // Fallback
+                        }
                     } else if (selectedEvents.includes('paper_presentation')) {
                         pQr.src = '150.jpeg';
                     } else if (selectedEvents.includes('Workshop')) {

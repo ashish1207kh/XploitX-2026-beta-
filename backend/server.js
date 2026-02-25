@@ -232,15 +232,31 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     verificationOtps[email] = otp;
 
     const subject = "Email Verification";
+    const socialMediaFooterHtml = `
+        <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px;">
+            <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">STAY CONNECTED FOR MORE UPDATES</p>
+            <a href="https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
+            </a>
+            <a href="https://www.facebook.com/share/18KcJjNcgs/" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" width="30" height="30" style="vertical-align: middle;">
+            </a>
+            <a href="https://maps.app.goo.gl/t6r6C566cyz4hsvs7" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Google_Maps_icon_%282020%29.svg/512px-Google_Maps_icon_%282020%29.svg.png" alt="Location" width="30" height="30" style="vertical-align: middle;">
+            </a>
+        </div>
+    `;
+
     const html = `<div style="font-family: Arial, sans-serif; color: #333;">
         <h2>Email Verification</h2>
         <p>Hi There,</p>
         <p>Use the code below to verify your email address for XploitX 2k26 registration:</p>
         <h1 style="color: #00FF41;">${otp}</h1>
         <p>If you didn't request this, ignore this email.</p>
+        ${socialMediaFooterHtml}
     </div>`;
 
-    const text = `Email Verification\n\nHi There,\n\nUse the code below to verify your email address for XploitX 2k26 registration:\n\n${otp}\n\nIf you didn't request this, ignore this email.`;
+    const text = `Email Verification\n\nHi There,\n\nUse the code below to verify your email address for XploitX 2k26 registration:\n\n${otp}\n\nIf you didn't request this, ignore this email.\n\nSTAY CONNECTED FOR MORE UPDATES\nInstagram: https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp\nFacebook: https://www.facebook.com/share/18KcJjNcgs/\nLocation: https://maps.app.goo.gl/t6r6C566cyz4hsvs7`;
 
     if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
         const sent = await sendEmail(email, subject, text, html);
@@ -364,7 +380,20 @@ async function sendRegistrationEmails(members, teamIdStr, event) {
 <p>Best regards,</p>
 <p><b>The XploitX 2k26 Organizing Committee</b><br>
 Department of Cyber Security<br>
-Prathyusha Engineering College</p>`;
+Prathyusha Engineering College</p>
+
+<div style="margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px;">
+    <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">STAY CONNECTED FOR MORE UPDATES</p>
+    <a href="https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp" target="_blank" style="text-decoration: none; margin: 0 10px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
+    </a>
+    <a href="https://www.facebook.com/share/18KcJjNcgs/" target="_blank" style="text-decoration: none; margin: 0 10px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" width="30" height="30" style="vertical-align: middle;">
+    </a>
+    <a href="https://maps.app.goo.gl/t6r6C566cyz4hsvs7" target="_blank" style="text-decoration: none; margin: 0 10px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Google_Maps_icon_%282020%29.svg/512px-Google_Maps_icon_%282020%29.svg.png" alt="Location" width="30" height="30" style="vertical-align: middle;">
+    </a>
+</div>`;
 
         // Derive simple text version to avoid duplication in code and content
         // This ensures the user receives one cohesive message format if their client supports it,
@@ -626,6 +655,19 @@ app.post('/api/admin/verify_payment', async (req, res) => {
                     
                     <p>Regards,<br>
                     <b>XploitX Team</b></p>
+                    
+                    <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px;">
+                        <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">STAY CONNECTED FOR MORE UPDATES</p>
+                        <a href="https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
+                        </a>
+                        <a href="https://www.facebook.com/share/18KcJjNcgs/" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" width="30" height="30" style="vertical-align: middle;">
+                        </a>
+                        <a href="https://maps.app.goo.gl/t6r6C566cyz4hsvs7" target="_blank" style="text-decoration: none; margin: 0 10px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Google_Maps_icon_%282020%29.svg/512px-Google_Maps_icon_%282020%29.svg.png" alt="Location" width="30" height="30" style="vertical-align: middle;">
+                        </a>
+                    </div>
                 </div>
             `;
 
