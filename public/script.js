@@ -751,7 +751,7 @@ if (regForm) {
                         let isPrathyushaCtf = (ev === '24 HRS CAPTURE THE FLAG (CTF)' && leaderCollege === 'prathyusha engineering college');
 
                         if (isPrathyushaCtf) {
-                            totalAmount += 250;
+                            totalAmount += 300;
                             originalTotalAmount += originalFee * members.length;
                         } else if (conf.perHead) {
                             totalAmount += fee * members.length;
@@ -794,7 +794,7 @@ if (regForm) {
                     if (selectedEvents.includes('24 HRS CAPTURE THE FLAG (CTF)')) {
                         let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
                         if (leaderCollege === 'prathyusha engineering college') {
-                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EXCLUSIVE OFFER ₹ 250 PER TEAM</span></div>`;
+                            msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EXCLUSIVE OFFER ₹ 300 PER TEAM</span></div>`;
                         } else {
                             const ctfOfferAmount = 150 * members.length;
                             msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EARLY BIRD OFFER ₹ ${ctfOfferAmount}</span></div>`;
