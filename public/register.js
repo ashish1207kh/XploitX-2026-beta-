@@ -60,7 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.disabled = false;
                     emailInput.readOnly = true; // Lock email
                 } else {
-                    showCustomAlert("Error: " + data.error);
+                    if (data.error && (
+                        data.error.toLowerCase().includes("address not found") ||
+                        data.error.includes("550 5.1.1") ||
+                        data.error.toLowerCase().includes("does not exist")
+                    )) {
+                        showCustomAlert("Wrong Mail ID Kindly check it and verfiy it");
+                    } else {
+                        showCustomAlert("Error: " + data.error);
+                    }
                     btn.innerText = "[ VERIFY ]";
                     btn.disabled = false;
                 }

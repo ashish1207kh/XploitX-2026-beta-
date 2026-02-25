@@ -140,10 +140,10 @@ async function sendEmail(to, subject, text, html = null) {
             html: html
         });
         console.log("Message sent: %s", info.messageId);
-        return true;
+        return { success: true };
     } catch (error) {
         console.error("Error sending email:", error);
-        return false;
+        return { success: false, error: error.message };
     }
 }
 
@@ -259,8 +259,15 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     const text = `Email Verification\n\nHi There,\n\nUse the code below to verify your email address for XploitX 2k26 registration:\n\n${otp}\n\nIf you didn't request this, ignore this email.\n\nSTAY CONNECTED FOR MORE UPDATES\nInstagram: https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp\nFacebook: https://www.facebook.com/share/18KcJjNcgs/\nLocation: https://maps.app.goo.gl/t6r6C566cyz4hsvs7`;
 
     if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
-        const sent = await sendEmail(email, subject, text, html);
-        if (!sent) return res.status(500).json({ error: "Failed to send email." });
+        const result = await sendEmail(email, subject, text, html);
+        if (!result.success) {
+            let errorMsg = result.error || "Failed to send email.";
+            // Normalize error message if it is Address not found
+            if (errorMsg.toLowerCase().includes('address not found') || errorMsg.toLowerCase().includes('enotfound') || errorMsg.toLowerCase().includes('rejected') || errorMsg.toLowerCase().includes('does not exist') || errorMsg.toLowerCase().includes('user unknown') || errorMsg.includes('550 5.1.1')) {
+                errorMsg = "Address not found";
+            }
+            return res.status(500).json({ error: errorMsg });
+        }
     } else {
         console.log(`[MOCK EMAIL] OTP: ${otp}`);
     }

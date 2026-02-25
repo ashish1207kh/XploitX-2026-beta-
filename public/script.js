@@ -940,7 +940,15 @@ if (regForm) {
                                     window.location.href = 'index.html';
                                 });
                             } else {
-                                showCustomAlert("Registration Failed: " + (d.error || "Unknown"));
+                                if (d.error && (
+                                    d.error.toLowerCase().includes("address not found") ||
+                                    d.error.includes("550 5.1.1") ||
+                                    d.error.toLowerCase().includes("does not exist")
+                                )) {
+                                    showCustomAlert("Wrong Mail ID Kindly check it and verfiy it");
+                                } else {
+                                    showCustomAlert("Registration Failed: " + (d.error || "Unknown"));
+                                }
                                 // Reset UI to allow correction
                                 pModal.style.display = 'none';
                                 const proceedBtn = document.querySelector('#team-form button[type="submit"]');
