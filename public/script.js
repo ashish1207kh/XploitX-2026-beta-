@@ -837,9 +837,9 @@ if (regForm) {
                         let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
                         if (leaderCollege === 'prathyusha engineering college') {
                             if (members.length === 2 || members.length === 3 || members.length === 4) {
-                                pQr.src = 'Internalclg(250).jpeg';
+                                pQr.src = '300.jpeg';
                             } else {
-                                pQr.src = 'Internalclg(250).jpeg'; // Fallback
+                                pQr.src = '300.jpeg'; // Fallback
                             }
                         } else {
                             if (members.length === 2) pQr.src = 'Early(300).jpeg';
