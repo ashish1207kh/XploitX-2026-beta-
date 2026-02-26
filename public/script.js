@@ -508,31 +508,16 @@ if (regForm) {
 
                 membersContainer.appendChild(clone);
 
-                // --- NEW: Sync Logic for New Member ---
-                // Make Member College/District ReadOnly and sync with Leader
-                const mName = `member${newIndex}`;
-                // Select by name attribute
-                // Note: The clone is already appended, we can search within clone
                 const colInput = clone.querySelector(`input[name$="_college"]`);
                 const distInput = clone.querySelector(`input[name$="_district"]`);
 
-                // Get leader values
-                const lColVal = document.querySelector('input[name="member1_college"]').value;
-                const lDistVal = document.querySelector('input[name="member1_district"]').value;
-
                 if (colInput) {
-                    colInput.readOnly = true;
-                    colInput.value = lColVal;
-                    colInput.style.backgroundColor = "rgba(0,0,0,0.3)";
-                    colInput.style.color = "#aaa";
-                    colInput.style.border = "1px dashed #333";
+                    colInput.readOnly = false;
+                    colInput.value = ''; // Ensure blank for new member
                 }
                 if (distInput) {
-                    distInput.readOnly = true;
-                    distInput.value = lDistVal;
-                    distInput.style.backgroundColor = "rgba(0,0,0,0.3)";
-                    distInput.style.color = "#aaa";
-                    distInput.style.border = "1px dashed #333";
+                    distInput.readOnly = false;
+                    distInput.value = ''; // Ensure blank for new member
                 }
             });
         }
@@ -551,17 +536,17 @@ if (regForm) {
             // Update College
             allCollege.forEach((inp, idx) => {
                 if (inp === leaderCollege) return; // Skip leader
-                inp.value = lColVal;
-                inp.readOnly = true; // Ensure they stay readOnly
-                inp.style.backgroundColor = "rgba(0,0,0,0.3)";
+                // inp.value = lColVal;
+                // inp.readOnly = true; // Ensure they stay readOnly
+                // inp.style.backgroundColor = "rgba(0,0,0,0.3)";
             });
 
             // Update District
             allDistrict.forEach((inp, idx) => {
                 if (inp === leaderDistrict) return; // Skip leader
-                inp.value = lDistVal;
-                inp.readOnly = true;
-                inp.style.backgroundColor = "rgba(0,0,0,0.3)";
+                // inp.value = lDistVal;
+                // inp.readOnly = true;
+                // inp.style.backgroundColor = "rgba(0,0,0,0.3)";
             });
         }
 
@@ -747,8 +732,8 @@ if (regForm) {
                             originalFee = 0; // Exclude from original amount sum if free
                         }
 
-                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
-                        let isPrathyushaCtf = (ev === '24 HRS CAPTURE THE FLAG (CTF)' && leaderCollege === 'prathyusha engineering college');
+                        let allPrathyusha = members.every(m => m.college && (m.college.trim().toLowerCase().includes('prathyusha') || m.college.trim().toLowerCase().includes('prathyuhsa')));
+                        let isPrathyushaCtf = (ev === '24 HRS CAPTURE THE FLAG (CTF)' && allPrathyusha);
 
                         if (isPrathyushaCtf) {
                             totalAmount += 300;
@@ -792,8 +777,8 @@ if (regForm) {
 
                     // DAY 1 EVENTS
                     if (selectedEvents.includes('24 HRS CAPTURE THE FLAG (CTF)')) {
-                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
-                        if (leaderCollege === 'prathyusha engineering college') {
+                        let allPrathyusha = members.every(m => m.college && (m.college.trim().toLowerCase().includes('prathyusha') || m.college.trim().toLowerCase().includes('prathyuhsa')));
+                        if (allPrathyusha) {
                             msgHtml += `<div style="margin-bottom: 5px;"><span style="color: var(--neon-green); font-weight: bold; background: rgba(0, 255, 65, 0.1); padding: 4px 10px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.9rem;">CTF: EXCLUSIVE OFFER ₹ 300 PER TEAM</span></div>`;
                         } else {
                             const ctfOfferAmount = 150 * members.length;
@@ -834,8 +819,8 @@ if (regForm) {
                 // Set QR Code based on count
                 if (pQr) {
                     if (selectedEvents.includes('24 HRS CAPTURE THE FLAG (CTF)')) {
-                        let leaderCollege = members[0].college ? members[0].college.trim().toLowerCase() : "";
-                        if (leaderCollege === 'prathyusha engineering college') {
+                        let allPrathyusha = members.every(m => m.college && (m.college.trim().toLowerCase().includes('prathyusha') || m.college.trim().toLowerCase().includes('prathyuhsa')));
+                        if (allPrathyusha) {
                             if (members.length === 2 || members.length === 3 || members.length === 4) {
                                 pQr.src = '300.jpeg';
                             } else {
