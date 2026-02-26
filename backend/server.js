@@ -348,12 +348,18 @@ async function sendRegistrationEmails(members, teamIdStr, event) {
         const isLeader = (i === 0);
 
         // Determine event details based on event type
-        let isMainHackathon = false;
-        if (event && (event.toLowerCase().includes("main") || event.toLowerCase().includes("24"))) {
-            isMainHackathon = true;
+        let dateStr = "March 14th, 2026"; // Default
+        if (event) {
+            const evLower = event.toLowerCase();
+            if (evLower.includes("main") || evLower.includes("hackathon") || evLower.includes("24")) {
+                dateStr = "March 13th & 14th, 2026";
+            } else if (evLower.includes("workshop")) {
+                dateStr = "March 13th, 2026";
+            } else if (evLower.includes("paper") || evLower.includes("network") || evLower.includes("defense") || evLower.includes("digital") || evLower.includes("forensics")) {
+                dateStr = "March 14th, 2026";
+            }
         }
 
-        const dateStr = isMainHackathon ? "March 13th & 14th, 2026" : "March 14th, 2026";
         const timeStr = "8:30 AM";
 
         // Single Source of Content (HTML)
