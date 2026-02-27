@@ -937,7 +937,7 @@ app.get('/api/attendance/all', async (req, res) => {
                 m.entry_time 
             FROM members m 
             JOIN teams t ON m.team_db_id = t.id 
-            ORDER BY m.entry_time DESC, t.team_id ASC
+            ORDER BY t.team_id ASC
         `);
         res.json(rows);
     } catch (e) { res.status(500).json({ error: e.message }); }
