@@ -970,6 +970,32 @@
                 document.getElementById('edit-modal').style.display = 'none';
             }
 
+            function addNewMember() {
+                const membersContainer = document.getElementById('edit-members-container');
+                const idx = membersContainer.children.length;
+                const div = document.createElement('div');
+                div.style.marginBottom = '15px';
+                div.style.padding = '10px';
+                div.style.border = '1px dashed #333';
+                div.innerHTML = `
+                    <div style="font-weight:bold; color:var(--neon-green); margin-bottom:5px;">MEMBER ${idx + 1} (MEMBER) <span style="float:right; color:#ff0000; cursor:pointer; font-size:0.8rem;" onclick="this.parentElement.parentElement.remove()">[ REMOVE ]</span></div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                        <input type="text" class="edit-m-name" placeholder="Name" value="">
+                        <input type="text" class="edit-m-age" placeholder="Age" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
+                        <div style="position:relative;">
+                            <input type="email" class="edit-m-email" placeholder="Email" maxlength="30" value="" data-orig="" oninput="checkEmailChange(this)">
+                            <button class="resend-mail-btn" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:10px; background:#003300; color:#0f0; border:2px solid #0f0; padding:10px; font-size:0.9rem; font-weight:bold; cursor:pointer; font-family:'Share Tech Mono'; box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);">[ RESEND CONFIRMATION TO NEW EMAIL ]</button>
+                        </div>
+                        <input type="text" class="edit-m-phone" placeholder="Phone" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
+                        <input type="text" class="edit-m-whatsapp" placeholder="WhatsApp" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
+                        <input type="text" class="edit-m-college" placeholder="College" value="">
+                        <input type="text" class="edit-m-district" placeholder="District" maxlength="40" value="">
+                        <input type="hidden" class="edit-m-role" value="MEMBER">
+                    </div>
+                `;
+                membersContainer.appendChild(div);
+            }
+
             function deleteTeam(teamId) {
                 showCustomConfirm(`ARE YOU SURE YOU WANT TO DELETE TEAM ${teamId}? THIS ACTION CANNOT BE UNDONE.`, () => {
                     // Second confirmation - let's keep it simple or use another custom confirm?
@@ -1237,6 +1263,9 @@
                     <button onclick="closeEditModal()"
                         style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 20px; cursor:pointer;">[
                         CANCEL ]</button>
+                    <button type="button" onclick="addNewMember()"
+                        style="background:transparent; color:#00BFFF; border:1px solid #00BFFF; padding:10px 20px; cursor:pointer; font-weight:bold;">[
+                        ADD MEMBER ]</button>
                     <button id="save-changes-btn" onclick="saveEditChanges()"
                         style="background:var(--neon-green); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">[
                         SAVE CHANGES ]</button>
