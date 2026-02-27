@@ -972,6 +972,22 @@
 
             function addNewMember() {
                 const membersContainer = document.getElementById('edit-members-container');
+                const eventSelect = document.getElementById('edit-team-event').value;
+                
+                let maxLimit = 4;
+                if (eventSelect === 'Workshop' || eventSelect.includes('Workshop')) {
+                    maxLimit = 1;
+                }
+                
+                if (membersContainer.children.length >= maxLimit) {
+                    if (window.showCustomAlert) {
+                        showCustomAlert("LIMIT REACHED: Maximum " + maxLimit + " member(s) allowed for this event.");
+                    } else {
+                        alert("LIMIT REACHED: Maximum " + maxLimit + " member(s) allowed for this event.");
+                    }
+                    return;
+                }
+                
                 const idx = membersContainer.children.length;
                 const div = document.createElement('div');
                 div.style.marginBottom = '15px';
