@@ -166,6 +166,7 @@ app.post('/api/admin/login', (req, res) => {
         "Ramya G": "RamyaG@xploitx",
         "Nirmal Raj": "Nirmal@xploitx",
         "Ashish": "Ashish@xploitx",
+        "Diya": "Diya@xploitx",
         "Administrator": process.env.ADMIN_PASSWORD // Keeping original admin as master backup
     };
 
