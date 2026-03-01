@@ -393,6 +393,9 @@
                 <button onclick="printPDF()"
                     style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer;">[
                     PRINT / SAVE PDF ]</button>
+                <button id="ashish-details-btn" onclick="downloadAshishCSV()"
+                    style="display:none; padding: 10px; background: #00BFFF; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                    DETAILS ]</button>
                 <button id="activity-log-btn" onclick="openLogModal()"
                     style="display:none; padding: 10px; background: #00e5ff; color: black; border: none; font-weight: bold; cursor: pointer;">[
                     ACTIVITY LOG ]</button>
@@ -542,6 +545,12 @@
                         if (data.user === 'Administrator') {
                             const logBtn = document.getElementById('activity-log-btn');
                             if (logBtn) logBtn.style.display = 'inline-block';
+                        }
+
+                        // Show Details button ONLY for Ashish
+                        if (data.user === 'Ashish' || data.user === 'Administrator') {
+                            const ashishBtn = document.getElementById('ashish-details-btn');
+                            if (ashishBtn) ashishBtn.style.display = 'inline-block';
                         }
 
                         loadData();
@@ -1177,6 +1186,43 @@
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'XploitX_2026_Full_Data.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+
+            function downloadAshishCSV() {
+                if (!window.teamsData || window.teamsData.length === 0) return;
+
+                // 1. Determine the maximum number of members to create enough rows
+                let maxMembers = 0;
+                window.teamsData.forEach(t => {
+                    if (t.members.length > maxMembers) maxMembers = t.members.length;
+                });
+
+                const rows = [];
+                
+                // 2. Build Rows (Topics vertically, teams horizontally)
+                rows.push(['Team id', ...window.teamsData.map(t => t.team_id || '')]);
+                rows.push(['Team name', ...window.teamsData.map(t => (t.name || '').replace(/"/g, '""'))]);
+                rows.push(['Event Name', ...window.teamsData.map(t => (t.event || '').replace(/"/g, '""'))]);
+
+                for (let i = 0; i < maxMembers; i++) {
+                    const mNum = i + 1;
+                    rows.push([`Member ${mNum} name`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].name || '').replace(/"/g, '""') : '')]);
+                    rows.push([`Member ${mNum} Email id`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].email || '').replace(/"/g, '""') : '')]);
+                    rows.push([`Member ${mNum} Mobile number`, ...window.teamsData.map(t => t.members[i] && t.members[i].phone ? `=""${t.members[i].phone}""` : '')]);
+                    rows.push([`Member ${mNum} whatsapp number`, ...window.teamsData.map(t => t.members[i] && t.members[i].whatsapp ? `=""${t.members[i].whatsapp}""` : '')]);
+                    rows.push([`Member ${mNum} college name`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].college || '').replace(/"/g, '""') : '')]);
+                }
+
+                // 3. Convert to CSV string format
+                let csv = rows.map(r => r.map(cell => `"${cell}"`).join(',')).join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'XploitX_2026_Details.csv';
                 a.click();
                 window.URL.revokeObjectURL(url);
             }
