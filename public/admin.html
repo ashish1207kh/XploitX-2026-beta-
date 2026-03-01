@@ -259,11 +259,12 @@
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
-                    <span>EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
-                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
-                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
-                        ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON ... EARLY BIRD OFFERS ENDS SOON
-                        ... </span>
+                    <span>Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March
+                        ... Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March
+                        ... Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March
+                        ... Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March
+                        ... Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March
+                        ... Registration Closes on 8th March ... Registration Closes on 8th March ... Registration Closes on 8th March </span>
                 </a>
             </div>
         </div>
@@ -1193,30 +1194,75 @@
             function downloadAshishCSV() {
                 if (!window.teamsData || window.teamsData.length === 0) return;
 
-                // 1. Determine the maximum number of members to create enough rows
-                let maxMembers = 0;
-                window.teamsData.forEach(t => {
-                    if (t.members.length > maxMembers) maxMembers = t.members.length;
-                });
-
                 const rows = [];
                 
-                // 2. Build Rows (Topics vertically, teams horizontally)
-                rows.push(['Team id', ...window.teamsData.map(t => t.team_id || '')]);
-                rows.push(['Team name', ...window.teamsData.map(t => (t.name || '').replace(/"/g, '""'))]);
-                rows.push(['Event Name', ...window.teamsData.map(t => (t.event || '').replace(/"/g, '""'))]);
+                // 1. Build Header
+                rows.push([
+                    'Team ID', 
+                    'Team Name', 
+                    'Event Name', 
+                    'Member Name', 
+                    'Role', 
+                    'Email ID', 
+                    'Mobile Number', 
+                    'WhatsApp Number', 
+                    'College Name'
+                ]);
 
-                for (let i = 0; i < maxMembers; i++) {
-                    const mNum = i + 1;
-                    rows.push([`Member ${mNum} name`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].name || '').replace(/"/g, '""') : '')]);
-                    rows.push([`Member ${mNum} Email id`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].email || '').replace(/"/g, '""') : '')]);
-                    rows.push([`Member ${mNum} Mobile number`, ...window.teamsData.map(t => t.members[i] && t.members[i].phone ? `=""${t.members[i].phone}""` : '')]);
-                    rows.push([`Member ${mNum} whatsapp number`, ...window.teamsData.map(t => t.members[i] && t.members[i].whatsapp ? `=""${t.members[i].whatsapp}""` : '')]);
-                    rows.push([`Member ${mNum} college name`, ...window.teamsData.map(t => t.members[i] ? (t.members[i].college || '').replace(/"/g, '""') : '')]);
-                }
+                // 2. Build Rows (Each member gets a row; team details on first row only)
+                window.teamsData.forEach(t => {
+                    const teamId = t.team_id || '';
+                    const teamName = t.name || '';
+                    const event = t.event || '';
+
+                    if (!t.members || t.members.length === 0) {
+                        rows.push([teamId, teamName, event, '', '', '', '', '', '']);
+                        return;
+                    }
+
+                    t.members.forEach((m, index) => {
+                        const mName = m.name || '';
+                        const mRole = m.role || (index === 0 ? 'LEADER' : 'MEMBER');
+                        const mEmail = m.email || '';
+                        const mPhone = m.phone ? `=""${m.phone}""` : '';
+                        const mWhatsapp = m.whatsapp ? `=""${m.whatsapp}""` : '';
+                        const mCollege = m.college || '';
+
+                        if (index === 0) {
+                            rows.push([
+                                teamId,
+                                teamName,
+                                event,
+                                mName,
+                                mRole,
+                                mEmail,
+                                mPhone,
+                                mWhatsapp,
+                                mCollege
+                            ]);
+                        } else {
+                            rows.push([
+                                '-',
+                                '-',
+                                '-',
+                                mName,
+                                mRole,
+                                mEmail,
+                                mPhone,
+                                mWhatsapp,
+                                mCollege
+                            ]);
+                        }
+                    });
+                });
 
                 // 3. Convert to CSV string format
-                let csv = rows.map(r => r.map(cell => `"${cell}"`).join(',')).join('\n');
+                const csv = rows.map(r => r.map(cell => {
+                    if (typeof cell === 'string' && !cell.startsWith('="')) {
+                        return `"${cell.replace(/"/g, '""')}"`;
+                    }
+                    return cell.startsWith('="') ? cell : `"${cell}"`;
+                }).join(',')).join('\n');
 
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
