@@ -27,30 +27,38 @@
         
         @media (max-width: 768px) {
             .register-section {
-                flex-direction: column !important;
-                gap: 20px !important;
+                display: block !important;
             }
             .register-section > div:first-child {
-                min-width: 100% !important;
-                flex: none !important;
+                width: 100% !important;
+                display: block !important;
+                margin-bottom: 40px !important;
             }
             .registration-right {
-                min-width: 100% !important;
-                margin-top: 30px !important;
-                flex: none !important;
+                width: 100% !important;
+                margin-top: 40px !important;
+                display: block !important;
             }
             .sponsor-cta {
-                margin: 40px auto !important;
+                margin: 60px auto 40px auto !important;
                 padding: 25px !important;
                 transform: none !important;
-                max-width: 90% !important;
+                width: 90% !important;
+                display: block !important;
+                clear: both !important;
+                position: relative !important;
+            }
+            .partner-container {
+                display: grid !important;
+                gap: 15px !important;
+            }
+            .partner-card img {
+                width: 100% !important;
+                height: auto !important;
+                aspect-ratio: 1/1 !important;
             }
             .pill-badge {
                 margin-top: 120px !important;
-            }
-            .sponsor-sidebar .hover-zoom-in img {
-                max-width: 100% !important;
-                max-height: 100% !important;
             }
         }
     </style>
@@ -354,9 +362,9 @@
                             </div>
                         </a>
 
-                        <a href="https://www.gameistry.in/" target="_blank" class="partner-link">
-                            <div class="partner-card">
-                                <img src="Gameistry.png" alt="Gameistry" class="partner-logo" style="background-color: black;">
+                        <a href="https://www.gameistry.in/" target="_blank" class="partner-link" style="width: 100%;">
+                            <div class="partner-card" style="width: 100%;">
+                                <img src="Gameistry.png" alt="Gameistry" class="partner-logo" style="background-color: black; width: 100%; height: auto; aspect-ratio: 1/1;">
                             </div>
                         </a>
                     </div>
