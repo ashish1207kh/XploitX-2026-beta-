@@ -90,7 +90,6 @@
         }
 
         @media print {
-
             button,
             #login-overlay,
             nav,
@@ -98,23 +97,87 @@
                 display: none !important;
             }
 
+            @page {
+                size: landscape;
+                margin: 5mm;
+            }
+
             body {
                 background: white;
                 color: black;
+                font-size: 7pt; /* Much smaller font to fit on page */
+                margin: 0;
+            }
+
+            .admin-container {
+                margin-top: 0;
+                padding: 0;
+                max-width: none;
+                width: 100%;
+            }
+
+            h1 {
+                page-break-after: avoid; /* Prevents splitting after header */
+                font-size: 14pt;
+                margin-bottom: 5px;
+            }
+
+            .table-responsive {
+                overflow: visible !important; /* Forces all content to render for printing */
+                width: 100%;
             }
 
             table {
                 border-color: black;
+                width: 100%;
+                table-layout: auto; /* Allow auto stretching */
+                border-collapse: collapse;
             }
 
             th,
             td {
-                border-color: black;
+                border: 1px solid black;
                 color: black;
+                padding: 2px 4px; /* Reduced padding */
+                word-wrap: break-word; /* Let words break so they don't force width */
+                font-size: 7.5pt;
             }
 
             th {
                 background: #ddd;
+                font-size: 8pt;
+            }
+
+            /* Specifically shrink and target the "All Members" column to save massive horizontal space */
+            .member-list {
+                max-width: 250px;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+
+            .member-list div {
+                font-size: 7pt;
+                line-height: 1.1;
+                margin-bottom: 2px !important;
+                padding-bottom: 2px !important;
+                border-bottom: 1px dashed #ccc !important;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+
+            td {
+                max-width: 150px;
+                overflow-wrap: break-word;
+            }
+
+            .member-list strong {
+                color: black !important;
+            }
+
+            /* Hide Action columns cleanly to make space */
+            th:nth-child(9), td:nth-child(9), /* Edit */
+            th:nth-child(10), td:nth-child(10) /* Delete */ {
+                display: none;
             }
         }
 
@@ -612,7 +675,7 @@
                     let membersHtml = '';
                     t.members.forEach((m, idx) => {
                         membersHtml += `
-                            <div style="border-bottom:1px dashed #333; margin-bottom:5px; padding-bottom:5px; font-size: 0.85em;">
+                            <div style="border-bottom:1px dashed #333; margin-bottom:5px; padding-bottom:5px; font-size: 0.85em; word-wrap: break-word; white-space: normal;">
                                 <strong style="color:#00FF41;">${m.name}</strong> <span style="color:#aaa;">(${m.role})</span><br>
                                 <span style="color:#ddd;">
                                     Ph: ${m.phone || 'N/A'} | Age: ${m.age || 'N/A'}<br>
@@ -692,7 +755,8 @@
                     filtered = window.teamsData.filter(t => {
                         if (!t.event) return false;
                         const ev = t.event.toLowerCase();
-                        return ev.includes('paper presentation') || ev.includes('network defense') || ev.includes('digital forensics');
+                        // Check against the actual string formats used in the <select> element or DB
+                        return ev.includes('paper') || ev.includes('network') || ev.includes('digital') || ev.includes('_');
                     });
                 }
 
