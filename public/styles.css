@@ -3195,3 +3195,25 @@
                 margin-bottom: 20px !important;
             }
         }
+
+/* Mobile Bus Button Styles */
+.mobile-bus-btn {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .mobile-bus-btn {
+        display: inline-block !important;
+    }
+    
+    .mobile-action-container {
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+    }
+
+    .mobile-action-btn {
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        white-space: nowrap !important;
+    }
+}

@@ -360,6 +360,23 @@
             });
         </script>
 
+        <!-- Event Filters Row (Centered Above Header) -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; margin-top: 10px; margin-bottom: 20px; z-index: 50; position: relative;">
+            <span style="color: #00FF41; font-weight:bold;">EVENT:</span>
+            <button onclick="filterEvent('ALL')"
+                style="padding: 10px; background: #EEE; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                ALL ]</button>
+            <button onclick="filterEvent('CTF')"
+                style="padding: 10px; background: #00FF41; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                CTF ]</button>
+            <button onclick="filterEvent('WORKSHOP')"
+                style="padding: 10px; background: #00BFFF; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                WORKSHOP ]</button>
+            <button onclick="filterEvent('OTHER')"
+                style="padding: 10px; background: #FFA500; color: black; border: none; font-weight: bold; cursor: pointer;">[
+                OTHER ]</button>
+        </div>
+
         <h1>> SYSTEM_ADMINISTRATOR_VIEW</h1>
         <div id="stats">Total Teams: Loading...</div>
 
@@ -391,7 +408,7 @@
                 <button onclick="downloadCSV()"
                     style="padding: 10px; background: #00FF41; border: none; font-weight: bold; cursor: pointer;">[
                     DOWNLOAD CSV ]</button>
-                <button onclick="printPDF()"
+                <button onclick="openPrintModal()"
                     style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer;">[
                     PRINT / SAVE PDF ]</button>
                 <button id="ashish-details-btn" onclick="downloadAshishCSV()"
@@ -656,6 +673,27 @@
                 } else if (status === 'UNTRACKED') {
                     // WRONG DETAILS (Rejected / -1)
                     filtered = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === -1);
+                }
+
+                renderTable(filtered);
+            };
+
+            window.filterEvent = function (eventType) {
+                if (!window.teamsData) return;
+                let filtered = [];
+
+                if (eventType === 'ALL') {
+                    filtered = window.teamsData;
+                } else if (eventType === 'CTF') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('ctf'));
+                } else if (eventType === 'WORKSHOP') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('workshop'));
+                } else if (eventType === 'OTHER') {
+                    filtered = window.teamsData.filter(t => {
+                        if (!t.event) return false;
+                        const ev = t.event.toLowerCase();
+                        return ev.includes('paper presentation') || ev.includes('network defense') || ev.includes('digital forensics');
+                    });
                 }
 
                 renderTable(filtered);
@@ -1273,10 +1311,63 @@
                 window.URL.revokeObjectURL(url);
             }
 
-            function printPDF() {
-                window.print();
+            function openPrintModal() {
+                document.getElementById('print-modal').style.display = 'flex';
+            }
+
+            function closePrintModal() {
+                document.getElementById('print-modal').style.display = 'none';
+            }
+
+            function executePrint(eventCategory) {
+                // Filter the table based on the category
+                filterEvent(eventCategory);
+                
+                // Close the modal
+                closePrintModal();
+
+                // Wait for render then print (then restore)
+                setTimeout(() => {
+                    window.print();
+                    
+                    // Restore to 'ALL' after print dialog completes or is canceled
+                    setTimeout(() => {
+                        filterEvent('ALL');
+                    }, 500);
+                }, 500);
             }
         </script>
+
+        <!-- PRINT MODAL -->
+        <div id="print-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content: center; align-items: center;">
+            <div
+                style="background:#050505; padding:40px; width:90%; max-width:400px; border:2px solid #008F11; box-shadow: 0 0 50px rgba(0,143,17,0.2); text-align:center;">
+                <h2 style="color:#00FF41; border-bottom: 2px solid #008F11; padding-bottom: 15px; margin-bottom: 25px;">
+                    > SELECT EVENT TO PRINT</h2>
+
+                <div style="display:flex; flex-direction: column; gap:15px; margin-bottom: 30px;">
+                    <button onclick="executePrint('ALL')"
+                        style="background:#EEE; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        All Teams ]</button>
+                    <button onclick="executePrint('CTF')"
+                        style="background:#00FF41; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        CTF Teams ]</button>
+                    <button onclick="executePrint('WORKSHOP')"
+                        style="background:#00BFFF; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Workshop Teams ]</button>
+                    <button onclick="executePrint('OTHER')"
+                        style="background:#FFA500; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Other / Paper / Defense ]</button>
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    <button onclick="closePrintModal()"
+                        style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 30px; cursor:pointer; font-weight:bold; width: 100%;">[
+                        CANCEL ]</button>
+                </div>
+            </div>
+        </div>
 
         <!-- VERIFY MODAL -->
         <div id="verify-modal"
