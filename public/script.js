@@ -653,6 +653,12 @@ if (regForm) {
             const submitBtn = regForm.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.innerHTML;
 
+            const selectedEventVal = eventSelectInput.value;
+            if (!selectedEventVal || selectedEventVal.trim() === "") {
+                showCustomAlert("Please select an event.");
+                return;
+            }
+
             // Validate Member Count
             const memberCount = membersContainer.querySelectorAll('.member-card').length;
             if (memberCount < currentMin) {
@@ -681,6 +687,14 @@ if (regForm) {
                 // Collect Data
                 const teamName = document.getElementById('team-name').value;
                 const event = eventSelectInput.value;
+
+                if (!event || event.trim() === "") {
+                    showCustomAlert("Please select an event.");
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
                 const members = [];
 
                 document.querySelectorAll('.member-card').forEach(card => {
