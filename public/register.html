@@ -31,8 +31,15 @@
             }
             .register-section > div:first-child {
                 width: 100% !important;
+                min-width: 0 !important;
                 display: block !important;
                 margin-bottom: 40px !important;
+            }
+            .terminal-window {
+                overflow-x: auto !important;
+            }
+            .terminal-body {
+                min-width: 600px !important;
             }
             .registration-right {
                 width: 100% !important;
@@ -276,10 +283,11 @@
                                  So we should initialize with 4 slots. -->
                         </div>
 
-                        <div class="controls" style="margin-top: 20px; display: flex; gap: 15px;">
-                            <button type="button" id="add-member-btn" class="secondary-btn">[ + ADD OPERATIVE ]</button>
+                        <div class="controls" id="member-controls" style="margin-top: 20px; display: flex; gap: 15px;">
+                            <button type="button" id="add-member-btn" class="secondary-btn"
+                                style="opacity: 0.5; cursor: not-allowed;" disabled>[ + ADD OPERATIVE ]</button>
                             <button type="button" id="remove-member-btn" class="secondary-btn"
-                                style="color: #ffcccc; border-color: #ffcccc;">[ - REMOVE ]</button>
+                                style="color: #ffcccc; border-color: #ffcccc; opacity: 0.5; cursor: not-allowed;" disabled>[ - REMOVE ]</button>
                         </div>
 
                         <button type="submit" class="jack-in-btn" style="margin-top: 30px; width: 100%;">[ PROCEED TO

@@ -211,7 +211,7 @@ if (regForm) {
 
     let currentFee = 0;
     let currentMin = 1;
-    let currentMax = 5;
+    let currentMax = 4;
 
     // Elements
     const daySelect = document.getElementById('day-select');
@@ -294,6 +294,9 @@ if (regForm) {
                 });
 
             }
+
+            // Call handleSelectionChange to reset the UI since the options were just cleared
+            handleSelectionChange();
         }
 
         function handleSelectionChange() {
@@ -385,11 +388,28 @@ if (regForm) {
             let minP = 1;
             let maxP = 10;
 
+            const memberControls = document.getElementById('member-controls');
+
             // If no event, reset
             if (events.length === 0) {
                 currentMin = 1;
-                currentMax = 5;
+                currentMax = 4;
+                if (memberControls) memberControls.style.display = 'flex';
+
+                // Force buttons to be disabled when no event is selected
+                if (addMemberBtn) {
+                    addMemberBtn.disabled = true;
+                    addMemberBtn.style.opacity = '0.5';
+                    addMemberBtn.style.cursor = 'not-allowed';
+                }
+                if (removeMemberBtn) {
+                    removeMemberBtn.disabled = true;
+                    removeMemberBtn.style.opacity = '0.5';
+                    removeMemberBtn.style.cursor = 'not-allowed';
+                }
                 return;
+            } else {
+                if (memberControls) memberControls.style.display = 'flex';
             }
 
             // Logic: strict intersection for Min/Max? 
@@ -429,7 +449,39 @@ if (regForm) {
             }
 
             // Trigger Member Update
+            // Re-enable button temporarily if we need to force click it
+            if (addMemberBtn) addMemberBtn.disabled = false;
             updateMemberConstraints();
+            updateButtonStates();
+        }
+
+        function updateButtonStates() {
+            const cards = membersContainer.querySelectorAll('.member-card');
+            const currentCount = cards.length;
+
+            if (addMemberBtn) {
+                if (currentCount >= currentMax) {
+                    addMemberBtn.disabled = true;
+                    addMemberBtn.style.opacity = '0.5';
+                    addMemberBtn.style.cursor = 'not-allowed';
+                } else {
+                    addMemberBtn.disabled = false;
+                    addMemberBtn.style.opacity = '1';
+                    addMemberBtn.style.cursor = 'pointer';
+                }
+            }
+
+            if (removeMemberBtn) {
+                if (currentCount <= currentMin) {
+                    removeMemberBtn.disabled = true;
+                    removeMemberBtn.style.opacity = '0.5';
+                    removeMemberBtn.style.cursor = 'not-allowed';
+                } else {
+                    removeMemberBtn.disabled = false;
+                    removeMemberBtn.style.opacity = '1';
+                    removeMemberBtn.style.cursor = 'pointer';
+                }
+            }
         }
 
         function updateMemberConstraints() {
@@ -440,85 +492,86 @@ if (regForm) {
             const needed = currentMin - currentCount;
             if (needed > 0) {
                 for (let i = 0; i < needed; i++) {
-                    if (addWorkshopMemberFallback()) { /* manual add */ }
-                    else if (addMemberBtn) addMemberBtn.click();
+                    addMemberUI();
                 }
             }
             // Remove if above max
             else if (currentCount > currentMax) {
                 const removeCount = currentCount - currentMax;
                 for (let i = 0; i < removeCount; i++) {
-                    if (removeMemberBtn) removeMemberBtn.click();
+                    removeMemberUI();
                 }
             }
         }
 
-        // Helper to simulate click if btn hidden or logic complex
-        // We reuse the existing click handler by just calling click() on button
-        // But need to ensure button exists
-        function addWorkshopMemberFallback() { return false; }
+        // Add Member internal function
+        function addMemberUI() {
+            const currentCount = membersContainer.querySelectorAll('.member-card').length;
+            if (currentCount >= currentMax) {
+                showCustomAlert(`Maximum ${currentMax} members allowed for this event.`);
+                return;
+            }
 
+            const newIndex = currentCount + 1;
+            const template = document.getElementById('member-1');
+            const clone = template.cloneNode(true);
+            clone.id = `member-${newIndex}`;
+            clone.querySelector('h4').innerText = `> OPERATIVE_0${newIndex} (MEMBER)`;
+
+            // Clear inputs and update names
+            const inputs = clone.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = '';
+
+                // Remove duplicate ID from email input
+                if (input.type === 'email') {
+                    input.removeAttribute('id');
+                    input.readOnly = false;
+                }
+
+                // name format: member1_name -> member2_name
+                const nameParts = input.name.split('_');
+                if (nameParts.length > 1) {
+                    input.name = `member${newIndex}_${nameParts[1]}`;
+                }
+
+                // Reset verification status
+                delete input.dataset.verified;
+            });
+
+            // Reset Verification State for Clone
+            // Remove Verification Elements for additional members (Only Leader needs to verify)
+            const otpSection = clone.querySelector('.otp-section');
+            if (otpSection) otpSection.remove();
+
+            const verifiedBadge = clone.querySelector('.email-verified-badge');
+            if (verifiedBadge) verifiedBadge.remove();
+
+            const verifyBtn = clone.querySelector('.verify-email-btn');
+            if (verifyBtn) verifyBtn.remove();
+
+            membersContainer.appendChild(clone);
+
+            const colInput = clone.querySelector(`input[name$="_college"]`);
+            const distInput = clone.querySelector(`input[name$="_district"]`);
+
+            if (colInput) {
+                colInput.readOnly = false;
+                colInput.value = ''; // Ensure blank for new member
+            }
+            if (distInput) {
+                distInput.readOnly = false;
+                distInput.value = ''; // Ensure blank for new member
+            }
+
+            updateButtonStates();
+        }
 
         // 2. Add Member Logic
         if (addMemberBtn && membersContainer) {
             addMemberBtn.addEventListener('click', () => {
-                const currentCount = membersContainer.querySelectorAll('.member-card').length;
-                if (currentCount >= currentMax) {
-                    showCustomAlert(`Maximum ${currentMax} members allowed for this event.`);
-                    return;
-                }
-
-                const newIndex = currentCount + 1;
-                const template = document.getElementById('member-1');
-                const clone = template.cloneNode(true);
-                clone.id = `member-${newIndex}`;
-                clone.querySelector('h4').innerText = `> OPERATIVE_0${newIndex} (MEMBER)`;
-
-                // Clear inputs and update names
-                const inputs = clone.querySelectorAll('input');
-                inputs.forEach(input => {
-                    input.value = '';
-
-                    // Remove duplicate ID from email input
-                    if (input.type === 'email') {
-                        input.removeAttribute('id');
-                        input.readOnly = false;
-                    }
-
-                    // name format: member1_name -> member2_name
-                    const nameParts = input.name.split('_');
-                    if (nameParts.length > 1) {
-                        input.name = `member${newIndex}_${nameParts[1]}`;
-                    }
-
-                    // Reset verification status
-                    delete input.dataset.verified;
-                });
-
-                // Reset Verification State for Clone
-                // Remove Verification Elements for additional members (Only Leader needs to verify)
-                const otpSection = clone.querySelector('.otp-section');
-                if (otpSection) otpSection.remove();
-
-                const verifiedBadge = clone.querySelector('.email-verified-badge');
-                if (verifiedBadge) verifiedBadge.remove();
-
-                const verifyBtn = clone.querySelector('.verify-email-btn');
-                if (verifyBtn) verifyBtn.remove();
-
-                membersContainer.appendChild(clone);
-
-                const colInput = clone.querySelector(`input[name$="_college"]`);
-                const distInput = clone.querySelector(`input[name$="_district"]`);
-
-                if (colInput) {
-                    colInput.readOnly = false;
-                    colInput.value = ''; // Ensure blank for new member
-                }
-                if (distInput) {
-                    distInput.readOnly = false;
-                    distInput.value = ''; // Ensure blank for new member
-                }
+                if (addMemberBtn.disabled) return;
+                addMemberUI();
             });
         }
 
@@ -571,17 +624,24 @@ if (regForm) {
             });
         }
 
+        function removeMemberUI() {
+            const cards = membersContainer.querySelectorAll('.member-card');
+            if (cards.length <= currentMin) {
+                showCustomAlert(`Minimum ${currentMin} members required for this event.`);
+                return;
+            }
+            if (cards.length > 1) {
+                cards[cards.length - 1].remove();
+            }
+
+            updateButtonStates();
+        }
+
         // Remove Member Logic
         if (removeMemberBtn) {
             removeMemberBtn.addEventListener('click', () => {
-                const cards = membersContainer.querySelectorAll('.member-card');
-                if (cards.length <= currentMin) {
-                    showCustomAlert(`Minimum ${currentMin} members required for this event.`);
-                    return;
-                }
-                if (cards.length > 1) {
-                    cards[cards.length - 1].remove();
-                }
+                if (removeMemberBtn.disabled) return;
+                removeMemberUI();
             });
         }
 
