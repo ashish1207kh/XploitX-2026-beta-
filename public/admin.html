@@ -689,7 +689,8 @@
                     const verifiedStatus = parseInt(t.payment_verified, 10);
                     let checkBtnHtml = '';
                     if (!isNaN(verifiedStatus) && verifiedStatus === 1) {
-                        checkBtnHtml = `<span style="color:#00FF41; font-weight:bold;">[ VERIFIED ]</span>`;
+                        checkBtnHtml = `<span style="color:#00FF41; font-weight:bold;">[ VERIFIED ]</span><br>
+                                        <button onclick="resendPaymentVerification('${t.team_id}')" style="margin-top:5px; background:#00BFFF; color:#000; border:none; padding:3px 8px; font-weight:bold; cursor:pointer; font-size:0.8rem;">[ RESEND VERIFICATION ]</button>`;
                     } else if (verifiedStatus === -1) {
                         checkBtnHtml = `<span style="color:#FF0000; font-weight:bold;">[ WRONG DETAILS ]</span><br>
                                          <button onclick="performRestore('${t.team_id}')" style="margin-top:5px; background:#00BFFF; color:#000; border:none; padding:3px 8px; font-weight:bold; cursor:pointer; font-size:0.8rem;">[ RESTORE ]</button>`;
@@ -910,6 +911,34 @@
                         }
                     },
                     "CONFIRM & SEND"
+                );
+            }
+
+            function resendPaymentVerification(teamId) {
+                showCustomConfirm(
+                    "Are you sure you want to RESEND the verification email with the OD letter and QR code?",
+                    async () => {
+                        try {
+                            const res = await fetch(`${API_BASE_URL}/api/admin/verify_payment`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ teamId })
+                            });
+                            const data = await res.json();
+
+                            if (data.success) {
+                                if (window.showCustomAlert) showCustomAlert("PAYMENT VERIFICATION EMAIL RESENT!");
+                                else alert("PAYMENT VERIFICATION EMAIL RESENT!");
+                            } else {
+                                if (window.showCustomAlert) showCustomAlert("ERROR: " + data.error);
+                                else alert("ERROR: " + data.error);
+                            }
+                        } catch (e) {
+                            if (window.showCustomAlert) showCustomAlert("Network Error");
+                            else alert("Network Error");
+                        }
+                    },
+                    "YES, RESEND"
                 );
             }
 
