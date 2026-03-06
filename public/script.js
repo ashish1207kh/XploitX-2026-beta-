@@ -896,39 +896,35 @@ if (regForm) {
                         let allPrathyusha = members.every(m => m.college && (m.college.trim().toLowerCase().includes('prathyusha') || m.college.trim().toLowerCase().includes('prathyuhsa')));
                         if (allPrathyusha) {
                             if (members.length === 2 || members.length === 3 || members.length === 4) {
-                                pQr.src = '300.jpeg';
+                                pQr.src = '300R.jpeg';
                             } else {
-                                pQr.src = '300.jpeg'; // Fallback
+                                pQr.src = '300R.jpeg'; // Fallback
                             }
                         } else {
-                            if (members.length === 2) pQr.src = 'Early(300).jpeg';
-                            else if (members.length === 3) pQr.src = 'Early(450).jpeg';
-                            else if (members.length === 4) pQr.src = 'Early(600).jpeg';
-                            else pQr.src = 'Early(300).jpeg'; // Fallback
+                            if (members.length === 2) pQr.src = '300R.jpeg';
+                            else if (members.length === 3) pQr.src = '450R.jpeg';
+                            else if (members.length === 4) pQr.src = '600R.jpeg';
                         }
                     } else if (selectedEvents.includes('paper_presentation')) {
-                        pQr.src = '150.jpeg';
+                        pQr.src = '150R.jpeg';
                     } else if (selectedEvents.includes('Workshop')) {
-                        pQr.src = '150.jpeg';
+                        pQr.src = '150R.jpeg';
                     } else if (selectedEvents.includes('network_defense') && selectedEvents.includes('digital_forensics')) {
                         // Both selected and NOT free (since CTF/Paper checks failed above)
-                        if (members.length === 1) pQr.src = '100.jpeg';
-                        else if (members.length === 2) pQr.src = '200.jpeg';
-                        else if (members.length === 3) pQr.src = '300.jpeg';
-                        else if (members.length === 4) pQr.src = '400.jpeg';
-                        else pQr.src = '100.jpeg';
+                        if (members.length === 1) pQr.src = '100R.jpeg';
+                        else if (members.length === 2) pQr.src = '200R.jpeg';
+                        else if (members.length === 3) pQr.src = '300R.jpeg';
+                        else if (members.length === 4) pQr.src = '400R.jpeg';
                     } else if (selectedEvents.includes('network_defense')) {
-                        if (members.length === 1) pQr.src = '50.jpeg';
-                        else if (members.length === 2) pQr.src = '100.jpeg';
-                        else if (members.length === 3) pQr.src = '150.jpeg';
-                        else if (members.length === 4) pQr.src = '200.jpeg';
-                        else pQr.src = '50.jpeg';
+                        if (members.length === 1) pQr.src = '50R.jpeg';
+                        else if (members.length === 2) pQr.src = '100R.jpeg';
+                        else if (members.length === 3) pQr.src = '150R.jpeg';
+                        else if (members.length === 4) pQr.src = '200R.jpeg';
                     } else if (selectedEvents.includes('digital_forensics')) {
-                        if (members.length === 1) pQr.src = '50.jpeg';
-                        else if (members.length === 2) pQr.src = '100.jpeg';
-                        else if (members.length === 3) pQr.src = '150.jpeg';
-                        else if (members.length === 4) pQr.src = '200.jpeg';
-                        else pQr.src = '50.jpeg';
+                        if (members.length === 1) pQr.src = '50R.jpeg';
+                        else if (members.length === 2) pQr.src = '100R.jpeg';
+                        else if (members.length === 3) pQr.src = '150R.jpeg';
+                        else if (members.length === 4) pQr.src = '200R.jpeg';
                     }
                 }
 
