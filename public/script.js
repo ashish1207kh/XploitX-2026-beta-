@@ -1002,7 +1002,12 @@ if (regForm) {
                                 )) {
                                     showCustomAlert("Wrong Mail ID Kindly check it and verfiy it");
                                 } else {
-                                    showCustomAlert("Registration Failed: " + (d.error || "Unknown"));
+                                    let errorMsg = d.error || "Unknown";
+                                    if (errorMsg === "upload the images in jpeg, jpg or png format") {
+                                        showCustomAlert(errorMsg);
+                                    } else {
+                                        showCustomAlert("Registration Failed: " + errorMsg);
+                                    }
                                 }
                                 // Reset UI to allow correction
                                 pModal.style.display = 'none';

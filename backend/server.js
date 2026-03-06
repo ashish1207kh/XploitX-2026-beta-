@@ -35,7 +35,24 @@ const storage = multer.diskStorage({
         cb(null, teamId + path.extname(file.originalname));
     }
 });
-const upload = multer({ storage: storage });
+
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+        return cb(null, true);
+    } else {
+        cb(new Error('Upload the images in jpeg, jpg or png format'));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 }
+});
 
 let db = null;
 const DBPath = path.join(__dirname, 'hackathon.db');
@@ -149,7 +166,24 @@ async function sendEmail(to, subject, text, html = null) {
 
 // API Routes
 
-// [NEW] Admin Login
+// --- JWT & ADMIN SECURITY LAYER ---
+const JWT_SECRET = process.env.JWT_SECRET || 'xploitx_super_secret_key_2026';
+
+const verifyAdmin = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Access Denied: No Token Provided' });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Access Denied: Invalid Token' });
+        req.user = user;
+        next();
+    });
+};
+
 // [NEW] Admin Login
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
@@ -180,14 +214,17 @@ app.post('/api/admin/login', (req, res) => {
             if (err) console.error('Error writing to admin log:', err);
         });
 
-        res.json({ success: true, token: 'admin-authorized', user: username });
+        // Generate Secure JWT Token for this session
+        const token = jwt.sign({ username: username, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
+
+        res.json({ success: true, token: token, user: username });
     } else {
         res.status(401).json({ error: 'Invalid Credentials' });
     }
 });
 
 // [NEW] Get Admin Activity Log
-app.get('/api/admin/activity-log', (req, res) => {
+app.get('/api/admin/activity-log', verifyAdmin, (req, res) => {
     const logPath = path.join(__dirname, 'admin_activity.log');
     if (fs.existsSync(logPath)) {
         fs.readFile(logPath, 'utf8', (err, data) => {
@@ -430,7 +467,7 @@ const otpStore = {};
 
 
 
-app.get('/api/admin/data', async (req, res) => {
+app.get('/api/admin/data', verifyAdmin, async (req, res) => {
     try {
         const teams = await db.all(`SELECT * FROM teams`);
         const fullData = [];
@@ -463,7 +500,7 @@ app.get('/api/registration/count', async (req, res) => {
 
 // [NEW] Admin Update Team
 // [NEW] Admin Update Team
-app.post('/api/admin/update_team', async (req, res) => {
+app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
     const { teamId, name, event, members } = req.body;
     console.log(`Admin updating team ${teamId}...`);
     try {
@@ -612,7 +649,7 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
     res.json({ success: true });
 });
 
-app.post('/api/admin/verify_payment', async (req, res) => {
+app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await db.run(`UPDATE teams SET payment_verified = 1 WHERE team_id = ?`, [teamId]);
@@ -698,7 +735,7 @@ app.post('/api/admin/verify_payment', async (req, res) => {
 });
 
 // [NEW] Reject Payment
-app.post('/api/admin/reject_payment', async (req, res) => {
+app.post('/api/admin/reject_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await db.run(`UPDATE teams SET payment_verified = -1 WHERE team_id = ?`, [teamId]);
@@ -707,7 +744,7 @@ app.post('/api/admin/reject_payment', async (req, res) => {
 });
 
 // [NEW] Resend Confirmation Email
-app.post('/api/admin/resend_confirmation', async (req, res) => {
+app.post('/api/admin/resend_confirmation', verifyAdmin, async (req, res) => {
     const { teamId, memberName, email, event } = req.body;
     console.log(`Resending confirmation to ${email} for team ${teamId}`);
     try {
@@ -721,7 +758,7 @@ app.post('/api/admin/resend_confirmation', async (req, res) => {
 });
 
 // [NEW] Restore Payment (Undo Reject)
-app.post('/api/admin/restore_payment', async (req, res) => {
+app.post('/api/admin/restore_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         // Reset to 0 (Pending/Standby)
@@ -862,7 +899,7 @@ async function generateODPdfInternal(teamDbId) {
 }
 
 // Admin Delete Team
-app.post('/api/admin/delete_team', async (req, res) => {
+app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         const team = await db.get(`SELECT id FROM teams WHERE team_id = ?`, [teamId]);
@@ -941,4 +978,13 @@ app.get('/api/attendance/all', async (req, res) => {
         `);
         res.json(rows);
     } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// -- Centralized Error Handling Middleware (Catches Multer FileFilter Errors) --
+app.use((err, req, res, next) => {
+    if (err) {
+        console.error('[Error Middleware Caught]:', err.message);
+        return res.status(400).json({ error: err.message });
+    }
+    next();
 });

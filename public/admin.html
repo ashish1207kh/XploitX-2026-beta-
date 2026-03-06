@@ -518,6 +518,23 @@
             const API_BASE_URL = isLocal ? 'http://localhost:3000' : '';
             console.log("Admin Panel API_BASE_URL:", API_BASE_URL);
 
+            // --- INJECT JWT TOKEN TO ALL ADMIN FETCH CALLS ---
+            const originalFetch = window.fetch;
+            window.fetch = async function() {
+                let [resource, config] = arguments;
+                
+                if(typeof resource === 'string' && resource.includes('/api/admin/') && !resource.includes('/login')) {
+                    if(!config) config = {};
+                    if(!config.headers) config.headers = {};
+                    
+                    const token = sessionStorage.getItem('admin_token');
+                    if(token) {
+                        config.headers['Authorization'] = 'Bearer ' + token;
+                    }
+                }
+                return await originalFetch(resource, config);
+            };
+
             // --- CUSTOM ALERT IMPLEMENTATION (LOCAL OVERRIDE) ---
             window.currentAlertCallback = null;
 
@@ -621,6 +638,9 @@
                     if (data.success) {
                         document.getElementById('login-overlay').style.display = 'none';
                         showCustomAlert('ACCESS GRANTED: WELCOME ' + data.user);
+                        
+                        // Save token to session storage
+                        sessionStorage.setItem('admin_token', data.token);
 
                         // Show Log Button ONLY for Administrator
                         if (data.user === 'Administrator') {
