@@ -122,9 +122,12 @@
     <!-- Details Section -->
     <div id="details-section" class="scanner-container" style="display: none; max-width: 900px; text-align: left;">
         <h2 class="section-header">>_ ATTENDANCE_DATABASE</h2>
-        <div style="margin-bottom: 10px; text-align: right;">
-            <button onclick="downloadPDF()" class="cta-btn" style="padding: 5px 15px; font-size: 0.8rem; margin-right: 10px;"><i class="fas fa-file-pdf"></i> DOWNLOAD PDF</button>
-            <button onclick="loadAttendance()" class="cta-btn" style="padding: 5px 15px; font-size: 0.8rem;"><i class="fas fa-sync"></i> REFRESH</button>
+        <div style="margin-bottom: 10px; text-align: right; display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: var(--neon-green); font-weight: bold; font-size: 1.1rem; border: 1px solid var(--neon-green); padding: 5px 15px; border-radius: 4px; background: rgba(0, 255, 65, 0.1);">MEMBER : <span id="member-count-display">0</span></div>
+            <div>
+                <button onclick="downloadPDF()" class="cta-btn" style="padding: 5px 15px; font-size: 0.8rem; margin-right: 10px;"><i class="fas fa-file-pdf"></i> DOWNLOAD PDF</button>
+                <button onclick="loadAttendance()" class="cta-btn" style="padding: 5px 15px; font-size: 0.8rem;"><i class="fas fa-sync"></i> REFRESH</button>
+            </div>
         </div>
         <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse; color: #eee; font-size: 0.9rem;">
@@ -461,6 +464,10 @@
                 if(!res.ok) throw new Error("Failed to fetch");
                 
                 const rows = await res.json();
+                
+                // Update Target
+                const countEl = document.getElementById('member-count-display');
+                if (countEl) countEl.innerText = rows.length;
                 
                 if(rows.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--neon-green); font-size: 1.2rem; border: 1px dashed var(--neon-green);">[ SYSTEM_LOG: NO_DATA_FOUND ]<br><span style="font-size: 0.9rem; color: #aaa;">Attendance database is currently empty.</span></td></tr>';

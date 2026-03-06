@@ -37,7 +37,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
+    const allowedTypes = /jpeg|jpg|png/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
 
@@ -206,7 +206,7 @@ app.post('/api/admin/login', (req, res) => {
 
     if (admins.hasOwnProperty(username) && admins[username] === password) {
         // [LOGGING] Record admin access
-        const timestamp = new Date().toLocaleString();
+        const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
         const logEntry = `[${timestamp}] USER LOGIN: ${username}\n`;
         const logPath = path.join(__dirname, 'admin_activity.log');
 
