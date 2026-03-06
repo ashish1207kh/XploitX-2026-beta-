@@ -653,6 +653,18 @@ if (regForm) {
             const submitBtn = regForm.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.innerHTML;
 
+            // --- CAPTCHA VALIDATION ---
+            const captchaInput = document.getElementById('captcha-input');
+            const captchaDisplay = document.getElementById('captcha-display');
+            if (captchaInput && captchaDisplay) {
+                if (captchaInput.value.trim().toUpperCase() !== captchaDisplay.innerText.trim().toUpperCase()) {
+                    showCustomAlert("Enter the Correct Captcha");
+                    if (typeof generateCaptcha === 'function') generateCaptcha();
+                    captchaInput.value = '';
+                    return;
+                }
+            }
+
             const selectedEventVal = eventSelectInput.value;
             if (!selectedEventVal || selectedEventVal.trim() === "") {
                 showCustomAlert("Please select an event.");
@@ -940,6 +952,16 @@ if (regForm) {
                 const proceedBtn = document.querySelector('#team-form button[type="submit"]');
                 if (proceedBtn) proceedBtn.style.display = 'none';
 
+                // Lock the form so users cannot edit it once they enter the payment page
+                const formInputs = regForm.querySelectorAll('input, select, button');
+                formInputs.forEach(input => {
+                    input.disabled = true;
+                    if (input.style) {
+                        input.style.opacity = '0.7';
+                        input.style.cursor = 'not-allowed';
+                    }
+                });
+
                 // Input Validation
                 function checkInputs() {
                     if (pUtr.value.trim() && pFile.files.length > 0) {
@@ -1003,13 +1025,22 @@ if (regForm) {
                                     showCustomAlert("Wrong Mail ID Kindly check it and verfiy it");
                                 } else {
                                     let errorMsg = d.error || "Unknown";
-                                    if (errorMsg === "upload the images in jpeg, jpg or png format") {
-                                        showCustomAlert(errorMsg);
+                                    if (errorMsg.toLowerCase() === "upload the images in jpeg, jpg or png format" || errorMsg.toLowerCase() === "file too large") {
+                                        if (errorMsg.toLowerCase() === "file too large") {
+                                            showCustomAlert("Filesize exceeded. Upload a file less than 5 MB.");
+                                        } else {
+                                            showCustomAlert(errorMsg);
+                                        }
+                                        // DO NOT hide the payment modal for image format or size errors
+                                        // Reset the confirm button so they can try again with a valid file
+                                        pConfirm.innerHTML = "[ CONFIRM PAYMENT & REGISTER ]";
+                                        pConfirm.disabled = false;
+                                        return;
                                     } else {
                                         showCustomAlert("Registration Failed: " + errorMsg);
                                     }
                                 }
-                                // Reset UI to allow correction
+                                // Reset UI to allow correction for other errors
                                 pModal.style.display = 'none';
                                 const proceedBtn = document.querySelector('#team-form button[type="submit"]');
                                 if (proceedBtn) {
@@ -1606,5 +1637,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.style.overflow = '';
             });
         });
+    }
+});
+
+// CAPTCHA Implementation
+window.generateCaptcha = function () {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let captcha = "";
+    for (let i = 0; i < 5; i++) {
+        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const display = document.getElementById('captcha-display');
+    const input = document.getElementById('captcha-input');
+    if (display) display.innerText = captcha;
+    if (input) input.value = '';
+};
+
+// Initialize CAPTCHA on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('captcha-display')) {
+        window.generateCaptcha();
     }
 });

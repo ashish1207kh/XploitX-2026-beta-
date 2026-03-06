@@ -244,7 +244,7 @@
                                         </div>
                                         <div class="otp-section" style="display: none; margin-top: 10px;">
                                             <input type="text" class="email-otp-input"
-                                                placeholder="Enter OTP sent to email"
+                                                placeholder="Enter OTP sent to email" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                 style="width: 100%; padding: 8px; background: #111; border: 1px dashed var(--neon-green); color: white; margin-bottom: 5px;">
                                             <button type="button" class="confirm-otp-btn"
                                                 style="width: 100%; background: #FFA500; border: none; padding: 5px; font-weight: bold; cursor: pointer;">[
@@ -290,6 +290,26 @@
                                 style="color: #ffcccc; border-color: #ffcccc; opacity: 0.5; cursor: not-allowed;" disabled>[ - REMOVE ]</button>
                         </div>
 
+                        <!-- CAPTCHA Section -->
+                        <div class="form-group" style="margin-top: 20px; border: 1px dashed var(--neon-green); padding: 15px; border-radius: 5px; background: rgba(0,20,0,0.5);">
+                            <label style="color: var(--neon-green);">> VERIFY_HUMAN_OPERATIVE</label>
+                            <div style="display: flex; gap: 15px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                                <div id="captcha-display" style="
+                                    background: #000; 
+                                    color: var(--neon-yellow); 
+                                    font-size: 1.5rem; 
+                                    letter-spacing: 5px; 
+                                    padding: 10px 20px; 
+                                    border: 2px solid var(--neon-green); 
+                                    border-radius: 4px;
+                                    font-family: 'Courier New', Courier, monospace;
+                                    user-select: none;">
+                                </div>
+                                <button type="button" id="refresh-captcha" onclick="generateCaptcha()" style="background: transparent; color: var(--neon-green); border: 1px solid var(--neon-green); cursor: pointer; padding: 10px; flex-shrink: 0;"><i class="fas fa-sync-alt"></i></button>
+                                <input type="text" id="captcha-input" placeholder="Enter Captcha Code" required style="flex-grow: 1; padding: 12px; background: #111; border: 1px solid var(--neon-green); color: white; border-radius: 4px; text-transform: uppercase;">
+                            </div>
+                        </div>
+
                         <button type="submit" class="jack-in-btn" style="margin-top: 30px; width: 100%;">[ PROCEED TO
                             PAYMENT ]</button>
                     </form>
@@ -324,7 +344,7 @@
 
 
                         <p style="margin-bottom: 5px; color: #aaa;">UPLOAD PAYMENT PROOF:</p>
-                        <p style="margin-bottom: 5px; font-size: 0.8rem; color: #666;">(Screenshot of Transaction)</p>
+                        <p style="margin-bottom: 5px; font-size: 0.8rem; color: #666;">(Screenshot of Transaction - Max 5MB)</p>
                         <input type="file" id="payment-proof-file" accept="image/*"
                             style="width: 100%; padding: 8px; margin-bottom: 15px; background: #111; border: 1px solid #333; color: var(--neon-green);">
                     </div>
