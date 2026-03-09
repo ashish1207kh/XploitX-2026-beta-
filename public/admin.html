@@ -468,15 +468,12 @@
 
             <!-- Right Side: Actions -->
             <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="downloadCSV()"
+                <button onclick="openCSVModal()"
                     style="padding: 10px; background: #00FF41; border: none; font-weight: bold; cursor: pointer;">[
                     DOWNLOAD CSV ]</button>
                 <button onclick="openPrintModal()"
                     style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer;">[
                     PRINT / SAVE PDF ]</button>
-                <button id="ashish-details-btn" onclick="downloadAshishCSV()"
-                    style="display:none; padding: 10px; background: #00BFFF; color: black; border: none; font-weight: bold; cursor: pointer;">[
-                    DETAILS ]</button>
                 <button id="activity-log-btn" onclick="openLogModal()"
                     style="display:none; padding: 10px; background: #00e5ff; color: black; border: none; font-weight: bold; cursor: pointer;">[
                     ACTIVITY LOG ]</button>
@@ -648,11 +645,7 @@
                             if (logBtn) logBtn.style.display = 'inline-block';
                         }
 
-                        // Show Details button ONLY for Ashish
-                        if (data.user === 'Ashish' || data.user === 'Administrator') {
-                            const ashishBtn = document.getElementById('ashish-details-btn');
-                            if (ashishBtn) ashishBtn.style.display = 'inline-block';
-                        }
+                        // Removed Details button logic for Ashish
 
                         loadData();
                     } else {
@@ -1280,12 +1273,46 @@
                 }
             }
 
-            function downloadCSV() {
+            function openCSVModal() {
+                document.getElementById('csv-modal').style.display = 'flex';
+            }
+
+            function closeCSVModal() {
+                document.getElementById('csv-modal').style.display = 'none';
+            }
+
+            function executeCSVDownload(eventCategory) {
+                downloadCSV(eventCategory);
+                closeCSVModal();
+            }
+
+            function downloadCSV(eventType = 'ALL') {
                 if (!window.teamsData || window.teamsData.length === 0) return;
+
+                let filtered = [];
+                if (eventType === 'ALL') {
+                    filtered = window.teamsData;
+                } else if (eventType === 'CTF') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('ctf'));
+                } else if (eventType === 'WORKSHOP') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('workshop'));
+                } else if (eventType === 'OTHER') {
+                    filtered = window.teamsData.filter(t => {
+                        if (!t.event) return false;
+                        const ev = t.event.toLowerCase();
+                        return ev.includes('paper') || ev.includes('network') || ev.includes('digital') || ev.includes('_');
+                    });
+                }
+
+                if (filtered.length === 0) {
+                    if (window.showCustomAlert) showCustomAlert("No data available for this category.");
+                    else alert("No data available for this category.");
+                    return;
+                }
 
                 // 1. Determine the maximum number of members to create enough columns
                 let maxMembers = 0;
-                window.teamsData.forEach(t => {
+                filtered.forEach(t => {
                     if (t.members.length > maxMembers) maxMembers = t.members.length;
                 });
 
@@ -1297,7 +1324,7 @@
                 csv += '\n';
 
                 // 3. Build Rows
-                window.teamsData.forEach(t => {
+                filtered.forEach(t => {
                     // Team Level Data
                     const teamId = t.team_id || '';
                     const teamName = (t.name || '').replace(/"/g, '""');
@@ -1337,7 +1364,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'XploitX_2026_Full_Data.csv';
+                a.download = `XploitX_2026_${eventType}_Data.csv`;
                 a.click();
                 window.URL.revokeObjectURL(url);
             }
@@ -1450,6 +1477,37 @@
                 }, 500);
             }
         </script>
+
+        <!-- CSV MODAL -->
+        <div id="csv-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content: center; align-items: center;">
+            <div
+                style="background:#050505; padding:40px; width:90%; max-width:400px; border:2px solid #00FF41; box-shadow: 0 0 50px rgba(0,255,65,0.2); text-align:center;">
+                <h2 style="color:#00FF41; border-bottom: 2px solid #00FF41; padding-bottom: 15px; margin-bottom: 25px;">
+                    > SELECT EVENT TO DOWNLOAD CSV</h2>
+
+                <div style="display:flex; flex-direction: column; gap:15px; margin-bottom: 30px;">
+                    <button onclick="executeCSVDownload('ALL')"
+                        style="background:#EEE; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        All Teams ]</button>
+                    <button onclick="executeCSVDownload('CTF')"
+                        style="background:#00FF41; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        CTF Teams ]</button>
+                    <button onclick="executeCSVDownload('WORKSHOP')"
+                        style="background:#00BFFF; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Workshop Teams ]</button>
+                    <button onclick="executeCSVDownload('OTHER')"
+                        style="background:#FFA500; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Other / Paper / Defense ]</button>
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    <button onclick="closeCSVModal()"
+                        style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 30px; cursor:pointer; font-weight:bold; width: 100%;">[
+                        CANCEL ]</button>
+                </div>
+            </div>
+        </div>
 
         <!-- PRINT MODAL -->
         <div id="print-modal"
