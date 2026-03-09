@@ -950,11 +950,20 @@ app.post('/api/attendance/mark_members', async (req, res) => {
         if (!team) return res.status(404).json({ error: 'Team not found' });
 
         for (const item of memberStatuses) {
-            // Update member
-            await db.run(
-                `UPDATE members SET attendance_status = ?, entry_time = CURRENT_TIMESTAMP WHERE id = ?`,
-                [item.status, item.id]
-            );
+            const currentMember = await db.get('SELECT attendance_status FROM members WHERE id = ?', [item.id]);
+            if (!currentMember) continue;
+
+            if (item.status === 'PRESENT' && currentMember.attendance_status !== 'PRESENT') {
+                await db.run(
+                    `UPDATE members SET attendance_status = 'PRESENT', entry_time = CURRENT_TIMESTAMP WHERE id = ?`,
+                    [item.id]
+                );
+            } else if (item.status === 'ABSENT' && currentMember.attendance_status !== 'ABSENT') {
+                await db.run(
+                    `UPDATE members SET attendance_status = 'ABSENT' WHERE id = ?`,
+                    [item.id]
+                );
+            }
         }
 
         res.json({ success: true });
