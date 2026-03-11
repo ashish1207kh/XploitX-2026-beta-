@@ -68,6 +68,21 @@ const initialiseDBAndServer = async () => {
 
         app.listen(PORT, () => {
             console.log(`Server started at http://localhost:${PORT}/`);
+            
+            // Start the Matrix App server
+            const { spawn } = require('child_process');
+            const matrixAppDir = path.join(__dirname, '../public/Digitial/matrix-app');
+            
+            console.log(`Starting matrix-app server from ${matrixAppDir}`);
+            const matrixProcess = spawn('node', ['server.js'], {
+                cwd: matrixAppDir,
+                env: { ...process.env, PORT: 3001 }, // Running on a different port to avoid conflict
+                stdio: 'inherit'
+            });
+
+            matrixProcess.on('error', (err) => {
+                console.error('Failed to start matrix-app server:', err);
+            });
         });
     } catch (err) {
         console.log(`DB Error: ${err.message}`);
