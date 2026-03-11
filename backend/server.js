@@ -29,7 +29,14 @@ app.use(['/digitial/matrix-app/public', '/Digitial/matrix-app/public', '/digitia
         // Strip out /public/ if they typed it
         urlPath = urlPath.replace('/public/', '/');
     }
-    res.redirect('http://localhost:3001' + urlPath);
+    
+    // Dynamically build the URL so it works on "www.xploitxctf.me" and "localhost"
+    const protocol = req.protocol; // 'http' or 'https'
+    const host = req.hostname;     // 'localhost' or 'www.xploitxctf.me'
+    
+    // If you are setting up a domain, ensure PORT 3001 is open on your production server firewall!
+    const targetUrl = `${protocol}://${host}:3001${urlPath}`;
+    res.redirect(targetUrl);
 });
 
 // Multer Storage
