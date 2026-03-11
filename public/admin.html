@@ -1544,7 +1544,7 @@
                     }
                 </style>
                 </head><body>
-                <h2>Details of ${eventCategory}</h2>
+                <h2>Team Details of ${eventCategory}</h2>
                 <table>
                     <thead>
                         <tr>
@@ -1562,21 +1562,41 @@
                 `;
 
                 filtered.forEach((t, i) => {
-                    const leader = t.members && t.members.find(m => m.role === 'LEADER') || (t.members && t.members[0]) || {};
-                    const memberNames = (t.members || []).map(m => m.name).join(', ');
-                    
-                    html += `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td>${t.team_id || ''}</td>
-                            <td>${t.name || ''}</td>
-                            <td>${memberNames}</td>
-                            <td>${leader.college || ''}</td>
-                            <td>${leader.email || ''}</td>
-                            <td>${leader.phone || ''}</td>
-                            <td></td>
-                        </tr>
-                    `;
+                    const members = t.members || [];
+                    if (members.length === 0) {
+                        html += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${t.team_id || ''}</td>
+                                <td>${t.name || ''}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        `;
+                    } else {
+                        members.forEach((m, mIndex) => {
+                            const isFirst = mIndex === 0;
+                            const sno = isFirst ? (i + 1) : '';
+                            const teamId = isFirst ? (t.team_id || '') : '';
+                            const teamName = isFirst ? (t.name || '') : '';
+                            
+                            html += `
+                                <tr>
+                                    <td>${sno}</td>
+                                    <td>${teamId}</td>
+                                    <td>${teamName}</td>
+                                    <td>${m.name || ''}</td>
+                                    <td>${m.college || ''}</td>
+                                    <td>${m.email || ''}</td>
+                                    <td>${m.phone || ''}</td>
+                                    <td></td>
+                                </tr>
+                            `;
+                        });
+                    }
                 });
 
                 html += `
