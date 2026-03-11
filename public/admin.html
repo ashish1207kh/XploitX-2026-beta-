@@ -474,6 +474,9 @@
                 <button onclick="openPrintModal()"
                     style="padding: 10px; background: #008F11; color: white; border: none; font-weight: bold; cursor: pointer;">[
                     PRINT / SAVE PDF ]</button>
+                <button id="format-btn" onclick="openFormatModal()"
+                    style="display:none; padding: 10px; background: #FF00FF; color: white; border: none; font-weight: bold; cursor: pointer;">[
+                    FORMAT PDF ]</button>
                 <button id="activity-log-btn" onclick="openLogModal()"
                     style="display:none; padding: 10px; background: #00e5ff; color: black; border: none; font-weight: bold; cursor: pointer;">[
                     ACTIVITY LOG ]</button>
@@ -643,6 +646,12 @@
                         if (data.user === 'Administrator') {
                             const logBtn = document.getElementById('activity-log-btn');
                             if (logBtn) logBtn.style.display = 'inline-block';
+                        }
+
+                        // Show Format Button ONLY for Rubika
+                        if (data.user === 'Rubika') {
+                            const formatBtn = document.getElementById('format-btn');
+                            if (formatBtn) formatBtn.style.display = 'inline-block';
                         }
 
                         // Removed Details button logic for Ashish
@@ -1476,6 +1485,115 @@
                     }, 500);
                 }, 500);
             }
+
+            function openFormatModal() {
+                document.getElementById('format-modal').style.display = 'flex';
+            }
+
+            function closeFormatModal() {
+                document.getElementById('format-modal').style.display = 'none';
+            }
+
+            function executeFormat(eventCategory) {
+                closeFormatModal();
+
+                let filtered = [];
+                if (!window.teamsData) return;
+                
+                if (eventCategory === 'ALL') {
+                    filtered = window.teamsData;
+                } else if (eventCategory === 'CTF') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('ctf'));
+                } else if (eventCategory === 'WORKSHOP') {
+                    filtered = window.teamsData.filter(t => t.event && t.event.toLowerCase().includes('workshop'));
+                } else if (eventCategory === 'OTHER') {
+                    filtered = window.teamsData.filter(t => {
+                        if (!t.event) return false;
+                        const ev = t.event.toLowerCase();
+                        return ev.includes('paper') || ev.includes('network') || ev.includes('digital') || ev.includes('_');
+                    });
+                }
+
+                if (filtered.length === 0) {
+                    if (window.showCustomAlert) showCustomAlert("No data available for this category.");
+                    else alert("No data available for this category.");
+                    return;
+                }
+
+                const printWindow = window.open('', '_blank');
+                let html = `
+                <html><head><title>Format Report - ${eventCategory}</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; word-wrap: break-word; }
+                    th, td { border: 1px solid black; padding: 8px; font-size: 13px; text-align: left; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
+                    th { background-color: #f2f2f2; }
+                    /* Adjust column widths */
+                    th:nth-child(1), td:nth-child(1) { width: 4%; } /* S.No */
+                    th:nth-child(2), td:nth-child(2) { width: 10%; } /* Team ID */
+                    th:nth-child(3), td:nth-child(3) { width: 14%; } /* Team Name */
+                    th:nth-child(4), td:nth-child(4) { width: 20%; } /* Team Members */
+                    th:nth-child(5), td:nth-child(5) { width: 20%; } /* College Name */
+                    th:nth-child(6), td:nth-child(6) { width: 14%; } /* Mail ID */
+                    th:nth-child(7), td:nth-child(7) { width: 10%; } /* Phone Number */
+                    th:nth-child(8), td:nth-child(8) { width: 8%; } /* Signature */
+                    h2 { text-align: center; margin-bottom: 20px; }
+                    @media print {
+                        @page { size: landscape; margin: 10mm; }
+                        body { padding: 0; }
+                    }
+                </style>
+                </head><body>
+                <h2>RUBIKA FORMAT REPORT - ${eventCategory}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Team ID</th>
+                            <th>Team Name</th>
+                            <th>Team Members</th>
+                            <th>College Name</th>
+                            <th>Mail ID</th>
+                            <th>Phone Number</th>
+                            <th>Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                filtered.forEach((t, i) => {
+                    const leader = t.members && t.members.find(m => m.role === 'LEADER') || (t.members && t.members[0]) || {};
+                    const memberNames = (t.members || []).map(m => m.name).join(', ');
+                    
+                    html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${t.team_id || ''}</td>
+                            <td>${t.name || ''}</td>
+                            <td>${memberNames}</td>
+                            <td>${leader.college || ''}</td>
+                            <td>${leader.email || ''}</td>
+                            <td>${leader.phone || ''}</td>
+                            <td></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                    </tbody>
+                </table>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                        }, 500);
+                    }
+                <\/script>
+                </body></html>
+                `;
+                printWindow.document.write(html);
+                printWindow.document.close();
+            }
         </script>
 
         <!-- CSV MODAL -->
@@ -1534,6 +1652,37 @@
 
                 <div style="display:flex; justify-content:center;">
                     <button onclick="closePrintModal()"
+                        style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 30px; cursor:pointer; font-weight:bold; width: 100%;">[
+                        CANCEL ]</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMAT MODAL -->
+        <div id="format-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content: center; align-items: center;">
+            <div
+                style="background:#050505; padding:40px; width:90%; max-width:400px; border:2px solid #FF00FF; box-shadow: 0 0 50px rgba(255,0,255,0.2); text-align:center;">
+                <h2 style="color:#FF00FF; border-bottom: 2px solid #FF00FF; padding-bottom: 15px; margin-bottom: 25px;">
+                    > SELECT EVENT FOR FORMAT</h2>
+
+                <div style="display:flex; flex-direction: column; gap:15px; margin-bottom: 30px;">
+                    <button onclick="executeFormat('ALL')"
+                        style="background:#EEE; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        All Teams ]</button>
+                    <button onclick="executeFormat('CTF')"
+                        style="background:#00FF41; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        CTF Teams ]</button>
+                    <button onclick="executeFormat('WORKSHOP')"
+                        style="background:#00BFFF; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Workshop Teams ]</button>
+                    <button onclick="executeFormat('OTHER')"
+                        style="background:#FFA500; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; font-size: 1.1rem; text-transform: uppercase;">[
+                        Other / Paper / Defense ]</button>
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    <button onclick="closeFormatModal()"
                         style="background:transparent; color:#ff3333; border:1px solid #ff3333; padding:10px 30px; cursor:pointer; font-weight:bold; width: 100%;">[
                         CANCEL ]</button>
                 </div>
