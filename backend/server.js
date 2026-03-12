@@ -192,7 +192,7 @@ app.post('/api/admin/login', (req, res) => {
     // Defined Admin Credentials
     const admins = {
         "Madhumitha": "Madhumitha@xploitx",
-        "Jesin Milesh": "JM@xploitx",
+        "Jesin Milesh": "Jesin@xploitx",
         "Harish": "Harish@xploitx",
         "Abhiram": "Abhiram@xploitx",
         "Subashini": "Subashini@xploitx",
