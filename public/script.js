@@ -1659,3 +1659,98 @@ document.addEventListener('DOMContentLoaded', () => {
         window.generateCaptcha();
     }
 });
+
+// ============================================================
+// REGISTRATION CLOSED - Intercept all register.html links
+// ============================================================
+(function () {
+    const REG_CLOSED_MSG =
+        "⚠️ REGISTRATION CLOSED\n\n" +
+        "Online registration is now closed.\n\n" +
+        "You can register ON-SPOT before the event starts at the venue.\n\n" +
+        "See you at XploitX 2k26! 🚀";
+
+    // Intercept clicks via event delegation (catches all links, even dynamic ones)
+    document.addEventListener('click', function (e) {
+        const anchor = e.target.closest('a');
+        if (!anchor) return;
+
+        const href = anchor.getAttribute('href');
+        if (href && (href === 'register.html' || href.endsWith('/register.html'))) {
+            e.preventDefault();
+            e.stopPropagation();
+            showRegistrationClosedDialog();
+        }
+    }, true); // Use capture phase so it runs before any other handlers
+
+    // If user lands directly on register.html, show the dialog automatically
+    document.addEventListener('DOMContentLoaded', function () {
+        const isRegisterPage =
+            window.location.pathname.endsWith('register.html') ||
+            window.location.pathname.endsWith('register');
+
+        if (isRegisterPage) {
+            showRegistrationClosedDialog();
+        }
+    });
+
+    function showRegistrationClosedDialog() {
+        // Reuse the existing showCustomAlert if available, else build our own
+        if (typeof window.showCustomAlert === 'function') {
+            // Temporarily override the dialog title for this specific alert
+            let overlay = document.getElementById('custom-alert-overlay');
+            if (!overlay) {
+                // Trigger creation by calling showCustomAlert with a dummy message
+                window.showCustomAlert('__INIT__');
+                overlay = document.getElementById('custom-alert-overlay');
+            }
+
+            // Customise the dialog for registration-closed context
+            const titleEl = overlay ? overlay.querySelector('h2') : null;
+            if (titleEl) titleEl.textContent = '> REGISTRATION_CLOSED';
+
+            window.showCustomAlert(REG_CLOSED_MSG);
+
+            // Restore the title text inside the alert to be more specific
+            const msgEl = document.getElementById('custom-alert-msg');
+            if (msgEl) {
+                msgEl.style.whiteSpace = 'pre-line';
+                msgEl.style.textAlign = 'left';
+                msgEl.style.lineHeight = '1.7';
+            }
+        } else {
+            // Fallback: build a standalone modal
+            let modal = document.getElementById('reg-closed-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'reg-closed-modal';
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.9); z-index: 999999;
+                    display: flex; justify-content: center; align-items: center;
+                    font-family: 'Share Tech Mono', monospace;
+                `;
+                modal.innerHTML = `
+                    <div style="background:#000; border:2px solid #00FF41; padding:35px; max-width:460px;
+                                width:90%; text-align:center; box-shadow:0 0 30px rgba(0,255,65,0.3);">
+                        <h2 style="color:#00FF41; margin-bottom:20px; border-bottom:1px solid #00FF41; padding-bottom:10px;">
+                            &gt; REGISTRATION_CLOSED
+                        </h2>
+                        <p style="color:#fff; white-space:pre-line; line-height:1.8; text-align:left; font-size:1rem;">
+                            ${REG_CLOSED_MSG}
+                        </p>
+                        <button onclick="document.getElementById('reg-closed-modal').style.display='none'"
+                                style="margin-top:20px; padding:10px 30px; background:transparent;
+                                       color:#00FF41; border:1px solid #00FF41; cursor:pointer;
+                                       font-family:inherit; font-size:1rem; width:100%;
+                                       letter-spacing:2px;">
+                            [ ACKNOWLEDGE ]
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            modal.style.display = 'flex';
+        }
+    }
+})();
