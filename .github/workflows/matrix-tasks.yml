@@ -13,43 +13,40 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Deploy and Verify via SSH
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            backend/package-lock.json
-            digitial/Matrix-tasks/package-lock.json
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/app
+            git pull origin main
+            
+            # Install dependencies
+            npm install --prefix backend
+            npm install --prefix digitial/Matrix-tasks
+            npm run install-tasks --prefix digitial/Matrix-tasks
+            
+            # Kill existing processes
+            kill -9 $(lsof -t -i :3000-3006) || true
+            pkill -f node || true
 
-      - name: Install dependencies (Backend)
-        run: npm install --prefix backend
-
-      - name: Install dependencies (Matrix Tasks Manager)
-        run: npm install --prefix digitial/Matrix-tasks
-
-      - name: Install dependencies (All Individual Tasks)
-        run: npm run install-tasks --prefix digitial/Matrix-tasks
-
-      - name: Verify All Tasks Start
-        run: |
-          # Start Backend in background
-          npm start --prefix backend &
-          
-          # Start All Matrix Tasks in background
-          npm run start-tasks --prefix digitial/Matrix-tasks &
-          
-          # Wait for servers to initialize
-          sleep 15
-          
-          # Health check for all ports
-          curl -I http://localhost:3000 || exit 1
-          curl -I http://localhost:3001 || exit 1
-          curl -I http://localhost:3002 || exit 1
-          curl -I http://localhost:3003 || exit 1
-          curl -I http://localhost:3004 || exit 1
-          curl -I http://localhost:3005 || exit 1
-          curl -I http://localhost:3006 || exit 1
-          
-          echo "SUCCESS: All systems operational on designated ports."
-
+            # Start Backend and Matrix Tasks
+            nohup npm start --prefix backend > app.log 2>&1 &
+            nohup npm run start-tasks --prefix digitial/Matrix-tasks > app1.log 2>&1 &
+            
+            # Wait for servers to initialize
+            sleep 15
+            
+            # Health check for all ports
+            curl -I http://localhost:3000 || exit 1
+            curl -I http://localhost:3001 || exit 1
+            curl -I http://localhost:3002 || exit 1
+            curl -I http://localhost:3003 || exit 1
+            curl -I http://localhost:3004 || exit 1
+            curl -I http://localhost:3005 || exit 1
+            curl -I http://localhost:3006 || exit 1
+            
+            echo "SUCCESS: All systems operational on designated ports."
