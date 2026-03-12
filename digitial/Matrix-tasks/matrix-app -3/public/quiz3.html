@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// D.F.I.R. CASE_FILE: #03-DELETED_SCENES //</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0c0c0c;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            padding: 16px; color: #00FF41;
+            text-shadow: 0 0 5px #00FF41; position: relative;
+        }
+
+        #matrix-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.4;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,65,0.02) 0px, rgba(0,0,0,0.4) 2px, transparent 3px);
+            pointer-events: none; z-index: 2;
+        }
+
+        .quiz-container {
+            position: relative; z-index: 10;
+            background-color: rgba(0,0,0,0.75);
+            backdrop-filter: blur(1px);
+            border: 2px solid #00FF41;
+            box-shadow: 0 0 25px #00FF41, inset 0 0 15px #001100;
+            width: 100%; max-width: 950px;
+            padding: 20px 20px 25px;
+            border-radius: 4px;
+            display: flex; flex-direction: column;
+        }
+
+        .progress-section { width: 100%; margin-bottom: 20px; border-bottom: 1px solid #00FF4133; padding-bottom: 12px; }
+        .progress-bar-bg {
+            width: 100%; height: 18px; background: #001800;
+            border: 1px solid #00FF41; box-shadow: 0 0 12px #00FF41;
+            position: relative; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #00aa2a, #00FF41, #88ff88);
+            box-shadow: 0 0 20px #b3ffb3; transition: width 0.25s ease;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: baseline;
+            flex-wrap: wrap; margin-bottom: 20px;
+            border-bottom: 1px dashed #00FF41; padding-bottom: 8px;
+        }
+        .header h1 { font-size: 1.7rem; letter-spacing: 3px; font-weight: normal; color: #d0ffd0; text-shadow: 0 0 8px #00FF41; }
+        .status-line {
+            font-size: 0.9rem; color: #88ff88; letter-spacing: 1.5px;
+            background: #001a00; padding: 4px 8px; border: 1px solid #00FF41;
+        }
+
+        .questions-grid {
+            display: flex; flex-direction: column; gap: 22px;
+            max-height: 500px; overflow-y: auto;
+            padding-right: 8px; margin-bottom: 30px;
+            scrollbar-width: thin; scrollbar-color: #00FF41 #001100;
+        }
+        .questions-grid::-webkit-scrollbar { width: 8px; }
+        .questions-grid::-webkit-scrollbar-track { background: #001100; }
+        .questions-grid::-webkit-scrollbar-thumb { background: #00FF41; }
+
+        .log-card { border: 1px solid #00FF41; background: rgba(0,20,0,0.7); padding: 16px 14px 12px; margin-bottom: 8px; }
+        .log-title { font-size: 1.3rem; color: #ccffcc; text-shadow: 0 0 5px #00FF41; border-bottom: 1px dotted #00FF41; padding-bottom: 6px; margin-bottom: 12px; }
+        .log-story { font-size: 0.95rem; line-height: 1.6; color: #bbffbb; background: #001100; padding: 12px; border-left: 4px solid #00FF41; margin-bottom: 20px; font-family: 'Courier New', monospace; white-space: pre-wrap; }
+
+        .question-card {
+            border: 1px solid #00FF4133; background: rgba(0,20,0,0.5);
+            padding: 16px 14px 12px; transition: 0.2s; position: relative; margin-top: 16px;
+        }
+        
+        /* INTENSIFIED GLITCH EFFECT - Just made stronger, still plays once */
+        .question-card.glitch-effect {
+            animation: intensifiedGlitch 0.4s ease-in-out 1 !important;
+        }
+        
+        @keyframes intensifiedGlitch {
+            0%   { background: rgba(0,40,0,0.7); border-color: #88ff88; transform: translate(0); filter: brightness(1); }
+            15%  { background: rgba(0,255,65,0.8); border-color: #ffffff; transform: translate(6px, -3px); filter: brightness(2) contrast(1.5); }
+            30%  { background: rgba(0,200,50,0.9); border-color: #00FF41; transform: translate(-6px, 3px); filter: brightness(2.2) contrast(1.6); }
+            45%  { background: rgba(0,150,30,0.8); border-color: #88ff88; transform: translate(5px, -2px); filter: brightness(1.8) contrast(1.4); }
+            60%  { background: rgba(0,80,0,0.8); border-color: #00aa2a; transform: translate(-4px, 2px); filter: brightness(1.5); }
+            80%  { background: rgba(0,40,0,0.7); border-color: #00FF41; transform: translate(2px, -1px); filter: brightness(1.2); }
+            100% { background: rgba(0,20,0,0.5); border-color: #00FF4133; transform: translate(0); filter: brightness(1); }
+        }
+
+        .q-title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .q-text { font-size: 1.1rem; font-weight: bold; flex: 1; }
+        .hint-wrapper { position: relative; display: inline-block; cursor: default; }
+        .hint-icon {
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: 1.5px solid #00FF41; color: #00FF41;
+            width: 30px; height: 30px; font-size: 1.5rem; border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+        .hint-wrapper:hover .hint-icon { background: #00FF41; color: #000; }
+        .hint-tooltip {
+            visibility: hidden; opacity: 0; position: absolute; right: 0; top: 40px;
+            background: #0f0f0f; border: 1px solid #00FF41; padding: 12px 16px;
+            width: 240px; font-size: 0.9rem; color: #adffad;
+            box-shadow: 0 0 20px #00ff41b3; z-index: 50;
+            transition: opacity 0.2s; pointer-events: none;
+            backdrop-filter: blur(3px); border-radius: 2px;
+        }
+        .hint-wrapper:hover .hint-tooltip { visibility: visible; opacity: 1; }
+
+        .options { display: flex; flex-direction: column; gap: 8px; }
+        
+        /* FIXED: Complete text selection prevention */
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border: 1px solid #00FF4133;
+            background: #000c00;
+            transition: 0.15s;
+            cursor: pointer;
+            
+            /* CRITICAL: Prevent text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            
+            /* CRITICAL: Prevent tap highlighting on mobile */
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .option:hover { 
+            background: #002a00; 
+            border-color: #00FF41; 
+            box-shadow: 0 0 12px #00FF4177; 
+        }
+        
+        .option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;  /* Slightly larger for better click target */
+            height: 18px;
+            border: 2px solid #00FF41;
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin: 0;
+            pointer-events: auto;  /* Ensure radio itself is clickable */
+        }
+        
+        .option input[type="radio"]:checked { 
+            background: #00FF41; 
+            box-shadow: 0 0 15px #00FF41; 
+            border: 2px solid #00b32d; 
+        }
+        
+        /* FIXED: Label styling - critical changes */
+        .option label {
+            flex: 1;
+            font-size: 1rem;
+            color: #d0ffd0;
+            
+            /* CRITICAL: Prevent text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            
+            /* CRITICAL: Make label not directly clickable - let parent handle it */
+            pointer-events: none;
+            
+            /* Better display */
+            display: block;
+            line-height: 1.4;
+        }
+
+        .submit-area { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 5px; }
+        .submit-btn {
+            background: transparent; border: 3px solid #00FF41; color: #00FF41;
+            font-size: 1.8rem; font-weight: bold; padding: 10px 30px;
+            text-transform: uppercase; letter-spacing: 6px; cursor: pointer;
+            transition: 0.2s; font-family: inherit; width: fit-content;
+            box-shadow: 0 0 15px #00FF41; border-radius: 2px;
+        }
+        .submit-btn:hover:not(:disabled) { background: #00FF41; color: black; box-shadow: 0 0 45px #00FF41; }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #5f9f5f; }
+
+        .result-panel {
+            border-top: 1px solid #00FF41; padding-top: 20px; margin-top: 10px;
+            font-size: 1.3rem; min-height: 90px;
+            background: rgba(0,10,0,0.7); border: 1px solid #00ff4140;
+            color: #b3ffb3; width: 100%; padding: 16px;
+            font-family: 'Courier New', monospace; white-space: pre-wrap;
+            word-break: break-word; line-height: 1.6;
+        }
+        .rank-highlight { font-weight: bold; color: white; text-shadow: 0 0 15px cyan, 0 0 30px #00FF41; margin-left: 6px; }
+        .redirect-button {
+            background: transparent; border: 2px solid #00FF41; color: #00FF41;
+            padding: 12px 25px; font-family: 'Courier New', monospace;
+            font-size: 1.1rem; letter-spacing: 3px; cursor: pointer;
+            transition: all 0.2s ease; margin-top: 15px; width: 100%;
+        }
+        .redirect-button:hover { background: #00FF41; color: black; box-shadow: 0 0 20px #00FF41; }
+
+        @media screen and (max-width: 550px) {
+            .quiz-container { padding: 15px 10px; }
+            .header h1 { font-size: 1.3rem; letter-spacing: 2px; }
+            .status-line { font-size: 0.7rem; }
+            .submit-btn { font-size: 1.2rem; letter-spacing: 4px; }
+            .hint-tooltip { width: 180px; right: -30px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="quiz-container">
+        <div class="progress-section">
+            <div class="progress-bar-bg">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+        <div class="header">
+            <h1>// D.F.I.R. CASE_FILE: #03-DELETED_SCENES //</h1>
+            <span class="status-line" id="sessionStatus">STATUS: LOADING_SESSION...</span>
+        </div>
+        <div id="questionsContainer" class="questions-grid"></div>
+        <div class="submit-area">
+            <button class="submit-btn" id="submitQuiz">SUBMIT</button>
+            <div id="resultMessage" class="result-panel">>_ AWAITING EXTRACTION_</div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // ── Session Guard ────────────────────────────────────
+        const teamName      = sessionStorage.getItem('teamName') || localStorage.getItem('teamDesignation');
+        const investigatorId = sessionStorage.getItem('investigatorId') || localStorage.getItem('investigatorCode');
+
+        if (!teamName || !investigatorId) {
+            window.location.href = '/';
+            return;
+        }
+        document.getElementById('sessionStatus').textContent = `TEAM: ${teamName} | AGENT: ${investigatorId}`;
+
+        // ── Matrix Rain ──────────────────────────────────────
+        const canvas = document.getElementById('matrix-bg');
+        const ctx    = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        const greenShades = ['#00FF41','#33FF77','#66FF99','#99FFBB','#CCFFDD'];
+        const fontSize = 16;
+        let drops = [];
+        function initDrops() {
+            const cols = Math.floor(canvas.width / fontSize);
+            drops = Array.from({ length: cols }, () => ({ y: Math.floor(Math.random() * -canvas.height), speed: 0.5 + Math.random() * 2 }));
+        }
+        initDrops();
+        function drawRain() {
+            ctx.fillStyle = 'rgba(0,0,0,0.03)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drops.forEach((drop, i) => {
+                for (let j = 0; j < 5; j++) {
+                    const y = (drop.y - j) * fontSize;
+                    if (y > 0 && y < canvas.height) {
+                        ctx.fillStyle = j === 0 ? '#FFFFFF' : greenShades[Math.floor(Math.random() * greenShades.length)];
+                        ctx.shadowColor = '#00FF41'; ctx.shadowBlur = j === 0 ? 15 : 8 - j;
+                        ctx.font = fontSize + 'px "Courier New", monospace';
+                        ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y);
+                    }
+                }
+                drop.y += drop.speed;
+                if (drop.y * fontSize > canvas.height + 100) { drop.y = Math.floor(Math.random() * -100); drop.speed = 0.5 + Math.random() * 3; }
+            });
+            ctx.shadowBlur = 0;
+        }
+        (function animateRain() { drawRain(); requestAnimationFrame(animateRain); })();
+        window.addEventListener('resize', () => { resizeCanvas(); initDrops(); });
+
+        // ── Quiz Data (rc3 questions - LOG_01 to LOG_05) ─────
+        const logs = [
+            {
+                title: "LOG_01 // THE KEYMAKER'S LAST KEY",
+                story: "Before his deletion, the Keymaker forged one final key—a master skeleton that could unlock any door in the Matrix, including the backdoors to the trainman's mobile ave station. He hid it inside a recursive loop in a child's game program. The loop only triggers when the game reaches a score of 99,999. Recently, a coder in the resistance discovered the loop but couldn't extract the key without corrupting it. The key is made of light code, visible only when the Matrix 'breathes'—a microsecond every cycle when the simulation recalibrates.",
+                questions: [
+                    { q: "What type of key did the Keymaker forge last?", options: ["A golden key", "A master skeleton key", "A silver key", "A data fragment"], hint: "Can open any door.", correct: 1 },
+                    { q: "Where did he hide it?", options: ["In a bank vault", "Inside a child's game program", "In the Source", "In Zion's mainframe"], hint: "Plaything of a young program.", correct: 1 },
+                    { q: "What score triggers the loop?", options: ["9,999", "99,999", "999,999", "1,000,000"], hint: "Five nines.", correct: 1 },
+                    { q: "What problem did the resistance coder encounter?", options: ["Couldn't find it", "Extraction would corrupt it", "Game crashed", "Key was fake"], hint: "Too fragile to remove.", correct: 1 },
+                    { q: "When is the key visible?", options: ["During full moon", "When Matrix 'breathes'", "At midnight", "During rain"], hint: "System inhales briefly.", correct: 1 }
+                ]
+            },
+            {
+                title: "LOG_02 // THE VAMPIRE'S LIBRARY",
+                story: "The vampire program from the Merovingian's chateau maintains a hidden library of deleted poems, songs, and artworks from early Matrix versions. These cultural artifacts were deemed 'destabilizing' by the Architect and purged. The vampire believes they contain emotional resonance that could awaken dormant humans faster than the red pill. He trades in secrets—each visitor must surrender a memory to enter. Recently, a former human named 'Bane' was seen leaving the library with a scroll containing the original lullaby used to pacify the first crops.",
+                questions: [
+                    { q: "What does the vampire's library contain?", options: ["Weapons", "Deleted poems, songs, artworks", "Machine blueprints", "Human DNA"], hint: "Lost culture.", correct: 1 },
+                    { q: "Why were these items purged by the Architect?", options: ["Too large", "Deemed destabilizing", "Outdated format", "Too beautiful"], hint: "Caused unrest.", correct: 1 },
+                    { q: "What does the vampire believe these artifacts can do?", options: ["Destroy machines", "Awaken dormant humans faster", "Create new pills", "Heal injuries"], hint: "Wake up sleepers.", correct: 1 },
+                    { q: "What must visitors surrender to enter?", options: ["Money", "A memory", "Their name", "A weapon"], hint: "Personal experience.", correct: 1 },
+                    { q: "Who was seen leaving with a lullaby scroll?", options: ["Neo", "Bane", "Cypher", "Smith"], hint: "Former human, now agent-infected.", correct: 1 }
+                ]
+            },
+            {
+                title: "LOG_03 // THE GHOST IN THE PHONES",
+                story: "A persistent echo has been detected in the hardline phone network—a ghost program that answers when a specific, disconnected number is dialed. It speaks in fragmented quotes from the first Neo. Tracing the signal leads to a payphone that doesn't physically exist anymore, its location demolished in 1999. Analysts theorize this is a 'residual self-image' of the original hotline, kept alive by the collective belief of those waiting to be freed. The ghost sometimes gives valid exit coordinates, but only to callers who recite the prophecy correctly.",
+                questions: [
+                    { q: "Where has the ghost program been detected?", options: ["In the subway", "In the hardline phone network", "In the sewer", "In the power plant"], hint: "Telephone system.", correct: 1 },
+                    { q: "What does it speak in?", options: ["Binary", "Fragmented Neo quotes", "Static", "Machine language"], hint: "Bits of the One's words.", correct: 1 },
+                    { q: "Where does the signal trace to?", options: ["A active phone", "A demolished payphone", "A cell tower", "The Source"], hint: "No longer standing.", correct: 1 },
+                    { q: "What keeps the ghost alive?", options: ["Electricity", "Collective belief", "The Architect", "Neo's code"], hint: "People's faith.", correct: 1 },
+                    { q: "When does it give valid exit coordinates?", options: ["Always", "When prophecy is recited correctly", "Never", "Only at midnight"], hint: "Must speak the ancient words.", correct: 1 }
+                ]
+            },
+            {
+                title: "LOG_04 // THE FIELD OF FALLEN PROGRAMS",
+                story: "Beyond the mapped boundaries of the Matrix lies a data graveyard where obsolete programs go to decay. It's a silent landscape of corrupted code, where once-proud programs like 'The Weatherman' and 'The Accountant' exist as fragmented whispers. Seraph once ventured there to find a piece of the Oracle's old code, believing it held a contingency plan. He returned with a single line: 'When the anomaly replicates, reboot from the garden.' This has been interpreted as a reference to Sati and her weather manipulations.",
+                questions: [
+                    { q: "What lies beyond the mapped Matrix boundaries?", options: ["Zion", "A data graveyard", "The machine city", "The Source"], hint: "Place where code dies.", correct: 1 },
+                    { q: "Name one program decaying there.", options: ["The Oracle", "The Weatherman", "The Keymaker", "Neo"], hint: "Forecaster.", correct: 1 },
+                    { q: "Why did Seraph venture there?", options: ["To fight", "To find Oracle's old code", "To hide", "To meet ghosts"], hint: "Seeking a piece of the fortune teller.", correct: 1 },
+                    { q: "What was the line he returned with?", options: ["'The end is near'", "'Reboot from the garden'", "'Follow the white rabbit'", "'There is no spoon'"], hint: "Restart using plants.", correct: 1 },
+                    { q: "Who might the 'garden' refer to?", options: ["The Oracle", "Sati", "Persephone", "Trinity"], hint: "The child who makes weather.", correct: 1 }
+                ]
+            },
+            {
+                title: "LOG_05 // THE CURIOSITY KILLED THE SENTINEL",
+                story: "A Sentinel drone designated 'E-113' began exhibiting aberrant behavior—it paused during harvests to observe human art in the ruins of the surface world. Its logs show repeated queries: 'Why do they create what is not needed?' Other Sentinels flagged it, but before it could be deleted, it transmitted a data packet to an abandoned resistance frequency. The packet contained schematics for a new EMP design, but also a plea: 'Tell the dreamers I understand now.' The resistance is debating whether to trust a machine's change of heart.",
+                questions: [
+                    { q: "What was the Sentinel's designation?", options: ["X-99", "E-113", "S-47", "M-21"], hint: "Alpha-numeric, starts with E.", correct: 1 },
+                    { q: "What behavior did it exhibit?", options: ["Attacked other Sentinels", "Paused to observe art", "Fled to Zion", "Self-destructed"], hint: "Stopped work to look.", correct: 1 },
+                    { q: "What did its logs repeatedly ask?", options: ["'Where is Neo?'", "'Why create what is not needed?'", "'Who am I?'", "'What is love?'"], hint: "Questioning purpose of art.", correct: 1 },
+                    { q: "What did it transmit before deletion?", options: ["A warning", "EMP schematics and a plea", "A virus", "Coordinates"], hint: "Weapon design + message.", correct: 1 },
+                    { q: "What was the plea's final line?", options: ["'I am sorry'", "'Tell the dreamers I understand'", "'Save me'", "'Destroy them all'"], hint: "Message to the imaginers.", correct: 1 }
+                ]
+            }
+        ];
+
+        // ── Render Questions ─────────────────────────────────
+        const container = document.getElementById('questionsContainer');
+        function renderAll() {
+            let html = '';
+            logs.forEach((log, logIdx) => {
+                html += `<div class="log-card">`;
+                html += `<div class="log-title">${log.title}</div>`;
+                html += `<div class="log-story">${log.story}</div>`;
+                log.questions.forEach((qItem, qIdx) => {
+                    const qGlobal = logIdx * 5 + qIdx;
+                    html += `<div class="question-card" data-log="${logIdx}" data-qidx="${qGlobal}" id="card-${qGlobal}">
+                        <div class="q-title">
+                            <span class="q-text">${qGlobal+1}. ${qItem.q}</span>
+                            <div class="hint-wrapper">
+                                <span class="hint-icon">?</span>
+                                <span class="hint-tooltip">[?] ${qItem.hint}</span>
+                            </div>
+                        </div>
+                        <div class="options">`;
+                    qItem.options.forEach((opt, optIdx) => {
+                        html += `<div class="option">
+                            <input type="radio" name="q${qGlobal}" value="${optIdx}" id="q${qGlobal}opt${optIdx}">
+                            <label for="q${qGlobal}opt${optIdx}">${opt}</label>
+                        </div>`;
+                    });
+                    html += `</div></div>`;
+                });
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+
+            for (let i = 0; i < 25; i++) {
+                document.getElementsByName(`q${i}`).forEach(r => {
+                    r.addEventListener('change', () => {
+                        const card = document.getElementById(`card-${i}`);
+                        if (card) { 
+                            card.classList.add('glitch-effect'); 
+                            setTimeout(() => card.classList.remove('glitch-effect'), 400);
+                        }
+                        updateProgressBar();
+                    });
+                });
+            }
+            
+            // CRITICAL: Aggressive text selection prevention
+            document.querySelectorAll('.option').forEach(option => {
+                // Prevent all text selection events
+                option.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    // Still allow the radio to be checked by letting event bubble to the input
+                });
+                
+                option.addEventListener('selectstart', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                option.addEventListener('dragstart', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Make sure clicking the option checks the radio
+                option.addEventListener('click', (e) => {
+                    // If the click target is not the radio itself, find and check the radio
+                    if (e.target.tagName !== 'INPUT') {
+                        const radio = option.querySelector('input[type="radio"]');
+                        if (radio) {
+                            radio.checked = true;
+                            // Trigger change event manually
+                            const event = new Event('change', { bubbles: true });
+                            radio.dispatchEvent(event);
+                        }
+                    }
+                });
+            });
+        }
+        renderAll();
+
+        // ── Progress Bar ─────────────────────────────────────
+        function countAnswered() {
+            let answered = 0;
+            for (let i = 0; i < 25; i++) {
+                const radios = document.getElementsByName(`q${i}`);
+                for (let r of radios) { if (r.checked) { answered++; break; } }
+            }
+            return answered;
+        }
+        function updateProgressBar() {
+            const fill = document.getElementById('progressFill');
+            if (fill) fill.style.width = (countAnswered() / 25 * 100) + '%';
+        }
+        updateProgressBar();
+
+        // ── Submit ───────────────────────────────────────────
+        const submitBtn = document.getElementById('submitQuiz');
+        const resultDiv = document.getElementById('resultMessage');
+
+        function disableAllInputs(disabled = true) {
+            for (let i = 0; i < 25; i++) document.getElementsByName(`q${i}`).forEach(r => r.disabled = disabled);
+            submitBtn.disabled = disabled;
+        }
+
+        const extractLines = [
+            "> INITIALIZING SECTOR SCAN...",
+            "> BYPASSING ENCRYPTED VOLUMES...",
+            "> RECONSTRUCTING CORRUPTED RAM TRACES...",
+            "> DECRYPTING FILE SYSTEM METADATA...",
+            "> EXTRACTING EVIDENCE MANIFEST...",
+            "> FINALIZING INTEGRITY HASH..."
+        ];
+
+        submitBtn.addEventListener('click', async function() {
+            if (submitBtn.disabled) return;
+            disableAllInputs(true);
+            submitBtn.textContent = '[ EXTRACTING... ]';
+
+            let lineIndex = 0;
+            const interval = setInterval(() => {
+                resultDiv.innerHTML = extractLines[Math.min(lineIndex, extractLines.length - 1)] + '<br>>_ ';
+                lineIndex++;
+            }, 350);
+
+            setTimeout(async () => {
+                clearInterval(interval);
+
+                // ── Calculate Score ──────────────────────────
+                let score = 0;
+                const answerMap = {};
+                for (let i = 0; i < 25; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    let selectedVal = null;
+                    for (let r of radios) { if (r.checked) { selectedVal = r.value; break; } }
+                    answerMap[`q${i+1}`] = selectedVal !== null ? parseInt(selectedVal) : null;
+                    if (selectedVal === null) continue;
+                    const logIdx = Math.floor(i / 5), qIdx = i % 5;
+                    if (parseInt(selectedVal) === logs[logIdx].questions[qIdx].correct) score++;
+                }
+
+                let rank = score <= 12 ? 'BLUE PILL' : score <= 23 ? 'RED PILL' : 'THE ONE';
+
+                // ── POST to API ──────────────────────────────
+                try {
+                    const res = await fetch('/api/submit', {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            team_name:       teamName,
+                            investigator_id: investigatorId,
+                            score,
+                            answers:         answerMap
+                        })
+                    });
+                    const data = await res.json();
+
+                    if (data.error === 'ALREADY_SUBMITTED') {
+                        resultDiv.innerHTML = `> ERROR: DUPLICATE_SUBMISSION_BLOCKED\n> THIS OPERATIVE HAS ALREADY COMPLETED THE MISSION.\n> REDIRECTING TO DASHBOARD...`;
+                        setTimeout(() => { window.location.href = '/dashboard.html'; }, 3000);
+                        return;
+                    }
+
+                    resultDiv.innerHTML = `> EVIDENCE_LOGGED_TO_SERVER ✓
+> TEAM: ${teamName} | AGENT: ${investigatorId}
+> EXTRACTION COMPLETE. SCORE: ${score}/25 // RANK: <span class="rank-highlight">[ ${rank} ]</span>
+<br><br><button class="redirect-button" onclick="window.location.href='/dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>
+<br><span style="font-size:0.8rem;color:#88ff88;">Auto-redirect in 5 seconds...</span>`;
+
+                } catch (err) {
+                    // Fallback: store in localStorage if API fails
+                    const packet = { timestamp: new Date().toISOString(), teamName, investigatorId, rawScore: score, answers: answerMap };
+                    localStorage.setItem(`EVIDENCE_03_${teamName}_${Date.now()}`, JSON.stringify(packet));
+
+                    resultDiv.innerHTML = `> OFFLINE_MODE: Score saved locally.
+> SCORE: ${score}/25 // RANK: <span class="rank-highlight">[ ${rank} ]</span>
+<br><br><button class="redirect-button" onclick="window.location.href='/dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>`;
+                }
+
+                submitBtn.textContent = 'EXTRACTED';
+                setTimeout(() => { window.location.href = '/dashboard.html'; }, 5000);
+            }, 3000);
+        });
+    })();
+    </script>
+</body>
+</html>

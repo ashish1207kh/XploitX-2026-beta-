@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// IDENTITY_VERIFICATION_GATEWAY //</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0c0c0c;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            color: #00FF41;
+            position: relative;
+        }
+
+        #matrix-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,65,0.03) 0px, rgba(0,0,0,0.2) 2px, transparent 3px);
+            pointer-events: none; z-index: 2;
+        }
+
+        .auth-container {
+            position: relative; z-index: 10;
+            background-color: rgba(0,0,0,0.9);
+            border: 1px solid #00FF41;
+            box-shadow: 0 0 15px rgba(0,255,65,0.3);
+            width: 100%; max-width: 500px;
+            padding: 40px; border-radius: 0;
+            animation: pulseGlow 4s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,100% { box-shadow: 0 0 15px rgba(0,255,65,0.3); }
+            50%      { box-shadow: 0 0 25px rgba(0,255,65,0.5); }
+        }
+
+        .auth-header {
+            text-align: center; margin-bottom: 40px;
+            border-bottom: 1px dashed #00FF41; padding-bottom: 20px;
+        }
+        .auth-header h1 {
+            font-size: 1.2rem; letter-spacing: 5px;
+            font-weight: normal; color: #00FF41;
+            text-shadow: 0 0 8px #00FF41; word-break: break-word;
+        }
+        .auth-header .status-line {
+            display: block; margin-top: 12px;
+            font-size: 0.8rem; color: #88ff88; letter-spacing: 2px;
+        }
+
+        .input-group { margin-bottom: 25px; }
+        .input-label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #adffad; letter-spacing: 2px; }
+        .input-field {
+            width: 100%; background: transparent;
+            border: 1px solid #00FF41; padding: 12px 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem; color: #00FF41; outline: none;
+            transition: all 0.2s ease; border-radius: 0;
+        }
+        .input-field:focus { box-shadow: 0 0 12px #00FF41; background: rgba(0,255,65,0.05); }
+        .input-field::placeholder { color: #00FF41; opacity: 0.3; font-style: italic; }
+
+        .auth-button {
+            width: 100%; background: transparent;
+            border: 1px solid #00FF41; color: #00FF41;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem; padding: 15px; margin-top: 20px;
+            cursor: pointer; transition: all 0.2s ease;
+            letter-spacing: 4px; border-radius: 0; text-transform: uppercase;
+        }
+        .auth-button:hover:not(:disabled) { background: #00FF41; color: #000; box-shadow: 0 0 20px #00FF41; }
+        .auth-button:disabled { opacity: 0.5; cursor: not-allowed; border-color: #5f9f5f; }
+
+        .status-message {
+            margin-top: 30px; padding-top: 20px;
+            border-top: 1px dashed #00FF41;
+            font-size: 0.9rem; color: #88ff88;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap; min-height: 50px;
+        }
+
+        .status-error { color: #FF4136; }
+        .status-success { color: #00FF41; }
+
+        .glitch-effect { animation: glitch 0.3s ease-in-out 3; }
+        @keyframes glitch {
+            0%   { transform: translate(0); }
+            20%  { transform: translate(-3px, 2px); }
+            40%  { transform: translate(3px, -2px); }
+            60%  { transform: translate(-2px, 1px); }
+            80%  { transform: translate(2px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        @media screen and (max-width: 500px) {
+            .auth-container { padding: 25px; }
+            .auth-header h1 { font-size: 1rem; letter-spacing: 3px; }
+            .auth-button { font-size: 1rem; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="auth-container" id="authContainer">
+        <div class="auth-header">
+            <h1>--IDENTITY VERIFICATION GATEWAY--</h1>
+            <span class="status-line" id="headerStatus">>> v.2.3.1_secure // API_CONNECTED</span>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">[ TEAM_DESIGNATION ]</label>
+            <input type="text" class="input-field" id="teamDesignation" placeholder="TEAM_ALPHA_01" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">[ INVESTIGATOR_CODE ]</label>
+            <input type="text" class="input-field" id="investigatorCode" placeholder="AGENT_7X" autocomplete="off">
+        </div>
+
+        <button class="auth-button" id="initializeBtn" disabled>[ INITIALIZE_LINK ]</button>
+
+        <div class="status-message" id="statusMessage">> STATUS: AWAITING_CREDENTIALS...</div>
+    </div>
+
+    <script>
+    (function() {
+        // ── Matrix Rain ──────────────────────────────────────
+        const canvas = document.getElementById('matrix-bg');
+        const ctx    = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const fontSize = 14;
+        let drops = [];
+        function initDrops() {
+            const columns = Math.floor(canvas.width / fontSize);
+            drops = Array.from({ length: columns }, () => Math.floor(Math.random() * -canvas.height));
+        }
+        initDrops();
+        function drawRain() {
+            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00AA41';
+            ctx.font = fontSize + 'px "Courier New", monospace';
+            ctx.shadowColor = '#00AA41'; ctx.shadowBlur = 2;
+            drops.forEach((y, i) => {
+                ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+            ctx.shadowBlur = 0;
+        }
+        (function animateRain() { drawRain(); requestAnimationFrame(animateRain); })();
+        window.addEventListener('resize', () => { resizeCanvas(); initDrops(); });
+
+        // ── Auth Logic ───────────────────────────────────────
+        const teamInput  = document.getElementById('teamDesignation');
+        const codeInput  = document.getElementById('investigatorCode');
+        const initBtn    = document.getElementById('initializeBtn');
+        const statusEl   = document.getElementById('statusMessage');
+        const headerStat = document.getElementById('headerStatus');
+        const container  = document.getElementById('authContainer');
+
+        function validate() { return teamInput.value.trim() !== '' && codeInput.value.trim() !== ''; }
+        function updateBtn() { initBtn.disabled = !validate(); }
+
+        teamInput.addEventListener('input', updateBtn);
+        codeInput.addEventListener('input', updateBtn);
+
+        initBtn.addEventListener('click', async function() {
+            if (!validate() || initBtn.disabled) return;
+
+            const team = teamInput.value.trim().toUpperCase();
+            const code = codeInput.value.trim();
+
+            initBtn.disabled = true;
+            initBtn.textContent = '[ VERIFYING... ]';
+            statusEl.innerHTML = '> PINGING_SECURE_CHANNEL...\n> AUTHENTICATING...';
+            statusEl.className = 'status-message';
+
+            try {
+                const res  = await fetch('/api/auth/verify', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ team_name: team, investigator_id: code })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // Persist to sessionStorage for quiz page
+                    sessionStorage.setItem('teamName', data.team_name);
+                    sessionStorage.setItem('investigatorId', data.investigator_id);
+                    // Keep localStorage for backward compat with rc quiz page
+                    localStorage.setItem('teamDesignation', data.team_name);
+                    localStorage.setItem('investigatorCode', data.investigator_id);
+
+                    statusEl.innerHTML = `> ACCESS_GRANTED\n> ${data.message}\n> REDIRECTING...`;
+                    statusEl.className = 'status-message status-success';
+                    headerStat.innerHTML = '>> SESSION: AUTHENTICATED';
+                    container.classList.add('glitch-effect');
+
+                    setTimeout(() => { window.location.href = '/quiz.html'; }, 800);
+                } else if (data.error === 'ALREADY_SUBMITTED') {
+                    statusEl.innerHTML = `> ACCESS_DENIED\n> MISSION ALREADY COMPLETED BY THIS OPERATIVE.\n> ONE ATTEMPT PER INVESTIGATOR. CHECK DASHBOARD FOR RESULTS.`;
+                    statusEl.className = 'status-message status-error';
+                    headerStat.innerHTML = '>> SESSION: REJECTED';
+                    container.classList.add('glitch-effect');
+                    initBtn.disabled    = false;
+                    initBtn.textContent = '[ INITIALIZE_LINK ]';
+                } else {
+                    throw new Error(data.message || 'VERIFICATION_FAILED');
+                }
+
+            } catch (err) {
+                statusEl.innerHTML = `> ERROR: ${err.message}\n> RETRY_AUTHORIZATION...`;
+                statusEl.className = 'status-message status-error';
+                container.classList.add('glitch-effect');
+                initBtn.disabled   = false;
+                initBtn.textContent = '[ INITIALIZE_LINK ]';
+            }
+        });
+
+        [teamInput, codeInput].forEach(el => {
+            el.addEventListener('keypress', e => { if (e.key === 'Enter' && validate()) initBtn.click(); });
+        });
+    })();
+    </script>
+</body>
+</html>

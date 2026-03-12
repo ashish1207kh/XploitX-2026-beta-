@@ -1,0 +1,53 @@
+name: Matrix Tasks Deployment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run-matrix-tasks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (Root)
+        run: npm install
+
+      - name: Install dependencies (All Tasks)
+        run: npm run install-all
+
+      - name: Verify All Tasks Start
+        run: |
+          # Start Backend
+          cd backend && npm start &
+          
+          # Start Matrix Tasks 1-6
+          cd ../digitial/Matrix-tasks/matrix-app && npm start &
+          cd "../matrix-app -2" && npm start &
+          cd "../matrix-app -3" && npm start &
+          cd "../matrix-app -4" && npm start &
+          cd "../matrix-app -5" && npm start &
+          cd "../matrix-app -6" && npm start &
+          
+          # Wait for a few seconds to ensure they all start
+          sleep 10
+          
+          # Check if ports are listening
+          curl -I http://localhost:3000 || exit 1
+          curl -I http://localhost:3001 || exit 1
+          curl -I http://localhost:3002 || exit 1
+          curl -I http://localhost:3003 || exit 1
+          curl -I http://localhost:3004 || exit 1
+          curl -I http://localhost:3005 || exit 1
+          curl -I http://localhost:3006 || exit 1
+          
+          echo "All Matrix Tasks are running successfully on their respective ports!"

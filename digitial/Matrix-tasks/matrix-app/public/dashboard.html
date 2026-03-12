@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// D.F.I.R. CASE_#01 // MASTER_DASHBOARD //</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0c0c0c;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 20px; color: #00FF41; position: relative;
+        }
+
+        #matrix-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,65,0.02) 0px, rgba(0,0,0,0.15) 2px, transparent 3px);
+            pointer-events: none; z-index: 2;
+        }
+
+        .dashboard-container {
+            position: relative; z-index: 10;
+            width: 100%; max-width: 1200px;
+            background-color: rgba(0,0,0,0.95);
+            border: 2px solid #00FF41;
+            box-shadow: 0 0 40px rgba(0,255,65,0.3);
+            padding: 30px;
+        }
+
+        /* ── HEADER ── */
+        .case-header {
+            text-align: center; margin-bottom: 30px;
+            border-bottom: 1px dashed #00FF41; padding-bottom: 20px;
+            position: relative;
+        }
+        .case-header h1 {
+            font-size: 2rem; letter-spacing: 5px;
+            color: #00FF41; text-shadow: 0 0 20px #00FF41; margin-bottom: 10px;
+        }
+        .case-badge {
+            display: inline-block; background: #00FF41; color: #000;
+            padding: 5px 20px; font-size: 1rem; letter-spacing: 3px; font-weight: bold;
+        }
+
+        /* ── LIVE INDICATOR ── */
+        .live-indicator {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: #88ff88; letter-spacing: 2px;
+            margin-top: 10px; justify-content: center;
+        }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #00FF41; box-shadow: 0 0 8px #00FF41;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: flex; justify-content: space-between;
+            padding: 15px 20px; background: rgba(0,20,0,0.9);
+            border: 1px solid #00FF41; margin-bottom: 30px;
+            color: #88ff88; letter-spacing: 2px; font-size: 0.9rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.5rem; color: #FFFFFF; text-shadow: 0 0 10px #00FF41; }
+
+        /* ── DATABASE INFO ── */
+        .database-info {
+            padding: 10px 15px; background: rgba(0,0,0,0.3);
+            border-left: 4px solid #00FF41; margin-bottom: 20px;
+            font-size: 0.8rem; color: #88ff88;
+        }
+
+        /* ── PODIUM ── */
+        .podium-container {
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 30px; margin-bottom: 50px; min-height: 280px;
+        }
+        .podium {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-end; border: 1px solid;
+            background: linear-gradient(180deg, rgba(0,40,0,0.9) 0%, rgba(0,20,0,0.98) 100%);
+            padding: 20px; min-width: 200px; transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .podium::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 2px; opacity: 0.8;
+        }
+        .podium-1 { height: 260px; border-color: #FFD700; box-shadow: 0 0 25px rgba(255,215,0,0.35); }
+        .podium-1::before { background: linear-gradient(90deg, transparent, #FFD700, transparent); }
+        .podium-2 { height: 210px; border-color: #C0C0C0; box-shadow: 0 0 18px rgba(192,192,192,0.3); }
+        .podium-2::before { background: linear-gradient(90deg, transparent, #C0C0C0, transparent); }
+        .podium-3 { height: 205px; border-color: #CD7F32; box-shadow: 0 0 18px rgba(205,127,50,0.3); }
+        .podium-3::before { background: linear-gradient(90deg, transparent, #CD7F32, transparent); }
+
+        .crown { font-size: 2.8rem; margin-bottom: 10px; filter: drop-shadow(0 0 12px currentColor); animation: floatCrown 3s ease-in-out infinite; }
+        @keyframes floatCrown { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .podium-1 .crown { color: #FFD700; }
+        .podium-2 .crown { color: #C0C0C0; }
+        .podium-3 .crown { color: #CD7F32; }
+
+        .podium-pos { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 6px; }
+        .podium-1 .podium-pos { color: #FFD700; }
+        .podium-2 .podium-pos { color: #C0C0C0; }
+        .podium-3 .podium-pos { color: #CD7F32; }
+
+        .podium-team { font-size: 1.1rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 4px; text-align: center; word-break: break-all; }
+        .podium-investigator { font-size: 0.75rem; color: #88ff88; margin-bottom: 6px; letter-spacing: 1px; }
+        .podium-score { font-size: 2rem; color: #FFFFFF; text-shadow: 0 0 15px #00FF41; }
+        .podium-rank { font-size: 0.75rem; color: #88ff88; margin-top: 4px; }
+
+        /* rank badge colors */
+        .rank-badge {
+            display: inline-block; padding: 2px 8px;
+            background: rgba(0,255,65,0.1); border: 1px solid;
+            font-size: 0.75rem; letter-spacing: 1px;
+        }
+        .rank-blue  { border-color: #4169E1; color: #6fa3ff; background: rgba(65,105,225,0.1); }
+        .rank-red   { border-color: #FF4136; color: #ff7070; background: rgba(255,65,54,0.1); }
+        .rank-one   { border-color: #FFD700; color: #FFD700; background: rgba(255,215,0,0.15); }
+
+        /* ── TABS ── */
+        .tabs-container {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            border-bottom: 1px solid #00FF41; padding-bottom: 10px;
+        }
+        .tab {
+            padding: 8px 20px; cursor: pointer;
+            border: 1px solid transparent; letter-spacing: 2px; transition: all 0.2s ease;
+        }
+        .tab:hover { border-color: #00FF41; }
+        .tab.active { border: 1px solid #00FF41; background: rgba(0,255,65,0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── TABLE ── */
+        .section-title { font-size: 1.1rem; letter-spacing: 3px; margin-bottom: 15px; color: #88ff88; }
+        .table-filters { display: flex; gap: 15px; margin-bottom: 20px; }
+        .filter-input {
+            background: transparent; border: 1px solid #00FF41;
+            padding: 10px 15px; color: #00FF41;
+            font-family: 'Courier New', monospace; font-size: 0.9rem; min-width: 250px;
+        }
+        .filter-input::placeholder { color: #00FF41; opacity: 0.3; }
+        .filter-input:focus { outline: none; box-shadow: 0 0 8px #00FF41; }
+
+        .roster-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', Courier, monospace; }
+        .roster-table th {
+            text-align: left; padding: 12px 10px; font-weight: normal;
+            color: #88ff88; letter-spacing: 2px; font-size: 0.8rem;
+            border-bottom: 1px solid #00FF41;
+        }
+        .roster-table td {
+            padding: 10px; letter-spacing: 1px;
+            border-bottom: 1px dashed rgba(0,255,65,0.2); font-size: 0.9rem;
+        }
+        .roster-table tr:hover td { background: rgba(0,255,65,0.06); }
+
+        .the-one-row { background: rgba(255,215,0,0.04); }
+        .the-one-row td { color: #FFFFFF; }
+
+        .score-highlight { color: #FFFFFF; text-shadow: 0 0 8px #00FF41; font-weight: bold; }
+
+        .empty-state { text-align: center; padding: 60px 40px; border: 2px dashed #00FF41; background: rgba(0,20,0,0.5); }
+        .empty-state h2 { font-size: 1.8rem; color: #00FF41; margin-bottom: 20px; }
+        .empty-state p { color: #88ff88; margin-bottom: 20px; }
+        .empty-state a { color: #00FF41; text-decoration: none; border: 1px solid #00FF41; padding: 8px 16px; display: inline-block; transition: 0.2s; }
+        .empty-state a:hover { background: #00FF41; color: #000; }
+
+        .footer-note {
+            margin-top: 40px; display: flex; justify-content: space-between;
+            color: #88ff88; font-size: 0.8rem; letter-spacing: 2px;
+            border-top: 1px dashed #00FF41; padding-top: 20px;
+        }
+
+        /* ── GLITCH ANIMATION ── */
+        .glitch-row { animation: rowGlitch 0.3s ease-in-out; }
+        @keyframes rowGlitch {
+            0%   { transform: translate(0); opacity: 1; }
+            25%  { transform: translate(3px,0); opacity: 0.8; }
+            50%  { transform: translate(-3px,0); opacity: 0.9; }
+            75%  { transform: translate(1px,0); opacity: 0.85; }
+            100% { transform: translate(0); opacity: 1; }
+        }
+
+        /* podium investigator label */
+        .podium-investigator { font-size: 0.7rem; color: #88ff88; margin-bottom: 5px; }
+
+        @media screen and (max-width: 800px) {
+            .podium-container { flex-direction: column; align-items: center; gap: 15px; }
+            .podium { width: 100%; max-width: 300px; height: auto !important; min-height: 140px; }
+            .crown { animation: none; }
+            .stats-bar { flex-direction: column; gap: 10px; }
+            .table-filters { flex-direction: column; }
+            .case-header h1 { font-size: 1.4rem; letter-spacing: 3px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="dashboard-container">
+        <!-- HEADER -->
+        <div class="case-header">
+            <h1>// D.F.I.R. CASE_#01 //</h1>
+            <div class="case-badge">MASTER OPERATIONS DASHBOARD</div>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>LIVE_FEED // AUTO_REFRESH: 10s // LAST_SYNC: <span id="timestamp">--</span></span>
+            </div>
+        </div>
+
+        <!-- STATS BAR -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item"><div>TOTAL_ATTEMPTS</div><div class="stat-value" id="statTotal">--</div></div>
+            <div class="stat-item"><div>UNIQUE_TEAMS</div><div class="stat-value" id="statTeams">--</div></div>
+            <div class="stat-item"><div>AVG_SCORE</div><div class="stat-value" id="statAvg">--</div></div>
+            <div class="stat-item"><div>TOP_SCORE</div><div class="stat-value" id="statTop">--</div></div>
+        </div>
+
+        <!-- DB INFO -->
+        <div class="database-info" id="databaseInfo">>_ FETCHING DATABASE...</div>
+
+        <!-- PODIUM (TOP 3) -->
+        <div class="podium-container" id="podiumContainer">
+            <div class="podium podium-2" style="opacity:0.4;">
+                <span class="crown">🥈</span>
+                <div class="podium-pos">2ND PLACE</div>
+                <div class="podium-team">--- VACANT ---</div>
+                <div class="podium-score">--/25</div>
+                <div class="podium-rank">SILVER // PENDING</div>
+            </div>
+            <div class="podium podium-1" style="opacity:0.4;">
+                <span class="crown">👑</span>
+                <div class="podium-pos">1ST PLACE</div>
+                <div class="podium-team">--- VACANT ---</div>
+                <div class="podium-score">--/25</div>
+                <div class="podium-rank">GOLD // PENDING</div>
+            </div>
+            <div class="podium podium-3" style="opacity:0.4;">
+                <span class="crown">🥉</span>
+                <div class="podium-pos">3RD PLACE</div>
+                <div class="podium-team">--- VACANT ---</div>
+                <div class="podium-score">--/25</div>
+                <div class="podium-rank">BRONZE // PENDING</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs-container">
+            <div class="tab active" data-tab="leaderboard">[ LEADERBOARD ]</div>
+            <div class="tab" data-tab="database">[ FULL_DATABASE ]</div>
+        </div>
+
+        <!-- LEADERBOARD TAB -->
+        <div id="leaderboardTab" class="tab-content active">
+            <div class="table-section">
+                <div class="section-title">>> ONE-TEAM-ONE-RANK // BEST PER TEAM</div>
+                <div class="table-filters">
+                    <input class="filter-input" id="leaderboardSearch" placeholder=">_ FILTER_BY_TEAM_NAME..." autocomplete="off">
+                </div>
+                <table class="roster-table">
+                    <thead>
+                        <tr>
+                            <th>S.NO</th>
+                            <th>TEAM_NAME</th>
+                            <th>RANK</th>
+                            <th>MARK</th>
+                            <th>TOP_AGENT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr><td colspan="5" style="text-align:center;padding:30px;">LOADING...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DATABASE TAB -->
+        <div id="databaseTab" class="tab-content">
+            <div class="table-section">
+                <div class="section-title">>> RAW_SUBMISSIONS // ALL ENTRIES</div>
+                <div class="table-filters">
+                    <input class="filter-input" id="databaseSearch" placeholder=">_ FILTER_BY_TEAM_OR_AGENT..." autocomplete="off">
+                </div>
+                <table class="roster-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>TEAM_NAME</th>
+                            <th>INVESTIGATOR_ID</th>
+                            <th>SCORE</th>
+                            <th>RANK</th>
+                            <th>TIMESTAMP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="databaseBody">
+                        <tr><td colspan="6" style="text-align:center;padding:30px;">LOADING...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-note">
+            <span>>_ CASE #01-NEO // CLASSIFIED_LEVEL: OMEGA</span>
+            <span id="footerTimestamp">>>_</span>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // ── Matrix Rain ──────────────────────────────────────
+        const canvas = document.getElementById('matrix-bg');
+        const ctx    = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+        const fontSize = 14;
+        let drops = [];
+        function initDrops() {
+            const cols = Math.floor(canvas.width / fontSize);
+            drops = Array.from({ length: cols }, () => Math.floor(Math.random() * -canvas.height));
+        }
+        initDrops();
+        function drawRain() {
+            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00AA41';
+            ctx.font = fontSize + 'px "Courier New", monospace';
+            ctx.shadowColor = '#00AA41'; ctx.shadowBlur = 2;
+            drops.forEach((y, i) => {
+                ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+            ctx.shadowBlur = 0;
+        }
+        (function animateRain() { drawRain(); requestAnimationFrame(animateRain); })();
+        window.addEventListener('resize', () => { resizeCanvas(); initDrops(); });
+
+        // ── Helpers ──────────────────────────────────────────
+        function getRankClass(rank) {
+            if (rank === 'THE ONE') return 'rank-one';
+            if (rank === 'RED PILL') return 'rank-red';
+            return 'rank-blue';
+        }
+
+        // ── Cache for diff/glitch ────────────────────────────
+        let prevLeaderboard = [];
+
+        // ── Fetch Leaderboard from API ───────────────────────
+        async function fetchLeaderboard() {
+            const res  = await fetch('/api/leaderboard');
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            return data.data;
+        }
+
+        // ── Fetch Raw Submissions from API ───────────────────
+        async function fetchSubmissions() {
+            const res  = await fetch('/api/submissions');
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            return data.data;
+        }
+
+        // ── Render Stats ─────────────────────────────────────
+        function renderStats(stats) {
+            document.getElementById('statTotal').textContent = stats.total_submissions;
+            document.getElementById('statTeams').textContent = stats.unique_teams;
+            document.getElementById('statTop').textContent   = stats.top_score + '/25';
+        }
+
+        function renderAvg(submissions) {
+            if (!submissions.length) { document.getElementById('statAvg').textContent = '0'; return; }
+            const avg = (submissions.reduce((s, m) => s + m.score, 0) / submissions.length).toFixed(1);
+            document.getElementById('statAvg').textContent = avg;
+        }
+
+        // ── Render DB Info ────────────────────────────────────
+        function renderDbInfo(stats) {
+            document.getElementById('databaseInfo').textContent =
+                `>_ DATABASE: ${stats.total_submissions} total entries | ${stats.unique_teams} unique teams | Last sync: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // ── Render Podium (TOP 3) ─────────────────────────────
+        function renderPodium(leaderboard) {
+            const podiumContainer = document.getElementById('podiumContainer');
+
+            if (!leaderboard.length) {
+                podiumContainer.innerHTML = `
+                    <div class="empty-state" style="width:100%">
+                        <h2>// NO_MISSIONS_COMPLETED //</h2>
+                        <p>Waiting for operatives to complete CASE #01...</p>
+                        <a href="/">[ START_MISSION ]</a>
+                    </div>`;
+                return;
+            }
+
+            // Podium layout: [2nd, 1st, 3rd]
+            const order   = [leaderboard[1], leaderboard[0], leaderboard[2]];
+            const classes  = ['podium-2', 'podium-1', 'podium-3'];
+            const crowns   = ['🥈', '👑', '🥉'];
+            const labels   = ['2ND PLACE', '1ST PLACE', '3RD PLACE'];
+            const metalNm  = ['SILVER', 'GOLD', 'BRONZE'];
+
+            podiumContainer.innerHTML = order.map((team, i) => {
+                if (!team) return `
+                    <div class="podium ${classes[i]}" style="opacity:0.4;">
+                        <span class="crown">${crowns[i]}</span>
+                        <div class="podium-pos">${labels[i]}</div>
+                        <div class="podium-team">--- VACANT ---</div>
+                        <div class="podium-score">--/25</div>
+                        <div class="podium-rank">${metalNm[i]} // PENDING</div>
+                    </div>`;
+                return `
+                    <div class="podium ${classes[i]}">
+                        <span class="crown">${crowns[i]}</span>
+                        <div class="podium-pos">${labels[i]}</div>
+                        <div class="podium-team">${team.team_name}</div>
+                        <div class="podium-investigator">▸ ${team.investigator_id}</div>
+                        <div class="podium-score">${team.score}/25</div>
+                        <div class="podium-rank">${metalNm[i]} // ${team.rank_title}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        // ── Render Leaderboard Table ──────────────────────────
+        function renderLeaderboard(leaderboard, filter = '') {
+            const body = document.getElementById('leaderboardBody');
+            let filtered = filter
+                ? leaderboard.filter(t => t.team_name.toLowerCase().includes(filter.toLowerCase()))
+                : leaderboard;
+
+            if (!filtered.length) {
+                body.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:30px;">>_ NO MATCHING TEAMS FOUND</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = filtered.map((team, idx) => {
+                const isTheOne  = team.rank_title === 'THE ONE';
+                const rowClass  = isTheOne ? 'the-one-row' : '';
+                const rankClass = getRankClass(team.rank_title);
+                const wasPresent = prevLeaderboard.some(p => p.team_name === team.team_name && p.score === team.score);
+                const glitch = !wasPresent && prevLeaderboard.length > 0 ? 'glitch-row' : '';
+
+                return `<tr class="${rowClass} ${glitch}">
+                    <td>#${String(idx + 1).padStart(2, '0')}</td>
+                    <td>${team.team_name}</td>
+                    <td><span class="rank-badge ${rankClass}">${team.rank_title}</span></td>
+                    <td><span class="score-highlight">${team.score}/25</span></td>
+                    <td style="color:#88ff88;font-size:0.8rem;">${team.investigator_id}</td>
+                </tr>`;
+            }).join('');
+
+            // Update snapshot
+            prevLeaderboard = [...leaderboard];
+        }
+
+        // ── Render Full Database ──────────────────────────────
+        function renderFullDatabase(submissions, filter = '') {
+            const body = document.getElementById('databaseBody');
+            let filtered = filter
+                ? submissions.filter(m =>
+                    m.team_name.toLowerCase().includes(filter.toLowerCase()) ||
+                    m.investigator_id.toLowerCase().includes(filter.toLowerCase()))
+                : submissions;
+
+            if (!filtered.length) {
+                body.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;">>_ NO ENTRIES FOUND</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = filtered.map((m, idx) => {
+                const isTheOne  = m.rank_title === 'THE ONE';
+                const rowClass  = isTheOne ? 'the-one-row' : '';
+                const rankClass = getRankClass(m.rank_title);
+                const date      = new Date(m.timestamp).toLocaleString();
+                return `<tr class="${rowClass}">
+                    <td>${String(idx + 1).padStart(2, '0')}</td>
+                    <td>${m.team_name}</td>
+                    <td style="color:#88ff88;">${m.investigator_id}</td>
+                    <td><span class="score-highlight">${m.score}/25</span></td>
+                    <td><span class="rank-badge ${rankClass}">${m.rank_title}</span></td>
+                    <td style="font-size:0.7rem;color:#88ff88;">${date}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ── Main Refresh ──────────────────────────────────────
+        let allSubmissions = [];
+        let leaderboardData = [];
+
+        async function initDashboard() {
+            try {
+                const [lbRes, subRes] = await Promise.all([fetchLeaderboard(), fetchSubmissions()]);
+
+                leaderboardData = lbRes.leaderboard;
+                allSubmissions  = subRes;
+
+                renderStats(lbRes.stats);
+                renderAvg(allSubmissions);
+                renderDbInfo(lbRes.stats);
+                renderPodium(leaderboardData);
+
+                const lbFilter = document.getElementById('leaderboardSearch').value;
+                const dbFilter = document.getElementById('databaseSearch').value;
+                renderLeaderboard(leaderboardData, lbFilter);
+                renderFullDatabase(allSubmissions, dbFilter);
+
+                const now = new Date().toLocaleString();
+                document.getElementById('timestamp').textContent      = now;
+                document.getElementById('footerTimestamp').textContent = `>_ SYNC: ${now}`;
+
+            } catch (err) {
+                console.error('[DASHBOARD] Fetch failed:', err);
+                document.getElementById('databaseInfo').textContent =
+                    `>_ ERROR: Cannot reach server. ${err.message}`;
+            }
+        }
+
+        // ── Tab Switching ─────────────────────────────────────
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+
+        // ── Search Filters ────────────────────────────────────
+        document.getElementById('leaderboardSearch').addEventListener('input', e => {
+            renderLeaderboard(leaderboardData, e.target.value);
+        });
+        document.getElementById('databaseSearch').addEventListener('input', e => {
+            renderFullDatabase(allSubmissions, e.target.value);
+        });
+
+        // ── Start ─────────────────────────────────────────────
+        initDashboard();
+        // Live refresh every 10 seconds
+        setInterval(initDashboard, 10000);
+    })();
+    </script>
+</body>
+</html>
