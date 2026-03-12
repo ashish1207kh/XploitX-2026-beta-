@@ -6,7 +6,7 @@
     "install-tasks": "npm install --prefix matrix-app && npm install --prefix \"matrix-app -2\" && npm install --prefix \"matrix-app -3\" && npm install --prefix \"matrix-app -4\" && npm install --prefix \"matrix-app -5\" && npm install --prefix \"matrix-app -6\"",
     "start-tasks": "concurrently \"npm start --prefix matrix-app\" \"npm start --prefix \\\"matrix-app -2\\\"\" \"npm start --prefix \\\"matrix-app -3\\\"\" \"npm start --prefix \\\"matrix-app -4\\\"\" \"npm start --prefix \\\"matrix-app -5\\\"\" \"npm start --prefix \\\"matrix-app -6\\\"\""
   },
-  "devDependencies": {
+  "dependencies": {
     "concurrently": "^8.2.2"
   }
 }

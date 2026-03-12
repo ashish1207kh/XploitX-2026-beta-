@@ -6,14 +6,78 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-matrix-tasks:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
+      # ──────────────── BUILD ────────────────
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Deploy and Verify via SSH
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Dependencies
+        run: |
+          npm install --prefix backend
+          npm install --prefix digitial/Matrix-tasks
+          npm install --prefix digitial/Matrix-tasks/matrix-app
+          npm install --prefix "digitial/Matrix-tasks/matrix-app -2"
+          npm install --prefix "digitial/Matrix-tasks/matrix-app -3"
+          npm install --prefix "digitial/Matrix-tasks/matrix-app -4"
+          npm install --prefix "digitial/Matrix-tasks/matrix-app -5"
+          npm install --prefix "digitial/Matrix-tasks/matrix-app -6"
+
+      - name: Package for Deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-artifact
+          path: |
+            .
+            !**/.git/**
+            !**/.github/**
+            !**/*.env
+            !**/*.db
+            !**/*.log
+            !data.json
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-artifact
+          path: deploy-artifact
+
+      - name: Create Tarball for Transfer
+        run: |
+          cd deploy-artifact
+          tar -czf ../deploy.tar.gz .
+
+      # ──────────────── TRANSFER ────────────────
+
+      - name: Transfer to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: deploy.tar.gz
+          target: /tmp/
+
+      # ──────────────── DEPLOY ────────────────
+
+      - name: "SSH: Cleanup Existing Processes"
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -21,32 +85,85 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd ~/app
-            git pull origin main
+            # Kill existing processes on specific ports gracefully
+            PIDS=$(lsof -t -i :3000-3006 2>/dev/null || true)
+            if [ -n "$PIDS" ]; then 
+              kill -9 $PIDS || true
+            fi
             
-            # Install dependencies
-            npm install --prefix backend
-            npm install --prefix digitial/Matrix-tasks
-            npm run install-tasks --prefix digitial/Matrix-tasks
-            
-            # Kill existing processes
-            kill -9 $(lsof -t -i :3000-3006) || true
-            pkill -f node || true
+            # Use a more targeted kill instead of global 'pkill node'
+            # Or run it with nohup so it doesn't terminate the SSH action wrapper
+            killall -q -9 node || true
+            sleep 1
 
-            # Start Backend and Matrix Tasks
-            nohup npm start --prefix backend > app.log 2>&1 &
-            nohup npm run start-tasks --prefix digitial/Matrix-tasks > app1.log 2>&1 &
-            
+      - name: "SSH: Deploy Application"
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            # Backup .env and .db files
+            mkdir -p /tmp/app-backup
+            find ~/app -name '*.env' -exec cp --parents {} /tmp/app-backup/ \; 2>/dev/null || true
+            find ~/app -name '*.db' -exec cp --parents {} /tmp/app-backup/ \; 2>/dev/null || true
+
+            # Extract new code
+            rm -rf ~/app/*
+            tar -xzf /tmp/deploy.tar.gz -C ~/app
+
+            # Restore .env and .db files
+            if [ -d /tmp/app-backup/root/app ]; then
+              cp -rf /tmp/app-backup/root/app/. ~/app/
+            fi
+            rm -rf /tmp/deploy.tar.gz
+
+            # Fix native module architecture mismatch
+            cd ~/app/backend && npm rebuild
+            cd ~/app/digitial/Matrix-tasks && npm rebuild
+
+            # Start services
+            cd ~/app/backend
+            setsid npm start > ~/app.log 2>&1 &
+
+            cd ~/app/digitial/Matrix-tasks
+            setsid npm run start-tasks > ~/app1.log 2>&1 &
+
+            sleep 2
+
+      - name: "SSH: Health Verification"
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          command_timeout: 15m
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/app
             # Wait for servers to initialize
             sleep 15
-            
+
+            # Define a function to print logs on failure
+            check_port() {
+              if ! curl -s -I http://localhost:$1 >/dev/null; then
+                echo "❌ Failed to connect to port $1!"
+                echo "--- BACKEND LOG (app.log) ---"
+                tail -n 50 ~/app.log || true
+                echo "--- MATRIX TASKS LOG (app1.log) ---"
+                tail -n 50 ~/app1.log || true
+                exit 1
+              fi
+            }
+
             # Health check for all ports
-            curl -I http://localhost:3000 || exit 1
-            curl -I http://localhost:3001 || exit 1
-            curl -I http://localhost:3002 || exit 1
-            curl -I http://localhost:3003 || exit 1
-            curl -I http://localhost:3004 || exit 1
-            curl -I http://localhost:3005 || exit 1
-            curl -I http://localhost:3006 || exit 1
-            
+            check_port 3000
+            check_port 3001
+            check_port 3002
+            check_port 3003
+            check_port 3004
+            check_port 3005
+            check_port 3006
+
             echo "SUCCESS: All systems operational on designated ports."
