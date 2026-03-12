@@ -13,31 +13,25 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ============================================================
+// MATRIX APP INTEGRATION
+// ============================================================
+
+// 1. API ROUTES
+// Mount the Matrix API on multiple paths to handle typos and case sensitivity
+app.use(['/digitial/matrix-app/public/api', '/digital/matrix-app/public/api', '/Digitial/matrix-app/public/api'], require('../public/digitial/matrix-app/routes/api'));
+
+// 2. ENTRY REDIRECTS 
+// When user visits the matrix-app entry point, redirect to the internal public index.html
+app.get(['/digitial/matrix-app', '/digitial/matrix-app/', '/digital/matrix-app', '/digital/matrix-app/', '/Digitial/matrix-app/', '/Digitial/matrix-app/'], (req, res) => {
+    res.redirect('/digitial/matrix-app/public/index.html');
+});
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Redirect Matrix App requests to its separate server
-app.use(['/digitial/matrix-app/public', '/Digitial/matrix-app/public', '/digitial/matrix-app', '/Digitial/matrix-app'], (req, res) => {
-    // Redirect all requests from the main url to the Matrix App's port (3001)
-    let urlPath = req.url;
-    if (urlPath === '/' || urlPath === '/index.html' || urlPath === '/public/index.html') {
-        urlPath = '/';
-    } else {
-        // Strip out /public/ if they typed it
-        urlPath = urlPath.replace('/public/', '/');
-    }
-    
-    // Dynamically build the URL so it works on "www.xploitxctf.me" and "localhost"
-    const protocol = req.protocol; // 'http' or 'https'
-    const host = req.hostname;     // 'localhost' or 'www.xploitxctf.me'
-    
-    // If you are setting up a domain, ensure PORT 3001 is open on your production server firewall!
-    const targetUrl = `${protocol}://${host}:3001${urlPath}`;
-    res.redirect(targetUrl);
-});
 
 // Multer Storage
 const multer = require('multer');
@@ -89,20 +83,7 @@ const initialiseDBAndServer = async () => {
         app.listen(PORT, () => {
             console.log(`Server started at http://localhost:${PORT}/`);
             
-            // Start the Matrix App server
-            const { spawn } = require('child_process');
-            const matrixAppDir = path.join(__dirname, '../public/Digitial/matrix-app');
-            
-            console.log(`Starting matrix-app server from ${matrixAppDir}`);
-            const matrixProcess = spawn('node', ['server.js'], {
-                cwd: matrixAppDir,
-                env: { ...process.env, PORT: 3001 }, // Running on a different port to avoid conflict
-                stdio: 'inherit'
-            });
-
-            matrixProcess.on('error', (err) => {
-                console.error('Failed to start matrix-app server:', err);
-            });
+            console.log('Matrix App API loaded on main server.');
         });
     } catch (err) {
         console.log(`DB Error: ${err.message}`);

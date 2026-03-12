@@ -251,7 +251,7 @@
         const investigatorId = sessionStorage.getItem('investigatorId') || localStorage.getItem('investigatorCode');
 
         if (!teamName || !investigatorId) {
-            window.location.href = '/';
+            window.location.href = 'index.html';
             return;
         }
         document.getElementById('sessionStatus').textContent = `TEAM: ${teamName} | AGENT: ${investigatorId}`;
@@ -493,7 +493,7 @@
 
                 // ── POST to API ──────────────────────────────
                 try {
-                    const res = await fetch('/api/submit', {
+                    const res = await fetch('api/submit', {
                         method:  'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -507,14 +507,14 @@
 
                     if (data.error === 'ALREADY_SUBMITTED') {
                         resultDiv.innerHTML = `> ERROR: DUPLICATE_SUBMISSION_BLOCKED\n> THIS OPERATIVE HAS ALREADY COMPLETED THE MISSION.\n> REDIRECTING TO DASHBOARD...`;
-                        setTimeout(() => { window.location.href = '/dashboard.html'; }, 3000);
+                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 3000);
                         return;
                     }
 
                     resultDiv.innerHTML = `> EVIDENCE_LOGGED_TO_SERVER ✓
 > TEAM: ${teamName} | AGENT: ${investigatorId}
 > EXTRACTION COMPLETE. SCORE: ${score}/25 // RANK: <span class="rank-highlight">[ ${rank} ]</span>
-<br><br><button class="redirect-button" onclick="window.location.href='/dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>
+<br><br><button class="redirect-button" onclick="window.location.href='dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>
 <br><span style="font-size:0.8rem;color:#88ff88;">Auto-redirect in 5 seconds...</span>`;
 
                 } catch (err) {
@@ -524,11 +524,11 @@
 
                     resultDiv.innerHTML = `> OFFLINE_MODE: Score saved locally.
 > SCORE: ${score}/25 // RANK: <span class="rank-highlight">[ ${rank} ]</span>
-<br><br><button class="redirect-button" onclick="window.location.href='/dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>`;
+<br><br><button class="redirect-button" onclick="window.location.href='dashboard.html'">[ VIEW_DEBRIEF_DASHBOARD ]</button>`;
                 }
 
                 submitBtn.textContent = 'EXTRACTED';
-                setTimeout(() => { window.location.href = '/dashboard.html'; }, 5000);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 5000);
             }, 3000);
         });
     })();

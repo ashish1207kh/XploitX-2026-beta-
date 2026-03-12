@@ -363,7 +363,7 @@
 
         // ── Fetch Leaderboard from API ───────────────────────
         async function fetchLeaderboard() {
-            const res  = await fetch('/api/leaderboard');
+            const res  = await fetch('api/leaderboard');
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
             return data.data;
@@ -371,7 +371,7 @@
 
         // ── Fetch Raw Submissions from API ───────────────────
         async function fetchSubmissions() {
-            const res  = await fetch('/api/submissions');
+            const res  = await fetch('api/submissions');
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
             return data.data;
@@ -405,7 +405,7 @@
                     <div class="empty-state" style="width:100%">
                         <h2>// NO_MISSIONS_COMPLETED //</h2>
                         <p>Waiting for operatives to complete CASE #01...</p>
-                        <a href="/">[ START_MISSION ]</a>
+                        <a href="index.html">[ START_MISSION ]</a>
                     </div>`;
                 return;
             }
