@@ -194,7 +194,7 @@
             statusEl.className = 'status-message';
 
             try {
-                const res  = await fetch('api/auth/verify', {
+                const res  = await fetch('/api/auth/verify', {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify({ team_name: team, investigator_id: code })
@@ -214,7 +214,7 @@
                     headerStat.innerHTML = '>> SESSION: AUTHENTICATED';
                     container.classList.add('glitch-effect');
 
-                    setTimeout(() => { window.location.href = 'quiz.html'; }, 800);
+                    setTimeout(() => { window.location.href = '/quiz.html'; }, 800);
                 } else if (data.error === 'ALREADY_SUBMITTED') {
                     statusEl.innerHTML = `> ACCESS_DENIED\n> MISSION ALREADY COMPLETED BY THIS OPERATIVE.\n> ONE ATTEMPT PER INVESTIGATOR. CHECK DASHBOARD FOR RESULTS.`;
                     statusEl.className = 'status-message status-error';
