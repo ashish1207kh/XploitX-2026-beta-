@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Redirect Matrix App requests to its separate server
-app.use(['/digitial/matrix-app/public', '/Digitial/matrix-app/public', '/digitial/matrix-app', '/Digitial/matrix-app'], (req, res) => {
+app.use(['/digitial/matrix-app/public', '/digitial/matrix-app'], (req, res) => {
     // Redirect all requests from the main url to the Matrix App's port (3001)
     let urlPath = req.url;
     if (urlPath === '/' || urlPath === '/index.html' || urlPath === '/public/index.html') {
@@ -91,7 +91,7 @@ const initialiseDBAndServer = async () => {
             
             // Start the Matrix App server
             const { spawn } = require('child_process');
-            const matrixAppDir = path.join(__dirname, '../public/Digitial/matrix-app');
+            const matrixAppDir = path.join(__dirname, '../public/digitial/matrix-app');
             
             console.log(`Starting matrix-app server from ${matrixAppDir}`);
             const matrixProcess = spawn('node', ['server.js'], {

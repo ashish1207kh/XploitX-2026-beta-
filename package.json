@@ -1,0 +1,14 @@
+{
+  "name": "xploitx-2026",
+  "version": "1.0.0",
+  "description": "Root package for XploitX-2026 project",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "install-all": "npm install && cd backend && npm install && cd ../public/digitial/matrix-app && npm install",
+    "backend": "cd backend && npm start"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
