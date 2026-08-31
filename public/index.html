@@ -20,11 +20,11 @@
 
 <body>
 
-    <!-- Floating Register Badge at Bottom Right -->
-    <div class="register-badge">
-        <div class="early-bird-msg">● REGISTRATION OPEN ●</div>
-        <a href="register.html">[ REGISTER NOW ]</a>
-    </div>
+    <!-- Interactive Floating Register Button with Tactile Pressing Transitions -->
+    <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
+        <span class="reg-btn-status"><span class="pulse-dot"></span> REGISTRATION OPEN</span>
+        <span class="reg-btn-label">[ REGISTER NOW ] <i class="fas fa-arrow-right"></i></span>
+    </a>
 
     <!-- Background Layers: Interactive Particle Canvas & Cyber Grid -->
     <canvas id="particles-bg"></canvas>
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <!-- Tag Strip Marquee (With Rich Background Color) -->
+        <!-- Accreditations & Recognitions Marquee Banner -->
         <div class="logo-marquee-container">
             <div class="logo-marquee-content">
                 <img src="tag.png" alt="Accreditation Logos">
@@ -56,11 +56,12 @@
             </div>
         </div>
 
-        <!-- News Ticker Marquee -->
+        <!-- Live News Marquee -->
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
-                    <span>⚡ XPLOITX 2.0 BETA • 24-HOUR CYBERSECURITY CAPTURE THE FLAG • 09 OCTOBER 2026 • REGISTRATION OPEN • ENLIST YOUR TEAM NOW • PRATHYUSHA ENGINEERING COLLEGE • ⚡</span>
+                    <span>⚡ XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTRATION OPEN NOW • ENTER THE BATTLEFIELD • </span>
+                    <span>⚡ XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTRATION OPEN NOW • ENTER THE BATTLEFIELD • </span>
                 </a>
             </div>
         </div>
@@ -75,6 +76,7 @@
                 <li><a href="#home" class="nav-link active">HOME</a></li>
                 <li><a href="#about" class="nav-link">ABOUT</a></li>
                 <li><a href="#how-to-play" class="nav-link">HOW TO PLAY</a></li>
+                <li><a href="#prizes" class="nav-link">PRIZES</a></li>
                 <li><a href="#partners" class="nav-link">MOU PARTNERS</a></li>
                 <li><a href="#rules" class="nav-link">RULES</a></li>
                 <li><a href="#faq" class="nav-link">FAQ</a></li>
@@ -82,7 +84,7 @@
 
             <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
                 <i class="fas fa-bars"></i>
-            </button>
+            </button>           
         </div>
     </nav>
 
@@ -296,7 +298,56 @@
     </section>
 
     <!-- ==========================================
-         6. MoU PARTNERS & COLLABORATIONS (TRANSPARENT BACKGROUNDS)
+         6. BATTLEGROUND PRIZES & SPOILS
+         ========================================== -->
+    <section class="prizes-section" id="prizes">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ SOVEREIGN TREASURY ]</div>
+                <h2 class="section-title">BATTLEGROUND BOUNTIES & PRIZES</h2>
+                <p class="section-subtitle">Supreme glory, massive cash bounties, vouchers, and exclusive mentorship await the top cybersecurity operatives.</p>
+            </div>
+
+            <div class="prizes-grid">
+                <!-- 1st Prize -->
+                <div class="prize-tier-card hud-panel prize-gold">
+                    <div class="prize-badge-pill"><i class="fas fa-crown"></i> 1ST PLACE</div>
+                    <div class="prize-icon-wrap text-gold"><i class="fas fa-trophy"></i></div>
+                    <h3 class="prize-tier-title text-gold">CHAMPION OF BATTLEWORLD</h3>
+                    <div class="prize-cash-amount">₹15,000 CASH</div>
+                    <div class="prize-voucher-amount">+ ₹5,000 VOUCHERS</div>
+                    <p class="prize-desc">Executive cybersecurity mentorship, exclusive Avengers: Doomsday Sovereign Swag, and Championship Trophy.</p>
+                </div>
+
+                <!-- 2nd Prize -->
+                <div class="prize-tier-card hud-panel prize-green">
+                    <div class="prize-badge-pill"><i class="fas fa-medal"></i> 2ND PLACE</div>
+                    <div class="prize-icon-wrap text-green"><i class="fas fa-medal"></i></div>
+                    <h3 class="prize-tier-title text-green">TITANIUM DEFENDER</h3>
+                    <div class="prize-cash-amount">₹10,000 CASH</div>
+                    <div class="prize-voucher-amount">+ ₹5,000 VOUCHERS</div>
+                    <p class="prize-desc">Advanced security workshops, high-tier credentials, distinction certificates, and professional networking.</p>
+                </div>
+
+                <!-- 3rd Prize -->
+                <div class="prize-tier-card hud-panel prize-cyan">
+                    <div class="prize-badge-pill"><i class="fas fa-award"></i> 3RD PLACE</div>
+                    <div class="prize-icon-wrap text-cyan"><i class="fas fa-award"></i></div>
+                    <h3 class="prize-tier-title text-cyan">VIBRANIUM OPERATIVE</h3>
+                    <div class="prize-cash-amount">₹5,000 CASH</div>
+                    <div class="prize-voucher-amount">+ ₹5,000 VOUCHERS</div>
+                    <p class="prize-desc">Cutting-edge tech gadgets, elite certificates of distinction, and community recognition.</p>
+                </div>
+            </div>
+
+            <div class="prizes-cta-wrap">
+                <a href="prizes.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> [ VIEW FULL PRIZE & SPONSORS DOSSIER ]</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         7. MoU PARTNERS & COLLABORATIONS (TRANSPARENT BACKGROUNDS)
          ========================================== -->
     <section class="mou-section" id="partners">
         <div class="container">

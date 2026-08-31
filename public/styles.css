@@ -121,55 +121,95 @@ body::after {
 }
 
 /* ========================================================
-   FLOATING REGISTRATION BADGE AT BOTTOM RIGHT
+   FLOATING REGISTRATION BUTTON (WITH TACTILE PRESS TRANSITIONS)
    ======================================================== */
 
-.register-badge {
+.register-floating-btn {
     position: fixed;
     bottom: 25px;
     right: 25px;
-    top: auto;
     z-index: 1050;
-    background: rgba(3, 4, 10, 0.94);
-    border: 1px solid var(--doom-green);
-    padding: 10px 18px;
-    border-radius: 6px;
-    backdrop-filter: blur(12px);
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75), 0 0 15px var(--doom-green-glow);
-    transition: all 0.3s ease;
-    animation: floatingBadge 3.5s ease-in-out infinite alternate;
-}
-
-@keyframes floatingBadge {
-    0% { transform: translateY(0); box-shadow: 0 10px 25px rgba(0,0,0,0.75), 0 0 12px var(--doom-green-glow); }
-    100% { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(0,0,0,0.85), 0 0 20px var(--doom-green-glow); }
-}
-
-.register-badge:hover {
-    border-color: var(--doom-gold);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 0 0 25px rgba(255, 215, 0, 0.4);
-    transform: translateY(-6px);
-}
-
-.register-badge a {
-    font-family: var(--font-brand);
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #ffffff;
+    background: linear-gradient(135deg, rgba(3, 10, 24, 0.95) 0%, rgba(6, 20, 45, 0.95) 100%);
+    border: 1.5px solid var(--doom-green);
+    padding: 10px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     text-decoration: none;
-    letter-spacing: 2px;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 18px var(--doom-green-glow);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s ease,
+                background 0.2s ease;
+    outline: none;
 }
 
-.register-badge .early-bird-msg {
+/* Hover State */
+.register-floating-btn:hover {
+    transform: translateY(-4px) scale(1.03);
+    border-color: var(--doom-gold);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 25px var(--doom-gold-glow), 0 0 10px var(--doom-green-glow);
+    background: linear-gradient(135deg, rgba(6, 18, 40, 0.98) 0%, rgba(12, 32, 70, 0.98) 100%);
+}
+
+/* Active Pressing State - Tactile Push Feedback */
+.register-floating-btn:active {
+    transform: translateY(2px) scale(0.94);
+    border-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(0, 255, 102, 0.5), 0 0 35px var(--doom-green-glow);
+    background: linear-gradient(135deg, rgba(0, 255, 102, 0.25) 0%, rgba(0, 200, 80, 0.4) 100%);
+}
+
+.reg-btn-status {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--doom-green);
-    margin-bottom: 4px;
-    text-shadow: 0 0 8px var(--doom-green-glow);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 0 6px var(--doom-green-glow);
+}
+
+.reg-btn-status .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--doom-green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--doom-green);
+    animation: livePulse 1.5s infinite;
+}
+
+.reg-btn-label {
+    font-family: var(--font-brand);
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease;
+}
+
+.register-floating-btn:hover .reg-btn-label {
+    color: var(--doom-gold);
+    text-shadow: 0 0 10px var(--doom-gold-glow);
+}
+
+.register-floating-btn:hover .reg-btn-label i {
+    transform: translateX(4px);
+}
+
+.register-floating-btn:active .reg-btn-label {
+    transform: scale(0.96);
 }
 
 /* Layout Container - Fluid Autofit */
@@ -966,6 +1006,123 @@ section {
 }
 
 /* ========================================================
+   BATTLEGROUND PRIZES & BOUNTIES
+   ======================================================== */
+
+.prizes-section {
+    padding: 90px 0;
+    position: relative;
+}
+
+.prizes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 40px;
+}
+
+.prize-tier-card {
+    padding: 35px 25px;
+    text-align: center;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.prize-tier-card:hover {
+    transform: translateY(-8px);
+}
+
+.prize-gold {
+    border-top: 3px solid var(--doom-gold);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.2);
+}
+
+.prize-gold:hover {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 215, 0, 0.4);
+}
+
+.prize-green {
+    border-top: 3px solid var(--doom-green);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 255, 102, 0.2);
+}
+
+.prize-green:hover {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 255, 102, 0.4);
+}
+
+.prize-cyan {
+    border-top: 3px solid var(--electric-blue);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 210, 255, 0.2);
+}
+
+.prize-cyan:hover {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 210, 255, 0.4);
+}
+
+.prize-badge-pill {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 18px;
+    color: #ffffff;
+}
+
+.prize-icon-wrap {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 15px currentColor);
+}
+
+.prize-tier-title {
+    font-family: var(--font-brand);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.prize-cash-amount {
+    font-family: var(--font-brand);
+    font-size: 1.7rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin-bottom: 4px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.prize-voucher-amount {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--doom-gold);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--doom-gold-glow);
+}
+
+.prize-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.prizes-cta-wrap {
+    text-align: center;
+    margin-top: 45px;
+}
+
+/* ========================================================
    MoU PARTNERS & COLLABORATIONS (TRANSPARENT BACKGROUNDS)
    ======================================================== */
 
@@ -1370,6 +1527,11 @@ section {
         grid-template-columns: repeat(3, 1fr);
     }
     
+    .prizes-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
     .mission-grid {
         grid-template-columns: 1fr;
     }
@@ -1502,6 +1664,19 @@ section {
         gap: 14px;
     }
 
+    .prizes-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .prize-tier-card {
+        padding: 26px 18px;
+    }
+
+    .prize-cash-amount {
+        font-size: 1.45rem;
+    }
+
     .joint-org-wrapper {
         flex-direction: column;
         gap: 15px;
@@ -1557,12 +1732,17 @@ section {
         gap: 25px;
     }
     
-    .register-badge {
+    .register-floating-btn {
         bottom: 12px;
         right: 12px;
-        padding: 6px 12px;
-        font-size: 0.8rem;
+        padding: 8px 14px;
     }
+
+    .reg-btn-label {
+        font-size: 0.82rem;
+        letter-spacing: 1.5px;
+    }
+}
 }
 
 /* 4K Displays (2560px and 3840px) */
