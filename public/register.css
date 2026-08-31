@@ -92,15 +92,16 @@ body {
     z-index: -1;
 }
 
-/* Main Layout Wrapper */
+/* Main Layout Wrapper - Precision Fluid Autofit */
 .registration-wrapper {
     width: 100%;
-    max-width: 1420px;
+    max-width: min(1420px, 96vw);
     margin: 0 auto;
-    padding: 24px 25px 40px 25px;
+    padding: clamp(12px, 2vw, 24px) clamp(10px, 2vw, 25px) clamp(25px, 4vw, 40px) clamp(10px, 2vw, 25px);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 /* ========================================================
@@ -116,6 +117,7 @@ body {
     position: relative;
     flex-wrap: wrap;
     gap: 15px;
+    width: 100%;
 }
 
 .college-identity-group {
@@ -131,14 +133,14 @@ body {
 }
 
 .pec-seal-logo {
-    height: 60px;
+    height: clamp(45px, 6vw, 60px);
     width: auto;
     filter: drop-shadow(0 0 10px var(--neon-green-glow));
 }
 
 .college-identity-text .college-name {
     font-family: var(--font-brand);
-    font-size: 1.15rem;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
     font-weight: 800;
     letter-spacing: 2px;
     color: #ffffff;
@@ -148,7 +150,7 @@ body {
 
 .college-identity-text .college-tagline {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 1.2vw, 0.85rem);
     font-weight: 600;
     color: var(--neon-green);
     letter-spacing: 2px;
@@ -156,7 +158,7 @@ body {
 
 .dept-title-badge {
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 1.3vw, 1rem);
     font-weight: 700;
     letter-spacing: 3px;
     color: #ffffff;
@@ -210,19 +212,20 @@ body {
 
 .hud-hero-brand {
     text-align: center;
-    padding: 25px 0 15px 0;
+    padding: clamp(15px, 3vw, 25px) 0 clamp(10px, 2vw, 15px) 0;
+    width: 100%;
 }
 
 .hero-logo-container {
-    max-width: 580px;
+    max-width: min(580px, 90vw);
     margin: 0 auto 10px auto;
 }
 
 .hud-main-logo {
     width: 100%;
-    max-width: 520px;
+    max-width: min(520px, 85vw);
     height: auto;
-    max-height: 180px;
+    max-height: clamp(100px, 15vw, 180px);
     object-fit: contain;
     filter: drop-shadow(0 4px 25px rgba(0, 255, 102, 0.5));
     transition: transform 0.3s ease;
@@ -234,31 +237,33 @@ body {
 
 .hud-event-subtitle {
     font-family: var(--font-brand);
-    font-size: 1.35rem;
+    font-size: clamp(1rem, 2vw, 1.35rem);
     font-weight: 800;
-    letter-spacing: 6px;
+    letter-spacing: clamp(2px, 0.5vw, 6px);
     color: var(--text-white);
     text-shadow: 0 0 15px var(--neon-green-glow);
     text-transform: uppercase;
 }
 
 /* ========================================================
-   3. HUD 3-COLUMN GRID
+   3. HUD 3-COLUMN GRID (FLUID AUTO-FIT)
    ======================================================== */
 
 .hud-main-grid {
     display: grid;
-    grid-template-columns: 280px 1fr 280px;
-    gap: 24px;
+    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(260px, 300px);
+    gap: clamp(16px, 2vw, 24px);
     align-items: start;
     margin-top: 20px;
     flex-grow: 1;
+    width: 100%;
 }
 
 .hud-col {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    min-width: 0;
 }
 
 /* HUD Common Card Styling with Corner Brackets */
