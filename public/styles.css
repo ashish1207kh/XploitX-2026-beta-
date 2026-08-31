@@ -1378,6 +1378,15 @@ section {
 }
 
 @media (max-width: 768px) {
+    body {
+        background-image: 
+            linear-gradient(180deg, rgba(3, 4, 10, 0.55) 0%, rgba(3, 4, 10, 0.85) 60%, var(--bg-deep) 100%),
+            url("doomsday-mobile-bg.jpg");
+        background-size: cover;
+        background-position: center top;
+        background-attachment: scroll;
+    }
+
     .college-info-block {
         flex-direction: column;
         text-align: center;

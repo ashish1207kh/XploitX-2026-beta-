@@ -1152,6 +1152,16 @@ body {
 }
 
 @media (max-width: 768px) {
+    body {
+        background-image: 
+            radial-gradient(ellipse at 50% 15%, rgba(0, 255, 102, 0.08) 0%, transparent 65%),
+            linear-gradient(rgba(2, 4, 10, 0.82), rgba(2, 4, 10, 0.92)),
+            url('doomsday-mobile-bg.jpg');
+        background-size: cover;
+        background-position: center top;
+        background-attachment: scroll;
+    }
+
     .registration-wrapper {
         padding: 12px 10px 30px 10px;
     }
