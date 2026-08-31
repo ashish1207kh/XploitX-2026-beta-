@@ -32,9 +32,9 @@
     
     /* Avengers Doomsday Typography */
     --font-marvel: 'Cinzel Decorative', 'Cinzel', serif;
-    --font-brand: 'Cinzel', 'Cinzel Decorative', 'Orbitron', serif;
-    --font-heading: 'Cinzel', 'Orbitron', serif;
-    --font-tech: 'Orbitron', sans-serif;
+    --font-brand: 'Cinzel Decorative', 'Cinzel', serif;
+    --font-heading: 'Cinzel', serif;
+    --font-tech: 'Orbitron', 'Rajdhani', sans-serif;
     --font-body: 'Rajdhani', 'Inter', sans-serif;
     --font-mono: 'Share Tech Mono', monospace;
 }
@@ -271,12 +271,13 @@ section {
 }
 
 .section-title {
-    font-family: var(--font-brand);
-    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-family: var(--font-marvel);
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 3.5px;
     text-transform: uppercase;
     color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 0 28px var(--doom-green-glow), 0 2px 4px rgba(0, 0, 0, 0.9);
     margin-bottom: 16px;
 }
 
@@ -286,6 +287,7 @@ section {
     color: var(--text-muted);
     max-width: 720px;
     margin: 0 auto;
+    letter-spacing: 0.5px;
 }
 
 /* HUD Corner Brackets for Glass Panels */
@@ -729,23 +731,25 @@ section {
 }
 
 .hero-subtitle-format {
-    font-family: var(--font-brand);
-    font-size: clamp(1.15rem, 2.2vw, 1.8rem);
-    font-weight: 700;
-    letter-spacing: 5px;
+    font-family: var(--font-tech);
+    font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+    font-weight: 800;
+    letter-spacing: 6px;
     color: var(--doom-gold);
-    text-shadow: 0 0 12px var(--doom-gold-glow);
+    text-shadow: 0 0 15px var(--doom-gold-glow), 0 2px 4px rgba(0, 0, 0, 0.8);
     margin-bottom: 18px;
     text-transform: uppercase;
 }
 
 .hero-tagline {
-    font-family: var(--font-heading);
-    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-    font-weight: 700;
-    letter-spacing: 3px;
+    font-family: var(--font-marvel);
+    font-size: clamp(1.3rem, 2.8vw, 2.1rem);
+    font-weight: 900;
+    letter-spacing: 4px;
     color: #ffffff;
-    margin-bottom: 12px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 0 25px var(--doom-green-glow), 0 2px 4px rgba(0, 0, 0, 0.9);
+    margin-bottom: 14px;
+    text-transform: uppercase;
 }
 
 .hero-supporting-text {

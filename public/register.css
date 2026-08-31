@@ -25,9 +25,9 @@
     
     /* Avengers Doomsday Typography */
     --font-marvel: 'Cinzel Decorative', 'Cinzel', serif;
-    --font-brand: 'Cinzel', 'Cinzel Decorative', 'Orbitron', serif;
-    --font-heading: 'Cinzel', 'Orbitron', serif;
-    --font-tech: 'Orbitron', sans-serif;
+    --font-brand: 'Cinzel Decorative', 'Cinzel', serif;
+    --font-heading: 'Cinzel', serif;
+    --font-tech: 'Orbitron', 'Rajdhani', sans-serif;
     --font-body: 'Rajdhani', 'Inter', sans-serif;
     --font-mono: 'Share Tech Mono', monospace;
 }
