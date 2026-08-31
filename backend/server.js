@@ -998,3 +998,5 @@ app.use((err, req, res, next) => {
     }
     next();
 });
+
+module.exports = app;
