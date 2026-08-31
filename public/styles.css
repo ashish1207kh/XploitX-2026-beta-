@@ -431,17 +431,17 @@ section {
     text-shadow: 0 0 12px var(--doom-green-glow);
 }
 
-/* Tag Marquee (Pure White Background for Crisp Accreditation Logo Visibility) */
+/* Tag Marquee (Dim Off-White / Platinum Frosted Background for Low Glare Clarity) */
 .logo-marquee-container {
     width: 100%;
     overflow: hidden;
-    background: #ffffff !important;
-    border-top: 2px solid rgba(0, 255, 102, 0.5);
-    border-bottom: 2px solid rgba(0, 255, 102, 0.5);
+    background: linear-gradient(90deg, #cbd5e1 0%, #e2e8f0 30%, #e2e8f0 70%, #cbd5e1 100%) !important;
+    border-top: 1.5px solid rgba(0, 255, 102, 0.4);
+    border-bottom: 1.5px solid rgba(0, 255, 102, 0.4);
     padding: 8px 0;
     margin-top: 15px;
     position: relative;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 0, 0, 0.05);
 }
 
 .logo-marquee-content {
