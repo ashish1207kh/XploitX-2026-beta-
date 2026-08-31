@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration | XPLOITX 2.0 BETA - 24-Hour Cybersecurity CTF</title>
+    <meta name="description" content="Register your team for XPLOITX 2.0 BETA, 24-Hour Cybersecurity Capture The Flag competition at Prathyusha Engineering College on 09 October 2026.">
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Registration Specific Avengers Doomsday Design -->
+    <link rel="stylesheet" href="register.css?v=2.5">
+    <link rel="icon" type="image/png" href="logo_favicon.png">
+</head>
+
+<body>
+
+    <!-- Interactive Background Canvas (Matrix Circuit & Starfield Particle Grid) -->
+    <canvas id="cyber-canvas"></canvas>
+    <div class="cyber-scanline-overlay"></div>
+    <div class="circuit-grid-overlay"></div>
+
+    <div class="registration-wrapper">
+        <!-- ==========================================
+             1. TOP HEADER ROW (AVENGERS HUD)
+             ========================================== -->
+        <header class="hud-top-header">
+            <!-- Top Left: College Seal & Identity -->
+            <a href="index.html" class="college-identity-group" title="Back to Home Portal">
+                <img src="PEC Logo.png" alt="Prathyusha Engineering College" class="pec-seal-logo">
+                <div class="college-identity-text">
+                    <h1 class="college-name">PRATHYUSHA ENGINEERING COLLEGE</h1>
+                    <div class="college-tagline">(AN AUTONOMOUS INSTITUTION)</div>
+                </div>
+            </a>
+
+            <!-- Top Center: Department Title -->
+            <div class="dept-title-badge">
+                <span class="dept-bracket">[</span>
+                <span class="dept-name">DEPARTMENT OF CYBER SECURITY</span>
+                <span class="dept-bracket">]</span>
+            </div>
+
+            <!-- Top Right: Live Status Pill -->
+            <div class="reg-status-pill">
+                <span class="live-pulse-dot"></span>
+                <span class="status-label">REGISTRATION OPEN</span>
+            </div>
+        </header>
+
+        <!-- ==========================================
+             2. HERO LOGO & EVENT SUBTITLE
+             ========================================== -->
+        <div class="hud-hero-brand">
+            <div class="hero-logo-container">
+                <img src="xploitx_logo.png" alt="XPLOITX 2.0 BETA Logo" class="hud-main-logo">
+            </div>
+            <div class="hud-event-subtitle">
+                24-HOUR OFFLINE CYBERSECURITY CTF
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3. MAIN 3-COLUMN CYBER HUD BATTLEFIELD
+             ========================================== -->
+        <main class="hud-main-grid">
+            
+            <!-- LEFT COLUMN: Mission Status & Wireframe Telemetry -->
+            <aside class="hud-col hud-col-left">
+                
+                <!-- Card 1: Mission Status -->
+                <div class="hud-card mission-status-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+                    
+                    <h3 class="hud-card-title"><i class="fas fa-crosshairs"></i> MISSION STATUS</h3>
+                    
+                    <div class="mission-item">
+                        <div class="mission-key">TARGET</div>
+                        <div class="mission-val">CAPTURE THE FLAG</div>
+                    </div>
+                    
+                    <div class="mission-item">
+                        <div class="mission-key">DURATION</div>
+                        <div class="mission-val">24 HOURS NON-STOP</div>
+                    </div>
+
+                    <div class="mission-item">
+                        <div class="mission-key">VENUE</div>
+                        <div class="mission-val text-gold">PRATHYUSHA ENG. COLLEGE</div>
+                    </div>
+                    
+                    <div class="mission-item">
+                        <div class="mission-key">OBJECTIVE</div>
+                        <div class="mission-val text-green">SOLVE. EXPLOIT. CAPTURE. CONQUER.</div>
+                    </div>
+
+                    <!-- Hazard Striping -->
+                    <div class="hazard-stripe-bar"></div>
+                </div>
+
+                <!-- Card 2: Wireframe Cyber Globe Telemetry -->
+                <div class="hud-card globe-telemetry-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+
+                    <div class="globe-container">
+                        <canvas id="globe-wireframe-canvas" width="130" height="130"></canvas>
+                    </div>
+                    <div class="telemetry-node-badge">
+                        <span class="pulse-green"></span> BATTLEFIELD NODE ONLINE
+                    </div>
+                </div>
+
+                <!-- Card 3: Fee Summary Quick Box -->
+                <div class="hud-card fee-summary-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+
+                    <h4 class="hud-card-title" style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-calculator"></i> TICKET SUMMARY</h4>
+                    <div class="fee-row">
+                        <span>FEE PER HEAD:</span>
+                        <strong class="text-green">₹250</strong>
+                    </div>
+                    <div class="fee-row">
+                        <span>ACTIVE MEMBERS:</span>
+                        <strong id="summary-member-count" class="text-gold">1</strong>
+                    </div>
+                    <div class="fee-divider"></div>
+                    <div class="fee-row total-row">
+                        <span>TOTAL PAYABLE:</span>
+                        <strong id="summary-total-fee" class="text-green">₹250</strong>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- CENTER COLUMN: Comprehensive Registration Terminal -->
+            <section class="hud-col hud-col-center">
+                <div class="hud-card registration-form-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+
+                    <h2 class="form-main-heading">JOIN THE BATTLEFIELD</h2>
+
+                    <!-- Full Registration Form with OTP & Payment Proof -->
+                    <form id="ctf-registration-form" enctype="multipart/form-data" novalidate>
+                        
+                        <!-- SECTION 1: TEAM INFORMATION -->
+                        <div class="form-section-block">
+                            <div class="section-badge-title">
+                                <i class="fas fa-users-cog"></i> 01 // TEAM CREDENTIALS
+                            </div>
+
+                            <div class="form-row-2col">
+                                <!-- Team Name -->
+                                <div class="form-group-hud">
+                                    <label for="teamName" class="form-label-hud">
+                                        <i class="fas fa-users form-icon-hud"></i> TEAM NAME <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="text" id="teamName" name="teamName" placeholder="e.g. CyberDoomsday" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <!-- Event Selection -->
+                                <div class="form-group-hud">
+                                    <label for="eventName" class="form-label-hud">
+                                        <i class="fas fa-flag form-icon-hud"></i> EVENT FORMAT <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="text" id="eventName" name="event" value="XPLOITX 2.0 BETA - 24-Hour CTF" readonly class="readonly-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: TEAM LEADER (WITH EMAIL OTP VERIFICATION) -->
+                        <div class="form-section-block">
+                            <div class="section-badge-title">
+                                <i class="fas fa-user-shield"></i> 02 // TEAM LEADER (PRIMARY CONTACT)
+                            </div>
+
+                            <div class="form-row-2col">
+                                <!-- Leader Name -->
+                                <div class="form-group-hud">
+                                    <label for="leaderName" class="form-label-hud">
+                                        <i class="fas fa-user form-icon-hud"></i> FULL NAME <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="text" id="leaderName" placeholder="Leader full name" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <!-- Leader Age -->
+                                <div class="form-group-hud">
+                                    <label for="leaderAge" class="form-label-hud">
+                                        <i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="number" id="leaderAge" placeholder="e.g. 20" min="15" max="35" required autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email with OTP Verification Row -->
+                            <div class="form-group-hud">
+                                <label for="leaderEmail" class="form-label-hud">
+                                    <i class="fas fa-envelope form-icon-hud"></i> EMAIL ADDRESS <span class="req">*</span>
+                                </label>
+                                <div class="input-otp-group">
+                                    <div class="input-wrapper-hud" style="flex-grow: 1;">
+                                        <input type="email" id="leaderEmail" placeholder="Leader email (used for communications)" required autocomplete="off">
+                                    </div>
+                                    <button type="button" id="btn-send-otp" class="btn-otp-action">
+                                        <i class="fas fa-paper-plane"></i> SEND OTP
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- OTP Input Sub-Row (Hidden until sent) -->
+                            <div class="otp-verification-box" id="otp-box" style="display: none;">
+                                <div class="otp-instruction">
+                                    <i class="fas fa-info-circle text-green"></i> Enter the 6-digit verification code sent to your email:
+                                </div>
+                                <div class="input-otp-group">
+                                    <div class="input-wrapper-hud" style="max-width: 200px;">
+                                        <input type="text" id="otpCode" placeholder="6-digit OTP" maxlength="6" autocomplete="off">
+                                    </div>
+                                    <button type="button" id="btn-verify-otp" class="btn-otp-action btn-verify">
+                                        <i class="fas fa-check"></i> VERIFY CODE
+                                    </button>
+                                </div>
+                                <div id="otp-feedback" class="otp-feedback-msg"></div>
+                            </div>
+
+                            <div class="form-row-2col">
+                                <!-- Leader Phone -->
+                                <div class="form-group-hud">
+                                    <label for="leaderPhone" class="form-label-hud">
+                                        <i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="tel" id="leaderPhone" placeholder="10-digit mobile number" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <!-- Leader WhatsApp -->
+                                <div class="form-group-hud">
+                                    <label for="leaderWhatsapp" class="form-label-hud">
+                                        <i class="fab fa-whatsapp form-icon-hud" style="color: #25d366;"></i> WHATSAPP NUMBER
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="tel" id="leaderWhatsapp" placeholder="WhatsApp number" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2col">
+                                <!-- Leader College -->
+                                <div class="form-group-hud">
+                                    <label for="leaderCollege" class="form-label-hud">
+                                        <i class="fas fa-university form-icon-hud"></i> COLLEGE / INSTITUTION <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="text" id="leaderCollege" placeholder="Your college name" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <!-- Leader District / Dept -->
+                                <div class="form-group-hud">
+                                    <label for="leaderDistrict" class="form-label-hud">
+                                        <i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPARTMENT <span class="req">*</span>
+                                    </label>
+                                    <div class="input-wrapper-hud">
+                                        <input type="text" id="leaderDistrict" placeholder="e.g. Chennai / Cyber Security" required autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: ADDITIONAL TEAM MEMBERS (UP TO 4 TOTAL) -->
+                        <div class="form-section-block">
+                            <div class="section-badge-title-between">
+                                <span><i class="fas fa-user-plus"></i> 03 // ADDITIONAL SQUAD MEMBERS</span>
+                                <button type="button" id="btn-add-member" class="btn-add-member-hud">
+                                    <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">1</span>/4)
+                                </button>
+                            </div>
+
+                            <!-- Dynamic Members Container -->
+                            <div id="additional-members-container" class="additional-members-list">
+                                <!-- Dynamic member cards will be appended here -->
+                            </div>
+                        </div>
+
+                        <!-- SECTION 4: PAYMENT VERIFICATION & PROOF UPLOAD -->
+                        <div class="form-section-block payment-section-block">
+                            <div class="section-badge-title">
+                                <i class="fas fa-credit-card"></i> 04 // PAYMENT VERIFICATION (₹250 / HEAD)
+                            </div>
+
+                            <div class="payment-grid-hud">
+                                <!-- QR Code & UPI Scan Box -->
+                                <div class="payment-qr-box">
+                                    <div class="qr-code-wrapper">
+                                        <img src="load.png" id="qr-code-img" alt="Payment QR Code" class="payment-qr-display">
+                                    </div>
+                                    <div class="upi-id-badge">
+                                        <span>UPI ID:</span> <strong class="text-green">prathyushactf@upi</strong>
+                                    </div>
+                                    <div class="amount-payable-badge">
+                                        AMOUNT: <strong id="payment-amount-display" class="text-gold">₹250</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Inputs (UTR & Proof Screenshot) -->
+                                <div class="payment-inputs-col">
+                                    <!-- Transaction / UTR ID -->
+                                    <div class="form-group-hud">
+                                        <label for="utrNumber" class="form-label-hud">
+                                            <i class="fas fa-receipt form-icon-hud"></i> UTR / TRANSACTION ID <span class="req">*</span>
+                                        </label>
+                                        <div class="input-wrapper-hud">
+                                            <input type="text" id="utrNumber" name="utrNumber" placeholder="12-digit UPI / Bank Ref UTR Number" required autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment Proof Screenshot Upload -->
+                                    <div class="form-group-hud">
+                                        <label for="paymentProof" class="form-label-hud">
+                                            <i class="fas fa-file-upload form-icon-hud"></i> PAYMENT SCREENSHOT PROOF <span class="req">*</span>
+                                        </label>
+                                        <div class="file-upload-box-hud">
+                                            <input type="file" id="paymentProof" name="paymentProof" accept="image/jpeg,image/png,image/jpg" required>
+                                            <div class="file-upload-visual" id="file-drop-area">
+                                                <i class="fas fa-cloud-upload-alt file-icon"></i>
+                                                <span class="file-label-text" id="file-chosen-text">Click or drag screenshot (JPEG/PNG, Max 5MB)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-action-hud">
+                            <button type="submit" class="hud-register-btn" id="submit-btn">
+                                <span class="btn-glow-layer"></span>
+                                <span class="btn-text">COMPLETE REGISTRATION</span>
+                                <i class="fas fa-angle-double-right btn-arrow-icon"></i>
+                            </button>
+                        </div>
+
+                        <!-- Security Notice -->
+                        <div class="security-notice-hud">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>ENCRYPTED TRANSMISSION • YOUR DATA & PAYMENT ARE FULLY SECURED</span>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: Event Intel & Secure Channel -->
+            <aside class="hud-col hud-col-right">
+
+                <!-- Card 1: Event Directives -->
+                <div class="hud-card event-details-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+
+                    <h3 class="hud-card-title"><i class="fas fa-info-circle"></i> EVENT INTEL</h3>
+
+                    <!-- Event Date -->
+                    <div class="event-meta-row">
+                        <div class="meta-icon-box">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="meta-text-box">
+                            <div class="meta-label">EVENT DATE</div>
+                            <div class="meta-value">09 OCTOBER 2026</div>
+                        </div>
+                    </div>
+
+                    <!-- Mode -->
+                    <div class="event-meta-row">
+                        <div class="meta-icon-box text-gold">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="meta-text-box">
+                            <div class="meta-label">MODE</div>
+                            <div class="meta-value text-gold">OFFLINE (IN-PERSON)</div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Fee -->
+                    <div class="event-meta-row">
+                        <div class="meta-icon-box text-green">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="meta-text-box">
+                            <div class="meta-label">ENTRY FEE</div>
+                            <div class="meta-value text-green">₹250 / HEAD</div>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="event-meta-row">
+                        <div class="meta-icon-box text-green">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="meta-text-box">
+                            <div class="meta-label">STATUS</div>
+                            <div class="meta-value text-green">REGISTRATION OPEN</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Secure Channel & Oscilloscope Waveform -->
+                <div class="hud-card secure-channel-card">
+                    <div class="hud-card-corner top-left"></div>
+                    <div class="hud-card-corner top-right"></div>
+                    <div class="hud-card-corner bottom-left"></div>
+                    <div class="hud-card-corner bottom-right"></div>
+
+                    <div class="secure-channel-header">
+                        <i class="fas fa-lock text-green"></i>
+                        <div class="secure-channel-titles">
+                            <div class="secure-title">SECURE CHANNEL</div>
+                            <div class="secure-sub">ENCRYPTED CONNECTION<br>256-BIT SSL ENCRYPTION</div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Oscilloscope Waveform Canvas -->
+                    <div class="waveform-container">
+                        <canvas id="waveform-canvas" width="240" height="45"></canvas>
+                    </div>
+                </div>
+
+            </aside>
+
+        </main>
+
+        <!-- ==========================================
+             4. BOTTOM FOOTER DIRECTIVES
+             ========================================== -->
+        <footer class="hud-bottom-footer">
+            <div class="footer-directives">
+                <span>EXCELLENCE</span>
+                <span class="footer-dot">•</span>
+                <span>INNOVATION</span>
+                <span class="footer-dot">•</span>
+                <span>SECURITY</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Interactive Registration Feedback Modal -->
+    <div class="hud-modal-overlay" id="success-modal">
+        <div class="hud-modal-card">
+            <div class="modal-icon-glow">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="modal-title">MISSION REGISTRATION CONFIRMED</h3>
+            <p class="modal-msg">Your strike team <strong id="modal-team-name" class="text-green"></strong> is now enrolled for <strong>XPLOITX 2.0 BETA</strong> on 09 October 2026.</p>
+            <div class="modal-details-hud">
+                <div><span>TEAM ID:</span> <strong id="modal-team-id" class="text-gold">Xctf26te0001</strong></div>
+                <div><span>TEAM LEADER:</span> <strong id="modal-leader-name"></strong></div>
+                <div><span>LEADER EMAIL:</span> <strong id="modal-email"></strong></div>
+                <div><span>MODE & VENUE:</span> <strong class="text-gold">OFFLINE @ Prathyusha Engineering College</strong></div>
+                <div><span>PAYMENT STATUS:</span> <strong class="text-green">VERIFIED (CONFIRMATION SENT TO EMAIL)</strong></div>
+            </div>
+            <div class="modal-actions">
+                <a href="index.html" class="btn-modal-return">[ RETURN TO BRIEFING ]</a>
+                <button type="button" class="btn-modal-close" onclick="closeModal()">[ CLOSE ]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Logic Script -->
+    <script src="register.js?v=2.5"></script>
+</body>
+
+</html>
