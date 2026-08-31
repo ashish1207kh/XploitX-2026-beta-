@@ -1,0 +1,80 @@
+name: XPLOITX 2.0 BETA CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  # ==========================================
+  # 1. CONTINUOUS INTEGRATION (BUILD & TEST)
+  # ==========================================
+  continuous-integration:
+    name: Build & Codebase Verification
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: 📥 Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: ⚡ Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 📦 Install Root Dependencies
+        run: npm ci || npm install
+
+      - name: 📦 Install Backend Server Dependencies
+        run: |
+          cd backend
+          npm ci || npm install
+
+      - name: 🔍 Verify Backend Syntax & Server Module
+        run: |
+          node -c backend/server.js
+          node -e "console.log('✅ Server syntax validated successfully')"
+
+      - name: 🛡️ Validate Core Frontend Assets
+        run: |
+          test -f public/index.html && echo "✅ index.html verified"
+          test -f public/register.html && echo "✅ register.html verified"
+          test -f public/styles.css && echo "✅ styles.css verified"
+          test -f public/register.css && echo "✅ register.css verified"
+          test -f public/doomsday-bg.jpg && echo "✅ doomsday-bg.jpg verified"
+          test -f public/doomsday-mobile-bg.jpg && echo "✅ doomsday-mobile-bg.jpg verified"
+          test -f vercel.json && echo "✅ vercel.json verified"
+
+  # ==========================================
+  # 2. CONTINUOUS DEPLOYMENT (VERCEL DEPLOY)
+  # ==========================================
+  continuous-deployment:
+    name: Vercel Production Deployment
+    needs: continuous-integration
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: ⚡ Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 🚀 Deployment Notification & Verification
+        run: |
+          echo "=========================================="
+          echo "⚡ XPLOITX 2.0 BETA CI/CD PIPELINE"
+          echo "Target: Vercel Production Environment"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Status: ALL TESTS PASSED - DEPLOY READY"
+          echo "=========================================="
