@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
     --bg-void: #02040a;
@@ -23,8 +23,11 @@
     --border-green-hover: rgba(0, 255, 102, 0.65);
     --border-subtle: rgba(255, 255, 255, 0.08);
     
-    --font-brand: 'Orbitron', 'Space Grotesk', sans-serif;
-    --font-heading: 'Space Grotesk', sans-serif;
+    /* Avengers Doomsday Typography */
+    --font-marvel: 'Cinzel Decorative', 'Cinzel', serif;
+    --font-brand: 'Cinzel', 'Cinzel Decorative', 'Orbitron', serif;
+    --font-heading: 'Cinzel', 'Orbitron', serif;
+    --font-tech: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', 'Inter', sans-serif;
     --font-mono: 'Share Tech Mono', monospace;
 }
