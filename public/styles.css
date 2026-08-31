@@ -43,7 +43,7 @@
    GLOBAL RESETS & MULTI-LAYERED BACKGROUND
    ======================================================== */
 
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -52,6 +52,14 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
 }
 
 body {
@@ -1343,11 +1351,132 @@ section {
 }
 
 /* ========================================================
-   REGISTRATION CTA SECTION
+   ORGANIZING NODES (EVENT HEADS & STAFF COORDINATORS)
+   ======================================================== */
+
+.organizing-nodes-section {
+    padding: 90px 0;
+    position: relative;
+}
+
+.nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    margin-top: 40px;
+    align-items: stretch;
+}
+
+.node-card {
+    padding: 30px 24px;
+    border-radius: 8px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.node-card:hover {
+    border-color: var(--doom-green);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 255, 102, 0.25);
+    transform: translateY(-5px);
+}
+
+.node-avatar-placeholder {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    background: rgba(0, 255, 102, 0.1);
+    border: 1px solid var(--doom-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--doom-green);
+    box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+    flex-shrink: 0;
+}
+
+.node-content-wrapper {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.node-category {
+    font-family: var(--font-brand);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+.node-role-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--doom-gold);
+    display: block;
+    margin-bottom: 16px;
+    letter-spacing: 1.5px;
+}
+
+.node-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.node-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+.node-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.node-item strong {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: #ffffff;
+    display: block;
+}
+
+.node-sublabel {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 3px;
+}
+
+.node-tel-link {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    color: var(--doom-green);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.node-tel-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--doom-green-glow);
+    padding-left: 3px;
+}
+
+/* ========================================================
+   FINAL REGISTRATION CTA SECTION
    ======================================================== */
 
 .registration-cta-section {
     padding: 100px 0;
+    text-align: center;
 }
 
 .cta-battle-card {
