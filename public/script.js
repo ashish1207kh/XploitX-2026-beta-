@@ -21,12 +21,202 @@ const EVENT_CONFIG = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    initAccessLoader();
     initCountdown();
     initParticleSystem();
     initNavbarScroll();
     initMobileNav();
     initAccordions();
 });
+
+// ==========================================
+// 1B. XPLOITX "ACCESS GRANTED" LOADER ENGINE
+// ==========================================
+function initAccessLoader() {
+    let loaderOverlay = document.getElementById('loader-overlay');
+
+    // The loader is ONLY for index.html. If no loader-overlay element exists, exit immediately.
+    if (!loaderOverlay) return;
+    
+    loaderOverlay.className = 'xploitx-access-loader';
+    loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
+
+    // Build Loader Content
+    loaderOverlay.innerHTML = `
+        <div class="loader-bg-grid"></div>
+        <div class="loader-scanline"></div>
+        <div class="loader-radial-glow"></div>
+        <canvas id="loader-particles-canvas"></canvas>
+
+        <div class="loader-content-box">
+            <div class="loader-cyber-emblem">
+                <svg class="cyber-ring-svg" viewBox="0 0 160 160" width="160" height="160">
+                    <circle class="ring-track" cx="80" cy="80" r="70" />
+                    <circle class="ring-progress" cx="80" cy="80" r="70" id="loader-ring-progress" />
+                </svg>
+                <div class="loader-icon-center" id="loader-icon-wrap">
+                    <i class="fas fa-satellite-dish loader-state-icon" id="loader-state-icon"></i>
+                </div>
+            </div>
+
+            <div class="loader-status-wrapper">
+                <div class="loader-status-step" id="loader-step-label">INITIALIZING</div>
+                <div class="loader-status-detail" id="loader-status-detail">SECURE CONNECTION...</div>
+            </div>
+
+            <div class="loader-progress-bar-container" id="loader-progress-wrap">
+                <div class="loader-progress-fill" id="loader-progress-fill"></div>
+            </div>
+
+            <div class="loader-granted-reveal-box" id="loader-granted-box">
+                <div class="loader-horizontal-scan"></div>
+                <img src="load.png" alt="XPLOITX 2.0 BETA Logo" class="loader-logo-img" id="loader-logo-img">
+                <div class="loader-granted-text" id="loader-granted-text">
+                    <span class="granted-word">ACCESS</span>
+                    <span class="granted-word highlight">GRANTED</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Lock body scroll
+    document.documentElement.classList.add('loader-locked');
+    document.body.classList.add('loader-locked');
+
+    const ringProgress = document.getElementById('loader-ring-progress');
+    const stateIcon = document.getElementById('loader-state-icon');
+    const stepLabel = document.getElementById('loader-step-label');
+    const statusDetail = document.getElementById('loader-status-detail');
+    const progressFill = document.getElementById('loader-progress-fill');
+    const progressWrap = document.getElementById('loader-progress-wrap');
+    const grantedBox = document.getElementById('loader-granted-box');
+    const canvas = document.getElementById('loader-particles-canvas');
+
+    // Green Particle Background
+    let animationFrameId = null;
+    if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const particles = Array.from({ length: 30 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.5 + 0.5,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            alpha: Math.random() * 0.5 + 0.2
+        }));
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#00ff66';
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            animationFrameId = requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+    }
+
+    const circumference = 2 * Math.PI * 70;
+    function setProgress(percent) {
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (ringProgress) {
+            const offset = circumference - (percent / 100) * circumference;
+            ringProgress.style.strokeDashoffset = offset;
+        }
+    }
+
+    let timeouts = [];
+
+    function schedule(fn, delay) {
+        const t = setTimeout(fn, delay);
+        timeouts.push(t);
+        return t;
+    }
+
+    function dismissLoader() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        loaderOverlay.classList.add('fade-out');
+        document.documentElement.classList.remove('loader-locked');
+        document.body.classList.remove('loader-locked');
+        setTimeout(() => {
+            if (loaderOverlay && loaderOverlay.parentNode) {
+                loaderOverlay.style.display = 'none';
+            }
+        }, 550);
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setProgress(100);
+        if (progressWrap) progressWrap.style.opacity = '0';
+        if (grantedBox) grantedBox.classList.add('active');
+        schedule(dismissLoader, 400);
+        return;
+    }
+
+    // Sequence (~2.1s duration)
+    setProgress(15);
+    schedule(() => { setProgress(40); }, 200);
+
+    schedule(() => {
+        if (stepLabel) stepLabel.textContent = "AUTHENTICATING";
+        if (statusDetail) statusDetail.textContent = "OPERATIVE CREDENTIALS...";
+        if (stateIcon) stateIcon.className = "fas fa-user-shield loader-state-icon";
+        setProgress(65);
+    }, 400);
+
+    schedule(() => {
+        if (stepLabel) stepLabel.textContent = "VERIFYING ACCESS";
+        if (statusDetail) {
+            statusDetail.textContent = "IDENTITY VERIFIED ✓";
+            statusDetail.classList.add("success");
+        }
+        if (stateIcon) stateIcon.className = "fas fa-check-circle loader-state-icon state-verified";
+        if (ringProgress) ringProgress.classList.add("verified");
+        setProgress(100);
+    }, 850);
+
+    schedule(() => {
+        const emblem = document.querySelector('.loader-cyber-emblem');
+        if (emblem) {
+            emblem.style.opacity = '0';
+            emblem.style.visibility = 'hidden';
+            emblem.style.height = '0';
+            emblem.style.margin = '0';
+            emblem.style.transition = 'all 0.35s ease';
+        }
+        if (progressWrap) {
+            progressWrap.style.opacity = '0';
+            progressWrap.style.height = '0';
+            progressWrap.style.margin = '0';
+        }
+        const statusWrapper = document.querySelector('.loader-status-wrapper');
+        if (statusWrapper) {
+            statusWrapper.style.opacity = '0';
+            statusWrapper.style.visibility = 'hidden';
+            statusWrapper.style.height = '0';
+            statusWrapper.style.minHeight = '0';
+            statusWrapper.style.margin = '0';
+        }
+        if (grantedBox) grantedBox.classList.add('active');
+    }, 1250);
+
+    schedule(() => {
+        dismissLoader();
+    }, 2650);
+}
+
 
 // ==========================================
 // 2. COUNTDOWN TIMER ENGINE
@@ -232,8 +422,8 @@ function initNavbarScroll() {
 // 5. MOBILE NAVIGATION TOGGLE
 // ==========================================
 function initMobileNav() {
-    const hamburger = document.getElementById('hamburger-btn');
-    const navMenu = document.getElementById('nav-links-menu');
+    const hamburger = document.getElementById('hamburger-btn') || document.getElementById('mobile-menu-open');
+    const navMenu = document.getElementById('nav-links-menu') || document.getElementById('mobile-nav');
     const navLinks = document.querySelectorAll('.nav-link');
 
     if (!hamburger || !navMenu) return;

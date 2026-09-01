@@ -4,284 +4,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decrees - AVENGERS: DOOMSDAY | XPLOITX 2026</title>
+    <title>Decrees & Rules - AVENGERS: DOOMSDAY | XPLOITX 2026</title>
+    <meta name="description" content="Official decrees, competition rules, and engagement protocols for XPLOITX 2.0 BETA 24-Hour Cybersecurity CTF at Prathyusha Engineering College.">
 
+    <!-- Google Fonts & Font Awesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Core Design System -->
+    <link rel="stylesheet" href="styles.css?v=2.5">
     <link rel="icon" type="image/png" href="logo_favicon.png">
 </head>
 
 <body>
 
-    <!-- Loading Screen -->
-    <div id="loader-overlay"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #06090e; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s;">
-        <img src="load.png" alt="Loading..."
-            style="width: 650px; max-width: 90vw; height: auto; animation: pulse 1.5s infinite; filter: drop-shadow(0 0 20px rgba(0, 255, 102, 0.6));">
-        <div
-            style="margin-top: 20px; font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--doom-gold-glow); text-shadow: 0 0 15px var(--doom-gold-shadow); animation: blink 1s infinite; letter-spacing: 3px; text-transform: uppercase; text-align: center;">
-            ⚡ IMPERIAL ACCORD PROTOCOLS LOADING ⚡
-        </div>
-    </div>
+    <!-- Interactive Floating Register Button -->
+    <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
+        <span class="reg-btn-status"><span class="pulse-dot"></span> REGISTRATION OPEN</span>
+        <span class="reg-btn-label">[ REGISTER NOW ] <i class="fas fa-arrow-right"></i></span>
+    </a>
 
-    <!-- Register Badge -->
-    <div class="register-badge">
+    <!-- Background Layers: Particle Canvas & Cyber Grid Overlay -->
+    <canvas id="particles-bg"></canvas>
+    <div class="cyber-grid-overlay"></div>
 
-
-        <div class="early-bird-msg"
-            style="color: var(--doom-gold-glow); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; margin-bottom: 5px; animation: blink 1s infinite;">⚠️ INCURSION PORTAL ACTIVE ⚠️</div>
-        <a href="register.html">[ ENTER THE MULTIVERSE ]</a>
-    </div>
-
-    <canvas id="matrix-bg"></canvas>
-
-    <nav
-        style="height: auto; padding: 20px 0; background: linear-gradient(to bottom, rgba(6,9,14,1), transparent); flex-direction: column;">
-
-        <!-- Top Row: College Info & logo -->
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <div
-                style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 10px; margin-top: 25px;">
-                <img src="PEC Logo.png" alt="PEC Logo" class="logo-img"
-                    style="height: 155px; width: auto; filter: drop-shadow(0 0 10px var(--neon-green)); margin-top: -15px;">
-                <div style="text-align: center;">
-                    <div class="header-title"
-                        style="font-family: var(--font-marvel); margin: 0; font-size: 2.6rem; letter-spacing: 3px; color: #ffffff; font-weight: 900; text-shadow: 0 0 15px rgba(0, 255, 102, 0.6);">
-                        PRATHYUSHA
-                        ENGINEERING COLLEGE</div>
-                    <div class="header-subtitle"
-                        style="font-family: var(--font-tech); margin-top: 5px; font-size: 1.15rem; letter-spacing: 4px; font-weight: bold; color: var(--doom-gold-glow);">
-                        (AN AUTONOMOUS INSTITUTION)</div>
-                    <div class="accreditation-text"
-                        style="font-family: var(--font-hud); margin-top: 8px; font-size: 0.95rem; opacity: 1; color: var(--arc-cyan); font-weight: bold;">
-                        Approved by AICTE & Affiliated to Anna University, NAAC "A" Grade Accredited Institution<br>
-                        National Board of Accreditation (NBA) accredited Programmes
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Tag Strip (Marquee) -->
-            <div class="logo-marquee-container">
-                <div class="logo-marquee-content">
-                    <!-- Duplicated Content for Seamless Scroll -->
-                    <img src="tag.png" alt="Accreditation Logos">
-                    <img src="tag.png" alt="Accreditation Logos">
-                    <img src="tag.png" alt="Accreditation Logos">
-                    <img src="tag.png" alt="Accreditation Logos">
+    <!-- ==========================================
+         TOP ROW: COLLEGE DETAILS & ACCREDITATION
+         ========================================== -->
+    <header class="college-header-wrapper">
+        <div class="college-info-block">
+            <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
+            <div class="college-text-details">
+                <h1 class="header-college-title">PRATHYUSHA ENGINEERING COLLEGE</h1>
+                <div class="header-college-subtitle">(AN AUTONOMOUS INSTITUTION)</div>
+                <div class="header-accreditation-text">
+                    Approved by AICTE & Affiliated to Anna University, NAAC "A" Grade Accredited Institution<br>
+                    National Board of Accreditation (NBA) Accredited Programmes
                 </div>
             </div>
         </div>
-        <!-- Moving News Strip -->
+
+        <!-- Tag Strip Marquee -->
+        <div class="logo-marquee-container">
+            <div class="logo-marquee-content">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+            </div>
+        </div>
+
+        <!-- Live News Strip -->
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
                     <span>⚡ MULTIVERSE INCURSION DETECTED ... AVENGERS: DOOMSDAY XPLOITX 2026 ... DEFEND THE TIMELINE ... 24 HR CTF CYBER BATTLEFIELD ... LATVERIA PROTOCOL ENGAGED ... REGISTER NOW ... </span>
+                    <span>⚡ MULTIVERSE INCURSION DETECTED ... AVENGERS: DOOMSDAY XPLOITX 2026 ... DEFEND THE TIMELINE ... 24 HR CTF CYBER BATTLEFIELD ... LATVERIA PROTOCOL ENGAGED ... REGISTER NOW ... </span>
                 </a>
             </div>
         </div>
+    </header>
 
-
-        <!-- Bottom Row: Nav Links (Original Navigation) -->
-        <div class="nav-bottom-row">
-            <button class="menu-toggle" id="mobile-menu-open"><i class="fas fa-bars"></i></button>
-            <div class="nav-links" id="mobile-nav">
-                <span class="menu-close" id="mobile-menu-close">&times;</span>
-                <a href="index.html"><i class="fas fa-shield-alt"></i> [ HOME ]</a>
-                <a href="about.html"><i class="fas fa-info-circle"></i> [ ABOUT ]</a>
-                <a href="rules.html"><i class="fas fa-gavel"></i> [ DECREES ]</a>
-                <a href="register.html"><i class="fas fa-user-plus"></i> [ REGISTER ]</a>
-                <a href="prizes.html"><i class="fas fa-trophy"></i> [ BOUNTIES ]</a>
-            </div>
+    <!-- ==========================================
+         NAVIGATION BAR
+         ========================================== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <button class="hamburger-btn" id="mobile-menu-open" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="nav-links-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-shield-alt"></i> [ HOME ]</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> [ ABOUT ]</a></li>
+                <li><a href="rules.html" class="nav-link active"><i class="fas fa-gavel"></i> [ DECREES ]</a></li>
+                <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> [ BOUNTIES ]</a></li>
+                <li><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> [ REGISTER ]</a></li>
+            </ul>
         </div>
     </nav>
 
-    <section class="hero hidden-el">
-        <div class="matrix-overlay"></div>
-        <div class="pill-badge">
-            <i class="fas fa-gavel text-gold"></i> [ MULTIVERSE ACCORD • AVENGERS: DOOMSDAY 2026 ]
+    <!-- ==========================================
+         HERO SECTION
+         ========================================== -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="status-indicator-badge">
+                <span class="pulse-dot"></span> [ MULTIVERSE ACCORD • AVENGERS: DOOMSDAY 2026 ]
+            </div>
+
+            <h1 class="hero-main-title">DECREES OF DOOM & AVENGERS ACCORD</h1>
+
+            <div class="hud-panel" style="max-width: 920px; margin: 25px auto 0 auto; padding: 35px; text-align: justify;">
+                <p style="font-family: var(--font-body); font-size: 1.2rem; line-height: 1.8; color: var(--text-main); margin: 0;">
+                    Adherence to the <strong class="text-gold">Imperial Decrees</strong> and <span class="text-cyan" style="font-weight: bold;">Battleworld Code</span> is absolute. All strike teams participating in <span class="text-green" style="font-weight: bold;">XPLOITX 2026</span> must operate with technical rigor, strict ethical adherence, and unyielding tactical honor across all 24 hours of engagement.
+                </p>
+            </div>
         </div>
-
-        <h1 class="glitch-title">THE DECREES OF DOOM & AVENGERS ACCORD</h1>
-
-        <p style="font-family: var(--font-hud); font-size: 1.3rem; text-align: center; max-width: 850px; margin: 0 auto 20px auto; color: #E2E8F0;">
-            Adherence to the imperial decrees and battleworld code is absolute. Strike teams must operate with honor, rigor, and unmatched technical skill.
-        </p>
     </section>
 
     <div class="container">
 
-        <!-- ELIGIBILITY & REGISTRATION (Terminal Style) -->
+        <!-- ==========================================
+             ELIGIBILITY & REGISTRATION DIRECTIVES
+             ========================================== -->
         <section>
-            <h2 class="section-header">[ ENLISTMENT & ENGAGEMENT PROTOCOLS ]</h2>
-            <div class="terminal-window" style="max-width: 950px; margin: 0 auto; margin-bottom: 0; border: 1px solid rgba(0, 255, 102, 0.4); border-top: 2px solid var(--doom-gold); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 255, 102, 0.15);">
-                <div class="terminal-bar">
-                    <div class="dots">
-                        <div class="dot red"></div>
-                        <div class="dot yellow"></div>
-                        <div class="dot green"></div>
+            <div class="section-header">
+                <div class="section-tag"><i class="fas fa-terminal"></i> ENLISTMENT DIRECTIVES</div>
+                <h2 class="section-title">ENLISTMENT & ENGAGEMENT PROTOCOLS</h2>
+                <p class="section-subtitle">Core baseline rules for all participating cadets and strike teams.</p>
+            </div>
+
+            <div class="hud-panel" style="max-width: 1000px; margin: 0 auto; padding: 0; overflow: hidden; border: 1px solid var(--border-hud); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--doom-green-glow);">
+                <div style="background: rgba(0, 15, 30, 0.9); padding: 12px 20px; border-bottom: 1px solid var(--border-hud); display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 8px;">
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56; display: inline-block;"></span>
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e; display: inline-block;"></span>
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f; display: inline-block;"></span>
                     </div>
-                    <div class="terminal-title">imperial_accord@doomsday:~/decrees.txt</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--doom-gold); letter-spacing: 1px;">
+                        <i class="fas fa-terminal"></i> imperial_accord@doomsday:~/decrees.txt
+                    </div>
                 </div>
-                <div class="terminal-body" style="text-align: justify; padding: 35px;">
-                    <ul class="rules-list" style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 20px; border-bottom: 1px dashed rgba(148, 163, 184, 0.2); padding-bottom: 15px;">
-                            <strong style="font-family: var(--font-tech); color: var(--arc-cyan); font-size: 1.15rem;">◈ 01. OPERATIVE ELIGIBILITY</strong>
-                            <p style="font-family: var(--font-hud); color: #E2E8F0; font-size: 1.05rem; margin-top: 5px;">Open to undergraduate and postgraduate cadets from recognized institutions across all timelines. <span class="text-green" style="font-weight: bold;">Cross-college strike teams</span> are fully authorized.</p>
+
+                <div style="padding: 35px;">
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 24px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 20px;">
+                            <div style="font-family: var(--font-brand); color: var(--electric-blue); font-size: 1.2rem; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-id-card text-cyan"></i> 01. OPERATIVE ELIGIBILITY
+                            </div>
+                            <p style="font-family: var(--font-body); color: var(--text-main); font-size: 1.05rem; line-height: 1.7; margin: 0;">
+                                Open to undergraduate and postgraduate cadets from recognized institutions across all technical disciplines. <strong class="text-green">Cross-college strike teams</strong> are fully authorized and encouraged.
+                            </p>
                         </li>
-                        <li style="margin-bottom: 20px; border-bottom: 1px dashed #333; padding-bottom: 10px;">
-                            <strong style="color: var(--neon-cyan); font-size: 1.1rem;">> 02.
-                                REGISTRATION_GATEWAY</strong>
-                            <p style="color: #ddd; margin-top: 5px;">All participants must register before the deadline
-                                through the official portal. Team sizes vary by track.</p>
+
+                        <li style="margin-bottom: 24px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 20px;">
+                            <div style="font-family: var(--font-brand); color: var(--electric-blue); font-size: 1.2rem; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-door-open text-cyan"></i> 02. REGISTRATION GATEWAY
+                            </div>
+                            <p style="font-family: var(--font-body); color: var(--text-main); font-size: 1.05rem; line-height: 1.7; margin: 0;">
+                                All operatives must complete official enrollment prior to deadline via the encrypted portal. Team sizes range from single operatives up to 4 members.
+                            </p>
                         </li>
-                        <li style="margin-bottom: 20px; border-bottom: 1px dashed #333; padding-bottom: 10px;">
-                            <strong style="color: var(--neon-cyan); font-size: 1.1rem;">> 03.
-                                EVENT_ARCHITECTURE</strong>
-                            <p style="color: #ddd; margin-top: 5px;">XploitX 2026 is a <span class="text-yellow">24-hour
-                                    national-level 24 hrs capture the flag (CTF)</span> divided into Day 1 and Day 2
-                                tracks. Adherence to
-                                schedule is mandatory.</p>
+
+                        <li style="margin-bottom: 0; padding-bottom: 0;">
+                            <div style="font-family: var(--font-brand); color: var(--electric-blue); font-size: 1.2rem; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-network-wired text-cyan"></i> 03. EVENT ARCHITECTURE
+                            </div>
+                            <p style="font-family: var(--font-body); color: var(--text-main); font-size: 1.05rem; line-height: 1.7; margin: 0;">
+                                XploitX 2026 is a <strong class="text-gold">24-Hour National-Level Cybersecurity Capture The Flag (CTF)</strong> simulation. Continuous presence, schedule compliance, and prompt flag submissions are mandatory.
+                            </p>
                         </li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- TRACK-WISE RULES (Cards Grid) -->
+        <!-- ==========================================
+             TRACK-SPECIFIC PROTOCOLS (CARDS GRID)
+             ========================================== -->
         <section>
-            <h2 class="section-header">TRACK_SPECIFIC_PROTOCOLS</h2>
-            <div class="cards-grid">
+            <div class="section-header">
+                <div class="section-tag"><i class="fas fa-layer-group"></i> COMPETITION TRACKS</div>
+                <h2 class="section-title">TRACK SPECIFIC PROTOCOLS</h2>
+                <p class="section-subtitle">Operational guidelines governing each specialized arena of battle.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px;">
 
                 <!-- Malware Analysis -->
-                <div class="card card-3d">
-                    <span class="card-icon text-pink"><i class="fas fa-bug"></i></span>
-                    <h3 class="text-pink">MALWARE ANALYSIS</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Analyze only provided samples.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-white">STRICT ISOLATION:</span> Running
-                            malware outside the environment is prohibited.</li>
-                        <li style="margin-bottom: 10px;">> Internet access may be restricted.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-red" style="color: red;">WARNING:</span>
-                            Execution on personal systems = Disqualification.</li>
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(247, 37, 133, 0.15); border: 1px solid var(--deep-magenta); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-magenta">
+                            <i class="fas fa-bug"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-magenta">MALWARE ANALYSIS</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">REVERSE ENGINEERING</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-magenta" style="margin-top: 4px;"></i>
+                            <span>Analyze only provided sandbox binary samples.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-shield-alt text-gold" style="margin-top: 4px;"></i>
+                            <span><strong style="color: #fff;">STRICT ISOLATION:</strong> Executing malware outside the isolated sandbox environment is prohibited.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-magenta" style="margin-top: 4px;"></i>
+                            <span>Network access may be restricted per challenge protocol.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-exclamation-triangle text-magenta" style="margin-top: 4px;"></i>
+                            <span><strong style="color: var(--deep-magenta);">WARNING:</strong> Sample execution on host network results in immediate disqualification.</span>
+                        </li>
                     </ul>
                 </div>
 
-                <!-- Secure Code -->
-                <div class="card card-3d">
-                    <span class="card-icon text-cyan"><i class="fas fa-code"></i></span>
-                    <h3 class="text-cyan">SECURE CODE & VAPT</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Only ethical/legal testing methods.</li>
-                        <li style="margin-bottom: 10px;">> Exploit only assigned codebases.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-white">FORBIDDEN:</span> Targeting
-                            real-world systems is punishable by fines.</li>
-                        <li style="margin-bottom: 10px;">> Document findings clearly within time limits.</li>
+                <!-- Secure Code & VAPT -->
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(0, 210, 255, 0.15); border: 1px solid var(--electric-blue); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-cyan">
+                            <i class="fas fa-code"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-cyan">SECURE CODE & VAPT</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">AUDITING & AUDIT DEFENSE</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-cyan" style="margin-top: 4px;"></i>
+                            <span>Utilize strictly authorized penetration techniques.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-cyan" style="margin-top: 4px;"></i>
+                            <span>Audit and patch only designated application targets.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-ban text-gold" style="margin-top: 4px;"></i>
+                            <span><strong style="color: #fff;">FORBIDDEN:</strong> Targeting production infrastructure outside target ranges is strictly banned.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-file-alt text-cyan" style="margin-top: 4px;"></i>
+                            <span>Document vulnerability PoCs clearly within allotted time windows.</span>
+                        </li>
                     </ul>
                 </div>
 
                 <!-- OSINT -->
-                <div class="card card-3d">
-                    <span class="card-icon text-green"><i class="fas fa-search"></i></span>
-                    <h3 class="text-green">OSINT</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Use only publicly available sources.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-white">NO FAKES:</span> No impersonation or
-                            illegal access techniques.</li>
-                        <li style="margin-bottom: 10px;">> Social engineering is strictly prohibited.</li>
-                        <li style="margin-bottom: 10px;">> Accuracy and data verification are key.</li>
-                    </ul>
-                </div>
-                <!-- CTF -->
-                <div class="card card-3d">
-                    <span class="card-icon text-yellow"><i class="fas fa-flag"></i></span>
-                    <h3 class="text-yellow">24 HRS CAPTURE THE FLAG (CTF)</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Flags must be obtained individually/by team.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-white">ZERO SHARING:</span> Sharing
-                            flags/solutions = Disqualification.</li>
-                        <li style="margin-bottom: 10px;">> Plagiarism will lead to immediate ban.</li>
-                        <li style="margin-bottom: 10px;">> Organizers' decision on scoring is final.</li>
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(0, 255, 102, 0.15); border: 1px solid var(--doom-green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-green">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-green">OSINT INTELLIGENCE</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">OPEN SOURCE INTEL</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-green" style="margin-top: 4px;"></i>
+                            <span>Leverage open, publicly available intelligence feeds.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-user-secret text-gold" style="margin-top: 4px;"></i>
+                            <span><strong style="color: #fff;">NO IMPERSONATION:</strong> Doxxing, harassment, or social engineering real individuals is strictly forbidden.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-green" style="margin-top: 4px;"></i>
+                            <span>Non-public account breaches or illegal access techniques are prohibited.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-check text-green" style="margin-top: 4px;"></i>
+                            <span>Accuracy, evidence verification, and analytical rigor determine score multiplier.</span>
+                        </li>
                     </ul>
                 </div>
 
+                <!-- 24 HRS CTF -->
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(255, 215, 0, 0.15); border: 1px solid var(--doom-gold); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-gold">
+                            <i class="fas fa-flag"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-gold">24-HOUR CTF BATTLEFIELD</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">MAIN COMPETITION TRACK</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-gold" style="margin-top: 4px;"></i>
+                            <span>Flags must be independently solved by enrolled strike teams.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-times-circle text-magenta" style="margin-top: 4px;"></i>
+                            <span><strong style="color: #fff;">ZERO SHARING:</strong> Flag or solution sharing across teams yields immediate double disqualification.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-gold" style="margin-top: 4px;"></i>
+                            <span>DoS/DDoS attacks on scoring infrastructure are strictly forbidden.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-gavel text-gold" style="margin-top: 4px;"></i>
+                            <span>Organizing committee scoring and flag verification decisions are final.</span>
+                        </li>
+                    </ul>
+                </div>
 
                 <!-- Network Defense -->
-                <div class="card card-3d">
-                    <span class="card-icon text-purple"><i class="fas fa-shield-alt"></i></span>
-                    <h3 class="text-purple">NETWORK DEFENSE</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Defend assigned networks from sims.</li>
-                        <li style="margin-bottom: 10px;">> <span class="text-white">NO OFFENSE:</span> Do not tamper
-                            with other teams' environments.</li>
-                        <li style="margin-bottom: 10px;">> Focus on monitoring, detection, and mitigation.</li>
-                        <li style="margin-bottom: 10px;">> Logs explanation required.</li>
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(157, 78, 221, 0.15); border: 1px solid var(--incursion-purple); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-purple">
+                            <i class="fas fa-shield-alt"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-purple">NETWORK DEFENSE</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">BLUE TEAM PROTOCOL</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-purple" style="margin-top: 4px;"></i>
+                            <span>Harden assigned network segments against active Red Team simulations.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-hand-paper text-gold" style="margin-top: 4px;"></i>
+                            <span><strong style="color: #fff;">DEFENSE ONLY:</strong> Tampering with rival team network nodes or sensors is strictly prohibited.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-purple" style="margin-top: 4px;"></i>
+                            <span>Prioritize real-time monitoring, threat detection, and swift incident mitigation.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-file-contract text-purple" style="margin-top: 4px;"></i>
+                            <span>SIEM log explanations and root cause analysis documents are required for points.</span>
+                        </li>
                     </ul>
                 </div>
 
                 <!-- Paper Presentation -->
-                <div class="card card-3d">
-                    <span class="card-icon text-orange"><i class="fas fa-file-alt"></i></span>
-                    <h3 class="text-orange">PAPER PRESENTATION</h3>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ccc;">
-                        <li style="margin-bottom: 10px;">> Papers must be <span class="text-white">ORIGINAL</span> &
-                            Plagiarism-free.</li>
-                        <li style="margin-bottom: 10px;">> Topics: Cybersec, Ethical Hacking, Forensics, etc.</li>
-                        <li style="margin-bottom: 10px;">> Strictly follow time limits for Q&A.</li>
-                        <li style="margin-bottom: 10px;">> Judges' decisions are final.</li>
+                <div class="hud-panel" style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <span style="width: 50px; height: 50px; border-radius: 8px; background: rgba(255, 158, 0, 0.15); border: 1px solid var(--cosmic-orange); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" class="text-orange">
+                            <i class="fas fa-file-alt"></i>
+                        </span>
+                        <div>
+                            <h3 style="font-family: var(--font-brand); font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;" class="text-orange">PAPER PRESENTATION</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">RESEARCH SYMPOSIUM</span>
+                        </div>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.98rem; color: var(--text-main);">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-orange" style="margin-top: 4px;"></i>
+                            <span>Research submissions must be <strong style="color: #fff;">ORIGINAL</strong> and plagiarism-free.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-angle-right text-orange" style="margin-top: 4px;"></i>
+                            <span>Core domains: Offensive Security, AI in Cyber Defense, Forensics, and Cryptography.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-clock text-gold" style="margin-top: 4px;"></i>
+                            <span>Strictly adhere to presentation time limits and jury Q&A sessions.</span>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: 10px;">
+                            <i class="fas fa-award text-orange" style="margin-top: 4px;"></i>
+                            <span>Jury panel recommendations and scoring criteria are binding.</span>
+                        </li>
                     </ul>
                 </div>
 
             </div>
         </section>
 
-        <!-- CODE OF CONDUCT & EVALUATION -->
+        <!-- ==========================================
+             CODE OF CONDUCT & EVALUATION METRICS
+             ========================================== -->
         <section style="margin-bottom: 60px;">
-
-            <div style="display: flex; flex-wrap: wrap; gap: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px;">
 
                 <!-- Conduct -->
-                <div
-                    style="flex: 1; min-width: 300px; border: 1px solid var(--neon-pink); padding: 30px; border-radius: 8px; background: rgba(20, 0, 5, 0.6); box-shadow: 0 0 15px rgba(255, 0, 85, 0.1);">
-                    <h3 class="text-pink" style="margin-bottom: 20px; font-size: 1.5rem;"><i
-                            class="fas fa-exclamation-triangle"></i> CODE_OF_CONDUCT</h3>
-                    <p style="color: #ddd; margin-bottom: 15px;">> Ethical hacking principles must be followed at all
-                        times.</p>
-                    <p style="color: #ddd; margin-bottom: 15px;">> <span class="text-white">ZERO TOLERANCE:</span>
-                        Misconduct, cheating, or harassment results in immediate disqualification/fines.</p>
-                    <p style="color: #ddd; margin-bottom: 15px;">> Respect organizers, judges, and participants.</p>
-                    <p style="color: #ddd;">> The use of alcohol, drugs, or disruptive behavior is strictly prohibited.
+                <div class="hud-panel" style="padding: 35px; border-color: rgba(247, 37, 133, 0.35); box-shadow: 0 0 25px rgba(247, 37, 133, 0.1);">
+                    <h3 class="text-magenta" style="font-family: var(--font-brand); margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-exclamation-triangle"></i> CODE OF CONDUCT
+                    </h3>
+                    <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.05rem;">
+                        <i class="fas fa-check text-magenta"></i> Ethical hacking principles and standard codes of conduct must be observed at all times.
+                    </p>
+                    <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.05rem;">
+                        <i class="fas fa-exclamation-circle text-gold"></i> <strong style="color: #fff;">ZERO TOLERANCE:</strong> Any form of harassment, malicious interference, or unsportsmanlike behavior will cause instant disqualification.
+                    </p>
+                    <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.05rem;">
+                        <i class="fas fa-hands-helping text-magenta"></i> Treat fellow operatives, volunteer staff, and judicial panels with absolute professionalism and respect.
+                    </p>
+                    <p style="color: var(--text-main); font-size: 1.05rem; margin: 0;">
+                        <i class="fas fa-ban text-magenta"></i> Substance use, contraband, or disruptive behavior on campus grounds is strictly prohibited.
                     </p>
                 </div>
 
-                <!-- Evaluation -->
-                <div
-                    style="flex: 1; min-width: 300px; border: 1px solid var(--neon-cyan); padding: 30px; border-radius: 8px; background: rgba(0, 20, 30, 0.6); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);">
-                    <h3 class="text-cyan" style="margin-bottom: 20px; font-size: 1.5rem;"><i
-                            class="fas fa-chart-line"></i> EVALUATION_METRICS</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-check-circle text-green"></i> <span style="color: #fff;">Technical Skill &
-                                Execution</span>
+                <!-- Evaluation Metrics -->
+                <div class="hud-panel" style="padding: 35px; border-color: rgba(0, 210, 255, 0.35); box-shadow: 0 0 25px rgba(0, 210, 255, 0.1);">
+                    <h3 class="text-cyan" style="font-family: var(--font-brand); margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-chart-line"></i> EVALUATION METRICS
+                    </h3>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-size: 1.05rem;">
+                            <i class="fas fa-check-circle text-green" style="font-size: 1.2rem;"></i>
+                            <span style="color: #ffffff; font-weight: 600;">Technical Rigor & Exploit Execution</span>
                         </li>
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-check-circle text-green"></i> <span style="color: #fff;">Innovation &
-                                Creativity</span>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-size: 1.05rem;">
+                            <i class="fas fa-check-circle text-green" style="font-size: 1.2rem;"></i>
+                            <span style="color: #ffffff; font-weight: 600;">Innovation & Strategic Problem Solving</span>
                         </li>
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-check-circle text-green"></i> <span style="color: #fff;">Accuracy &
-                                Clarity</span>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px; font-size: 1.05rem;">
+                            <i class="fas fa-check-circle text-green" style="font-size: 1.2rem;"></i>
+                            <span style="color: #ffffff; font-weight: 600;">Accuracy, Speed & Precision</span>
                         </li>
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-check-circle text-green"></i> <span style="color: #fff;">Presentation &
-                                Documentation</span>
+                        <li style="display: flex; align-items: center; gap: 12px; font-size: 1.05rem;">
+                            <i class="fas fa-check-circle text-green" style="font-size: 1.2rem;"></i>
+                            <span style="color: #ffffff; font-weight: 600;">Quality of PoC Documentation & Briefing</span>
                         </li>
                     </ul>
-                    <p style="color: #aaa; font-size: 0.9rem; margin-top: 15px;">* Judges' decisions are final and
-                        binding.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-mono); margin: 0;">
+                        * Official evaluation decisions by jury panel remain final and binding across all tracks.
+                    </p>
                 </div>
 
             </div>
@@ -289,358 +420,318 @@
 
     </div>
 
-
-
-    <!-- Jointly Organized By Section -->
-    <section class="joint-organizer-section">
-        <h2 class="section-header">JOINTLY ORGANIZED BY</h2>
-
-        <div class="joint-organizer-container">
-            <!-- Ethical Hacking -->
-            <div class="org-unit">
-                <img src="Ethical Hacking Logo.jpeg" alt="Ethical Hacking" class="joint-logo">
-                <span class="joint-text">ETHICAL HACKING CLUB</span>
-            </div>
-
-            <!-- AND -->
-            <div class="joint-and">AND</div>
-
-            <!-- Hackshield -->
-            <div class="org-unit">
-                <img src="Hackshield.jpeg" alt="Hackshield" class="joint-logo joint-logo-square">
-                <span class="joint-text">HACKSHIELD (STUDENT ASSOCIATION)</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sponsors Section -->
-    <section class="partners-section info-section hidden-el">
+    <!-- ==========================================
+         MoU PARTNERS & COLLABORATIONS SECTION
+         ========================================== -->
+    <section class="mou-section" id="partners">
         <div class="container">
-            <h2 class="section-header">[ PARTNERS IN CRIME ]</h2>
+            <div class="section-header">
+                <div class="section-tag">[ ALLIANCES & COLLABORATIONS ]</div>
+                <h2 class="section-title">JOINTLY ORGANIZED BY</h2>
+                <p class="section-subtitle">Under the auspices of official college clubs and student associations.</p>
+            </div>
 
-            <!-- MEDIA PARTNERS -->
-            <div class="partner-group">
-                <h3 class="partner-title">MEDIA PARTNER</h3>
-                <div class="partner-container">
-                    <a href="https://knowafest.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Knowafest.png" alt="Knowafest" class="partner-logo">
-                        </div>
-                    </a>
+            <!-- Joint Student & Department Organizations -->
+            <div class="joint-org-wrapper">
+                <div class="org-unit-card">
+                    <img src="Ethical Hacking Logo.jpeg" alt="Ethical Hacking Club" class="joint-logo-img">
+                    <div class="joint-text-info">
+                        DEPARTMENT OF CYBER SECURITY<br>
+                        <span class="text-green">(ETHICAL HACKING CLUB)</span>
+                    </div>
+                </div>
 
-                    <a href="https://devnovate.co/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Devnovate.jpg" alt="Devnovate" class="partner-logo" style="background-color: black;">
-                        </div>
-                    </a>
+                <div class="joint-separator">&</div>
 
-                    <div class="partner-link">
-                        <div class="partner-card">
-                            <img src="Omega Consortium.jpg" alt="Omega Consortium" class="partner-logo" style="border-radius: 4px; object-fit: contain;">
-                        </div>
+                <div class="org-unit-card">
+                    <img src="Hackshield.jpeg" alt="Hackshield Student Association" class="joint-logo-img">
+                    <div class="joint-text-info">
+                        HACKSHIELD<br>
+                        <span class="text-gold">(STUDENT ASSOCIATION)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- MoU PARTNERS -->
-            <div class="partner-group">
-                <h3 class="partner-title">OUR MoU PARTNERS</h3>
-                <div class="partner-container">
-                    <a href="https://tanmay.pro/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="cyber sanskar.jpg" alt="Cyber Sanskar" class="partner-logo">
+            <!-- MoU Industry Partners -->
+            <div class="partner-category-block">
+                <h3 class="partner-category-title"><i class="fas fa-handshake"></i> INDUSTRY MoU PARTNERS</h3>
+                <div class="partner-cards-grid">
+                    <a href="https://tanmay.pro/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="cyber sanskar.jpg" alt="Cyber Sanskar" class="partner-logo-img">
                         </div>
                     </a>
 
-                    <a href="https://cyberheals.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="cyber heals.jpg" alt="Cyber Heals" class="partner-logo zoom-logo">
+                    <a href="https://cyberheals.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="cyber heals.jpg" alt="Cyber Heals" class="partner-logo-img">
                         </div>
                     </a>
 
-                    <a href="https://junisys.in/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Junisys.png" alt="Junisys" class="partner-logo">
+                    <a href="https://junisys.in/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Junisys.png" alt="Junisys" class="partner-logo-img">
                         </div>
                     </a>
 
-                    <a href="https://rocheston.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Rocheston.png" alt="Rocheston" class="partner-logo">
+                    <a href="https://rocheston.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Rocheston.png" alt="Rocheston" class="partner-logo-img">
                         </div>
                     </a>
 
-                    <a href="https://secureworldz.pro/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Secure Worldz.jpg" alt="Secure Worldz" class="partner-logo" style="border-radius: 4px; object-fit: contain;">
+                    <a href="https://secureworldz.pro/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Secure Worldz.jpg" alt="Secure Worldz" class="partner-logo-img">
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- OUR SPONSORS -->
-            <div class="partner-group">
-                <h3 class="partner-title">OUR SPONSORS</h3>
-                <div class="partner-container">
-                    <a href="https://www.k7computing.com/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="K7 Security.jpeg" alt="K7 Security" class="partner-logo">
+            <!-- Event Sponsors -->
+            <div class="partner-category-block">
+                <h3 class="partner-category-title"><i class="fas fa-award"></i> OUR EVENT SPONSORS</h3>
+                <div class="partner-cards-grid">
+                    <a href="https://www.k7computing.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="K7 Security.jpeg" alt="K7 Security" class="partner-logo-img">
                         </div>
                     </a>
 
-                     <a href="https://www.gameistry.in/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Gameistry.png" alt="Gameistry" class="partner-logo" style="background-color: black;">
+                    <a href="https://www.gameistry.in/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Gameistry.png" alt="Gameistry" class="partner-logo-img" style="background-color: black;">
                         </div>
                     </a>
 
-                    <a href="https://thozhil.co.in/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="One Yes.jpeg" alt="One Yes" class="partner-logo">
+                    <a href="https://thozhil.co.in/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="One Yes.jpeg" alt="One Yes" class="partner-logo-img">
                         </div>
                     </a>
 
-                    <a href="https://thozhil.co.in/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Thozhil.jpeg" alt="Thozhil" class="partner-logo">
+                    <a href="https://thozhil.co.in/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Thozhil.jpeg" alt="Thozhil" class="partner-logo-img">
                         </div>
                     </a>
-                    <a href="https://sis.tech/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="sistechwork.png" alt="Sistechwork" class="partner-logo">
+
+                    <a href="https://sis.tech/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="sistechwork.png" alt="Sistechwork" class="partner-logo-img">
                         </div>
                     </a>
-                    <a href="#" class="partner-link">
-                        <div class="partner-card">
-                            <img src="OG Drinks.png" alt="OG Drinks" class="partner-logo">
+
+                    <div class="partner-logo-box">
+                        <img src="OG Drinks.png" alt="OG Drinks" class="partner-logo-img">
+                    </div>
+
+                    <div class="partner-logo-box">
+                        <img src="Outklass.png" alt="Outklass" class="partner-logo-img">
+                    </div>
+
+                    <div class="partner-logo-box">
+                        <img src="Pacfully.jpg" alt="Pacfully" class="partner-logo-img">
+                    </div>
+
+                    <a href="https://stamin.net/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Stamine.png" alt="Stamine" class="partner-logo-img">
                         </div>
                     </a>
-                    <a href="#" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Outklass.png" alt="Outklass" class="partner-logo">
-                        </div>
-                    </a>
-                    <a href="#" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Pacfully.jpg" alt="Pacfully" class="partner-logo">
-                        </div>
-                    </a>
-                    <a href="https://stamin.net/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Stamine.png" alt="Stamine" class="partner-logo">
-                        </div>
-                    </a>
-                    <a href="https://terv.pro/" target="_blank" class="partner-link">
-                        <div class="partner-card">
-                            <img src="Terv Pro.webp" alt="Terv Pro" class="partner-logo">
+
+                    <a href="https://terv.pro/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Terv Pro.webp" alt="Terv Pro" class="partner-logo-img">
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- SPONSOR CTA -->
-            <div class="sponsor-cta">
-                <h3 class="text-yellow" style="margin-bottom: 15px;">BECOME A SPONSOR</h3>
-                <p style="margin-bottom: 20px; color: #eee; text-align: justify;">
-                    24 hrs capture the flag (CTF) — it is to amplify your impact. Download our sponsorship brochure to
-                    explore the various
-                    tiers and benefits available for your organization.
+            <!-- Sponsor CTA -->
+            <div class="sponsor-cta-banner hud-panel">
+                <h3 class="text-gold" style="margin-bottom: 15px;"><i class="fas fa-bullhorn"></i> BECOME AN OFFICIAL SPONSOR</h3>
+                <p style="margin-bottom: 20px; color: var(--text-main); text-align: justify; max-width: 800px; margin-left: auto; margin-right: auto;">
+                    Amplify your brand presence across India's premier cybersecurity strike teams. Download our official sponsorship prospectus for tier breakdowns and partner benefits.
                 </p>
-                <a href="sponsors.pdf" target="_blank" class="cta-btn" style="font-size: 1rem;"><i
-                        class="fas fa-file-pdf"></i> [ VIEW SPONSOR BROCHURE ]</a>
+                <a href="sponsors.pdf" target="_blank" class="btn btn-primary" style="font-size: 1rem;">
+                    <i class="fas fa-file-pdf"></i> [ VIEW SPONSOR BROCHURE ]
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==========================================
+         ORGANIZING NODES (FOOTER DIRECTORY)
+         ========================================== -->
+    <section class="organizing-nodes-section" id="coordinators">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ ARCHITECTS OF THE SIMULATION ]</div>
+                <h2 class="section-title">ORGANIZING NODES</h2>
+                <p class="section-subtitle">Connect directly with student command leads and faculty coordinators.</p>
+            </div>
+
+            <div class="nodes-grid">
+                <!-- Card 1: Event Heads -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">EVENT HEADS</div>
+                        <span class="node-role-label">Student Coordinators</span>
+
+                        <ul class="node-list">
+                            <li class="node-item">
+                                <strong>N Ashish</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+918122079494" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 81220 79494</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>N Madhumitha Narayanan</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917305456171" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 73054 56171</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>R Divya Dharshini</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917092729115" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 70927 29115</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>M Jesin Milesh</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917418431480" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 74184 31480</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card 2: Staff Coordinators -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-id-card-alt"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">STAFF COORDS</div>
+                        <span class="node-role-label">Cyber Security Department</span>
+
+                        <ul class="node-list">
+                            <li class="node-item">
+                                <strong>Mrs. Anithalakshmi</strong>
+                                <span class="node-sublabel">HOD</span>
+                                <a href="tel:+919840268454" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 98402 68454</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. G Ramya</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919150567478" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 91505 67478</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Devi</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919940592672" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 99405 92672</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Rama Mathrasi</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+918778136639" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 87781 36639</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Aswini</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919042315995" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 90423 15995</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mr. Kalaimani</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+918220375592" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 82203 75592</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Keerthana</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919361782701" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 93617 82701</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card 3: Quick Navigation -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">SYSTEM ROUTING</div>
+                        <span class="node-role-label">Platform Shortcuts</span>
+
+                        <ul class="node-list">
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="register.html" class="node-tel-link" style="color: var(--doom-green); font-weight: 800;"><i class="fas fa-bolt"></i> [ ENLIST TEAM / REGISTER ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="prizes.html" class="node-tel-link" style="color: var(--doom-gold); font-weight: 800;"><i class="fas fa-trophy"></i> [ FULL PRIZES & SPONSORS ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="about.html" class="node-tel-link"><i class="fas fa-info-circle"></i> [ ABOUT MULTIVERSE ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="rules.html" class="node-tel-link"><i class="fas fa-gavel"></i> [ CTF DIRECTIVES / RULES ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="doom.html" class="node-tel-link" style="color: #ffffff;"><i class="fas fa-user-shield"></i> [ DOOM COMMAND CONSOLE ]</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- FINAL NOTES -->
-    <section class="info-section">
-        <div class="container" style="text-align: center; border-top: 1px solid var(--dark-green); padding-top: 40px;">
-            <h2 class="section-header" style="font-size: 1.5rem; margin-bottom: 20px;">SYSTEM_NOTIFICATIONS</h2>
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                <div class="pill-badge"
-                    style="background: transparent; border: 1px dashed var(--neon-yellow); color: var(--neon-yellow);">
-                    <i class="fas fa-id-card"></i> VALID COLLEGE ID MANDATORY
+    <!-- ==========================================
+         FOOTER
+         ========================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>XPLOITX 2.0 <span class="text-green">BETA</span></h3>
+                    <p>24-HOUR CYBERSECURITY CAPTURE THE FLAG</p>
+                    <div class="org-info">
+                        Department of Cyber Security<br>
+                        Prathyusha Engineering College<br>
+                        (An Autonomous Institution)
+                    </div>
                 </div>
-                <div class="pill-badge"
-                    style="background: transparent; border: 1px dashed var(--neon-green); color: var(--neon-green);">
-                    <i class="fas fa-sync"></i> RULES SUBJECT TO UPDATE
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Organizing Nodes Section (Coordinators) -->
-
-
-    <footer class="organizing-nodes-section">
-        <h2 class="nodes-header">>_ ORGANIZING NODES</h2>
-        <p class="nodes-subtitle">Meet the architects of the simulation</p>
-
-        <div class="nodes-grid">
-            <!-- Card 1: Event Coordinators -->
-            <div class="node-card">
-                <div class="node-avatar-placeholder">
-                    <i class="fas fa-network-wired"></i>
-                </div>
-                <div class="node-content-wrapper">
-                    <div class="node-category">EVENT HEADS</div>
-                    <span class="node-role-label">System Administrators</span>
-
-                    <ul class="node-list">
-                        <li class="node-item">
-                            <strong>N Ashish</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+918122079494">+91 8122079494</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>N Madhumitha Narayanan</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+917305456171">+91 7305456171</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>N Nirmal Raj</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+919150985783">+91 9150985783</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>R Divya Dharshini</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+917092729115">+91 7092729115</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>J Raghul</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+916382394558">+91 6382394558</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>M Jesin Milesh</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+917418431480">+91 7418431480</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>K Johnknox</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Student</span>
-                            <a href="tel:+919182597274">+91 91825 97274</a>
-                        </li>
+                <div class="footer-col">
+                    <h4>NAVIGATION</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">HOME</a></li>
+                        <li><a href="about.html">ABOUT US</a></li>
+                        <li><a href="rules.html">RULES</a></li>
+                        <li><a href="prizes.html">PRIZES</a></li>
+                        <li><a href="register.html">REGISTER</a></li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- Card 2: Staff Coordinators -->
-            <div class="node-card">
-                <div class="node-avatar-placeholder">
-                    <i class="fas fa-id-card-alt"></i>
-                </div>
-                <div class="node-content-wrapper">
-                    <div class="node-category">STAFF COORDS</div>
-                    <span class="node-role-label">Cyber Security Department</span>
-
-                    <ul class="node-list">
-                        <li class="node-item">
-                            <strong>Dr. M D Boomija</strong>
-                            <span
-                                style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">HOD</span>
-                            <a href="tel:+917358028970">+91 7358028970</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. Anithalakshmi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
-                                Professor</span>
-                            <a href="tel:+919840268454">+91 9840268454</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. G Ramya</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
-                                Professor</span>
-                            <a href="tel:+919150567478">+91 9150567478</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. S Devi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
-                                Professor</span>
-                            <a href="tel:+919940592672">+91 9940592672</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. S Rama Mathrasi</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
-                                Professor</span>
-                            <a href="tel:+918778136639">+91 8778136639</a>
-                        </li>
-                        <li class="node-item">
-                            <strong>Mrs. Aswini</strong>
-                            <span style="color: #aaa; font-size: 0.85rem; margin-bottom: 3px; display: block;">Assistant
-                                Professor</span>
-                            <a href="tel:+919042315995">+91 9042315995</a>
-                        </li>
-                    </ul>
+                <div class="footer-col">
+                    <h4>COMMUNICATIONS</h4>
+                    <div class="footer-social-links" style="margin-bottom: 20px;">
+                        <a href="https://instagram.com/xploitxctf.2k26" target="_blank" class="social-icon-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://facebook.com/xploitxctf.2k26" target="_blank" class="social-icon-btn" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    </div>
+                    <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                        Official communication channels open prior to competition launch.
+                    </p>
                 </div>
             </div>
 
-            <!-- Card 3: Quick Links -->
-            <div class="node-card">
-                <div class="node-avatar-placeholder">
-                    <i class="fas fa-link"></i>
-                </div>
-                <div class="node-content-wrapper">
-                    <div class="node-category">QUICK LINKS</div>
-                    <span class="node-role-label">System Navigation</span>
-
-                    <ul class="node-list">
-                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
-                            <a href="index.html" style="color: var(--neon-green); text-decoration: none;"><i
-                                    class="fas fa-home"></i> [ HOME ]</a>
-                        </li>
-                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
-                            <a href="about.html" style="color: var(--neon-green); text-decoration: none;"><i
-                                    class="fas fa-info-circle"></i> [ ABOUT ]</a>
-                        </li>
-                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
-                            <a href="rules.html" style="color: var(--neon-green); text-decoration: none;"><i
-                                    class="fas fa-gavel"></i> [ RULES ]</a>
-                        </li>
-                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
-                            <a href="prizes.html" style="color: var(--neon-green); text-decoration: none;"><i
-                                    class="fas fa-trophy"></i> [ PRIZES ]</a>
-                        </li>
-                        <li class="node-item" style="min-height: auto; padding: 10px 0; border: none;">
-                            <a href="register.html" style="color: var(--neon-green); text-decoration: none;"><i
-                                    class="fas fa-user-plus"></i> [ REGISTER ]</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="footer-bottom">
+                &copy; 2026 XPLOITX 2.0 BETA • Department of Cyber Security • Prathyusha Engineering College. All rights reserved.
             </div>
         </div>
-
-    <!-- Footer Social Follow -->
-    <div style="text-align: center; margin-top: 50px; margin-bottom: 30px; font-family: 'Share Tech Mono', monospace;">
-        <div style="font-size: 0.9rem; margin-bottom: 15px; color: var(--neon-green); letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.5);">
-            >_FOLLOW US
-        </div>
-        <div style="display: flex; gap: 30px; justify-content: center; align-items: center;">
-            <a href="https://instagram.com/xploitxctf.2k26" target="_blank" style="color: #E1306C; font-size: 2.2rem; text-decoration: none; display: inline-block; transition: all 0.3s ease; filter: drop-shadow(0 0 5px rgba(225, 48, 108, 0.5));" onmouseover="this.style.transform='scale(1.2)'; this.style.filter='drop-shadow(0 0 15px rgba(225, 48, 108, 0.9))'" onmouseout="this.style.transform='scale(1)'; this.style.filter='drop-shadow(0 0 5px rgba(225, 48, 108, 0.5))'">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://facebook.com/xploitxctf.2k26" target="_blank" style="color: #1877F2; font-size: 2.2rem; text-decoration: none; display: inline-block; transition: all 0.3s ease; filter: drop-shadow(0 0 5px rgba(24, 119, 242, 0.5));" onmouseover="this.style.transform='scale(1.2)'; this.style.filter='drop-shadow(0 0 15px rgba(24, 119, 242, 0.9))'" onmouseout="this.style.transform='scale(1)'; this.style.filter='drop-shadow(0 0 5px rgba(24, 119, 242, 0.5))'">
-                <i class="fab fa-facebook"></i>
-            </a>
-        </div>
-    </div>
-
-        <div class="footer-copyright">
-            <div>&copy; XploitX-2026 • All systems operational</div>
-            <div style="margin-top: 5px; font-style: italic;">"Free your mind." - Morpheus</div>
-        </div>
-
-
-
-
     </footer>
 
     <script src="script.js"></script>
