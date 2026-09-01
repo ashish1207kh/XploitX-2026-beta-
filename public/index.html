@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPLOITX 2.0 BETA | 24-Hour Cybersecurity CTF</title>
+    <meta name="description" content="XPLOITX 2.0 BETA - 24-Hour Cybersecurity Capture The Flag Competition organized by Department of Cyber Security, Prathyusha Engineering College on 9 October 2026.">
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core Design System -->
+    <link rel="stylesheet" href="styles.css?v=2.5">
+    <link rel="icon" type="image/png" href="logo_favicon.png">
+</head>
+
+<body>
+
+    <!-- Interactive Floating Register Button with Tactile Pressing Transitions -->
+    <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
+        <span class="reg-btn-status"><span class="pulse-dot"></span> REGISTRATION OPEN</span>
+        <span class="reg-btn-label">[ REGISTER NOW ] <i class="fas fa-arrow-right"></i></span>
+    </a>
+
+    <!-- Background Layers: Interactive Particle Canvas & Cyber Grid -->
+    <canvas id="particles-bg"></canvas>
+    <div class="cyber-grid-overlay"></div>
+
+    <!-- ==========================================
+         TOP ROW: COLLEGE DETAILS (LOGO ON LEFT)
+         ========================================== -->
+    <header class="college-header-wrapper">
+        <div class="college-info-block">
+            <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
+            <div class="college-text-details">
+                <h1 class="header-college-title">PRATHYUSHA ENGINEERING COLLEGE</h1>
+                <div class="header-college-subtitle">(AN AUTONOMOUS INSTITUTION)</div>
+                <div class="header-accreditation-text">
+                    Approved by AICTE & Affiliated to Anna University, NAAC "A" Grade Accredited Institution<br>
+                    National Board of Accreditation (NBA) Accredited Programmes
+                </div>
+            </div>
+        </div>
+
+        <!-- Accreditations & Recognitions Marquee Banner -->
+        <div class="logo-marquee-container">
+            <div class="logo-marquee-content">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+            </div>
+        </div>
+
+        <!-- Live News Marquee -->
+        <div class="news-marquee-container">
+            <div class="news-marquee-content">
+                <a href="register.html">
+                    <span>⚡ XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTRATION OPEN NOW • ENTER THE BATTLEFIELD • </span>
+                    <span>⚡ XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTRATION OPEN NOW • ENTER THE BATTLEFIELD • </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         1. CLEAN MINIMALIST CENTERED NAVBAR
+         ========================================== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <ul class="nav-links" id="nav-links-menu">
+                <li><a href="#home" class="nav-link active">HOME</a></li>
+                <li><a href="#about" class="nav-link">ABOUT</a></li>
+                <li><a href="#how-to-play" class="nav-link">HOW TO PLAY</a></li>
+                <li><a href="#prizes" class="nav-link">PRIZES</a></li>
+                <li><a href="#partners" class="nav-link">MOU PARTNERS</a></li>
+                <li><a href="#rules" class="nav-link">RULES</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>           
+        </div>
+    </nav>
+
+    <!-- ==========================================
+         2. HERO SECTION (OFFICIAL LOGO GRAPHIC)
+         ========================================== -->
+    <section class="hero-section" id="home">
+        <div class="container hero-content">
+            <!-- Restored Graphic Logo Emblem in Home Section -->
+            <div class="hero-logo-wrapper">
+                <img src="xploitx_logo.png" alt="XPLOITX 2.0 BETA Logo" class="hero-logo-img">
+            </div>
+
+            <div class="hero-subtitle-format">
+                24-HOUR CYBERSECURITY CAPTURE THE FLAG
+            </div>
+
+            <div class="hero-tagline">
+                "ENTER THE DIGITAL BATTLEFIELD."
+            </div>
+
+            <div class="hero-supporting-text">
+                24 hours. One battlefield. Hundreds of challenges. One leaderboard.
+            </div>
+
+            <p class="hero-description">
+                XPLOITX 2.0 BETA is a hands-on cybersecurity Capture The Flag competition designed to challenge participants across multiple domains of offensive security, analysis, exploitation and problem solving.
+            </p>
+
+            <div class="hero-meta-bar">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>09 OCTOBER 2026</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-stopwatch"></i>
+                    <span>24 HOURS NON-STOP</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>PRATHYUSHA ENGINEERING COLLEGE</span>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="register.html" class="btn btn-primary">[ REGISTER NOW ]</a>
+                <a href="#about" class="btn btn-secondary">[ EXPLORE MISSION ]</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         3. COUNTDOWN TIMER
+         ========================================== -->
+    <section class="countdown-section" id="countdown">
+        <div class="container">
+            <div class="countdown-wrapper hud-panel">
+                <div class="countdown-heading">
+                    <i class="fas fa-satellite-dish"></i> THE BATTLE BEGINS IN
+                </div>
+
+                <div class="countdown-grid">
+                    <div class="countdown-box">
+                        <span class="countdown-val" id="cd-days">00</span>
+                        <span class="countdown-label">DAYS</span>
+                    </div>
+
+                    <div class="countdown-divider">:</div>
+
+                    <div class="countdown-box">
+                        <span class="countdown-val" id="cd-hours">00</span>
+                        <span class="countdown-label">HOURS</span>
+                    </div>
+
+                    <div class="countdown-divider">:</div>
+
+                    <div class="countdown-box">
+                        <span class="countdown-val" id="cd-minutes">00</span>
+                        <span class="countdown-label">MINUTES</span>
+                    </div>
+
+                    <div class="countdown-divider">:</div>
+
+                    <div class="countdown-box">
+                        <span class="countdown-val" id="cd-seconds">00</span>
+                        <span class="countdown-label">SECONDS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         4. THE BETA MISSION (EVENT INTRODUCTION)
+         ========================================== -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ MISSION BRIEFING ]</div>
+                <h2 class="section-title">THE BETA MISSION</h2>
+                <p class="section-subtitle">A high-stakes digital proving ground designed to test practical cybersecurity capabilities.</p>
+            </div>
+
+            <div class="mission-grid">
+                <div class="mission-text-card hud-panel">
+                    <p class="mission-paragraph">
+                        The Department of Cyber Security presents <strong>XPLOITX 2.0 BETA</strong>, a 24-hour Cybersecurity Capture The Flag competition for students.
+                    </p>
+                    <p class="mission-paragraph">
+                        The beta edition is designed as a preliminary version of XPLOITX 2.0, building the foundation for a larger-scale edition planned for 2027.
+                    </p>
+                    <p class="mission-paragraph">
+                        The competition focuses on practical cybersecurity skills, technical problem solving and hands-on challenge solving.
+                    </p>
+                    
+                    <div class="mission-vision-box">
+                        <i class="fas fa-shield-alt text-green"></i> <strong>2027 SCALE ROADMAP:</strong> This beta edition calibrates the core infrastructure, difficulty curve, and scoring algorithms for next year's full international deployment.
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card hud-panel">
+                        <div class="stat-number text-green">24</div>
+                        <div class="stat-info">
+                            <h4>HOURS</h4>
+                            <p>Continuous capture the flag warfare</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card hud-panel" style="border-left-color: var(--incursion-purple);">
+                        <div class="stat-number text-purple">CTF</div>
+                        <div class="stat-info">
+                            <h4>COMPETITION</h4>
+                            <p>Hands-on offensive security & defense</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card hud-panel" style="border-left-color: var(--doom-gold);">
+                        <div class="stat-number text-gold">2026</div>
+                        <div class="stat-info">
+                            <h4>BETA EDITION</h4>
+                            <p>Preliminary launch for 2027 expansion</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         5. HOW THE CTF WORKS
+         ========================================== -->
+    <section id="how-to-play">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ BATTLEGROUND PROTOCOL ]</div>
+                <h2 class="section-title">HOW TO PLAY</h2>
+                <p class="section-subtitle">Six phases to navigate from enlistment to the top of the leaderboard.</p>
+            </div>
+
+            <div class="timeline-container">
+                <!-- Step 01 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 01</div>
+                    <div class="step-icon-wrap"><i class="fas fa-user-plus"></i></div>
+                    <h3 class="step-title">REGISTER</h3>
+                    <p class="step-desc">Participants register for XPLOITX 2.0 BETA and form strike teams.</p>
+                </div>
+
+                <!-- Step 02 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 02</div>
+                    <div class="step-icon-wrap"><i class="fas fa-key"></i></div>
+                    <h3 class="step-title">JOIN THE CTF</h3>
+                    <p class="step-desc">Participants receive access to the competition platform.</p>
+                </div>
+
+                <!-- Step 03 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 03</div>
+                    <div class="step-icon-wrap"><i class="fas fa-terminal"></i></div>
+                    <h3 class="step-title">SOLVE</h3>
+                    <p class="step-desc">Identify vulnerabilities, analyze evidence and solve cybersecurity challenges.</p>
+                </div>
+
+                <!-- Step 04 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 04</div>
+                    <div class="step-icon-wrap"><i class="fas fa-flag"></i></div>
+                    <h3 class="step-title">CAPTURE</h3>
+                    <p class="step-desc">Submit valid flags in correct format to earn dynamic points.</p>
+                </div>
+
+                <!-- Step 05 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 05</div>
+                    <div class="step-icon-wrap"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="step-title">CLIMB</h3>
+                    <p class="step-desc">Compete on the leaderboard throughout the 24-hour competition.</p>
+                </div>
+
+                <!-- Step 06 -->
+                <div class="timeline-step-card hud-panel">
+                    <div class="step-number">STEP 06</div>
+                    <div class="step-icon-wrap"><i class="fas fa-trophy"></i></div>
+                    <h3 class="step-title">CONQUER</h3>
+                    <p class="step-desc">Finish among the highest-scoring teams and claim victory.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         6. BATTLEGROUND PRIZES & SPOILS
+         ========================================== -->
+    <section class="prizes-section" id="prizes">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ SOVEREIGN TREASURY ]</div>
+                <h2 class="section-title">BATTLEGROUND BOUNTIES & PRIZES</h2>
+                <p class="section-subtitle">Supreme glory and cash bounties await the top cybersecurity operatives.</p>
+            </div>
+
+            <div class="prizes-grid">
+                <!-- 1st Prize -->
+                <div class="prize-tier-card hud-panel prize-gold">
+                    <div class="prize-badge-pill"><i class="fas fa-crown"></i> 1ST PLACE</div>
+                    <div class="prize-icon-wrap text-gold"><i class="fas fa-trophy"></i></div>
+                    <h3 class="prize-tier-title text-gold">CHAMPION OF BATTLEWORLD</h3>
+                    <div class="prize-cash-amount">₹5,000 CASH</div>
+                    <p class="prize-desc">Winner of the XPLOITX 2.0 BETA 24-Hour CTF Battlefield.</p>
+                </div>
+
+                <!-- 2nd Prize -->
+                <div class="prize-tier-card hud-panel prize-green">
+                    <div class="prize-badge-pill"><i class="fas fa-medal"></i> 2ND PLACE</div>
+                    <div class="prize-icon-wrap text-green"><i class="fas fa-medal"></i></div>
+                    <h3 class="prize-tier-title text-green">TITANIUM DEFENDER</h3>
+                    <div class="prize-cash-amount">₹2,500 CASH</div>
+                    <p class="prize-desc">First runner-up of the 24-Hour Cybersecurity CTF.</p>
+                </div>
+
+                <!-- 3rd Prize -->
+                <div class="prize-tier-card hud-panel prize-cyan">
+                    <div class="prize-badge-pill"><i class="fas fa-award"></i> 3RD PLACE</div>
+                    <div class="prize-icon-wrap text-cyan"><i class="fas fa-award"></i></div>
+                    <h3 class="prize-tier-title text-cyan">VIBRANIUM OPERATIVE</h3>
+                    <div class="prize-cash-amount">₹1,000 CASH</div>
+                    <p class="prize-desc">Second runner-up of the 24-Hour Cybersecurity CTF.</p>
+                </div>
+            </div>
+
+            <div class="prizes-cta-wrap">
+                <a href="prizes.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> [ VIEW FULL PRIZE & SPONSORS DOSSIER ]</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         7. MoU PARTNERS & COLLABORATIONS (TRANSPARENT BACKGROUNDS)
+         ========================================== -->
+    <section class="mou-section" id="partners">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ ALLIANCES & COLLABORATIONS ]</div>
+                <h2 class="section-title">OUR MoU PARTNERS</h2>
+                <p class="section-subtitle">Strategic cybersecurity industry alliances empowering XPLOITX 2.0 BETA.</p>
+            </div>
+
+            <!-- Joint Student & Department Organizations -->
+            <div class="joint-org-wrapper">
+                <div class="org-unit-card">
+                    <img src="Ethical Hacking Logo.jpeg" alt="Ethical Hacking Club" class="joint-logo-img">
+                    <div class="joint-text-info">
+                        DEPARTMENT OF CYBER SECURITY<br>
+                        <span class="text-green">(ETHICAL HACKING CLUB)</span>
+                    </div>
+                </div>
+
+                <div class="joint-separator">&</div>
+
+                <div class="org-unit-card">
+                    <img src="Hackshield.jpeg" alt="Hackshield Student Association" class="joint-logo-img">
+                    <div class="joint-text-info">
+                        HACKSHIELD<br>
+                        <span class="text-gold">(STUDENT ASSOCIATION)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MoU Industry Partners -->
+            <div class="partner-category-block">
+                <h3 class="partner-category-title"><i class="fas fa-handshake"></i> INDUSTRY MoU PARTNERS</h3>
+                <div class="partner-cards-grid">
+                    <a href="https://tanmay.pro/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="cyber sanskar.jpg" alt="Cyber Sanskar" class="partner-logo-img">
+                        </div>
+                    </a>
+
+                    <a href="https://cyberheals.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="cyber heals.jpg" alt="Cyber Heals" class="partner-logo-img">
+                        </div>
+                    </a>
+
+                    <a href="https://junisys.in/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Junisys.png" alt="Junisys" class="partner-logo-img">
+                        </div>
+                    </a>
+
+                    <a href="https://rocheston.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Rocheston.png" alt="Rocheston" class="partner-logo-img">
+                        </div>
+                    </a>
+
+                    <a href="https://secureworldz.pro/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Secure Worldz.jpg" alt="Secure Worldz" class="partner-logo-img">
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Media Partners -->
+            <div class="partner-category-block">
+                <h3 class="partner-category-title"><i class="fas fa-broadcast-tower"></i> MEDIA PARTNERS</h3>
+                <div class="partner-cards-grid">
+                    <a href="https://knowafest.com/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Knowafest.png" alt="Knowafest" class="partner-logo-img">
+                        </div>
+                    </a>
+
+                    <a href="https://devnovate.co/" target="_blank" rel="noopener noreferrer" class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Devnovate.jpg" alt="Devnovate" class="partner-logo-img" style="background-color: transparent; border-radius: 4px; padding: 2px;">
+                        </div>
+                    </a>
+
+                    <div class="partner-card-link">
+                        <div class="partner-logo-box">
+                            <img src="Omega Consortium.jpg" alt="Omega Consortium" class="partner-logo-img" style="border-radius: 4px; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         7. CTF RULEBOOK
+         ========================================= -->
+    <section id="rules">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ OPERATIONAL DIRECTIVES ]</div>
+                <h2 class="section-title">CTF RULEBOOK</h2>
+                <p class="section-subtitle">Strict compliance with fair-play directives is mandatory for all competitors.</p>
+            </div>
+
+            <div class="accordion-group">
+                <!-- 1. Team Rules -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ TEAM RULES</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Participants may compete individually or in teams of up to 4 members [Placeholder].</li>
+                                <li>Cross-institutional teams are permitted.</li>
+                                <li>Team members cannot be swapped after the 24-hour competition begins.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Fair Play -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ FAIR PLAY</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Sharing flags, writeups, or solutions between opposing teams during the event is strictly prohibited.</li>
+                                <li>Do not solicit outside assistance during active challenge periods.</li>
+                                <li>Compete with technical honor and integrity.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Flag Submission -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ FLAG SUBMISSION</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>All flags follow the standard format: <code>XPLOITX{sample_flag_content}</code> unless specified otherwise.</li>
+                                <li>Flags are case-sensitive and must be submitted through the official portal.</li>
+                                <li>Brute-forcing the flag submission box is disallowed and will trigger automated rate limits.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Scoring -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ SCORING</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Scoring operates on dynamic challenge point values based on total number of solves.</li>
+                                <li>Ties are resolved based on the timestamp of the last valid flag submission.</li>
+                                <li>The scoreboard will freeze during the final stretch before closing ceremonies.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Challenge Integrity -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ CHALLENGE INTEGRITY</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Do not attack, alter, or sabotage challenges to prevent other participants from solving them.</li>
+                                <li>Do not leave persistence or backdoors on challenge instances.</li>
+                                <li>Report any critical infrastructure bugs to the admin Discord/Telegram.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Server Usage -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ SERVER USAGE</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Attacking the CTF hosting infrastructure, score server, or organizer networks is strictly prohibited.</li>
+                                <li>Denial of Service (DoS/DDoS) attacks against any target will result in immediate disqualification.</li>
+                                <li>Limit automated scanners to reasonable thread limits to prevent service degradation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Disqualification -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ DISQUALIFICATION</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Any team caught cheating, flag-sharing, or exploiting scoreboard bugs will be disqualified instantly.</li>
+                                <li>Organizers reserve the right to audit solution writeups from top-ranked teams prior to prize disbursement.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Participant Conduct -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">◈ PARTICIPANT CONDUCT</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Maintain professional, respectful communication with fellow competitors, mentors, and staff.</li>
+                                <li>Harassment or disruptive behavior will not be tolerated.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         8. FAQ ACCORDION
+         ========================================== -->
+    <section id="faq">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ FREQUENTLY ASKED QUERIES ]</div>
+                <h2 class="section-title">FAQ</h2>
+                <p class="section-subtitle">Common questions regarding participation, structure, and technical requirements.</p>
+            </div>
+
+            <div class="accordion-group">
+                <!-- FAQ 1 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">What is XPLOITX 2.0 BETA?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>XPLOITX 2.0 BETA is a premier 24-hour cybersecurity Capture The Flag competition organized by the Department of Cyber Security at Prathyusha Engineering College. It serves as a preliminary beta edition paving the way for the larger-scale international edition in 2027.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">What is a CTF?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>A Capture The Flag (CTF) is an offensive cybersecurity competition where participants solve technical puzzles across domains like web exploitation, cryptography, reverse engineering, and forensics to discover hidden secret strings known as "flags".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">Who can participate?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>Undergraduate and postgraduate students, cybersecurity enthusiasts, and security researchers from recognized institutions are welcome to compete.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">How long is the competition?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>The competition runs non-stop for exactly <strong>24 hours</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">When is XPLOITX 2.0 BETA?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>The event is scheduled for <strong>09 OCTOBER 2026</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">How does scoring work?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>Challenges award points upon submitting a valid flag. The CTF uses a dynamic scoring model where point values scale based on the number of teams that solve a challenge.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 7 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">Can participants compete as teams?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>Yes. Participants can compete in teams (up to 4 members [Placeholder]). Cross-college teams are permitted.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 8 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">What cybersecurity skills are useful?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>Familiarity with Linux command line, Python/scripting, web application security (OWASP Top 10), basic assembly/disassembly (Ghidra, IDA), Wireshark packet analysis, and cryptanalysis tools will be valuable.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 9 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">How are flags submitted?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>Flags are submitted directly into the input field on the official CTF platform. Once validated, your team's score updates immediately on the live scoreboard.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 10 -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">Where will the competition platform be provided?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>All registered teams will receive secure platform login credentials and orientation instructions via email prior to the start of the competition.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 11: Registration Fee -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">What is the registration fee?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>The registration fee is <strong>₹250 per head</strong> (per participant). Teams can complete their registration securely through the online registration portal.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 12: Event Mode & Venue -->
+                <div class="accordion-item hud-panel">
+                    <button class="accordion-header">
+                        <span class="accordion-title">Is the event Online or Offline?</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>XPLOITX 2.0 BETA is an <strong>OFFLINE (In-Person)</strong> 24-Hour continuous cybersecurity hackathon and CTF competition hosted physically on-campus at <strong>Prathyusha Engineering College</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         9. ORGANIZING NODES (COMMAND DIRECTORY)
+         ========================================== -->
+    <section class="organizing-nodes-section" id="coordinators">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">[ ARCHITECTS OF THE SIMULATION ]</div>
+                <h2 class="section-title">ORGANIZING NODES</h2>
+                <p class="section-subtitle">Connect directly with student command leads and faculty coordinators.</p>
+            </div>
+
+            <div class="nodes-grid">
+                <!-- Card 1: Event Coordinators -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">EVENT HEADS</div>
+                        <span class="node-role-label">Student Coordinators</span>
+
+                        <ul class="node-list">
+                            <li class="node-item">
+                                <strong>N Ashish</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+918122079494" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 81220 79494</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>N Madhumitha Narayanan</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917305456171" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 73054 56171</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>N Nirmal Raj</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+919150985783" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 91509 85783</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>R Divya Dharshini</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917092729115" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 70927 29115</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>J Raghul</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+916382394558" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 63823 94558</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>M Jesin Milesh</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+917418431480" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 74184 31480</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>K Johnknox</strong>
+                                <span class="node-sublabel">Student</span>
+                                <a href="tel:+919842597274" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 91825 97274</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card 2: Staff Coordinators -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-id-card-alt"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">STAFF COORDS</div>
+                        <span class="node-role-label">Cyber Security Department</span>
+
+                        <ul class="node-list">
+                            <li class="node-item">
+                                <strong>Dr. M D Boomija</strong>
+                                <span class="node-sublabel">HOD</span>
+                                <a href="tel:+917358028970" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 73580 28970</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Anithalakshmi</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919840268454" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 98402 68454</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. G Ramya</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919150567478" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 91505 67478</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Devi</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919940592672" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 99405 92672</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. S Rama Mathrasi</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+918778136639" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 87781 36639</a>
+                            </li>
+                            <li class="node-item">
+                                <strong>Mrs. Aswini</strong>
+                                <span class="node-sublabel">Assistant Professor</span>
+                                <a href="tel:+919042315995" class="node-tel-link"><i class="fas fa-phone-alt"></i> +91 90423 15995</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card 3: Quick Navigation -->
+                <div class="node-card hud-panel">
+                    <div class="node-avatar-placeholder">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="node-content-wrapper">
+                        <div class="node-category">SYSTEM ROUTING</div>
+                        <span class="node-role-label">Platform Shortcuts</span>
+
+                        <ul class="node-list">
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="register.html" class="node-tel-link" style="color: var(--doom-green); font-weight: 800;"><i class="fas fa-bolt"></i> [ ENLIST TEAM / REGISTER ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="prizes.html" class="node-tel-link" style="color: var(--doom-gold); font-weight: 800;"><i class="fas fa-trophy"></i> [ FULL PRIZES & SPONSORS ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="about.html" class="node-tel-link"><i class="fas fa-info-circle"></i> [ ABOUT MULTIVERSE ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="rules.html" class="node-tel-link"><i class="fas fa-gavel"></i> [ CTF DIRECTIVES / RULES ]</a>
+                            </li>
+                            <li class="node-item" style="border-bottom: 1px solid var(--border-subtle); padding: 12px 0;">
+                                <a href="doom.html" class="node-tel-link" style="color: #ffffff;"><i class="fas fa-user-shield"></i> [ DOOM COMMAND CONSOLE ]</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         10. FINAL REGISTRATION CTA
+         ========================================== -->
+    <section class="registration-cta-section" id="register">
+        <div class="container">
+            <div class="cta-battle-card hud-panel">
+                <div class="cta-tag">READY? THE CLOCK IS TICKING.</div>
+                <h2 class="cta-headline">"24 HOURS. ONE CHANCE. CAPTURE THE FLAG."</h2>
+                <div class="cta-subtext">ENLIST YOUR STRIKE TEAM FOR THE DIGITAL WARZONE</div>
+
+                <a href="register.html" class="btn btn-primary cta-btn-xl">
+                    <i class="fas fa-bolt"></i> [ REGISTER FOR XPLOITX 2.0 BETA ]
+                </a>
+
+                <div class="cta-meta-note">
+                    09 OCTOBER 2026 • 24-HOUR CTF • PRATHYUSHA ENGINEERING COLLEGE
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         10. FOOTER
+         ========================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>XPLOITX 2.0 <span class="text-green">BETA</span></h3>
+                    <p>24-HOUR CYBERSECURITY CAPTURE THE FLAG</p>
+                    <div class="org-info">
+                        Department of Cyber Security<br>
+                        Prathyusha Engineering College<br>
+                        (An Autonomous Institution)
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>NAVIGATION</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">HOME</a></li>
+                        <li><a href="#about">ABOUT</a></li>
+                        <li><a href="#how-to-play">HOW TO PLAY</a></li>
+                        <li><a href="#partners">MOU PARTNERS</a></li>
+                        <li><a href="#rules">RULES</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>COMMUNICATIONS</h4>
+                    <div class="footer-social-links" style="margin-bottom: 20px;">
+                        <a href="#" class="social-icon-btn" aria-label="Discord" title="Discord [Placeholder]"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-icon-btn" aria-label="LinkedIn" title="LinkedIn [Placeholder]"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-icon-btn" aria-label="GitHub" title="GitHub [Placeholder]"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-icon-btn" aria-label="Instagram" title="Instagram [Placeholder]"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-dim);">
+                        Official communication channels will be opened prior to competition launch.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                &copy; 2026 XPLOITX 2.0 BETA • Department of Cyber Security • Prathyusha Engineering College. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Core Script -->
+    <script src="script.js?v=2.5"></script>
+</body>
+
+</html>
