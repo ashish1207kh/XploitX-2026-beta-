@@ -172,7 +172,7 @@
                         <!-- SECTION 1: TEAM INFORMATION -->
                         <div class="form-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-users-cog"></i> 01 // TEAM DETAILS
+                                <i class="fas fa-users-cog"></i> TEAM DETAILS
                             </div>
 
                             <div class="form-row-2col">
@@ -198,10 +198,10 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 2: TEAM LEADER (WITH EMAIL OTP VERIFICATION) -->
+                        <!-- SECTION 2: TEAM LEADER (OPERATIVE 01) -->
                         <div class="form-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-user-shield"></i> 02 // TEAM LEADER (PRIMARY CONTACT)
+                                <i class="fas fa-user-shield"></i> 01 // TEAM LEADER (PRIMARY CONTACT)
                             </div>
 
                             <div class="form-row-2col">
@@ -221,7 +221,7 @@
                                         <i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span>
                                     </label>
                                     <div class="input-wrapper-hud">
-                                        <input type="number" id="leaderAge" placeholder="e.g. 20" min="15" max="35" required autocomplete="off">
+                                        <input type="text" id="leaderAge" placeholder="e.g. 20" inputmode="numeric" maxlength="2" required autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                 </div>
                                 <div class="input-otp-group">
                                     <div class="input-wrapper-hud" style="max-width: 200px;">
-                                        <input type="text" id="otpCode" placeholder="6-digit OTP" maxlength="6" autocomplete="off">
+                                        <input type="text" id="otpCode" placeholder="6-digit OTP" inputmode="numeric" maxlength="6" autocomplete="off">
                                     </div>
                                     <button type="button" id="btn-verify-otp" class="btn-otp-action btn-verify">
                                         <i class="fas fa-check"></i> VERIFY CODE
@@ -264,7 +264,7 @@
                                         <i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span>
                                     </label>
                                     <div class="input-wrapper-hud">
-                                        <input type="tel" id="leaderPhone" placeholder="10-digit mobile number" required autocomplete="off">
+                                        <input type="tel" id="leaderPhone" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" required autocomplete="off">
                                     </div>
                                 </div>
 
@@ -274,7 +274,7 @@
                                         <i class="fab fa-whatsapp form-icon-hud" style="color: #25d366;"></i> WHATSAPP NUMBER
                                     </label>
                                     <div class="input-wrapper-hud">
-                                        <input type="tel" id="leaderWhatsapp" placeholder="WhatsApp number" autocomplete="off">
+                                        <input type="tel" id="leaderWhatsapp" placeholder="WhatsApp number" inputmode="numeric" maxlength="10" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -305,7 +305,7 @@
                         <!-- SECTION 3: ADDITIONAL TEAM MEMBERS (UP TO 4 TOTAL) -->
                         <div class="form-section-block">
                             <div class="section-badge-title-between">
-                                <span><i class="fas fa-user-plus"></i> 03 // ADDITIONAL SQUAD MEMBERS</span>
+                                <span><i class="fas fa-user-plus"></i> ADDITIONAL SQUAD MEMBERS</span>
                                 <button type="button" id="btn-add-member" class="btn-add-member-hud">
                                     <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">1</span>/4)
                                 </button>
@@ -320,7 +320,7 @@
                         <!-- SECTION 4: PAYMENT VERIFICATION & PROOF UPLOAD -->
                         <div class="form-section-block payment-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-credit-card"></i> 04 // PAYMENT VERIFICATION (₹250 / HEAD)
+                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (₹250 / HEAD)
                             </div>
 
                             <div class="payment-grid-hud">
@@ -345,7 +345,7 @@
                                             <i class="fas fa-receipt form-icon-hud"></i> UTR / TRANSACTION ID <span class="req">*</span>
                                         </label>
                                         <div class="input-wrapper-hud">
-                                            <input type="text" id="utrNumber" name="utrNumber" placeholder="12-digit UPI / Bank Ref UTR Number" required autocomplete="off">
+                                            <input type="text" id="utrNumber" name="utrNumber" placeholder="12-digit UPI / Bank Ref UTR Number" maxlength="20" required autocomplete="off">
                                         </div>
                                     </div>
 

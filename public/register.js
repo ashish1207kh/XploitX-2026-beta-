@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initOtpFlow();
     initFileUploadPreview();
     initFormSubmission();
+    initRealtimeInputSanitizers();
     updateFeeCalculations();
 });
 
@@ -188,6 +189,96 @@ function initWaveformVisualizer() {
 }
 
 // ==========================================
+// REAL-TIME INPUT SANITIZATION & KEYSTROKE RESTRICTIONS
+// ==========================================
+function initRealtimeInputSanitizers() {
+    // 1. Phone & WhatsApp & OTP fields (Strict Digits Only, Max 10 digits for phone)
+    document.querySelectorAll('#leaderPhone, #leaderWhatsapp, .m-phone, #otpCode').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.id === 'otpCode' && this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                } else if (this.value.length > 10 && this.id !== 'otpCode') {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key && e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+
+    // 2. Age fields (Strict Digits Only, Max 2 Digits)
+    document.querySelectorAll('#leaderAge, .m-age').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2);
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key && e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+
+    // 3. Full Name fields (Strict Letters, Spaces, Dots, Hyphens - NO Digits)
+    document.querySelectorAll('#leaderName, .m-name').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z\s.'-]/g, '');
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key && /[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+
+    // 4. Email fields (No Whitespaces Allowed)
+    document.querySelectorAll('#leaderEmail, .m-email').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/\s/g, '');
+            });
+        }
+    });
+
+    // 5. UTR Number field (Alphanumeric, Uppercase, Max 20)
+    document.querySelectorAll('#utrNumber').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 20);
+            });
+        }
+    });
+
+    // 6. College & District fields (Letters, spaces, dots, hyphens, slashes, ampersands - NO Digits)
+    document.querySelectorAll('#leaderCollege, #leaderDistrict, .m-college, .m-district').forEach(input => {
+        if (!input.dataset.sanitizerAttached) {
+            input.dataset.sanitizerAttached = 'true';
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z\s.'&\/-]/g, '');
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key && /[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+}
+
+// ==========================================
 // 4. DYNAMIC MEMBER ROSTER (1 TO 4 MEMBERS)
 // ==========================================
 function initMemberManagement() {
@@ -220,13 +311,13 @@ function initMemberManagement() {
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-user form-icon-hud"></i> FULL NAME <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="text" class="m-name" placeholder="Member full name" required>
+                        <input type="text" class="m-name" placeholder="Member full name" required autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="number" class="m-age" placeholder="Age" min="15" max="35" required>
+                        <input type="text" class="m-age" placeholder="Age" inputmode="numeric" maxlength="2" required autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -234,13 +325,13 @@ function initMemberManagement() {
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-envelope form-icon-hud"></i> EMAIL ADDRESS <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="email" class="m-email" placeholder="Member email" required>
+                        <input type="email" class="m-email" placeholder="Member email" required autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="tel" class="m-phone" placeholder="10-digit mobile number" required>
+                        <input type="tel" class="m-phone" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" required autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -248,19 +339,20 @@ function initMemberManagement() {
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="text" class="m-college" placeholder="College name" required>
+                        <input type="text" class="m-college" placeholder="College name" required autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group-hud">
                     <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPT <span class="req">*</span></label>
                     <div class="input-wrapper-hud">
-                        <input type="text" class="m-district" placeholder="District or Dept" required>
+                        <input type="text" class="m-district" placeholder="District or Dept" required autocomplete="off">
                     </div>
                 </div>
             </div>
         `;
 
         container.appendChild(memberCard);
+        initRealtimeInputSanitizers();
         updateFeeCalculations();
     });
 }
@@ -438,70 +530,196 @@ function initFileUploadPreview() {
 }
 
 // ==========================================
-// 8. FORM SUBMISSION (WITH PAYMENT PROOF & ROSTER)
+// 8. COMPREHENSIVE FIELD VALIDATION & FORM SUBMISSION
 // ==========================================
+function validateNoDigits(text) {
+    return !/\d/.test(text) && text.trim().length >= 2;
+}
+
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validatePhone(phone) {
+    return /^[6-9]\d{9}$/.test(phone);
+}
+
+function validateName(name) {
+    return /^[a-zA-Z\s.'-]+$/.test(name) && name.trim().length >= 2;
+}
+
+function validateAge(ageStr) {
+    const age = parseInt(ageStr, 10);
+    return !isNaN(age) && age >= 15 && age <= 40;
+}
+
+function validateUTR(utr) {
+    return /^[a-zA-Z0-9]{12,25}$/.test(utr);
+}
+
+function markInputError(inputEl, msg) {
+    if (!inputEl) return;
+    inputEl.classList.add('input-error');
+    let parent = inputEl.closest('.form-group-hud') || inputEl.parentElement;
+    let existingMsg = parent.querySelector('.input-error-msg');
+    if (!existingMsg) {
+        existingMsg = document.createElement('small');
+        existingMsg.className = 'input-error-msg';
+        parent.appendChild(existingMsg);
+    }
+    existingMsg.textContent = msg;
+}
+
+function clearInputError(inputEl) {
+    if (!inputEl) return;
+    inputEl.classList.remove('input-error');
+    let parent = inputEl.closest('.form-group-hud') || inputEl.parentElement;
+    let existingMsg = parent.querySelector('.input-error-msg');
+    if (existingMsg) {
+        existingMsg.remove();
+    }
+}
+
 function initFormSubmission() {
     const form = document.getElementById('ctf-registration-form');
     if (!form) return;
 
+    // Clear input errors dynamically on input change
+    form.addEventListener('input', (e) => {
+        if (e.target && e.target.tagName === 'INPUT') {
+            clearInputError(e.target);
+        }
+    });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const teamName = document.getElementById('teamName').value.trim();
-        const leaderName = document.getElementById('leaderName').value.trim();
-        const leaderAge = document.getElementById('leaderAge').value.trim();
-        const leaderEmail = document.getElementById('leaderEmail').value.trim();
-        const leaderPhone = document.getElementById('leaderPhone').value.trim();
-        const leaderWhatsapp = document.getElementById('leaderWhatsapp').value.trim() || leaderPhone;
-        const leaderCollege = document.getElementById('leaderCollege').value.trim();
-        const leaderDistrict = document.getElementById('leaderDistrict').value.trim();
+        // Clear existing errors
+        form.querySelectorAll('.input-error-msg').forEach(el => el.remove());
+        form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+        const teamNameInput = document.getElementById('teamName');
+        const leaderNameInput = document.getElementById('leaderName');
+        const leaderAgeInput = document.getElementById('leaderAge');
+        const leaderEmailInput = document.getElementById('leaderEmail');
+        const leaderPhoneInput = document.getElementById('leaderPhone');
+        const leaderWhatsappInput = document.getElementById('leaderWhatsapp');
+        const leaderCollegeInput = document.getElementById('leaderCollege');
+        const leaderDistrictInput = document.getElementById('leaderDistrict');
         
-        const utrNumber = document.getElementById('utrNumber').value.trim();
-        const paymentProofFile = document.getElementById('paymentProof').files[0];
+        const utrNumberInput = document.getElementById('utrNumber');
+        const paymentProofInput = document.getElementById('paymentProof');
 
-        if (!teamName || !leaderName || !leaderAge || !leaderEmail || !leaderPhone || !leaderCollege || !leaderDistrict) {
-            alert('Please fill in all mandatory Team & Leader credentials marked with *.');
-            return;
+        let isValid = true;
+        let firstErrorInput = null;
+
+        function setError(inputEl, msg) {
+            markInputError(inputEl, msg);
+            isValid = false;
+            if (!firstErrorInput) firstErrorInput = inputEl;
         }
 
-        if (!utrNumber) {
-            alert('Please enter your 12-digit UPI / Bank UTR Transaction ID.');
-            return;
+        // 1. Team Name Validation
+        const teamName = teamNameInput.value.trim();
+        if (!teamName || teamName.length < 2) {
+            setError(teamNameInput, 'Team Name must be at least 2 characters.');
         }
 
-        if (!paymentProofFile) {
-            alert('Please upload your payment screenshot proof (JPEG/PNG).');
-            return;
+        // 2. Leader Name Validation
+        const leaderName = leaderNameInput.value.trim();
+        if (!leaderName || !validateName(leaderName)) {
+            setError(leaderNameInput, 'Please enter a valid full name (letters only, min 2 chars).');
         }
 
-        // Collect all members
+        // 3. Leader Age Validation
+        const leaderAge = leaderAgeInput.value.trim();
+        if (!leaderAge || !validateAge(leaderAge)) {
+            setError(leaderAgeInput, 'Leader age must be between 15 and 40.');
+        }
+
+        // 4. Leader Email Validation
+        const leaderEmail = leaderEmailInput.value.trim();
+        if (!leaderEmail || !validateEmail(leaderEmail)) {
+            setError(leaderEmailInput, 'Please enter a valid email address.');
+        }
+
+        // 5. Leader Phone Validation
+        const leaderPhone = leaderPhoneInput.value.trim();
+        if (!leaderPhone || !validatePhone(leaderPhone)) {
+            setError(leaderPhoneInput, 'Enter a valid 10-digit mobile number starting with 6-9.');
+        }
+
+        // 6. Leader WhatsApp Validation (Optional, but if filled must be valid 10-digit)
+        const leaderWhatsapp = leaderWhatsappInput.value.trim();
+        if (leaderWhatsapp && !validatePhone(leaderWhatsapp)) {
+            setError(leaderWhatsappInput, 'Enter a valid 10-digit WhatsApp number.');
+        }
+
+        // 7. Leader College Validation
+        const leaderCollege = leaderCollegeInput.value.trim();
+        if (!leaderCollege || leaderCollege.length < 3 || !validateNoDigits(leaderCollege)) {
+            setError(leaderCollegeInput, 'College / Institution name must be at least 3 characters (letters only).');
+        }
+
+        // 8. Leader District Validation
+        const leaderDistrict = leaderDistrictInput.value.trim();
+        if (!leaderDistrict || leaderDistrict.length < 2 || !validateNoDigits(leaderDistrict)) {
+            setError(leaderDistrictInput, 'District / Department must be at least 2 characters (letters only).');
+        }
+
+        // 9. Additional Squad Members Validation
         const membersList = [
             {
                 name: leaderName,
                 age: parseInt(leaderAge) || 20,
                 email: leaderEmail,
                 phone: leaderPhone,
-                whatsapp: leaderWhatsapp,
+                whatsapp: leaderWhatsapp || leaderPhone,
                 college: leaderCollege,
                 district: leaderDistrict,
                 role: 'LEADER'
             }
         ];
 
-        // Additional Members
         const extraCards = document.querySelectorAll('.member-card-hud');
         for (let i = 0; i < extraCards.length; i++) {
             const card = extraCards[i];
-            const mName = card.querySelector('.m-name').value.trim();
-            const mAge = card.querySelector('.m-age').value.trim();
-            const mEmail = card.querySelector('.m-email').value.trim();
-            const mPhone = card.querySelector('.m-phone').value.trim();
-            const mCollege = card.querySelector('.m-college').value.trim();
-            const mDistrict = card.querySelector('.m-district').value.trim();
+            const mNameInput = card.querySelector('.m-name');
+            const mAgeInput = card.querySelector('.m-age');
+            const mEmailInput = card.querySelector('.m-email');
+            const mPhoneInput = card.querySelector('.m-phone');
+            const mCollegeInput = card.querySelector('.m-college');
+            const mDistrictInput = card.querySelector('.m-district');
 
-            if (!mName || !mEmail || !mPhone) {
-                alert(`Please complete the details for Operative 0${i + 2}.`);
-                return;
+            const mName = mNameInput ? mNameInput.value.trim() : '';
+            const mAge = mAgeInput ? mAgeInput.value.trim() : '';
+            const mEmail = mEmailInput ? mEmailInput.value.trim() : '';
+            const mPhone = mPhoneInput ? mPhoneInput.value.trim() : '';
+            const mCollege = mCollegeInput ? mCollegeInput.value.trim() : '';
+            const mDistrict = mDistrictInput ? mDistrictInput.value.trim() : '';
+
+            if (!mName || !validateName(mName)) {
+                setError(mNameInput, `Operative 0${i + 2}: Enter full name (letters only).`);
+            }
+
+            if (!mEmail || !validateEmail(mEmail)) {
+                setError(mEmailInput, `Operative 0${i + 2}: Enter a valid email address.`);
+            }
+
+            if (!mPhone || !validatePhone(mPhone)) {
+                setError(mPhoneInput, `Operative 0${i + 2}: Enter a valid 10-digit mobile number.`);
+            }
+
+            if (mAge && !validateAge(mAge)) {
+                setError(mAgeInput, `Operative 0${i + 2}: Age must be between 15 and 40.`);
+            }
+
+            if (!mCollege || !validateNoDigits(mCollege)) {
+                setError(mCollegeInput, `Operative 0${i + 2}: Enter College name (letters only).`);
+            }
+
+            if (!mDistrict || !validateNoDigits(mDistrict)) {
+                setError(mDistrictInput, `Operative 0${i + 2}: Enter District / Department (letters only).`);
             }
 
             membersList.push({
@@ -514,6 +732,34 @@ function initFormSubmission() {
                 district: mDistrict || leaderDistrict,
                 role: 'MEMBER'
             });
+        }
+
+        // 10. UTR Number Validation
+        const utrNumber = utrNumberInput.value.trim();
+        if (!utrNumber || !validateUTR(utrNumber)) {
+            setError(utrNumberInput, 'Please enter a valid 12-digit UTR / Bank Reference Number.');
+        }
+
+        // 11. Payment Proof File Validation
+        const paymentProofFile = paymentProofInput.files[0];
+        if (!paymentProofFile) {
+            setError(paymentProofInput, 'Please upload your payment screenshot proof.');
+        } else {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+            if (!validTypes.includes(paymentProofFile.type)) {
+                setError(paymentProofInput, 'Payment proof must be an image file (JPEG or PNG).');
+            } else if (paymentProofFile.size > 5 * 1024 * 1024) {
+                setError(paymentProofInput, 'File size must be under 5 MB.');
+            }
+        }
+
+        // Focus & scroll to first invalid field if form is incomplete
+        if (!isValid) {
+            if (firstErrorInput) {
+                firstErrorInput.focus();
+                firstErrorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
         }
 
         const submitBtn = document.getElementById('submit-btn');
@@ -537,7 +783,11 @@ function initFormSubmission() {
             });
 
             const data = await response.json();
-            console.log('Registration with payment response:', data);
+
+            if (!response.ok) {
+                alert(`Registration Error: ${data.error || 'Failed to submit registration.'}`);
+                return;
+            }
 
             const generatedTeamId = data.teamId || `Xctf26te${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -550,14 +800,8 @@ function initFormSubmission() {
 
             form.reset();
         } catch (err) {
-            console.warn('Backend server offline or fallback mock:', err);
-            const mockId = `Xctf26te${Math.floor(1000 + Math.random() * 9000)}`;
-            document.getElementById('modal-team-name').textContent = teamName;
-            document.getElementById('modal-team-id').textContent = mockId;
-            document.getElementById('modal-leader-name').textContent = leaderName;
-            document.getElementById('modal-email').textContent = leaderEmail;
-            document.getElementById('success-modal').classList.add('active');
-            form.reset();
+            console.warn('Registration network or server error:', err);
+            alert('Unable to connect to server. Please check your network connection and try again.');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;

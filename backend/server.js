@@ -680,86 +680,120 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await db.run(`UPDATE teams SET payment_verified = 1 WHERE team_id = ?`, [teamId]);
-        const teamData = await db.get(`SELECT id, name FROM teams WHERE team_id = ?`, [teamId]);
-        if (!teamData) return res.json({ success: true });
+        const teamData = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
+        if (!teamData) return res.json({ success: true, message: "Payment verified" });
 
-        const leader = await db.get(`SELECT email, name, phone FROM members WHERE team_db_id = ? AND role = 'LEADER'`, [teamData.id]);
+        const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [teamData.id]);
+        const leader = members.find(m => m.role === 'LEADER') || members[0];
+
         if (leader) {
             await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
                 [teamId, teamData.name, leader.name, leader.phone]);
 
-            // QR & PDF Generation Logic (Preserved Concepts)
+            // QR Code Generation
             const QRCode = require('qrcode');
             const qrData = JSON.stringify({ teamId, teamName: teamData.name, leaderName: leader.name });
             const qrImage = await QRCode.toDataURL(qrData);
 
-            // PDF Generation (Simplified call for brevity, assumes logic works)
-            const PDFDocument = require('pdfkit');
-            const odPdfBuffer = await generateODPdfInternal(teamData.id); // Helper function I will create below
+            // PDF Generation for OD Letter
+            let odPdfBuffer = null;
+            try {
+                odPdfBuffer = await generateODPdfInternal(teamData.id);
+            } catch (pdfErr) {
+                console.error("OD PDF Generation Error:", pdfErr);
+            }
 
             const attachments = [{
-                filename: `${teamId}.png`,
+                filename: `${teamId}_Pass.png`,
                 content: qrImage.split("base64,")[1],
                 encoding: 'base64',
                 cid: 'event-qr-code'
             }];
 
-            if (odPdfBuffer) attachments.push({ filename: 'OD_Letter.pdf', content: odPdfBuffer });
+            if (odPdfBuffer) {
+                attachments.push({
+                    filename: `${teamId}_OD_Letter.pdf`,
+                    content: odPdfBuffer
+                });
+            }
 
             const whatsappLink = "https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t";
+            
+            // Gather all member emails for complete team notification
+            const recipientEmails = Array.from(new Set(members.map(m => m.email).concat([teamData.email]).filter(e => e && e.includes('@'))));
+            const emailTarget = recipientEmails.length > 0 ? recipientEmails.join(', ') : leader.email;
+
             const htmlContent = `
-                <div style="font-family: Arial, sans-serif; color: #333;">
-                    <h2 style="color: #00FF41;">ACCESS_GRANTED</h2>
-                    <p>Dear ${leader.name},</p>
-                    <p>Your payment for team <b>${teamData.name}</b> (${teamId}) has been successfully verified.</p>
-                    
-                    <div style="text-align: center; margin: 20px 0; border: 2px dashed #00FF41; padding: 20px; display: inline-block;">
-                        <h3 style="margin-top: 0;">YOUR EVENT ENTRY PASS</h3>
-                        <p>Scan this QR code at the venue help desk</p>
-                        <img src="cid:event-qr-code" style="width: 200px; height: 200px;" alt="Entry QR Code" />
-                        <p><b>${teamId}</b></p>
+                <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
+                        <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
                     </div>
 
-                    <p>Follow this link to join the official WhatsApp group: <a href="${whatsappLink}" style="color: #007bff; font-weight: bold; text-decoration: underline;">Click here to join</a></p>
+                    <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px;">
+                        <h2 style="color: #00ff66; font-size: 20px; margin-top: 0;">🎉 REGISTRATION IS CONFIRMED</h2>
+                        <p style="color: #d1d5db; font-size: 14px;">Dear <b>${leader.name}</b> and Team Members,</p>
+                        <p style="color: #d1d5db; font-size: 14px;">We are pleased to inform you that your registration and payment for <b>${teamData.name}</b> (Team ID: <b style="color:#00ff66;">${teamId}</b>) have been successfully verified!</p>
+                        <p style="color: #00ff66; font-size: 16px; font-weight: bold; text-align: center; margin: 15px 0;">YOUR REGISTRATION FOR XPLOITX 2.0 BETA IS CONFIRMED!</p>
+                        
+                        <div style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px;">
+                            <h3 style="color: #ffd700; margin-top: 0;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
+                            <p style="color: #8b9bb4; font-size: 13px;">Present this QR code at the venue check-in desk</p>
+                            <img src="cid:event-qr-code" style="width: 200px; height: 200px; border: 2px solid #00ff66; border-radius: 6px;" alt="Entry QR Code" />
+                            <p style="color: #00ff66; font-weight: bold; font-size: 18px; margin-top: 10px;">${teamId}</p>
+                        </div>
 
-                    <p>Your slot for <b>XploitX-2026</b> is now fully confirmed.</p>
+                        <div style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                            <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
+                            <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> (signed by Head of Department Dr. V. Anithalakshmi) is generated and attached to this email (<b>${teamId}_OD_Letter.pdf</b>). You can submit this document to your college authority for OD approval.</p>
+                        </div>
 
-                    <p>
-                        <b>STATUS:</b> <span style="color: #00FF41; font-weight: bold;">CONFIRMED</span><br>
-                        <b>ACCESS_LEVEL:</b> <span style="color: #00FF41; font-weight: bold;">GRANTED</span>
-                    </p>
+                        <p style="color: #d1d5db; font-size: 14px;">Follow this link to join the official participant WhatsApp group: <a href="${whatsappLink}" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here to Join WhatsApp Group</a></p>
 
-                    <p>See you at the event!</p>
-                    
-                    <p>Regards,<br>
-                    <b>XploitX Team</b></p>
-                    
-                    <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px;">
-                        <p style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">STAY CONNECTED FOR MORE UPDATES</p>
-                        <a href="https://www.instagram.com/xploitxctf.2k26?igsh=MWtrbndiOTUxaWVp" target="_blank" style="text-decoration: none; margin: 0 10px;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
-                        </a>
-                        <a href="https://www.facebook.com/share/18KcJjNcgs/" target="_blank" style="text-decoration: none; margin: 0 10px;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" width="30" height="30" style="vertical-align: middle;">
-                        </a>
-                        <a href="https://maps.app.goo.gl/t6r6C566cyz4hsvs7" target="_blank" style="text-decoration: none; margin: 0 10px;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Google_Maps_icon_%282020%29.svg/512px-Google_Maps_icon_%282020%29.svg.png" alt="Location" width="30" height="30" style="vertical-align: middle;">
-                        </a>
+                        <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">
+                            <b>REGISTRATION STATUS:</b> <span style="color: #00ff66; font-weight: bold;">CONFIRMED</span><br>
+                            <b>ACCESS LEVEL:</b> <span style="color: #00ff66; font-weight: bold;">GRANTED</span>
+                        </p>
+
+                        <p style="color: #d1d5db; font-size: 14px; margin-top: 20px;">See you at the event!</p>
+                        <p style="color: #8b9bb4; font-size: 13px;">Regards,<br><b>The XploitX 2.0 Organizing Committee</b><br>Department of Cyber Security<br>Prathyusha Engineering College</p>
                     </div>
                 </div>
             `;
 
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: leader.email,
-                subject: `ACCESS_GRANTED: Payment Verified for ${teamData.name}`,
-                html: htmlContent,
-                attachments: attachments
-            });
+            if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
+                await transporter.sendMail({
+                    from: `"XploitX-2026" <${process.env.EMAIL_USER}>`,
+                    to: emailTarget,
+                    subject: `Registration Confirmed - XPLOITX 2.0 BETA: Payment Verified for ${teamData.name}`,
+                    html: htmlContent,
+                    attachments: attachments
+                });
+            }
         }
-        logAdminActivity('PAYMENT VERIFIED', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
-        res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+        logAdminActivity('PAYMENT VERIFIED & OD LETTER SENT', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        res.json({ success: true, message: 'Registration confirmed and OD Letter PDF sent' });
+    } catch (e) {
+        console.error("Verify Payment Error:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Endpoint to download OD Letter PDF directly
+app.get('/api/admin/od_letter/:teamId', verifyAdmin, async (req, res) => {
+    try {
+        const team = await db.get('SELECT id FROM teams WHERE team_id = ?', [req.params.teamId]);
+        if (!team) return res.status(404).json({ error: 'Team not found' });
+
+        const pdfBuffer = await generateODPdfInternal(team.id);
+        if (!pdfBuffer) return res.status(500).json({ error: 'Failed to generate OD PDF' });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${req.params.teamId}_OD_Letter.pdf"`);
+        res.send(pdfBuffer);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // [NEW] Reject Payment
@@ -799,134 +833,140 @@ app.post('/api/admin/restore_payment', verifyAdmin, async (req, res) => {
 });
 
 async function generateODPdfInternal(teamDbId) {
-    const PDFDocument = require('pdfkit');
-    const path = require('path');
-    const fs = require('fs');
-
-    // Tighter margins to fit on one page
-    const doc = new PDFDocument({ margin: 35 });
-    let buffers = [];
-    doc.on('data', buffers.push.bind(buffers));
-
-    const team = await db.get('SELECT * FROM teams WHERE id = ?', [teamDbId]);
-    const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [teamDbId]);
-    if (!team || !members || members.length === 0) {
-        doc.end();
-        return null;
-    }
-
-    const eventName = team.event || "XploitX 2026 Event";
-    const studentCollege = members[0].college || "YOUR COLLEGE";
-
-    // Date Logic
-    let odDate = "14-03-2026";
-    const evLower = eventName.toLowerCase();
-    if (evLower.includes("main") || evLower.includes("hackathon") || evLower.includes("24")) {
-        odDate = "13-03-2026 to 14-03-2026";
-    } else if (evLower.includes("paper") || evLower.includes("network") || evLower.includes("defense") || evLower.includes("digital") || evLower.includes("forensics")) {
-        odDate = "14-03-2026";
-    }
-
-    const publicDir = path.join(__dirname, '../public');
-    const header1Path = path.join(publicDir, 'Header(1st).jpeg');
-    const header2Path = path.join(publicDir, 'Header(2nd).jpeg');
-    const signImgPath = path.join(publicDir, 'Sign.jpeg');
-    const sealImgPath = path.join(publicDir, 'Seal.jpeg');
-
-    // --- Compact Header Section ---
-    let currentY = 30;
-    if (fs.existsSync(header1Path)) {
+    return new Promise(async (resolve, reject) => {
         try {
-            doc.image(header1Path, 35, currentY, { width: 525 });
-            currentY += 85;
-        } catch (e) { }
-    }
-    if (fs.existsSync(header2Path)) {
-        try {
-            doc.image(header2Path, 35, currentY, { width: 525 });
-            currentY += 65;
-        } catch (e) { }
-    }
+            const PDFDocument = require('pdfkit');
+            const path = require('path');
+            const fs = require('fs');
 
-    doc.y = currentY + 10;
+            const doc = new PDFDocument({ margin: 35 });
+            let buffers = [];
+            doc.on('data', chunk => buffers.push(chunk));
+            doc.on('end', () => resolve(Buffer.concat(buffers)));
+            doc.on('error', err => reject(err));
 
-    // Department Info (Smaller Font)
-    doc.font('Helvetica-Bold').fontSize(11).text('Team XPLOITX 2026', { align: 'left' });
-    doc.fontSize(10).text('Department of Cyber Security', { align: 'left' });
-    doc.text('Prathyusha Engineering College', { align: 'left' });
-    doc.text('Tiruvallur-602 025', { align: 'left' });
-    doc.moveDown(0.5);
+            const team = await db.get('SELECT * FROM teams WHERE id = ?', [teamDbId]);
+            const members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [teamDbId]);
+            if (!team || !members || members.length === 0) {
+                doc.end();
+                return;
+            }
 
-    // Salutation & Subject
-    doc.font('Helvetica').fontSize(11).text('Respected Sir/Madam,', { align: 'left' });
-    doc.moveDown(0.3);
+            const eventName = team.event || "XploitX 2026 Event";
+            const studentCollege = members[0].college || "YOUR COLLEGE";
 
-    doc.font('Helvetica-Bold').fontSize(11).text(`Subject: Requesting "On-Duty" permission for your student to participate in Our National Technical Cyberfest XPLOITX 2k26 - ${eventName}.`, { align: 'left' });
-    doc.moveDown(0.5);
+            // Date Logic
+            let odDate = "14-03-2026";
+            const evLower = eventName.toLowerCase();
+            if (evLower.includes("main") || evLower.includes("hackathon") || evLower.includes("24")) {
+                odDate = "13-03-2026 to 14-03-2026";
+            } else if (evLower.includes("paper") || evLower.includes("network") || evLower.includes("defense") || evLower.includes("digital") || evLower.includes("forensics")) {
+                odDate = "14-03-2026";
+            }
 
-    // Body
-    doc.font('Helvetica').fontSize(11).text('Greetings from Prathyusha Engineering College.', { align: 'left' });
-    doc.moveDown(0.3);
+            const publicDir = path.join(__dirname, '../public');
+            const header1Path = path.join(publicDir, 'Header(1st).jpeg');
+            const header2Path = path.join(publicDir, 'Header(2nd).jpeg');
+            const signImgPath = path.join(publicDir, 'Sign.jpeg');
+            const sealImgPath = path.join(publicDir, 'Seal.jpeg');
 
-    doc.text('We are pleased to inform you that the Department of Cyber Security is organizing a National Technical Cyberfest on ', { continued: true });
-    doc.font('Helvetica-Bold').text(odDate, { continued: true });
-    doc.font('Helvetica').text(' at ', { continued: true });
-    doc.font('Helvetica-Bold').text('PRATHYUSHA ENGINEERING COLLEGE', { continued: true });
-    doc.font('Helvetica').text(', Tiruvallur. In this regard, we kindly request you to grant On-Duty permission to the participating students from ', { continued: true });
-    doc.font('Helvetica-Bold').text(studentCollege.toUpperCase(), { continued: true });
-    doc.font('Helvetica').text(' to enable them to attend and actively take part in the Cyberfest.');
-    doc.moveDown(1);
+            // --- Compact Header Section ---
+            let currentY = 30;
+            if (fs.existsSync(header1Path)) {
+                try {
+                    doc.image(header1Path, 35, currentY, { width: 525 });
+                    currentY += 85;
+                } catch (e) { }
+            }
+            if (fs.existsSync(header2Path)) {
+                try {
+                    doc.image(header2Path, 35, currentY, { width: 525 });
+                    currentY += 65;
+                } catch (e) { }
+            }
 
-    doc.font('Helvetica-Bold').text('List of Participants:', { underline: true });
-    doc.moveDown(0.3);
+            doc.y = currentY + 10;
 
-    const tableTop = doc.y;
-    const nameX = 80;
-    const collegeX = 330;
+            // Department Info (Smaller Font)
+            doc.font('Helvetica-Bold').fontSize(11).text('Team XPLOITX 2026', { align: 'left' });
+            doc.fontSize(10).text('Department of Cyber Security', { align: 'left' });
+            doc.text('Prathyusha Engineering College', { align: 'left' });
+            doc.text('Tiruvallur-602 025', { align: 'left' });
+            doc.moveDown(0.5);
 
-    doc.fontSize(10);
-    doc.text('Name', nameX, tableTop, { bold: true });
-    doc.text('College Name', collegeX, tableTop, { bold: true });
-    doc.moveTo(35, tableTop + 13).lineTo(560, tableTop + 13).stroke();
+            // Salutation & Subject
+            doc.font('Helvetica').fontSize(11).text('Respected Sir/Madam,', { align: 'left' });
+            doc.moveDown(0.3);
 
-    let yRow = tableTop + 18;
-    doc.font('Helvetica').fontSize(10);
-    members.forEach((m, i) => {
-        doc.text(`${i + 1}. ${m.name}`, nameX - 15, yRow);
-        doc.text(m.college || "-", collegeX, yRow);
-        yRow += 16;
+            doc.font('Helvetica-Bold').fontSize(11).text(`Subject: Requesting "On-Duty" permission for your student to participate in Our National Technical Cyberfest XPLOITX 2k26 - ${eventName}.`, { align: 'left' });
+            doc.moveDown(0.5);
+
+            // Body
+            doc.font('Helvetica').fontSize(11).text('Greetings from Prathyusha Engineering College.', { align: 'left' });
+            doc.moveDown(0.3);
+
+            doc.text('We are pleased to inform you that the Department of Cyber Security is organizing a National Technical Cyberfest on ', { continued: true });
+            doc.font('Helvetica-Bold').text(odDate, { continued: true });
+            doc.font('Helvetica').text(' at ', { continued: true });
+            doc.font('Helvetica-Bold').text('PRATHYUSHA ENGINEERING COLLEGE', { continued: true });
+            doc.font('Helvetica').text(', Tiruvallur. In this regard, we kindly request you to grant On-Duty permission to the participating students from ', { continued: true });
+            doc.font('Helvetica-Bold').text(studentCollege.toUpperCase(), { continued: true });
+            doc.font('Helvetica').text(' to enable them to attend and actively take part in the Cyberfest.');
+            doc.moveDown(1);
+
+            doc.font('Helvetica-Bold').text('List of Participants:', { underline: true });
+            doc.moveDown(0.3);
+
+            const tableTop = doc.y;
+            const nameX = 80;
+            const collegeX = 330;
+
+            doc.fontSize(10);
+            doc.text('Name', nameX, tableTop, { bold: true });
+            doc.text('College Name', collegeX, tableTop, { bold: true });
+            doc.moveTo(35, tableTop + 13).lineTo(560, tableTop + 13).stroke();
+
+            let yRow = tableTop + 18;
+            doc.font('Helvetica').fontSize(10);
+            members.forEach((m, i) => {
+                doc.text(`${i + 1}. ${m.name}`, nameX - 15, yRow);
+                doc.text(m.college || "-", collegeX, yRow);
+                yRow += 16;
+            });
+
+            // --- Compact Footer Section ---
+            doc.y = yRow + 20;
+
+            const leftX = 35;
+            const rightX = 420;
+            const footerY = doc.y;
+
+            doc.fontSize(11).font('Helvetica').text('Yours Sincerely', leftX, footerY);
+
+            // Position signature and seal
+            const signY = footerY + 15;
+            if (fs.existsSync(signImgPath)) {
+                try {
+                    doc.image(signImgPath, leftX, signY, { width: 90, height: 40 });
+                } catch (e) { }
+            }
+
+            if (fs.existsSync(sealImgPath)) {
+                try {
+                    // Seal placed to the right
+                    doc.image(sealImgPath, rightX, signY - 10, { width: 80, height: 80 });
+                } catch (e) { }
+            }
+
+            doc.y = signY + 45;
+            doc.font('Helvetica-Bold').fontSize(11).text('Dr. V. Anithalakshmi', leftX, doc.y);
+            doc.font('Helvetica').fontSize(10).text('Head of the Department', leftX, doc.y + 13);
+
+            doc.end();
+        } catch (err) {
+            reject(err);
+        }
     });
-
-    // --- Compact Footer Section ---
-    doc.y = yRow + 20;
-
-    const leftX = 35;
-    const rightX = 420;
-    const footerY = doc.y;
-
-    doc.fontSize(11).font('Helvetica').text('Yours Sincerely', leftX, footerY);
-
-    // Position signature and seal
-    const signY = footerY + 15;
-    if (fs.existsSync(signImgPath)) {
-        try {
-            doc.image(signImgPath, leftX, signY, { width: 90, height: 40 });
-        } catch (e) { }
-    }
-
-    if (fs.existsSync(sealImgPath)) {
-        try {
-            // Seal placed to the right
-            doc.image(sealImgPath, rightX, signY - 10, { width: 80, height: 80 });
-        } catch (e) { }
-    }
-
-    doc.y = signY + 45;
-    doc.font('Helvetica-Bold').fontSize(11).text('Dr. M D Boomija', leftX, doc.y);
-    doc.font('Helvetica').fontSize(10).text('Head of the Department', leftX, doc.y + 13);
-
-    doc.end();
-    return new Promise(resolve => doc.on('end', () => resolve(Buffer.concat(buffers))));
 }
 
 // Admin Delete Team
