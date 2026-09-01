@@ -38,6 +38,9 @@ function initAccessLoader() {
     // The loader is ONLY for index.html. If no loader-overlay element exists, exit immediately.
     if (!loaderOverlay) return;
     
+    document.documentElement.classList.add('loader-locked');
+    document.body.classList.add('loader-locked');
+    
     loaderOverlay.className = 'xploitx-access-loader';
     loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
 
@@ -47,7 +50,6 @@ function initAccessLoader() {
         <div class="loader-scanline"></div>
         <div class="loader-radial-glow"></div>
         <canvas id="loader-particles-canvas"></canvas>
-
         <div class="loader-content-box">
             <div class="loader-cyber-emblem">
                 <svg class="cyber-ring-svg" viewBox="0 0 160 160" width="160" height="160">
@@ -60,8 +62,8 @@ function initAccessLoader() {
             </div>
 
             <div class="loader-status-wrapper">
-                <div class="loader-status-step" id="loader-step-label">INITIALIZING</div>
-                <div class="loader-status-detail" id="loader-status-detail">SECURE CONNECTION...</div>
+                <div class="loader-status-step" id="loader-step-label">SECURE CONNECTION</div>
+                <div class="loader-status-detail" id="loader-status-detail">INITIALIZING...</div>
             </div>
 
             <div class="loader-progress-bar-container" id="loader-progress-wrap">
@@ -70,7 +72,7 @@ function initAccessLoader() {
 
             <div class="loader-granted-reveal-box" id="loader-granted-box">
                 <div class="loader-horizontal-scan"></div>
-                <img src="load.png" alt="XPLOITX 2.0 BETA Logo" class="loader-logo-img" id="loader-logo-img">
+                <img src="xploitx_logo.png" alt="XPLOITX 2.0 BETA Logo" class="loader-logo-img" id="loader-logo-img">
                 <div class="loader-granted-text" id="loader-granted-text">
                     <span class="granted-word">ACCESS</span>
                     <span class="granted-word highlight">GRANTED</span>
@@ -91,26 +93,56 @@ function initAccessLoader() {
     const progressWrap = document.getElementById('loader-progress-wrap');
     const grantedBox = document.getElementById('loader-granted-box');
     const canvas = document.getElementById('loader-particles-canvas');
+    const skipBtn = document.getElementById('loader-skip-btn');
 
-    // Green Particle Background
     let animationFrameId = null;
+    let timeouts = [];
+
+    function dismissLoader() {
+        timeouts.forEach(t => clearTimeout(t));
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        loaderOverlay.classList.add('fade-out');
+        document.documentElement.classList.remove('loader-locked');
+        document.body.classList.remove('loader-locked');
+        setTimeout(() => {
+            if (loaderOverlay && loaderOverlay.parentNode) {
+                loaderOverlay.style.display = 'none';
+            }
+        }, 450);
+    }
+
+    // Skip Button Event Listeners
+    if (skipBtn) {
+        skipBtn.addEventListener('click', dismissLoader);
+    }
+    
+    // Key Listener for Escape Key or Skip
+    function handleKeyDown(e) {
+        if (e.key === 'Escape' || e.key === 'Enter') {
+            dismissLoader();
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cyan/Green Particle Background
     if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
-        const particles = Array.from({ length: 30 }, () => ({
+        const particles = Array.from({ length: 25 }, () => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            radius: Math.random() * 1.5 + 0.5,
-            vx: (Math.random() - 0.5) * 0.8,
-            vy: (Math.random() - 0.5) * 0.8,
-            alpha: Math.random() * 0.5 + 0.2
+            radius: Math.random() * 1.4 + 0.6,
+            vx: (Math.random() - 0.5) * 0.7,
+            vy: (Math.random() - 0.5) * 0.7,
+            alpha: Math.random() * 0.5 + 0.2,
+            color: Math.random() > 0.3 ? '#00f0ff' : '#00ff66'
         }));
 
         function drawParticles() {
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#00ff66';
             particles.forEach(p => {
                 p.x += p.vx;
                 p.y += p.vy;
@@ -118,6 +150,7 @@ function initAccessLoader() {
                 if (p.x > width) p.x = 0;
                 if (p.y < 0) p.y = height;
                 if (p.y > height) p.y = 0;
+                ctx.fillStyle = p.color;
                 ctx.globalAlpha = p.alpha;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -137,55 +170,40 @@ function initAccessLoader() {
         }
     }
 
-    let timeouts = [];
-
     function schedule(fn, delay) {
         const t = setTimeout(fn, delay);
         timeouts.push(t);
         return t;
     }
 
-    function dismissLoader() {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        loaderOverlay.classList.add('fade-out');
-        document.documentElement.classList.remove('loader-locked');
-        document.body.classList.remove('loader-locked');
-        setTimeout(() => {
-            if (loaderOverlay && loaderOverlay.parentNode) {
-                loaderOverlay.style.display = 'none';
-            }
-        }, 550);
-    }
-
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         setProgress(100);
         if (progressWrap) progressWrap.style.opacity = '0';
         if (grantedBox) grantedBox.classList.add('active');
-        schedule(dismissLoader, 400);
+        schedule(dismissLoader, 300);
         return;
     }
 
-    // Sequence (~2.1s duration)
-    setProgress(15);
-    schedule(() => { setProgress(40); }, 200);
-
-    schedule(() => {
+    // Crisp Fast Sequence (~2.0s total)
+    setProgress(20);
+    
+    schedule(() => { 
         if (stepLabel) stepLabel.textContent = "AUTHENTICATING";
         if (statusDetail) statusDetail.textContent = "OPERATIVE CREDENTIALS...";
         if (stateIcon) stateIcon.className = "fas fa-user-shield loader-state-icon";
-        setProgress(65);
-    }, 400);
+        setProgress(55); 
+    }, 320);
 
     schedule(() => {
-        if (stepLabel) stepLabel.textContent = "VERIFYING ACCESS";
+        if (stepLabel) stepLabel.textContent = "SECURITY CHECK";
         if (statusDetail) {
-            statusDetail.textContent = "IDENTITY VERIFIED ✓";
+            statusDetail.textContent = "SECURITY VERIFIED ✓";
             statusDetail.classList.add("success");
         }
-        if (stateIcon) stateIcon.className = "fas fa-check-circle loader-state-icon state-verified";
+        if (stateIcon) stateIcon.className = "fas fa-shield-alt loader-state-icon state-verified";
         if (ringProgress) ringProgress.classList.add("verified");
         setProgress(100);
-    }, 850);
+    }, 720);
 
     schedule(() => {
         const emblem = document.querySelector('.loader-cyber-emblem');
@@ -194,7 +212,7 @@ function initAccessLoader() {
             emblem.style.visibility = 'hidden';
             emblem.style.height = '0';
             emblem.style.margin = '0';
-            emblem.style.transition = 'all 0.35s ease';
+            emblem.style.transition = 'all 0.3s ease';
         }
         if (progressWrap) {
             progressWrap.style.opacity = '0';
@@ -210,11 +228,11 @@ function initAccessLoader() {
             statusWrapper.style.margin = '0';
         }
         if (grantedBox) grantedBox.classList.add('active');
-    }, 1250);
+    }, 1100);
 
     schedule(() => {
         dismissLoader();
-    }, 2650);
+    }, 2100);
 }
 
 
@@ -421,52 +439,109 @@ function initNavbarScroll() {
 // ==========================================
 // 5. MOBILE NAVIGATION TOGGLE
 // ==========================================
+// ==========================================
+// 5. REDESIGNED FULL-VIEWPORT MOBILE NAVIGATION SYSTEM
+// ==========================================
 function initMobileNav() {
-    const hamburger = document.getElementById('hamburger-btn') || document.querySelector('.hamburger-btn');
-    const navMenu = document.getElementById('nav-links-menu') || document.querySelector('.nav-links');
-    const navLinks = document.querySelectorAll('.nav-link, .nav-links a, .nav-links .btn');
+    const hamburger = document.getElementById('hamburger-btn') || document.getElementById('mobile-menu-open') || document.querySelector('.hamburger-btn');
+    const navMenu = document.getElementById('nav-links-menu') || document.getElementById('mobile-nav') || document.querySelector('.nav-links');
 
     if (!hamburger || !navMenu) return;
 
+    // 1. Ensure Backdrop Element Exists
+    let backdrop = document.getElementById('mobile-nav-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'mobile-nav-backdrop';
+        backdrop.className = 'mobile-nav-backdrop';
+        document.body.appendChild(backdrop);
+    }
+
+    // 2. Ensure Menu Header with Dedicated Close Button Exists inside navMenu
+    let drawerHeader = navMenu.querySelector('.mobile-drawer-header');
+    if (!drawerHeader) {
+        drawerHeader = document.createElement('div');
+        drawerHeader.className = 'mobile-drawer-header';
+        drawerHeader.innerHTML = `
+            <div class="mobile-drawer-brand">
+                <span class="mobile-brand-title">XPLOITX</span>
+                <span class="mobile-brand-tag">2.0 BETA</span>
+            </div>
+            <button class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close navigation" tabindex="0">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        navMenu.insertBefore(drawerHeader, navMenu.firstChild);
+    }
+
+    // 3. Ensure Dedicated Menu Footer Exists inside navMenu
+    let drawerFooter = navMenu.querySelector('.mobile-drawer-footer');
+    if (!drawerFooter) {
+        drawerFooter = document.createElement('div');
+        drawerFooter.className = 'mobile-drawer-footer';
+        drawerFooter.innerHTML = `
+            <div class="mobile-footer-text">XPLOITX 2.0 BETA</div>
+            <div class="mobile-footer-sub">24-HOUR CYBERSECURITY CTF • 09 OCT 2026</div>
+        `;
+        navMenu.appendChild(drawerFooter);
+    }
+
+    const closeBtn = document.getElementById('mobile-drawer-close');
+
+    function openMenu() {
+        navMenu.classList.add('open');
+        if (backdrop) backdrop.classList.add('active');
+        document.documentElement.classList.add('mobile-nav-active');
+        document.body.classList.add('mobile-nav-active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        if (closeBtn) closeBtn.focus();
+    }
+
+    function closeMenu() {
+        navMenu.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('active');
+        document.documentElement.classList.remove('mobile-nav-active');
+        document.body.classList.remove('mobile-nav-active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.focus();
+    }
+
     hamburger.setAttribute('aria-expanded', 'false');
-    hamburger.setAttribute('aria-label', 'Toggle Navigation Menu');
+    hamburger.setAttribute('aria-label', 'Open navigation menu');
+    if (navMenu.id) hamburger.setAttribute('aria-controls', navMenu.id);
 
     hamburger.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = navMenu.classList.toggle('open');
-        hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        hamburger.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        if (isOpen) {
-            document.body.classList.add('mobile-nav-active');
+        if (navMenu.classList.contains('open')) {
+            closeMenu();
         } else {
-            document.body.classList.remove('mobile-nav-active');
+            openMenu();
         }
     });
 
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeMenu();
+        });
+    }
+
+    if (backdrop) {
+        backdrop.addEventListener('click', closeMenu);
+    }
+
+    // Automatically close menu when any navigation link is tapped
+    const navLinks = navMenu.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            navMenu.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-            document.body.classList.remove('mobile-nav-active');
+            closeMenu();
         });
     });
 
-    document.addEventListener('click', (e) => {
-        if (navMenu.classList.contains('open') && !navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-            navMenu.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-            document.body.classList.remove('mobile-nav-active');
-        }
-    });
-
+    // Escape Key Handler
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu.classList.contains('open')) {
-            navMenu.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-            document.body.classList.remove('mobile-nav-active');
+            closeMenu();
         }
     });
 }

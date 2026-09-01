@@ -72,7 +72,7 @@
              ========================================== -->
         <main class="hud-main-grid">
             
-            <!-- LEFT COLUMN: Mission Status & Wireframe Telemetry -->
+            <!-- LEFT COLUMN: Mission Status & Ticket Summary -->
             <aside class="hud-col hud-col-left">
                 
                 <!-- Card 1: Mission Status -->
@@ -82,11 +82,11 @@
                     <div class="hud-card-corner bottom-left"></div>
                     <div class="hud-card-corner bottom-right"></div>
                     
-                    <h3 class="hud-card-title"><i class="fas fa-crosshairs"></i> MISSION STATUS</h3>
+                    <h3 class="hud-card-title"><i class="fas fa-crosshairs"></i> MISSION BRIEF</h3>
                     
                     <div class="mission-item">
                         <div class="mission-key">TARGET</div>
-                        <div class="mission-val">CAPTURE THE FLAG</div>
+                        <div class="mission-val">24-HOUR OFFLINE CTF</div>
                     </div>
                     
                     <div class="mission-item">
@@ -108,22 +108,7 @@
                     <div class="hazard-stripe-bar"></div>
                 </div>
 
-                <!-- Card 2: Wireframe Cyber Globe Telemetry -->
-                <div class="hud-card globe-telemetry-card">
-                    <div class="hud-card-corner top-left"></div>
-                    <div class="hud-card-corner top-right"></div>
-                    <div class="hud-card-corner bottom-left"></div>
-                    <div class="hud-card-corner bottom-right"></div>
-
-                    <div class="globe-container">
-                        <canvas id="globe-wireframe-canvas" width="130" height="130"></canvas>
-                    </div>
-                    <div class="telemetry-node-badge">
-                        <span class="pulse-green"></span> BATTLEFIELD NODE ONLINE
-                    </div>
-                </div>
-
-                <!-- Card 3: Fee Summary Quick Box -->
+                <!-- Card 2: Fee Summary Quick Box -->
                 <div class="hud-card fee-summary-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -156,7 +141,30 @@
                     <div class="hud-card-corner bottom-left"></div>
                     <div class="hud-card-corner bottom-right"></div>
 
-                    <h2 class="form-main-heading">JOIN THE BATTLEFIELD</h2>
+                    <h2 class="form-main-heading">TEAM REGISTRATION</h2>
+
+                    <!-- Step Tracker Bar -->
+                    <div class="form-step-tracker">
+                        <div class="step-item active">
+                            <span class="step-num">1</span>
+                            <span class="step-text">TEAM INFO</span>
+                        </div>
+                        <div class="step-line active"></div>
+                        <div class="step-item active">
+                            <span class="step-num">2</span>
+                            <span class="step-text">LEADER</span>
+                        </div>
+                        <div class="step-line active"></div>
+                        <div class="step-item active">
+                            <span class="step-num">3</span>
+                            <span class="step-text">MEMBERS</span>
+                        </div>
+                        <div class="step-line active"></div>
+                        <div class="step-item active">
+                            <span class="step-num">4</span>
+                            <span class="step-text">PAYMENT</span>
+                        </div>
+                    </div>
 
                     <!-- Full Registration Form with OTP & Payment Proof -->
                     <form id="ctf-registration-form" enctype="multipart/form-data" novalidate>
@@ -164,7 +172,7 @@
                         <!-- SECTION 1: TEAM INFORMATION -->
                         <div class="form-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-users-cog"></i> 01 // TEAM CREDENTIALS
+                                <i class="fas fa-users-cog"></i> 01 // TEAM DETAILS
                             </div>
 
                             <div class="form-row-2col">
@@ -362,15 +370,9 @@
                         <div class="form-action-hud">
                             <button type="submit" class="hud-register-btn" id="submit-btn">
                                 <span class="btn-glow-layer"></span>
-                                <span class="btn-text">COMPLETE REGISTRATION</span>
-                                <i class="fas fa-angle-double-right btn-arrow-icon"></i>
+                                <span class="btn-text">SUBMIT REGISTRATION</span>
+                                <i class="fas fa-arrow-right btn-arrow-icon"></i>
                             </button>
-                        </div>
-
-                        <!-- Security Notice -->
-                        <div class="security-notice-hud">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>ENCRYPTED TRANSMISSION • YOUR DATA & PAYMENT ARE FULLY SECURED</span>
                         </div>
 
                     </form>
@@ -434,25 +436,26 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Secure Channel & Oscilloscope Waveform -->
-                <div class="hud-card secure-channel-card">
+                <!-- Card 2: Help & Support Hub -->
+                <div class="hud-card support-info-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
                     <div class="hud-card-corner bottom-left"></div>
                     <div class="hud-card-corner bottom-right"></div>
 
-                    <div class="secure-channel-header">
-                        <i class="fas fa-lock text-green"></i>
-                        <div class="secure-channel-titles">
-                            <div class="secure-title">SECURE CHANNEL</div>
-                            <div class="secure-sub">ENCRYPTED CONNECTION<br>256-BIT SSL ENCRYPTION</div>
-                        </div>
+                    <h3 class="hud-card-title" style="font-size: 0.9rem;"><i class="fas fa-headset text-green"></i> NEED ASSISTANCE?</h3>
+
+                    <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px;">
+                        Have questions about registration or payments? Contact our event desk:
                     </div>
 
-                    <!-- Audio Oscilloscope Waveform Canvas -->
-                    <div class="waveform-container">
-                        <canvas id="waveform-canvas" width="240" height="45"></canvas>
-                    </div>
+                    <a href="https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t" target="_blank" class="action-btn-hud action-btn-green" style="width: 100%; justify-content: center; text-decoration: none; margin-bottom: 10px; padding: 10px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> JOIN OFFICIAL WHATSAPP
+                    </a>
+
+                    <a href="about.html" class="action-btn-hud action-btn-cyan" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-address-book"></i> VIEW COORDINATORS
+                    </a>
                 </div>
 
             </aside>

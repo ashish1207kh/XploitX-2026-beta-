@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loader-locked">
 
 <head>
     <meta charset="UTF-8">
@@ -18,7 +18,9 @@
     <link rel="icon" type="image/png" href="logo_favicon.png">
 </head>
 
-<body>
+<body class="loader-locked">
+    <!-- Premium Access Granted Loader Overlay (Exclusively for index.html) -->
+    <div id="loader-overlay"></div>
 
     <!-- Interactive Floating Register Button with Tactile Pressing Transitions -->
     <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
@@ -73,15 +75,15 @@
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <ul class="nav-links" id="nav-links-menu">
-                <li><a href="index.html" class="nav-link active">HOME</a></li>
-                <li><a href="about.html" class="nav-link">ABOUT</a></li>
-                <li><a href="rules.html" class="nav-link">RULES</a></li>
-                <li><a href="prizes.html" class="nav-link">PRIZES</a></li>
-                <li><a href="register.html" class="nav-link">REGISTER</a></li>
+                <li><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> HOME</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> ABOUT</a></li>
+                <li><a href="rules.html" class="nav-link"><i class="fas fa-gavel"></i> RULES</a></li>
+                <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> PRIZES</a></li>
+                <li><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> REGISTER</a></li>
             </ul>
 
             <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-ellipsis-v"></i>
             </button>           
         </div>
     </nav>
@@ -129,7 +131,7 @@
 
             <div class="hero-actions">
                 <a href="register.html" class="btn btn-primary">[ REGISTER NOW ]</a>
-                <a href="#about" class="btn btn-secondary">[ EXPLORE MISSION ]</a>
+                <a href="about.html" class="btn btn-secondary">[ EXPLORE MISSION ]</a>
             </div>
         </div>
     </section>
