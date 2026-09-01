@@ -189,20 +189,10 @@ const verifyAdmin = (req, res, next) => {
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Defined Admin Credentials
     const admins = {
-        "Madhumitha": "Madhumitha@xploitx",
         "Jesin Milesh": "Jesin@xploitx",
-        "Harish": "Harish@xploitx",
-        "Abhiram": "Abhiram@xploitx",
-        "Subashini": "Subashini@xploitx",
-        "Rubika": "Rubika@xploitx",
-        "Ramya": "Ramya@xploitx",
-        "Ramya G": "RamyaG@xploitx",
-        "Nirmal Raj": "Nirmal@xploitx",
         "Ashish": "Ashish@xploitx",
-        "Diya": "Diya@xploitx",
-        "Administrator": process.env.ADMIN_PASSWORD // Keeping original admin as master backup
+        "Administrator": process.env.ADMIN_PASSWORD
     };
 
     if (admins.hasOwnProperty(username) && admins[username] === password) {

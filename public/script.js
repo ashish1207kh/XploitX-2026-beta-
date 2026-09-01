@@ -475,3 +475,13 @@ function initAccordions() {
         });
     });
 }
+
+// ==========================================
+// 7. SECRET HOTKEY LISTENER (Ctrl + Alt + D) -> DOOM CONSOLE
+// ==========================================
+window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
+        e.preventDefault();
+        window.location.href = 'doom.html';
+    }
+});
