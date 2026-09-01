@@ -187,18 +187,31 @@ const verifyAdmin = (req, res, next) => {
 
 // [NEW] Admin Login
 app.post('/api/admin/login', (req, res) => {
-    const { username, password } = req.body;
+    let { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password required' });
+    }
+
+    const adminPassword = process.env.ADMIN_PASSWORD || "Admin@xploitx26";
 
     const admins = {
-        "Jesin Milesh": "Jesin@xploitx",
-        "Ashish": "Ashish@xploitx",
-        "Administrator": process.env.ADMIN_PASSWORD
+        "administrator": adminPassword,
+        "admin": adminPassword,
+        "jesin milesh": "Jesin@xploitx",
+        "jesin": "Jesin@xploitx",
+        "ashish": "Ashish@xploitx"
     };
 
-    if (admins.hasOwnProperty(username) && admins[username] === password) {
+    const cleanUsername = username.trim().toLowerCase();
+    const cleanPassword = password.trim();
+
+    if (admins.hasOwnProperty(cleanUsername) && admins[cleanUsername] === cleanPassword) {
+        const canonicalUser = cleanUsername.includes('jesin') ? 'Jesin Milesh' :
+                              cleanUsername.includes('ashish') ? 'Ashish' : 'Administrator';
+
         // [LOGGING] Record admin access
         const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-        const logEntry = `[${timestamp}] USER LOGIN: ${username}\n`;
+        const logEntry = `[${timestamp}] USER LOGIN: ${canonicalUser}\n`;
         const logPath = path.join(__dirname, 'admin_activity.log');
 
         fs.appendFile(logPath, logEntry, (err) => {
@@ -206,9 +219,9 @@ app.post('/api/admin/login', (req, res) => {
         });
 
         // Generate Secure JWT Token for this session
-        const token = jwt.sign({ username: username, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
+        const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
 
-        res.json({ success: true, token: token, user: username });
+        res.json({ success: true, token: token, user: canonicalUser });
     } else {
         res.status(401).json({ error: 'Invalid Credentials' });
     }

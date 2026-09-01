@@ -422,23 +422,52 @@ function initNavbarScroll() {
 // 5. MOBILE NAVIGATION TOGGLE
 // ==========================================
 function initMobileNav() {
-    const hamburger = document.getElementById('hamburger-btn') || document.getElementById('mobile-menu-open');
-    const navMenu = document.getElementById('nav-links-menu') || document.getElementById('mobile-nav');
-    const navLinks = document.querySelectorAll('.nav-link');
+    const hamburger = document.getElementById('hamburger-btn') || document.querySelector('.hamburger-btn');
+    const navMenu = document.getElementById('nav-links-menu') || document.querySelector('.nav-links');
+    const navLinks = document.querySelectorAll('.nav-link, .nav-links a, .nav-links .btn');
 
     if (!hamburger || !navMenu) return;
 
-    hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('open');
-        const isOpen = navMenu.classList.contains('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.setAttribute('aria-label', 'Toggle Navigation Menu');
+
+    hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = navMenu.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         hamburger.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        if (isOpen) {
+            document.body.classList.add('mobile-nav-active');
+        } else {
+            document.body.classList.remove('mobile-nav-active');
+        }
     });
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             navMenu.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
             hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.classList.remove('mobile-nav-active');
         });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('open') && !navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+            navMenu.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.classList.remove('mobile-nav-active');
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+            navMenu.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.classList.remove('mobile-nav-active');
+        }
     });
 }
 

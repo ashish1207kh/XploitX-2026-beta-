@@ -1843,6 +1843,12 @@ section {
 }
 
 @media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden !important;
+        width: 100%;
+        max-width: 100vw;
+    }
+
     body {
         background-image:
             linear-gradient(180deg, rgba(3, 4, 10, 0.55) 0%, rgba(3, 4, 10, 0.85) 60%, var(--bg-deep) 100%),
@@ -1852,34 +1858,53 @@ section {
         background-attachment: scroll;
     }
 
+    body.mobile-nav-active {
+        overflow: hidden !important;
+        touch-action: none !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        box-sizing: border-box !important;
+    }
+
     .college-info-block {
         flex-direction: column;
         text-align: center;
         gap: 12px;
+        padding: 10px 14px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .pec-logo-img {
-        height: 75px;
+        height: 70px;
+        max-height: 70px;
+        width: auto;
     }
 
     .header-college-title {
-        font-size: 1.25rem;
+        font-size: clamp(1.1rem, 4.5vw, 1.4rem);
         letter-spacing: 1.5px;
         line-height: 1.25;
+        word-break: break-word;
     }
 
     .header-college-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         letter-spacing: 2px;
     }
 
     .header-accreditation-text {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         line-height: 1.4;
     }
 
     .logo-marquee-content img {
-        height: 32px;
+        height: 28px;
     }
 
     .news-marquee-content span {
@@ -1887,56 +1912,101 @@ section {
         letter-spacing: 1.5px;
     }
 
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+
     .nav-links {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 82%;
-        max-width: 320px;
+        width: 85vw;
+        max-width: 340px;
         height: 100vh;
-        background: rgba(3, 4, 10, 0.98);
+        height: 100dvh;
+        background: rgba(3, 4, 12, 0.98);
         border-left: 1px solid var(--border-hud);
-        backdrop-filter: blur(20px);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         flex-direction: column;
         justify-content: center;
-        gap: 22px;
-        transition: right 0.35s ease;
-        z-index: 1000;
-        padding: 40px 20px;
+        align-items: center;
+        gap: 16px;
+        transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100000;
+        padding: 60px 20px 40px 20px;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.9);
+        overflow-y: auto;
+        box-sizing: border-box;
     }
 
     .nav-links.open {
         right: 0;
     }
 
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 44px;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        padding: 10px 16px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
     .hamburger-btn {
-        display: block;
-        z-index: 1001;
-        background: rgba(0, 255, 102, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        background: rgba(0, 255, 102, 0.12);
         border: 1px solid var(--border-hud);
         color: var(--doom-green);
-        padding: 8px 14px;
-        border-radius: 4px;
-        font-size: 1.2rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 1.25rem;
         cursor: pointer;
+        z-index: 100001;
+        box-shadow: 0 0 12px var(--doom-green-glow);
     }
 
     .hero-section {
-        padding: 40px 0 50px 0;
+        padding: 35px 0 45px 0;
+        min-height: auto;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .hero-logo-img {
-        max-width: 85vw;
-        max-height: 140px;
+        max-width: 88vw;
+        max-height: 130px;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .hero-main-title {
+        font-size: clamp(1.8rem, 6.5vw, 2.8rem);
+        line-height: 1.15;
+        letter-spacing: 2px;
+        word-break: break-word;
     }
 
     .hero-subtitle-format {
-        font-size: 0.92rem;
+        font-size: clamp(0.85rem, 3vw, 1.1rem);
         letter-spacing: 2px;
     }
 
     .hero-tagline {
-        font-size: 1.35rem;
+        font-size: clamp(1.1rem, 4vw, 1.5rem);
         letter-spacing: 1.5px;
     }
 
@@ -1945,42 +2015,56 @@ section {
         gap: 10px;
         padding: 12px;
         font-size: 0.85rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .hero-actions {
+        display: flex;
         flex-direction: column;
+        align-items: center;
         width: 100%;
         gap: 12px;
+        margin-top: 18px;
     }
 
     .hero-actions .btn {
         width: 100%;
         max-width: 320px;
+        min-height: 46px;
         text-align: center;
-        padding: 14px 20px;
+        padding: 12px 20px;
+        box-sizing: border-box;
     }
 
     .timeline-container {
         grid-template-columns: 1fr;
         gap: 14px;
+        width: 100%;
     }
 
     .prizes-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+        width: 100%;
     }
 
     .prize-tier-card {
-        padding: 26px 18px;
+        padding: 24px 16px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .prize-cash-amount {
-        font-size: 1.45rem;
+        font-size: clamp(1.5rem, 5vw, 2rem);
     }
 
     .joint-org-wrapper {
         flex-direction: column;
         gap: 15px;
+        width: 100%;
     }
 
     .joint-separator {
@@ -1989,34 +2073,49 @@ section {
 
     .partner-cards-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 10px;
+        width: 100%;
     }
 
     .partner-logo-box {
         width: 100%;
-        height: 75px;
+        height: 70px;
         padding: 8px;
+        box-sizing: border-box;
     }
 
     .partner-logo-img {
-        max-height: 55px;
+        max-height: 50px;
+        object-fit: contain;
     }
 
     .countdown-grid {
-        gap: 8px;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        flex-wrap: nowrap;
+        box-sizing: border-box;
     }
 
     .countdown-box {
-        min-width: 60px;
-        padding: 12px 6px;
+        flex: 1;
+        min-width: 52px;
+        max-width: 75px;
+        padding: 10px 4px;
+        box-sizing: border-box;
+        border-radius: 6px;
     }
 
     .countdown-val {
-        font-size: 1.4rem;
+        font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+        line-height: 1;
     }
 
     .countdown-label {
-        font-size: 0.68rem;
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+        margin-top: 4px;
     }
 
     .countdown-divider {
@@ -2026,17 +2125,29 @@ section {
     .accordion-header {
         padding: 14px 16px;
         font-size: 0.95rem;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        cursor: pointer;
     }
 
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 25px;
+        width: 100%;
     }
 
     .register-floating-btn {
         bottom: 12px;
         right: 12px;
         padding: 8px 14px;
+        min-height: 44px;
+        max-width: calc(100vw - 24px);
+        box-sizing: border-box;
     }
 
     .reg-btn-label {
@@ -2045,16 +2156,21 @@ section {
     }
 
     .organizing-nodes-section {
-        padding: 50px 0;
+        padding: 40px 0;
     }
 
     .nodes-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+        width: 100%;
     }
 
     .node-card {
         padding: 20px 16px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .section-title {
@@ -2068,6 +2184,40 @@ section {
         font-size: clamp(1.4rem, 5.5vw, 1.9rem) !important;
         letter-spacing: 1.5px !important;
         line-height: 1.3;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 430px) {
+    .container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .pec-logo-img {
+        height: 60px;
+        max-height: 60px;
+    }
+
+    .header-college-title {
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+    }
+
+    .hero-logo-img {
+        max-width: 92vw;
+        max-height: 110px;
+    }
+
+    .status-indicator-badge {
+        font-size: 0.78rem;
+        padding: 6px 12px;
+        letter-spacing: 1px;
+    }
+
+    .btn {
+        padding: 12px 18px;
+        font-size: 0.88rem;
     }
 }
 
