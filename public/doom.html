@@ -1552,8 +1552,8 @@
             if (window.teamsData) {
                 const total = window.teamsData.length;
                 const verified = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === 1).length;
-                const standby = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && parseInt(t.payment_verified, 10) !== -1 && t.payment_proof).length;
-                const pending = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && !t.payment_proof).length;
+                const standby = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === 0).length;
+                const pending = window.teamsData.filter(t => parseInt(t.payment_verified, 10) !== 1 && parseInt(t.payment_verified, 10) !== -1 && (!t.transaction_id && (!t.payment_proof || t.payment_proof === 'NOT_PROVIDED'))).length;
 
                 document.getElementById('stat-total').innerText = total;
                 document.getElementById('stat-verified').innerText = verified;
@@ -1579,10 +1579,12 @@
                 const leader = t.members.find(m => m.role === 'LEADER') || t.members[0];
                 const waLink = leader && leader.whatsapp ? `<a href="https://wa.me/${leader.whatsapp}" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> [WA]</a>` : '';
 
-                let proofHtml = '<span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem;">Pending</span>';
-                if (t.payment_proof) {
+                let proofHtml = '<span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem;">No File</span>';
+                if (t.payment_proof && t.payment_proof !== 'NOT_PROVIDED') {
                     const proofUrl = `${API_BASE_URL}${t.payment_proof}`;
                     proofHtml = `<a href="${proofUrl}" target="_blank" style="color: var(--doom-green); font-family: var(--font-mono); font-weight: bold; text-decoration: none;"><i class="fas fa-eye"></i> [ VIEW ]</a>`;
+                } else if (t.transaction_id) {
+                    proofHtml = `<span style="color: var(--doom-gold); font-family: var(--font-mono); font-size: 0.85rem;"><i class="fas fa-receipt"></i> UTR Recorded</span>`;
                 }
 
                 let membersHtml = '';
@@ -1649,9 +1651,9 @@
             if (window.currentStatusFilter === 'READY') {
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === 1);
             } else if (window.currentStatusFilter === 'STANDBY') {
-                filtered = filtered.filter(t => parseInt(t.payment_verified, 10) !== 1 && parseInt(t.payment_verified, 10) !== -1 && t.payment_proof);
+                filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === 0);
             } else if (window.currentStatusFilter === 'PENDING') {
-                filtered = filtered.filter(t => parseInt(t.payment_verified, 10) !== 1 && !t.payment_proof);
+                filtered = filtered.filter(t => parseInt(t.payment_verified, 10) !== 1 && parseInt(t.payment_verified, 10) !== -1 && (!t.transaction_id && (!t.payment_proof || t.payment_proof === 'NOT_PROVIDED')));
             } else if (window.currentStatusFilter === 'UNTRACKED') {
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === -1);
             }

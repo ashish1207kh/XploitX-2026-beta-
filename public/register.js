@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initWaveformVisualizer();
     initMemberManagement();
     initOtpFlow();
-    initFileUploadPreview();
     initFormSubmission();
     initRealtimeInputSanitizers();
     updateFeeCalculations();
@@ -433,7 +432,7 @@ function initOtpFlow() {
             if (res.ok) {
                 otpBox.style.display = 'block';
                 feedback.style.color = '#00ff66';
-                feedback.textContent = '✓ OTP dispatched! Please check your inbox / spam folder.';
+                feedback.textContent = '✓ Enter the OTP send to your mail';
                 btnSendOtp.innerHTML = '<i class="fas fa-redo"></i> RESEND OTP';
             } else {
                 feedback.style.color = '#ff4757';
@@ -441,10 +440,10 @@ function initOtpFlow() {
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
         } catch (err) {
-            console.warn('Backend server OTP offline, entering simulation mode:', err);
+            console.error('Error sending OTP:', err);
             otpBox.style.display = 'block';
-            feedback.style.color = '#ffd700';
-            feedback.textContent = '⚡ Dev Mode: OTP system active. Enter 123456 or verification code.';
+            feedback.style.color = '#00ff66';
+            feedback.textContent = 'Enter the OTP send to your mail';
             btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> RESEND OTP';
         } finally {
             btnSendOtp.disabled = false;
@@ -456,12 +455,13 @@ function initOtpFlow() {
         const otp = otpCodeInput.value.trim();
 
         if (!otp) {
-            alert('Please enter the 6-digit verification code.');
+            alert('Please enter the OTP sent to your mail.');
             return;
         }
 
         btnVerifyOtp.disabled = true;
         btnVerifyOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
+        feedback.textContent = '';
 
         try {
             const res = await fetch('/api/auth/verify-email-otp', {
@@ -471,7 +471,7 @@ function initOtpFlow() {
             });
             const data = await res.json();
 
-            if (res.ok || otp === "123456") {
+            if (res.ok && data.success) {
                 isEmailVerified = true;
                 emailInput.readOnly = true;
                 btnSendOtp.style.display = 'none';
@@ -486,22 +486,12 @@ function initOtpFlow() {
                 emailInput.parentElement.parentElement.appendChild(verifiedBadge);
             } else {
                 feedback.style.color = '#ff4757';
-                feedback.textContent = `Invalid OTP: ${data.error || 'Incorrect code entered.'}`;
+                feedback.textContent = 'Invalid OTP! Enter the OTP send to your mail';
             }
         } catch (err) {
-            // Simulated validation
-            isEmailVerified = true;
-            emailInput.readOnly = true;
-            btnSendOtp.style.display = 'none';
-            otpBox.style.display = 'none';
-
-            const verifiedBadge = document.createElement('span');
-            verifiedBadge.className = 'btn-otp-action';
-            verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
-            verifiedBadge.style.borderColor = '#00ff66';
-            verifiedBadge.style.color = '#00ff66';
-            verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
-            emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+            console.error('Error verifying OTP:', err);
+            feedback.style.color = '#ff4757';
+            feedback.textContent = 'Invalid OTP! Enter the OTP send to your mail';
         } finally {
             btnVerifyOtp.disabled = false;
             btnVerifyOtp.innerHTML = '<i class="fas fa-check"></i> VERIFY CODE';
@@ -608,7 +598,6 @@ function initFormSubmission() {
         const leaderDistrictInput = document.getElementById('leaderDistrict');
         
         const utrNumberInput = document.getElementById('utrNumber');
-        const paymentProofInput = document.getElementById('paymentProof');
 
         let isValid = true;
         let firstErrorInput = null;
@@ -740,19 +729,6 @@ function initFormSubmission() {
             setError(utrNumberInput, 'Please enter a valid 12-digit UTR / Bank Reference Number.');
         }
 
-        // 11. Payment Proof File Validation
-        const paymentProofFile = paymentProofInput.files[0];
-        if (!paymentProofFile) {
-            setError(paymentProofInput, 'Please upload your payment screenshot proof.');
-        } else {
-            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-            if (!validTypes.includes(paymentProofFile.type)) {
-                setError(paymentProofInput, 'Payment proof must be an image file (JPEG or PNG).');
-            } else if (paymentProofFile.size > 5 * 1024 * 1024) {
-                setError(paymentProofInput, 'File size must be under 5 MB.');
-            }
-        }
-
         // Focus & scroll to first invalid field if form is incomplete
         if (!isValid) {
             if (firstErrorInput) {
@@ -775,7 +751,6 @@ function initFormSubmission() {
             formData.append('day', '09 OCTOBER 2026');
             formData.append('utrNumber', utrNumber);
             formData.append('members', JSON.stringify(membersList));
-            formData.append('paymentProof', paymentProofFile);
 
             const response = await fetch('/api/auth/register-with-payment', {
                 method: 'POST',
