@@ -418,18 +418,24 @@ initialiseDBAndServer();
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
+        user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',
+        pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : ''
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 15000
 });
 
 async function sendEmail(to, subject, text, html = null, attachments = []) {
     console.log(`Sending email to ${to}...`);
     try {
+        const senderEmail = process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '';
         const mailOptions = {
-            from: `"XploitX-2026" <${process.env.EMAIL_USER}>`,
+            from: `"XploitX-2026" <${senderEmail}>`,
             to: to,
             subject: subject,
             text: text,
@@ -438,7 +444,13 @@ async function sendEmail(to, subject, text, html = null, attachments = []) {
         if (attachments && attachments.length > 0) {
             mailOptions.attachments = attachments;
         }
-        const info = await transporter.sendMail(mailOptions);
+
+        const sendPromise = transporter.sendMail(mailOptions);
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Email dispatch timed out after 12 seconds. Please check server SMTP credentials or firewall.")), 12000)
+        );
+
+        const info = await Promise.race([sendPromise, timeoutPromise]);
         console.log("Message sent: %s", info.messageId);
         return { success: true };
     } catch (error) {

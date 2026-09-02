@@ -421,12 +421,17 @@ function initOtpFlow() {
         btnSendOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
         feedback.textContent = '';
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
         try {
             const res = await fetch('/api/auth/send-verification-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, name: leaderName })
+                body: JSON.stringify({ email: email, name: leaderName }),
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
             const data = await res.json();
 
             if (res.ok) {
@@ -440,10 +445,15 @@ function initOtpFlow() {
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
         } catch (err) {
+            clearTimeout(timeoutId);
             console.error('Error sending OTP:', err);
             otpBox.style.display = 'block';
-            feedback.style.color = '#00ff66';
-            feedback.textContent = 'Enter the OTP send to your mail';
+            feedback.style.color = '#ff4757';
+            if (err.name === 'AbortError') {
+                feedback.textContent = 'Server response timeout. Please try again or check server deployment.';
+            } else {
+                feedback.textContent = 'Failed to connect to server. Please try again.';
+            }
             btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> RESEND OTP';
         } finally {
             btnSendOtp.disabled = false;
