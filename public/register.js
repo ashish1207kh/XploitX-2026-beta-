@@ -420,9 +420,10 @@ function initOtpFlow() {
         btnSendOtp.disabled = true;
         btnSendOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
         feedback.textContent = '';
+        otpBox.style.display = 'none';
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
 
         try {
             const res = await fetch('/api/auth/send-verification-otp', {
@@ -440,21 +441,22 @@ function initOtpFlow() {
                 feedback.textContent = '✓ Enter the OTP send to your mail';
                 btnSendOtp.innerHTML = '<i class="fas fa-redo"></i> RESEND OTP';
             } else {
+                otpBox.style.display = 'none';
                 feedback.style.color = '#ff4757';
-                feedback.textContent = `Error: ${data.error || 'Failed to send OTP'}`;
+                feedback.textContent = `Error: ${data.error || 'Failed to send OTP. Check server settings.'}`;
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
         } catch (err) {
             clearTimeout(timeoutId);
             console.error('Error sending OTP:', err);
-            otpBox.style.display = 'block';
+            otpBox.style.display = 'none';
             feedback.style.color = '#ff4757';
             if (err.name === 'AbortError') {
-                feedback.textContent = 'Server response timeout. Please try again or check server deployment.';
+                feedback.textContent = 'Server response timeout. Please verify EMAIL_USER & EMAIL_PASS in your deployment settings.';
             } else {
                 feedback.textContent = 'Failed to connect to server. Please try again.';
             }
-            btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> RESEND OTP';
+            btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
         } finally {
             btnSendOtp.disabled = false;
         }

@@ -418,16 +418,17 @@ initialiseDBAndServer();
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',
         pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : ''
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 15000
+    tls: {
+        rejectUnauthorized: false
+    },
+    connectionTimeout: 7000,
+    greetingTimeout: 4000,
+    socketTimeout: 7000
 });
 
 async function sendEmail(to, subject, text, html = null, attachments = []) {
@@ -447,7 +448,7 @@ async function sendEmail(to, subject, text, html = null, attachments = []) {
 
         const sendPromise = transporter.sendMail(mailOptions);
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Email dispatch timed out after 12 seconds. Please check server SMTP credentials or firewall.")), 12000)
+            setTimeout(() => reject(new Error("Email server connection timed out. Please check EMAIL_USER and EMAIL_PASS environment variables on deployment server.")), 8000)
         );
 
         const info = await Promise.race([sendPromise, timeoutPromise]);
