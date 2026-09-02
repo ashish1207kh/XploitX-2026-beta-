@@ -192,6 +192,17 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
     const recipient = Array.isArray(to) ? to.join(',') : to;
     console.log(`[Email] Dispatching email to: ${recipient.split('@')[1] || 'recipient'}`);
 
+    // Prevent Gmail content trimming by injecting a unique anti-collapse nonce
+    if (html && typeof html === 'string') {
+        const antiTrimNonce = `<span style="display:none !important; opacity:0; color:transparent; font-size:1px; line-height:1px; max-height:0px; max-width:0px; overflow:hidden; mso-hide:all;">[ID:${Date.now()}-${Math.floor(Math.random() * 10000)}]</span>`;
+        if (html.includes('</div>')) {
+            const lastIdx = html.lastIndexOf('</div>');
+            html = html.substring(0, lastIdx) + antiTrimNonce + html.substring(lastIdx);
+        } else {
+            html += antiTrimNonce;
+        }
+    }
+
     const brevoApiKey = process.env.BREVO_API_KEY || null;
     const resendApiKey = process.env.RESEND_API_KEY || (process.env.EMAIL_API_KEY && process.env.EMAIL_API_KEY.startsWith('re_') ? process.env.EMAIL_API_KEY : null);
     const sendgridApiKey = process.env.SENDGRID_API_KEY;
@@ -906,23 +917,36 @@ async function validateEmailDomain(email) {
 
 const verificationOtps = {};
 
+function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE') {
+    return `
+        <div style="text-align: center; margin-bottom: 22px;">
+            <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png" alt="XploitX 2.0 BETA Logo" width="110" style="vertical-align: middle; margin-bottom: 10px; border: 0; outline: none; display: inline-block; max-width: 110px; height: auto;" />
+            <h1 style="color: #00ff66; font-size: 22px; margin: 4px 0 0 0; letter-spacing: 3px; font-weight: bold;">XPLOITX 2.0 BETA</h1>
+            <p style="color: #ffd700; font-size: 12px; margin-top: 6px; font-weight: bold; letter-spacing: 1px;">${subtitle}</p>
+        </div>
+    `;
+}
+
 function getEmailFooterHtml(includeWhatsApp = true) {
     const whatsappIcon = includeWhatsApp ? `
                 <a href="https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png" alt="WhatsApp Group" width="30" height="30" style="vertical-align: middle;">
+                    <img src="https://img.icons8.com/color/96/whatsapp.png" alt="WhatsApp Group" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>` : '';
 
+    const uniqueId = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+
     return `
-        <div style="margin-top: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 20px;">
+        <div style="margin-top: 20px; text-align: center; padding-top: 15px;">
             <p style="font-weight: bold; font-size: 12px; margin-bottom: 12px; color: #8b9bb4; letter-spacing: 1px;">CONNECT WITH US & FIND VENUE LOCATION</p>
             <div style="text-align: center;">
                 <a href="https://instagram.com/xploitxctf.2k26" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
+                    <img src="https://img.icons8.com/color/96/instagram-new.png" alt="Instagram" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>${whatsappIcon}
                 <a href="https://maps.app.goo.gl/fEMAzGYaPhuvDfi86" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282020%29.svg/1024px-Google_Maps_icon_%282020%29.svg.png" alt="Location Map" width="30" height="30" style="vertical-align: middle;">
+                    <img src="https://img.icons8.com/color/96/google-maps.png" alt="Location Map" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>
             </div>
+            <span style="display:none !important; opacity:0; color:transparent; font-size:1px; line-height:1px; max-height:0px; max-width:0px; overflow:hidden; mso-hide:all;">[Ref: ${uniqueId}]</span>
         </div>
     `;
 }
@@ -950,10 +974,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
 
     const html = `
     <div style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; margin: 0 auto;">
-        <div style="text-align: center; margin-bottom: 22px;">
-            <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
-            <p style="color: #ffd700; font-size: 13px; margin-top: 6px; font-weight: bold; letter-spacing: 1px;">DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
-        </div>
+        ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
         
         <div style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px;">
             <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Verification Code</h2>
@@ -1012,14 +1033,11 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
     const subject = "XploitX 2.0 Beta CTF - Registration Under Verification";
 
-    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nFollow this link to join the official participant WhatsApp group: https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
+    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
 
     const htmlContent = `
     <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
-            <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
-        </div>
+        ${getEmailHeaderHtml('DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
 
         <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
             <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${leader.name}</b>,</p>
@@ -1041,8 +1059,6 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
             <p>Once your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.</p>
 
-            <p style="color: #d1d5db; font-size: 14px;">Follow this link to join the official participant WhatsApp group: <a href="https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here to Join WhatsApp Group</a></p>
-
             <p style="color: #ff9900; font-weight: bold;">Please do not make any duplicate payment while your payment is under verification.</p>
 
             <p>Thank you for registering for XploitX 2.0 Beta CTF.</p>
@@ -1051,7 +1067,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
             <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Department of Cybersecurity</p>
         </div>
-        ${getEmailFooterHtml()}
+        ${getEmailFooterHtml(false)}
     </div>`;
 
     await sendEmail({ to: recipientEmail, subject, text: textContent, html: htmlContent });
@@ -1244,10 +1260,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
 
             const htmlContent = `
                 <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
-                        <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
-                    </div>
+                    ${getEmailHeaderHtml('DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
 
                     <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
                         <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear Participants,</p>
@@ -1286,13 +1299,13 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                         <div style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px;">
                             <h3 style="color: #ffd700; margin-top: 0;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
                             <p style="color: #8b9bb4; font-size: 13px;">Present this QR code at the venue check-in desk</p>
-                            <img src="cid:event-qr-code" style="width: 200px; height: 200px; border: 2px solid #00ff66; border-radius: 6px;" alt="Entry QR Code" />
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(JSON.stringify({ teamId, teamName: teamData.name, leader: leader.name }))}" style="width: 200px; height: 200px; border: 2px solid #00ff66; border-radius: 6px; background-color: #ffffff; padding: 6px;" alt="Entry QR Code" />
                             <p style="color: #00ff66; font-weight: bold; font-size: 18px; margin-top: 10px;">${teamId}</p>
                         </div>
 
                         <div style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                             <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
-                            <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> (signed by Head of Department Dr. V. Anithalakshmi) is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
+                            <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
                         </div>
 
                         <p>Your payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.</p>
@@ -1418,43 +1431,42 @@ async function generateODPdfInternal(teamObj) {
 
             doc.moveTo(35, 102).lineTo(560, 102).lineWidth(0.8).strokeColor('#000000').stroke();
 
-            const todayStr = new Date().toLocaleDateString('en-GB');
-            doc.font('Times-Roman').fontSize(9.5).text(`Date: ${todayStr}`, 410, 109, { width: 150, align: 'right' });
+            doc.font('Times-Roman').fontSize(9.5).text('Date: __________________', 390, 109, { width: 170, align: 'right' });
 
             // --- TITLE & SUBTITLE ---
-            let currentY = 128;
+            let currentY = 126;
             doc.font('Times-Bold').fontSize(12).text('ON-DUTY (OD) LETTER', 35, currentY, { align: 'center', underline: true });
-            currentY += 18;
+            currentY += 20;
             doc.font('Times-Bold').fontSize(10).text('TO WHOMSOEVER IT MAY CONCERN', 35, currentY, { align: 'center' });
 
-            // --- BODY PARAGRAPHS WITH NECESSARY DETAILS BOLD ---
-            currentY += 22;
+            // --- BODY PARAGRAPHS WITH GAP IN BETWEEN ---
+            currentY += 24;
             doc.font('Times-Roman').fontSize(9.5).fillColor('#000000');
 
             doc.text('This is to certify that the following students are permitted to participate in ', 35, currentY, { continued: true });
             doc.font('Times-Bold').text('“ XploitX 2.0 Beta CTF ”', { continued: true });
             doc.font('Times-Roman').text(', organized by the Department of Cybersecurity, Prathyusha Engineering College, Tiruvallur.');
-            currentY += 24;
+            currentY += 26;
 
             doc.font('Times-Roman').text('The event is scheduled to be conducted from ', 35, currentY, { continued: true });
             doc.font('Times-Bold').text('9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM', { continued: true });
             doc.font('Times-Roman').text(' at ', { continued: true });
             doc.font('Times-Bold').text('Prathyusha Engineering College, Tiruvallur.');
-            currentY += 24;
+            currentY += 26;
 
             const numWords = ['one', 'two', 'three', 'four', 'five', 'six'];
             const countWord = numWords[members.length - 1] || `${members.length}`;
 
             doc.font('Times-Roman').text(`The following ${countWord}-member team, including the Team Leader, may be granted On-Duty (OD) permission for the duration of the event to enable them to participate in the `, 35, currentY, { continued: true });
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
-            currentY += 28;
+            currentY += 30;
 
             // --- TEAM DETAILS ---
             doc.font('Times-Bold').fontSize(10).text('TEAM DETAILS', 35, currentY, { align: 'center' });
             currentY += 16;
 
             doc.font('Times-Bold').fontSize(9.5).text(`Team ID: ${teamObj.team_id || teamObj.id}`, 35, currentY);
-            currentY += 15;
+            currentY += 16;
 
             // --- TABLE DRAWING ---
             const colWidths = [30, 70, 115, 75, 115, 65, 55];
@@ -1513,11 +1525,11 @@ async function generateODPdfInternal(teamObj) {
                 currentY += rowHeight;
             });
 
-            currentY += 18;
+            currentY += 22;
 
             // --- EVENT DETAILS SECTION ---
             doc.font('Times-Bold').fontSize(10).text('EVENT DETAILS', 35, currentY, { align: 'center' });
-            currentY += 16;
+            currentY += 18;
 
             const evtDetails = [
                 { label: 'Event Name', val: 'XploitX 2.0 Beta CTF' },
@@ -1535,31 +1547,24 @@ async function generateODPdfInternal(teamObj) {
                 doc.font('Times-Bold').fontSize(9).text(item.label, labelX, currentY, { width: 90 });
                 doc.font('Times-Bold').fontSize(9).text(':', colonX, currentY);
                 doc.font('Times-Bold').fontSize(9).text(item.val, valX, currentY, { width: 350 });
-                currentY += 14;
+                currentY += 15;
             });
 
-            currentY += 12;
+            currentY += 16;
 
             // --- CLOSING REMARK ---
             doc.font('Times-Roman').fontSize(9.5).text('This letter is issued for the purpose of granting On-Duty permission to the above-mentioned participants for attending and participating in the ', 35, currentY, { continued: true });
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
 
-            // --- SIGNATURE FOOTER ---
+            // --- SIGNATURE FOOTER (NO SEAL IMAGE) ---
             const sigY = 715;
 
             doc.moveTo(55, sigY).lineTo(165, sigY).lineWidth(0.8).strokeColor('#000000').stroke();
             doc.moveTo(230, sigY).lineTo(340, sigY).stroke();
             doc.moveTo(405, sigY).lineTo(515, sigY).stroke();
 
-            if (fs.existsSync(sealImgPath)) {
-                try {
-                    doc.image(sealImgPath, 415, sigY - 45, { width: 65, height: 65 });
-                } catch (e) { }
-            }
-
             doc.font('Times-Bold').fontSize(8.5);
             doc.text('Signature of Student', 55, sigY + 10, { width: 110, align: 'center' });
-
             doc.text('Signature of Mentor', 230, sigY + 10, { width: 110, align: 'center' });
             doc.text('Signature of HOD', 405, sigY + 10, { width: 110, align: 'center' });
 
