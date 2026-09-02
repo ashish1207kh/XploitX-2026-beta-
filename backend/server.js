@@ -206,17 +206,13 @@ async function getTeamCount() {
 
 async function getNextTeamId() {
     if (isMongoConnected) {
-        const lastTeam = await Team.findOne({}).sort({ created_at: -1 }).exec();
-        let nextNum = 1;
-        if (lastTeam && lastTeam.team_id) {
-            const numMatch = lastTeam.team_id.match(/\d+/);
-            if (numMatch) nextNum = parseInt(numMatch[0], 10) + 1;
-        }
-        return `Xctf26te${String(nextNum).padStart(4, '0')}`;
+        const count = await Team.countDocuments();
+        const nextNum = count + 1;
+        return `XB2026-${String(nextNum).padStart(4, '0')}`;
     }
-    const lastTeam = await db.get('SELECT id FROM teams ORDER BY id DESC LIMIT 1');
-    const nextNum = lastTeam ? lastTeam.id + 1 : 1;
-    return `Xctf26te${String(nextNum).padStart(4, '0')}`;
+    const result = await db.get('SELECT COUNT(*) as count FROM teams');
+    const nextNum = (result && result.count ? result.count : 0) + 1;
+    return `XB2026-${String(nextNum).padStart(4, '0')}`;
 }
 
 async function findTeamByName(name) {
@@ -319,7 +315,7 @@ async function createTeamRecord({ teamName, email, event, day, transactionId, pa
         [tempId, teamName, email, event, day || "N/A", transactionId || "NOT_PROVIDED", paymentProof || ""]
     );
     const teamDbId = result.lastID;
-    const teamIdStr = `Xctf26te${String(teamDbId).padStart(4, '0')}`;
+    const teamIdStr = `XB2026-${String(teamDbId).padStart(4, '0')}`;
     await db.run(`UPDATE teams SET team_id = ? WHERE id = ?`, [teamIdStr, teamDbId]);
 
     for (let i = 0; i < members.length; i++) {
@@ -429,16 +425,20 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-async function sendEmail(to, subject, text, html = null) {
+async function sendEmail(to, subject, text, html = null, attachments = []) {
     console.log(`Sending email to ${to}...`);
     try {
-        const info = await transporter.sendMail({
+        const mailOptions = {
             from: `"XploitX-2026" <${process.env.EMAIL_USER}>`,
             to: to,
             subject: subject,
             text: text,
             html: html
-        });
+        };
+        if (attachments && attachments.length > 0) {
+            mailOptions.attachments = attachments;
+        }
+        const info = await transporter.sendMail(mailOptions);
         console.log("Message sent: %s", info.messageId);
         return { success: true };
     } catch (error) {
@@ -538,14 +538,19 @@ async function validateEmailDomain(email) {
 
 const verificationOtps = {};
 
-function getEmailFooterHtml() {
+function getEmailFooterHtml(includeWhatsApp = true) {
+    const whatsappIcon = includeWhatsApp ? `
+                <a href="https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png" alt="WhatsApp Group" width="30" height="30" style="vertical-align: middle;">
+                </a>` : '';
+
     return `
         <div style="margin-top: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 20px;">
             <p style="font-weight: bold; font-size: 12px; margin-bottom: 12px; color: #8b9bb4; letter-spacing: 1px;">CONNECT WITH US & FIND VENUE LOCATION</p>
             <div style="text-align: center;">
                 <a href="https://instagram.com/xploitxctf.2k26" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png" alt="Instagram" width="30" height="30" style="vertical-align: middle;">
-                </a>
+                </a>${whatsappIcon}
                 <a href="https://maps.app.goo.gl/fEMAzGYaPhuvDfi86" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282020%29.svg/1024px-Google_Maps_icon_%282020%29.svg.png" alt="Location Map" width="30" height="30" style="vertical-align: middle;">
                 </a>
@@ -597,7 +602,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
             <p style="color: #8b9bb4; font-size: 12px; margin-top: 15px;">If you did not request this email, please ignore this message.</p>
         </div>
         
-        ${getEmailFooterHtml()}
+        ${getEmailFooterHtml(false)}
     </div>`;
 
     const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
@@ -628,48 +633,56 @@ app.post('/api/auth/verify-email-otp', (req, res) => {
     }
 });
 
-async function sendRegistrationEmails(members, teamIdStr, event) {
-    if (!process.env.EMAIL_USER) return;
-    const subject = "Confirmation: Your Registration for XploitX 2.0 BETA!";
+async function sendRegistrationVerificationEmail(leader, teamName) {
+    if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes('your-email')) return;
+    const recipientEmail = leader.email;
+    if (!recipientEmail || !recipientEmail.includes('@')) return;
 
-    for (let i = 0; i < members.length; i++) {
-        const m = members[i];
-        const dateStr = "09 October 2026";
-        const timeStr = "8:30 AM";
+    const subject = "XploitX 2.0 Beta CTF - Registration Under Verification";
 
-        const htmlBody = `
-        <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
-                <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
+    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nFollow this link to join the official participant WhatsApp group: https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
+
+    const htmlContent = `
+    <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
+            <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
+        </div>
+
+        <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
+            <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${leader.name}</b>,</p>
+
+            <p>Greetings from Team XploitX!</p>
+
+            <p>We are pleased to inform you that your registration for <b>XploitX 2.0 Beta CTF</b> has been successfully received.</p>
+
+            <p>We have successfully received your registration and payment details. Your payment is currently under verification.</p>
+
+            <p>Our team will verify your payment and confirm your registration within 1–2 working days.</p>
+
+            <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
+                <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
+                <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
+                <p style="margin: 3px 0;"><b>Venue:</b> Prathyusha Engineering College, Tiruvallur</p>
             </div>
-            
-            <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px;">
-                <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${m.name}</b>,</p>
-                <p style="color: #d1d5db; font-size: 14px;">Thank you for registering for <b>XPLOITX 2.0 BETA</b>, the Department of Cyber Security's premier 24-Hour Offline CTF competition!</p>
 
-                <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; color: #ffffff;">
-                    <p style="margin: 0; font-size: 15px;"><b>Your Team ID:</b> <span style="color: #00ff66; font-weight: bold;">${teamIdStr}</span></p>
-                    <p style="margin-top: 5px; color: #8b9bb4;"><small>Please quote this Team ID for all event communications.</small></p>
-                </div>
+            <p>Once your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.</p>
 
-                <p style="color: #ffffff; font-weight: bold; margin-bottom: 8px;">Event Details:</p>
-                <ul style="color: #d1d5db; font-size: 14px; line-height: 1.6;">
-                    <li><b>Event:</b> ${event || "XPLOITX 2.0 BETA - 24-Hour CTF"}</li>
-                    <li><b>Date:</b> ${dateStr}</li>
-                    <li><b>Venue:</b> Prathyusha Engineering College Campus (Offline)</li>
-                    <li><b>Check-in Starts:</b> ${timeStr}</li>
-                </ul>
+            <p style="color: #d1d5db; font-size: 14px;">Follow this link to join the official participant WhatsApp group: <a href="https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here to Join WhatsApp Group</a></p>
 
-                <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Best regards,<br><b>The XploitX 2.0 Organizing Committee</b><br>Department of Cyber Security<br>Prathyusha Engineering College</p>
-            </div>
-            ${getEmailFooterHtml()}
-        </div>`;
+            <p style="color: #ff9900; font-weight: bold;">Please do not make any duplicate payment while your payment is under verification.</p>
 
-        const textBody = `XPLOITX 2.0 BETA Registration Confirmed\n\nDear ${m.name},\n\nTeam ID: ${teamIdStr}\nEvent: ${event}\nDate: ${dateStr}\nVenue: Prathyusha Engineering College Campus`;
+            <p>Thank you for registering for XploitX 2.0 Beta CTF.</p>
 
-        if (m.email) await sendEmail(m.email, subject, textBody, htmlBody);
-    }
+            <p>We look forward to seeing you at the event!</p>
+
+            <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Department of Cybersecurity</p>
+        </div>
+        ${getEmailFooterHtml()}
+    </div>`;
+
+    await sendEmail(recipientEmail, subject, textContent, htmlContent);
 }
 
 app.get('/api/admin/data', verifyAdmin, async (req, res) => {
@@ -778,8 +791,9 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
             }
         }
 
-        // Send Confirmation Email
-        await sendRegistrationEmails(members, teamIdStr, event);
+        // Send Initial Verification Email to Team Leader Only
+        const leaderObj = members[0] || { name: teamName, email: email };
+        await sendRegistrationVerificationEmail(leaderObj, teamName);
 
         res.json({ success: true, teamId: teamIdStr });
 
@@ -848,22 +862,55 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 });
             }
 
-            const whatsappLink = "https://chat.whatsapp.com/Gc8vl1uJvAgHuzLhQjMdCb?mode=gi_t";
+            const whatsappLink = "https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg";
             const recipientEmails = Array.from(new Set(members.map(m => m.email).concat([teamData.email]).filter(e => e && e.includes('@'))));
-            const emailTarget = recipientEmails.length > 0 ? recipientEmails.join(', ') : leader.email;
+
+            const membersListText = members.map((m, i) => `${i + 1}. ${m.name} – ${m.college || leader.college || 'Prathyusha Engineering College'}`).join('\n');
+            const membersListHtml = members.map(m => `<li><b>${m.name}</b> – ${m.college || leader.college || 'Prathyusha Engineering College'}</li>`).join('');
+
+            const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
 
             const htmlContent = `
                 <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
                     <div style="text-align: center; margin-bottom: 20px;">
                         <h1 style="color: #00ff66; font-size: 24px; margin: 0; letter-spacing: 3px;">XPLOITX 2.0 BETA</h1>
-                        <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
+                        <p style="color: #ffd700; font-size: 13px; margin-top: 5px; font-weight: bold;">DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE</p>
                     </div>
 
-                    <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px;">
-                        <h2 style="color: #00ff66; font-size: 20px; margin-top: 0;">🎉 REGISTRATION IS CONFIRMED</h2>
-                        <p style="color: #d1d5db; font-size: 14px;">Dear <b>${leader.name}</b> and Team Members,</p>
-                        <p style="color: #d1d5db; font-size: 14px;">We are pleased to inform you that your registration and payment for <b>${teamData.name}</b> (Team ID: <b style="color:#00ff66;">${teamId}</b>) have been successfully verified!</p>
-                        
+                    <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
+                        <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear Participants,</p>
+
+                        <p>Greetings from Team XploitX!</p>
+
+                        <p>We are pleased to inform you that your payment for <b>XploitX 2.0 Beta CTF</b> has been successfully verified.</p>
+
+                        <p style="color: #00ff66; font-weight: bold;">Your team’s registration is now officially confirmed for the event.</p>
+
+                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                            <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">TEAM & REGISTRATION DETAILS</h4>
+                            <p style="margin: 3px 0;"><b>Team ID:</b> <span style="color: #00ff66; font-weight: bold;">${teamId}</span></p>
+                            <p style="margin: 3px 0;"><b>Team Name:</b> ${teamData.name}</p>
+                            <p style="margin: 3px 0;"><b>Team Leader:</b> ${leader.name}</p>
+                            <p style="margin: 3px 0;"><b>Payment Status:</b> <span style="color: #00ff66; font-weight: bold;">VERIFIED</span></p>
+                            <p style="margin: 3px 0;"><b>Registration Status:</b> <span style="color: #00ff66; font-weight: bold;">CONFIRMED</span></p>
+                        </div>
+
+                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                            <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">TEAM MEMBERS</h4>
+                            <ol style="margin: 5px 0; padding-left: 20px;">
+                                ${membersListHtml}
+                            </ol>
+                        </div>
+
+                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                            <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
+                            <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
+                            <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
+                            <p style="margin: 3px 0;"><b>Venue:</b> Prathyusha Engineering College, Tiruvallur</p>
+                            <p style="margin: 3px 0;"><b>Organized By:</b> Department of Cybersecurity</p>
+                            <p style="margin: 3px 0;"><b>Institution:</b> Prathyusha Engineering College</p>
+                        </div>
+
                         <div style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px;">
                             <h3 style="color: #ffd700; margin-top: 0;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
                             <p style="color: #8b9bb4; font-size: 13px;">Present this QR code at the venue check-in desk</p>
@@ -873,25 +920,29 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
 
                         <div style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                             <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
-                            <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> (signed by Head of Department Dr. V. Anithalakshmi) is generated and attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
+                            <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> (signed by Head of Department Dr. V. Anithalakshmi) is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
                         </div>
 
-                        <p style="color: #d1d5db; font-size: 14px;">Follow this link to join the official participant WhatsApp group: <a href="${whatsappLink}" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here to Join WhatsApp Group</a></p>
+                        <p>Your payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.</p>
 
-                        <p style="color: #8b9bb4; font-size: 13px;">Regards,<br><b>The XploitX 2.0 Organizing Committee</b><br>Department of Cyber Security<br>Prathyusha Engineering College</p>
+                        <p style="color: #d1d5db; font-size: 14px;"><a href="${whatsappLink}" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here</a> to join the official participant WhatsApp group.</p>
+
+                        <p>Please keep this email for your future reference and ensure that all team members are informed about the event details.</p>
+
+                        <p>Thank you for participating in XploitX 2.0 Beta CTF.</p>
+
+                        <p>We look forward to welcoming your team and wish you the very best for the competition!</p>
+
+                        <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Department of Cybersecurity</p>
                     </div>
                     ${getEmailFooterHtml()}
                 </div>
             `;
 
             if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
-                await transporter.sendMail({
-                    from: `"XploitX-2026" <${process.env.EMAIL_USER}>`,
-                    to: emailTarget,
-                    subject: `Registration Confirmed - XPLOITX 2.0 BETA: Payment Verified for ${teamData.name}`,
-                    html: htmlContent,
-                    attachments: attachments
-                });
+                for (const emailAddr of recipientEmails) {
+                    await sendEmail(emailAddr, `XploitX 2.0 Beta CTF - Payment Verified & Registration Confirmed`, textContent, htmlContent, attachments);
+                }
             }
         }
         logAdminActivity('PAYMENT VERIFIED & OD LETTER SENT', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
@@ -953,7 +1004,7 @@ async function generateODPdfInternal(teamObj) {
         try {
             const PDFDocument = require('pdfkit');
 
-            const doc = new PDFDocument({ margin: 35 });
+            const doc = new PDFDocument({ size: 'A4', margin: 35 });
             let buffers = [];
             doc.on('data', chunk => buffers.push(chunk));
             doc.on('end', () => resolve(Buffer.concat(buffers)));
@@ -971,102 +1022,178 @@ async function generateODPdfInternal(teamObj) {
                 return;
             }
 
-            const eventName = teamObj.event || "XPLOITX 2.0 BETA - 24-Hour CTF";
-            const studentCollege = members[0].college || "YOUR COLLEGE";
-            const odDate = "09-10-2026";
-
             const publicDir = path.join(__dirname, '../public');
-            const header1Path = path.join(publicDir, 'Header(1st).jpeg');
-            const header2Path = path.join(publicDir, 'Header(2nd).jpeg');
-            const signImgPath = path.join(publicDir, 'Sign.jpeg');
+            const pecLogoPath = path.join(publicDir, 'PEC Logo.png');
             const sealImgPath = path.join(publicDir, 'Seal.jpeg');
 
-            let currentY = 30;
-            if (fs.existsSync(header1Path)) {
-                try {
-                    doc.image(header1Path, 35, currentY, { width: 525 });
-                    currentY += 85;
-                } catch (e) { }
-            }
-            if (fs.existsSync(header2Path)) {
-                try {
-                    doc.image(header2Path, 35, currentY, { width: 525 });
-                    currentY += 65;
-                } catch (e) { }
+            // --- HEADER ---
+            let headerY = 32;
+            if (fs.existsSync(pecLogoPath)) {
+                doc.image(pecLogoPath, 42, headerY - 5, { width: 62, height: 62 });
             }
 
-            doc.y = currentY + 10;
+            doc.font('Times-Bold').fontSize(16).fillColor('#000000')
+               .text('PRATHYUSHA ENGINEERING COLLEGE', 105, headerY, { width: 455, align: 'center' });
+            
+            doc.font('Times-Bold').fontSize(11)
+               .text('AN AUTONOMOUS INSTITUTION', 105, headerY + 20, { width: 455, align: 'center' });
 
-            doc.font('Helvetica-Bold').fontSize(11).text('Team XPLOITX 2.0 BETA', { align: 'left' });
-            doc.fontSize(10).text('Department of Cyber Security', { align: 'left' });
-            doc.text('Prathyusha Engineering College', { align: 'left' });
-            doc.text('Tiruvallur-602 025', { align: 'left' });
-            doc.moveDown(0.5);
+            doc.font('Times-Roman').fontSize(8.5)
+               .text('Approved by AICTE | Affiliated to Anna University', 105, headerY + 34, { width: 455, align: 'center' });
+            doc.text("Accredited by NAAC with 'A' Grade", 105, headerY + 45, { width: 455, align: 'center' });
+            doc.text('Tiruvallur – 602 025, Tamil Nadu, India.', 105, headerY + 56, { width: 455, align: 'center' });
 
-            doc.font('Helvetica').fontSize(11).text('Respected Sir/Madam,', { align: 'left' });
-            doc.moveDown(0.3);
+            doc.moveTo(35, 102).lineTo(560, 102).lineWidth(0.8).strokeColor('#000000').stroke();
 
-            doc.font('Helvetica-Bold').fontSize(11).text(`Subject: Requesting "On-Duty" permission for your student to participate in Our National Technical Cyberfest XPLOITX 2.0 BETA - ${eventName}.`, { align: 'left' });
-            doc.moveDown(0.5);
+            const todayStr = new Date().toLocaleDateString('en-GB');
+            doc.font('Times-Roman').fontSize(9.5).text(`Date: ${todayStr}`, 410, 109, { width: 150, align: 'right' });
 
-            doc.font('Helvetica').fontSize(11).text('Greetings from Prathyusha Engineering College.', { align: 'left' });
-            doc.moveDown(0.3);
+            // --- TITLE & SUBTITLE ---
+            let currentY = 128;
+            doc.font('Times-Bold').fontSize(12).text('ON-DUTY (OD) LETTER', 35, currentY, { align: 'center', underline: true });
+            currentY += 18;
+            doc.font('Times-Bold').fontSize(10).text('TO WHOMSOEVER IT MAY CONCERN', 35, currentY, { align: 'center' });
 
-            doc.text('We are pleased to inform you that the Department of Cyber Security is organizing a 24-Hour Cyberfest CTF on ', { continued: true });
-            doc.font('Helvetica-Bold').text(odDate, { continued: true });
-            doc.font('Helvetica').text(' at ', { continued: true });
-            doc.font('Helvetica-Bold').text('PRATHYUSHA ENGINEERING COLLEGE', { continued: true });
-            doc.font('Helvetica').text(', Tiruvallur. In this regard, we kindly request you to grant On-Duty permission to the participating students from ', { continued: true });
-            doc.font('Helvetica-Bold').text(studentCollege.toUpperCase(), { continued: true });
-            doc.font('Helvetica').text(' to enable them to attend and actively take part in the Cyberfest.');
-            doc.moveDown(1);
+            // --- BODY PARAGRAPHS WITH NECESSARY DETAILS BOLD ---
+            currentY += 22;
+            doc.font('Times-Roman').fontSize(9.5).fillColor('#000000');
 
-            doc.font('Helvetica-Bold').text('List of Participants:', { underline: true });
-            doc.moveDown(0.3);
+            doc.text('This is to certify that the following students are permitted to participate in ', 35, currentY, { continued: true });
+            doc.font('Times-Bold').text('“ XploitX 2.0 Beta CTF ”', { continued: true });
+            doc.font('Times-Roman').text(', organized by the Department of Cybersecurity, Prathyusha Engineering College, Tiruvallur.');
+            currentY += 24;
 
-            const tableTop = doc.y;
-            const nameX = 80;
-            const collegeX = 330;
+            doc.font('Times-Roman').text('The event is scheduled to be conducted from ', 35, currentY, { continued: true });
+            doc.font('Times-Bold').text('9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM', { continued: true });
+            doc.font('Times-Roman').text(' at ', { continued: true });
+            doc.font('Times-Bold').text('Prathyusha Engineering College, Tiruvallur.');
+            currentY += 24;
 
-            doc.fontSize(10);
-            doc.text('Name', nameX, tableTop, { bold: true });
-            doc.text('College Name', collegeX, tableTop, { bold: true });
-            doc.moveTo(35, tableTop + 13).lineTo(560, tableTop + 13).stroke();
+            const numWords = ['one', 'two', 'three', 'four', 'five', 'six'];
+            const countWord = numWords[members.length - 1] || `${members.length}`;
 
-            let yRow = tableTop + 18;
-            doc.font('Helvetica').fontSize(10);
-            members.forEach((m, i) => {
-                doc.text(`${i + 1}. ${m.name}`, nameX - 15, yRow);
-                doc.text(m.college || "-", collegeX, yRow);
-                yRow += 16;
+            doc.font('Times-Roman').text(`The following ${countWord}-member team, including the Team Leader, may be granted On-Duty (OD) permission for the duration of the event to enable them to participate in the `, 35, currentY, { continued: true });
+            doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
+            currentY += 28;
+
+            // --- TEAM DETAILS ---
+            doc.font('Times-Bold').fontSize(10).text('TEAM DETAILS', 35, currentY, { align: 'center' });
+            currentY += 16;
+
+            doc.font('Times-Bold').fontSize(9.5).text(`Team ID: ${teamObj.team_id || teamObj.id}`, 35, currentY);
+            currentY += 15;
+
+            // --- TABLE DRAWING ---
+            const colWidths = [30, 70, 115, 75, 115, 65, 55]; 
+            const headers = ['S. No.', 'Role', 'Name of the Participant', 'Register /\nID No.', 'College /\nInstitution', 'Department', 'Year'];
+            const startX = 35;
+            const headerHeight = 24;
+            const rowHeight = 22;
+
+            doc.lineWidth(0.8).strokeColor('#000000');
+            doc.rect(startX, currentY, 525, headerHeight).stroke();
+
+            let curX = startX;
+            doc.font('Times-Bold').fontSize(8);
+
+            headers.forEach((h, idx) => {
+                const w = colWidths[idx];
+                doc.text(h, curX + 2, currentY + (h.includes('\n') ? 3 : 7), { width: w - 4, align: 'center' });
+                curX += w;
+                if (idx < headers.length - 1) {
+                    doc.moveTo(curX, currentY).lineTo(curX, currentY + headerHeight).stroke();
+                }
             });
 
-            doc.y = yRow + 20;
+            currentY += headerHeight;
 
-            const leftX = 35;
-            const rightX = 420;
-            const footerY = doc.y;
+            doc.font('Times-Roman').fontSize(7.5);
 
-            doc.fontSize(11).font('Helvetica').text('Yours Sincerely', leftX, footerY);
+            members.forEach((m, idx) => {
+                doc.rect(startX, currentY, 525, rowHeight).stroke();
+                let xPos = startX;
 
-            const signY = footerY + 15;
-            if (fs.existsSync(signImgPath)) {
-                try {
-                    doc.image(signImgPath, leftX, signY, { width: 90, height: 40 });
-                } catch (e) { }
-            }
+                // Register No, Department, and Year are left blank per user request
+                const rowData = [
+                    (idx + 1).toString(),
+                    idx === 0 ? 'Team Leader' : 'Team Member',
+                    m.name || '-',
+                    '', 
+                    m.college || members[0].college || 'Prathyusha Engineering College',
+                    '', 
+                    ''  
+                ];
+
+                rowData.forEach((val, cIdx) => {
+                    const w = colWidths[cIdx];
+                    const align = cIdx === 2 ? 'left' : 'center';
+                    const padLeft = cIdx === 2 ? 6 : 2;
+                    if (val) {
+                        doc.text(val, xPos + padLeft, currentY + 5, { width: w - (padLeft * 2), align: align, lineGap: 0 });
+                    }
+                    xPos += w;
+                    if (cIdx < rowData.length - 1) {
+                        doc.moveTo(xPos, currentY).lineTo(xPos, currentY + rowHeight).stroke();
+                    }
+                });
+
+                currentY += rowHeight;
+            });
+
+            currentY += 18;
+
+            // --- EVENT DETAILS SECTION ---
+            doc.font('Times-Bold').fontSize(10).text('EVENT DETAILS', 35, currentY, { align: 'center' });
+            currentY += 16;
+
+            const evtDetails = [
+                { label: 'Event Name', val: 'XploitX 2.0 Beta CTF' },
+                { label: 'Organized By', val: 'Department of Cybersecurity, Prathyusha Engineering College' },
+                { label: 'Date & Time', val: '9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM' },
+                { label: 'Venue', val: 'Prathyusha Engineering College, Tiruvallur' },
+                { label: 'Purpose', val: 'Participation in XploitX 2.0 Beta CTF' }
+            ];
+
+            const labelX = 65;
+            const colonX = 160;
+            const valX = 170;
+
+            evtDetails.forEach(item => {
+                doc.font('Times-Bold').fontSize(9).text(item.label, labelX, currentY, { width: 90 });
+                doc.font('Times-Bold').fontSize(9).text(':', colonX, currentY);
+                doc.font('Times-Bold').fontSize(9).text(item.val, valX, currentY, { width: 350 });
+                currentY += 14;
+            });
+
+            currentY += 12;
+
+            // --- CLOSING REMARK ---
+            doc.font('Times-Roman').fontSize(9.5).text('This letter is issued for the purpose of granting On-Duty permission to the above-mentioned participants for attending and participating in the ', 35, currentY, { continued: true });
+            doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
+
+            // --- SIGNATURE FOOTER ---
+            const sigY = 715;
+
+            doc.moveTo(55, sigY).lineTo(165, sigY).lineWidth(0.8).strokeColor('#000000').stroke();
+            doc.moveTo(230, sigY).lineTo(340, sigY).stroke();
+            doc.moveTo(405, sigY).lineTo(515, sigY).stroke();
 
             if (fs.existsSync(sealImgPath)) {
                 try {
-                    doc.image(sealImgPath, rightX, signY - 10, { width: 80, height: 80 });
+                    doc.image(sealImgPath, 415, sigY - 45, { width: 65, height: 65 });
                 } catch (e) { }
             }
 
-            doc.y = signY + 45;
-            doc.font('Helvetica-Bold').fontSize(11).text('Dr. V. Anithalakshmi', leftX, doc.y);
-            doc.font('Helvetica').fontSize(10).text('Head of the Department', leftX, doc.y + 13);
+            doc.font('Times-Bold').fontSize(8.5);
+            doc.text('Signature of Student', 55, sigY + 10, { width: 110, align: 'center' });
+
+            doc.text('Signature of Mentor', 230, sigY + 10, { width: 110, align: 'center' });
+            doc.text('Signature of HOD', 405, sigY + 10, { width: 110, align: 'center' });
+
+            doc.moveTo(35, 765).lineTo(560, 765).lineWidth(0.8).strokeColor('#000000').stroke();
 
             doc.end();
+
         } catch (err) {
             reject(err);
         }

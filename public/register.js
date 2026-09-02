@@ -764,7 +764,7 @@ function initFormSubmission() {
                 return;
             }
 
-            const generatedTeamId = data.teamId || `Xctf26te${Math.floor(1000 + Math.random() * 9000)}`;
+            const generatedTeamId = data.teamId || `XB2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
             // Populate and show HUD Confirmation Modal
             document.getElementById('modal-team-name').textContent = teamName;
