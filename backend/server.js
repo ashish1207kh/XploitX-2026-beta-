@@ -951,77 +951,114 @@ function getEmailFooterHtml(includeWhatsApp = true) {
     `;
 }
 
+async function findTeamByEmail(email) {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail) return null;
+
+    if (isMongoConnected) {
+        try {
+            return await Team.findOne({ email: cleanEmail });
+        } catch (e) {
+            console.error('Error checking MongoDB for existing team:', e.message);
+        }
+    }
+    if (db) {
+        try {
+            return await db.get('SELECT * FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
+        } catch (e) {
+            console.error('Error checking SQLite for existing team:', e.message);
+        }
+    }
+    return null;
+}
+
 // Send OTP
 app.post('/api/auth/send-verification-otp', async (req, res) => {
-    const { email, name } = req.body;
-    if (!email) return res.status(400).json({ error: 'Email required' });
+    try {
+        let { email, name } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email required' });
 
-    const isValidDomain = await validateEmailDomain(email);
-    if (!isValidDomain) {
-        return res.status(400).json({ error: `Invalid email domain.` });
-    }
+        email = email.trim().toLowerCase();
 
-    const existingTeam = await findTeamByEmail(email);
-    if (existingTeam) {
-        return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
-    }
+        const isValidDomain = await validateEmailDomain(email);
+        if (!isValidDomain) {
+            return res.status(400).json({ error: `Invalid email address format.` });
+        }
 
-    const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
-    verificationOtps[email] = otp;
+        const existingTeam = await findTeamByEmail(email);
+        if (existingTeam) {
+            return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
+        }
 
-    const subject = "Email Verification OTP - XPLOITX 2.0 BETA";
-    const recipientName = name ? name.trim() : "Team Leader";
+        const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
+        verificationOtps[email] = otp;
 
-    const html = `
-    <div style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; margin: 0 auto;">
-        ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
-        
-        <div style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px;">
-            <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Verification Code</h2>
-            <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Dear <b>${recipientName}</b>,</p>
-            <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Your one-time verification code for registering in <b>XPLOITX 2.0 BETA</b> is:</p>
+        const subject = "Email Verification OTP - XPLOITX 2.0 BETA";
+        const recipientName = name ? name.trim() : "Team Leader";
+
+        const html = `
+        <div style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; margin: 0 auto;">
+            ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
             
-            <div style="text-align: center; margin: 26px 0;">
-                <span style="display: inline-block; background: #02040a; color: #00ff66; border: 2px dashed #00ff66; padding: 14px 28px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 6px; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);">
-                    ${otp}
-                </span>
+            <div style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px;">
+                <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Verification Code</h2>
+                <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Dear <b>${recipientName}</b>,</p>
+                <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Your one-time verification code for registering in <b>XPLOITX 2.0 BETA</b> is:</p>
+                
+                <div style="text-align: center; margin: 26px 0;">
+                    <span style="display: inline-block; background: #02040a; color: #00ff66; border: 2px dashed #00ff66; padding: 14px 28px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 6px; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);">
+                        ${otp}
+                    </span>
+                </div>
+                
+                <p style="color: #8b9bb4; font-size: 13px;">This OTP is valid for 10 minutes. Please enter this code on the registration page to complete your email verification.</p>
+                <p style="color: #8b9bb4; font-size: 12px; margin-top: 15px;">If you did not request this email, please ignore this message.</p>
             </div>
             
-            <p style="color: #8b9bb4; font-size: 13px;">This OTP is valid for 10 minutes. Please enter this code on the registration page to complete your email verification.</p>
-            <p style="color: #8b9bb4; font-size: 12px; margin-top: 15px;">If you did not request this email, please ignore this message.</p>
-        </div>
-        
-        ${getEmailFooterHtml(false)}
-    </div>`;
+            ${getEmailFooterHtml(false)}
+        </div>`;
 
-    const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
+        const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
 
-    // Use BREVO_API_KEY as primary guard — this is the production email provider
-    const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
-    if (hasEmailProvider) {
-        const result = await sendEmail({ to: email, subject, text, html });
-        if (!result.success) {
-            let errorMsg = result.error || "Failed to send email.";
-            if (errorMsg.toLowerCase().includes('address not found') || errorMsg.toLowerCase().includes('enotfound') || errorMsg.toLowerCase().includes('rejected') || errorMsg.toLowerCase().includes('does not exist') || errorMsg.toLowerCase().includes('user unknown') || errorMsg.includes('550 5.1.1')) {
-                errorMsg = "Address not found";
+        // Use BREVO_API_KEY as primary guard — this is the production email provider
+        const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
+        if (hasEmailProvider) {
+            const result = await sendEmail({ to: email, subject, text, html });
+            if (!result.success) {
+                let errorMsg = result.error || "Failed to send email.";
+                if (errorMsg.toLowerCase().includes('address not found') || errorMsg.toLowerCase().includes('enotfound') || errorMsg.toLowerCase().includes('rejected') || errorMsg.toLowerCase().includes('does not exist') || errorMsg.toLowerCase().includes('user unknown') || errorMsg.includes('550 5.1.1')) {
+                    errorMsg = "Address not found";
+                }
+                return res.status(500).json({ error: 'Unable to send verification email. Please try again.' });
             }
-            return res.status(500).json({ error: 'Unable to send verification email. Please try again.' });
+        } else {
+            console.log(`[MOCK EMAIL] OTP for ${email} is ${otp}`);
         }
-    } else {
-        // Development-only mock: OTP is NOT logged in production
-        console.log('[MOCK EMAIL] OTP would be sent here (no email provider configured)');
-    }
 
-    res.json({ success: true, message: 'OTP sent' });
+        res.json({ success: true, message: 'OTP sent' });
+    } catch (err) {
+        console.error('Error in /api/auth/send-verification-otp:', err);
+        res.status(500).json({ error: 'Internal server error while sending OTP.' });
+    }
 });
 
 app.post('/api/auth/verify-email-otp', (req, res) => {
-    const { email, otp } = req.body;
-    if (verificationOtps[email] && verificationOtps[email] === otp) {
-        delete verificationOtps[email];
-        res.json({ success: true });
-    } else {
-        res.status(400).json({ error: 'Invalid OTP' });
+    try {
+        let { email, otp } = req.body;
+        if (!email || !otp) return res.status(400).json({ error: 'Email and OTP required' });
+
+        email = email.trim().toLowerCase();
+        otp = otp.trim();
+
+        if (verificationOtps[email] && verificationOtps[email] === otp) {
+            delete verificationOtps[email];
+            res.json({ success: true });
+        } else {
+            res.status(400).json({ error: 'Invalid OTP' });
+        }
+    } catch (err) {
+        console.error('Error in /api/auth/verify-email-otp:', err);
+        res.status(500).json({ error: 'Internal server error while verifying OTP.' });
     }
 });
 

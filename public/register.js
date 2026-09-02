@@ -405,21 +405,34 @@ function initOtpFlow() {
     const otpBox = document.getElementById('otp-box');
     const otpCodeInput = document.getElementById('otpCode');
     const feedback = document.getElementById('otp-feedback');
+    const outerFeedback = document.getElementById('otp-feedback-outer');
 
     if (!btnSendOtp || !emailInput) return;
 
+    function setFeedback(msg, isSuccess = false) {
+        const color = isSuccess ? '#00ff66' : '#ff4757';
+        if (outerFeedback) {
+            outerFeedback.style.color = color;
+            outerFeedback.textContent = msg;
+        }
+        if (feedback) {
+            feedback.style.color = color;
+            feedback.textContent = msg;
+        }
+    }
+
     btnSendOtp.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
         const leaderName = document.getElementById('leaderName').value.trim() || 'Team Leader';
 
         if (!email || !email.includes('@')) {
-            alert('Please enter a valid Team Leader email address to receive OTP.');
+            setFeedback('Please enter a valid Team Leader email address.');
             return;
         }
 
         btnSendOtp.disabled = true;
         btnSendOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
-        feedback.textContent = '';
+        setFeedback('', true);
         otpBox.style.display = 'none';
 
         const controller = new AbortController();
@@ -435,26 +448,27 @@ function initOtpFlow() {
             clearTimeout(timeoutId);
             const data = await res.json();
 
-            if (res.ok) {
+            if (res.ok && data.success) {
                 otpBox.style.display = 'block';
-                feedback.style.color = '#00ff66';
-                feedback.textContent = '✓ Enter the OTP send to your mail';
+                setFeedback('✓ Enter the 6-digit OTP sent to your email', true);
                 btnSendOtp.innerHTML = '<i class="fas fa-redo"></i> RESEND OTP';
+                if (otpCodeInput) {
+                    otpCodeInput.value = '';
+                    setTimeout(() => otpCodeInput.focus(), 100);
+                }
             } else {
                 otpBox.style.display = 'none';
-                feedback.style.color = '#ff4757';
-                feedback.textContent = `Error: ${data.error || 'Failed to send OTP. Check server settings.'}`;
+                setFeedback(`Error: ${data.error || 'Failed to send OTP. Check server settings.'}`, false);
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
         } catch (err) {
             clearTimeout(timeoutId);
             console.error('Error sending OTP:', err);
             otpBox.style.display = 'none';
-            feedback.style.color = '#ff4757';
             if (err.name === 'AbortError') {
-                feedback.textContent = 'Server response timeout. Please verify EMAIL_USER & EMAIL_PASS in your deployment settings.';
+                setFeedback('Server response timeout. Please try again.', false);
             } else {
-                feedback.textContent = 'Failed to connect to server. Please try again.';
+                setFeedback('Failed to connect to server. Please try again.', false);
             }
             btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
         } finally {
@@ -463,17 +477,16 @@ function initOtpFlow() {
     });
 
     btnVerifyOtp.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
         const otp = otpCodeInput.value.trim();
 
         if (!otp) {
-            alert('Please enter the OTP sent to your mail.');
+            setFeedback('Please enter the 6-digit OTP sent to your email.', false);
             return;
         }
 
         btnVerifyOtp.disabled = true;
         btnVerifyOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
-        feedback.textContent = '';
 
         try {
             const res = await fetch('/api/auth/verify-email-otp', {
@@ -488,22 +501,24 @@ function initOtpFlow() {
                 emailInput.readOnly = true;
                 btnSendOtp.style.display = 'none';
                 otpBox.style.display = 'none';
+                setFeedback('✓ Email verified successfully!', true);
 
                 const verifiedBadge = document.createElement('span');
                 verifiedBadge.className = 'btn-otp-action';
                 verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
                 verifiedBadge.style.borderColor = '#00ff66';
                 verifiedBadge.style.color = '#00ff66';
+                verifiedBadge.style.display = 'inline-flex';
+                verifiedBadge.style.alignItems = 'center';
+                verifiedBadge.style.gap = '6px';
                 verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
                 emailInput.parentElement.parentElement.appendChild(verifiedBadge);
             } else {
-                feedback.style.color = '#ff4757';
-                feedback.textContent = 'Invalid OTP! Enter the OTP send to your mail';
+                setFeedback(`Invalid OTP code! ${data.error || 'Please check and enter the correct code.'}`, false);
             }
         } catch (err) {
             console.error('Error verifying OTP:', err);
-            feedback.style.color = '#ff4757';
-            feedback.textContent = 'Invalid OTP! Enter the OTP send to your mail';
+            setFeedback('Failed to connect to server during OTP verification.', false);
         } finally {
             btnVerifyOtp.disabled = false;
             btnVerifyOtp.innerHTML = '<i class="fas fa-check"></i> VERIFY CODE';
