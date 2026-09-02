@@ -14,9 +14,376 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { open } = require('sqlite');
 const sqlite3 = require('sqlite3').verbose();
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
+// --- OTP MANAGEMENT HELPERS ---
+const inMemoryOtps = new Map();
+
+function generateSecureOtp() {
+    return crypto.randomInt(100000, 1000000).toString();
+}
+
+async function saveOtp({ email, otp, durationMinutes = 10, isMongoConnected, OtpModel, db }) {
+    const cleanEmail = email.trim().toLowerCase();
+    const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000);
+    const createdAt = new Date();
+
+    if (isMongoConnected && OtpModel) {
+        try {
+            await OtpModel.deleteMany({ email: cleanEmail });
+            await new OtpModel({
+                email: cleanEmail,
+                otp: otp,
+                expires_at: expiresAt,
+                attempts: 0,
+                created_at: createdAt
+            }).save();
+            return;
+        } catch (err) {
+            console.error('[OTP Storage] MongoDB Save Error:', err.message);
+        }
+    }
+
+    if (db) {
+        try {
+            await db.run('DELETE FROM otps WHERE email = ?', [cleanEmail]);
+            await db.run(
+                'INSERT INTO otps (email, otp, expires_at, attempts, created_at) VALUES (?, ?, ?, 0, ?)',
+                [cleanEmail, otp, expiresAt.toISOString(), createdAt.toISOString()]
+            );
+            return;
+        } catch (err) {
+            console.error('[OTP Storage] SQLite Save Error:', err.message);
+        }
+    }
+
+    inMemoryOtps.set(cleanEmail, { otp, expiresAt, attempts: 0, createdAt });
+}
+
+async function checkSendCooldown(email, { isMongoConnected, OtpModel, db, cooldownSeconds = 60 }) {
+    const cleanEmail = email.trim().toLowerCase();
+    let lastCreated = null;
+
+    if (isMongoConnected && OtpModel) {
+        try {
+            const doc = await OtpModel.findOne({ email: cleanEmail }).lean();
+            if (doc && doc.created_at) {
+                lastCreated = new Date(doc.created_at).getTime();
+            }
+        } catch (err) {
+            console.error('[OTP Cooldown] MongoDB lookup error:', err.message);
+        }
+    } else if (db) {
+        try {
+            const row = await db.get('SELECT created_at FROM otps WHERE email = ?', [cleanEmail]);
+            if (row && row.created_at) {
+                lastCreated = new Date(row.created_at).getTime();
+            }
+        } catch (err) {
+            console.error('[OTP Cooldown] SQLite lookup error:', err.message);
+        }
+    }
+
+    if (!lastCreated && inMemoryOtps.has(cleanEmail)) {
+        lastCreated = inMemoryOtps.get(cleanEmail).createdAt.getTime();
+    }
+
+    if (lastCreated) {
+        const elapsedSeconds = Math.floor((Date.now() - lastCreated) / 1000);
+        if (elapsedSeconds < cooldownSeconds) {
+            return { allowed: false, cooldownRemaining: cooldownSeconds - elapsedSeconds };
+        }
+    }
+
+    return { allowed: true, cooldownRemaining: 0 };
+}
+
+async function verifyOtp({ email, inputOtp, isMongoConnected, OtpModel, db }) {
+    const cleanEmail = email.trim().toLowerCase();
+    let record = null;
+
+    if (isMongoConnected && OtpModel) {
+        try {
+            record = await OtpModel.findOne({ email: cleanEmail }).lean();
+        } catch (err) {
+            console.error('[OTP Verify] MongoDB lookup error:', err.message);
+        }
+    }
+
+    if (!record && db) {
+        try {
+            const row = await db.get('SELECT * FROM otps WHERE email = ?', [cleanEmail]);
+            if (row) {
+                record = {
+                    email: row.email,
+                    otp: row.otp,
+                    expires_at: new Date(row.expires_at),
+                    attempts: row.attempts || 0
+                };
+            }
+        } catch (err) {
+            console.error('[OTP Verify] SQLite lookup error:', err.message);
+        }
+    }
+
+    if (!record && inMemoryOtps.has(cleanEmail)) {
+        const mem = inMemoryOtps.get(cleanEmail);
+        record = {
+            email: cleanEmail,
+            otp: mem.otp,
+            expires_at: mem.expiresAt,
+            attempts: mem.attempts
+        };
+    }
+
+    if (!record) {
+        return { success: false, error: 'No verification code was sent to this email. Please request a new OTP.' };
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(record.expires_at);
+    if (now > expiresAt) {
+        await deleteOtp(cleanEmail, { isMongoConnected, OtpModel, db });
+        return { success: false, error: 'OTP has expired. Please request a new verification code.' };
+    }
+
+    if (record.attempts >= 5) {
+        await deleteOtp(cleanEmail, { isMongoConnected, OtpModel, db });
+        return { success: false, error: 'Too many failed verification attempts. Please request a new OTP.' };
+    }
+
+    if (record.otp === inputOtp.trim()) {
+        await deleteOtp(cleanEmail, { isMongoConnected, OtpModel, db });
+        return { success: true };
+    } else {
+        const newAttempts = (record.attempts || 0) + 1;
+        await incrementAttempts(cleanEmail, newAttempts, { isMongoConnected, OtpModel, db });
+        const remaining = 5 - newAttempts;
+        return { success: false, error: `Invalid OTP code. You have ${remaining} attempt(s) remaining.` };
+    }
+}
+
+async function incrementAttempts(email, attempts, { isMongoConnected, OtpModel, db }) {
+    if (isMongoConnected && OtpModel) {
+        try { await OtpModel.updateOne({ email }, { attempts }); } catch (e) { }
+    } else if (db) {
+        try { await db.run('UPDATE otps SET attempts = ? WHERE email = ?', [attempts, email]); } catch (e) { }
+    }
+    if (inMemoryOtps.has(email)) {
+        inMemoryOtps.get(email).attempts = attempts;
+    }
+}
+
+async function deleteOtp(email, { isMongoConnected, OtpModel, db }) {
+    if (isMongoConnected && OtpModel) {
+        try { await OtpModel.deleteOne({ email }); } catch (e) { }
+    }
+    if (db) {
+        try { await db.run('DELETE FROM otps WHERE email = ?', [email]); } catch (e) { }
+    }
+    inMemoryOtps.delete(email);
+}
+
+// --- UNIVERSAL EMAIL DELIVERY FUNCTION (HTTPS API & SMTP Fallback) ---
+async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
+    const recipient = Array.isArray(to) ? to.join(',') : to;
+    console.log(`[Email] Dispatching email to: ${recipient.split('@')[1] || 'recipient'}`);
+
+    const brevoApiKey = process.env.BREVO_API_KEY || null;
+    const resendApiKey = process.env.RESEND_API_KEY || (process.env.EMAIL_API_KEY && process.env.EMAIL_API_KEY.startsWith('re_') ? process.env.EMAIL_API_KEY : null);
+    const sendgridApiKey = process.env.SENDGRID_API_KEY;
+    const senderEmail = (process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || process.env.SMTP_USER || process.env.EMAIL_USER || 'xploitxbeta2.0@gmail.com').trim();
+    const senderName = (process.env.BREVO_SENDER_NAME || 'XploitX 2.0 BETA').trim();
+    const fromAddress = senderEmail.includes('<') ? senderEmail : `"${senderName}" <${senderEmail}>`;
+
+    // 1. BREVO HTTPS REST API (Vercel Serverless Ready over Port 443)
+    if (brevoApiKey) {
+        console.log('[EmailService] Using Brevo HTTPS Email API (Vercel Serverless Ready)');
+        try {
+            const recipientList = (Array.isArray(to) ? to : [to]).map(e => ({ email: e }));
+
+            const formattedAttachments = attachments.map(att => {
+                let contentBase64 = '';
+                if (typeof att.content === 'string') {
+                    contentBase64 = att.content;
+                } else if (Buffer.isBuffer(att.content)) {
+                    contentBase64 = att.content.toString('base64');
+                } else if (att.path && fs.existsSync(att.path)) {
+                    contentBase64 = fs.readFileSync(att.path).toString('base64');
+                }
+                return {
+                    name: att.filename || 'attachment.pdf',
+                    content: contentBase64
+                };
+            }).filter(att => att.content);
+
+            const payload = {
+                sender: { name: senderName, email: senderEmail },
+                to: recipientList,
+                subject: subject,
+                htmlContent: html || `<p>${text}</p>`,
+                textContent: text
+            };
+
+            if (formattedAttachments.length > 0) {
+                payload.attachment = formattedAttachments;
+            }
+
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'api-key': brevoApiKey.trim(),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log(`[EmailService] ✅ Email delivered via Brevo HTTPS API. ID: ${data.messageId || data.id}`);
+                return { success: true, messageId: data.messageId || data.id, provider: 'Brevo' };
+            } else {
+                console.error(`[EmailService] ❌ Brevo API Error (${response.status}):`, data);
+            }
+        } catch (err) {
+            console.error('[EmailService] ❌ Exception calling Brevo HTTPS API:', err.message);
+        }
+    }
+
+    // 2. Resend HTTPS API (Vercel Serverless Ready)
+    if (resendApiKey) {
+        console.log('[EmailService] Using Resend HTTPS Email API');
+        try {
+            const formattedAttachments = attachments.map(att => ({
+                filename: att.filename,
+                content: typeof att.content === 'string' ? att.content : Buffer.isBuffer(att.content) ? att.content.toString('base64') : att.content
+            }));
+
+            const payload = {
+                from: process.env.EMAIL_FROM || 'XploitX 2.0 <onboarding@resend.dev>',
+                to: Array.isArray(to) ? to : [to],
+                subject: subject,
+                html: html || `<p>${text}</p>`,
+                text: text
+            };
+
+            if (formattedAttachments.length > 0) {
+                payload.attachments = formattedAttachments;
+            }
+
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${resendApiKey.trim()}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log(`[EmailService] ✅ Email delivered via Resend. ID: ${data.id}`);
+                return { success: true, messageId: data.id, provider: 'Resend' };
+            } else {
+                console.error(`[EmailService] ❌ Resend API Error:`, data);
+            }
+        } catch (err) {
+            console.error('[EmailService] ❌ Exception calling Resend API:', err.message);
+        }
+    }
+
+    // 3. SendGrid HTTPS API
+    if (sendgridApiKey) {
+        console.log('[EmailService] Using SendGrid HTTPS Email API');
+        try {
+            const payload = {
+                personalizations: [{ to: (Array.isArray(to) ? to : [to]).map(e => ({ email: e })) }],
+                from: { email: senderEmail },
+                subject: subject,
+                content: [
+                    { type: 'text/plain', value: text || '' },
+                    ...(html ? [{ type: 'text/html', value: html }] : [])
+                ]
+            };
+
+            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${sendgridApiKey.trim()}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.status >= 200 && response.status < 300) {
+                console.log('[EmailService] ✅ Email delivered via SendGrid.');
+                return { success: true, provider: 'SendGrid' };
+            } else {
+                const errText = await response.text();
+                console.error(`[EmailService] ❌ SendGrid API Error:`, errText);
+            }
+        } catch (err) {
+            console.error('[EmailService] ❌ SendGrid Exception:', err.message);
+        }
+    }
+
+    // 4. Nodemailer SMTP Fallback
+    console.log('[EmailService] Using Nodemailer SMTP Transport');
+    const smtpConfig = process.env.SMTP_HOST ? {
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
+        auth: {
+            user: (process.env.SMTP_USER || process.env.EMAIL_USER || '').trim(),
+            pass: (process.env.SMTP_PASS || process.env.EMAIL_PASS || '').replace(/\s+/g, '')
+        },
+        tls: { rejectUnauthorized: false },
+        connectionTimeout: 8000,
+        greetingTimeout: 5000,
+        socketTimeout: 8000
+    } : {
+        service: 'gmail',
+        auth: {
+            user: (process.env.EMAIL_USER || '').trim(),
+            pass: (process.env.EMAIL_PASS || '').replace(/\s+/g, '')
+        },
+        tls: { rejectUnauthorized: false },
+        connectionTimeout: 8000,
+        greetingTimeout: 5000,
+        socketTimeout: 8000
+    };
+
+    try {
+        const transporter = nodemailer.createTransport(smtpConfig);
+        const mailOptions = {
+            from: fromAddress,
+            to: to,
+            subject: subject,
+            text: text,
+            html: html
+        };
+
+        if (attachments && attachments.length > 0) {
+            mailOptions.attachments = attachments;
+        }
+
+        const sendPromise = transporter.sendMail(mailOptions);
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("SMTP connection timed out.")), 9000)
+        );
+
+        const info = await Promise.race([sendPromise, timeoutPromise]);
+        console.log("[EmailService] ✅ Email sent via SMTP: %s", info.messageId);
+        return { success: true, messageId: info.messageId, provider: 'SMTP' };
+    } catch (error) {
+        console.error("[EmailService] ❌ SMTP Error:", error.message);
+        return { success: false, error: error.message, provider: 'SMTP' };
+    }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -98,9 +465,18 @@ const attendanceSchema = new mongoose.Schema({
     entry_time: { type: Date, default: Date.now }
 });
 
+const otpSchema = new mongoose.Schema({
+    email: { type: String, required: true, index: true },
+    otp: { type: String, required: true },
+    expires_at: { type: Date, required: true },
+    attempts: { type: Number, default: 0 },
+    created_at: { type: Date, default: Date.now }
+});
+
 const Team = mongoose.model('Team', teamSchema);
 const Member = mongoose.model('Member', memberSchema);
 const Attendance = mongoose.model('Attendance', attendanceSchema);
+const Otp = mongoose.model('Otp', otpSchema);
 
 let isMongoConnected = false;
 let db = null;
@@ -133,14 +509,18 @@ const initialiseDBAndServer = async () => {
         }
     }
 
-    app.listen(PORT, () => {
-        console.log(`🚀 Server started at http://localhost:${PORT}/`);
-        if (isMongoConnected) {
-            console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
-        } else {
-            console.log(`📁 Database Engine: SQLite (Local Backup)`);
-        }
-    });
+    if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
+        app.listen(PORT, () => {
+            console.log(`🚀 Server started at http://localhost:${PORT}/`);
+            if (isMongoConnected) {
+                console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
+            } else {
+                console.log(`📁 Database Engine: SQLite (Local Backup)`);
+            }
+        });
+    } else {
+        console.log(`🚀 Vercel Serverless environment initialized.`);
+    }
 };
 
 async function initDb() {
@@ -185,6 +565,15 @@ async function initDb() {
         entry_time DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    await db.run(`CREATE TABLE IF NOT EXISTS otps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE,
+        otp TEXT,
+        expires_at DATETIME,
+        attempts INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     try { await db.run(`ALTER TABLE attendance ADD COLUMN entry_time DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) { }
     try { await db.run(`ALTER TABLE attendance ADD COLUMN status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
     try { await db.run(`ALTER TABLE members ADD COLUMN attendance_status TEXT DEFAULT 'ABSENT'`); } catch (e) { }
@@ -219,6 +608,7 @@ async function findTeamByName(name) {
     if (isMongoConnected) {
         return await Team.findOne({ name: new RegExp('^' + name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
     }
+    if (!db) return null;
     return await db.get('SELECT * FROM teams WHERE name = ? COLLATE NOCASE', [name]);
 }
 
@@ -226,6 +616,7 @@ async function findTeamByEmail(email) {
     if (isMongoConnected) {
         return await Team.findOne({ email }).lean();
     }
+    if (!db) return null;
     return await db.get('SELECT * FROM teams WHERE email = ?', [email]);
 }
 
@@ -233,6 +624,7 @@ async function findTeamById(teamId) {
     if (isMongoConnected) {
         return await Team.findOne({ team_id: teamId }).lean();
     }
+    if (!db) return null;
     return await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
 }
 
@@ -240,6 +632,7 @@ async function findTeamByUTR(utr) {
     if (isMongoConnected) {
         return await Team.findOne({ transaction_id: utr }).lean();
     }
+    if (!db) return null;
     return await db.get('SELECT team_id FROM teams WHERE transaction_id = ?', [utr]);
 }
 
@@ -417,48 +810,10 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
 initialiseDBAndServer();
 
 // --- EMAIL CONFIGURATION ---
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',
-        pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : ''
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 7000,
-    greetingTimeout: 4000,
-    socketTimeout: 7000
-});
-
-async function sendEmail(to, subject, text, html = null, attachments = []) {
-    console.log(`Sending email to ${to}...`);
-    try {
-        const senderEmail = process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '';
-        const mailOptions = {
-            from: `"XploitX-2026" <${senderEmail}>`,
-            to: to,
-            subject: subject,
-            text: text,
-            html: html
-        };
-        if (attachments && attachments.length > 0) {
-            mailOptions.attachments = attachments;
-        }
-
-        const sendPromise = transporter.sendMail(mailOptions);
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Email server connection timed out. Please check EMAIL_USER and EMAIL_PASS environment variables on deployment server.")), 8000)
-        );
-
-        const info = await Promise.race([sendPromise, timeoutPromise]);
-        console.log("Message sent: %s", info.messageId);
-        return { success: true };
-    } catch (error) {
-        console.error("Error sending email:", error);
-        return { success: false, error: error.message };
-    }
-}
+// NOTE: The primary sendEmail function using the Brevo HTTPS REST API is defined
+// at the top of this file (search for 'UNIVERSAL EMAIL DELIVERY FUNCTION').
+// It supports Brevo, Resend, SendGrid, and Nodemailer SMTP as fallback.
+// No duplicate definition is needed here.
 
 // API Routes
 
@@ -587,7 +942,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
         return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
     verificationOtps[email] = otp;
 
     const subject = "Email Verification OTP - XPLOITX 2.0 BETA";
@@ -620,17 +975,20 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
 
     const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
 
-    if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
-        const result = await sendEmail(email, subject, text, html);
+    // Use BREVO_API_KEY as primary guard — this is the production email provider
+    const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
+    if (hasEmailProvider) {
+        const result = await sendEmail({ to: email, subject, text, html });
         if (!result.success) {
             let errorMsg = result.error || "Failed to send email.";
             if (errorMsg.toLowerCase().includes('address not found') || errorMsg.toLowerCase().includes('enotfound') || errorMsg.toLowerCase().includes('rejected') || errorMsg.toLowerCase().includes('does not exist') || errorMsg.toLowerCase().includes('user unknown') || errorMsg.includes('550 5.1.1')) {
                 errorMsg = "Address not found";
             }
-            return res.status(500).json({ error: errorMsg });
+            return res.status(500).json({ error: 'Unable to send verification email. Please try again.' });
         }
     } else {
-        console.log(`[MOCK EMAIL] OTP: ${otp}`);
+        // Development-only mock: OTP is NOT logged in production
+        console.log('[MOCK EMAIL] OTP would be sent here (no email provider configured)');
     }
 
     res.json({ success: true, message: 'OTP sent' });
@@ -647,7 +1005,8 @@ app.post('/api/auth/verify-email-otp', (req, res) => {
 });
 
 async function sendRegistrationVerificationEmail(leader, teamName) {
-    if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes('your-email')) return;
+    const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
+    if (!hasEmailProvider) return;
     const recipientEmail = leader.email;
     if (!recipientEmail || !recipientEmail.includes('@')) return;
 
@@ -695,7 +1054,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
         ${getEmailFooterHtml()}
     </div>`;
 
-    await sendEmail(recipientEmail, subject, textContent, htmlContent);
+    await sendEmail({ to: recipientEmail, subject, text: textContent, html: htmlContent });
 }
 
 app.get('/api/admin/data', verifyAdmin, async (req, res) => {
@@ -952,9 +1311,10 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 </div>
             `;
 
-            if (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')) {
+            const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
+            if (hasEmailProvider) {
                 for (const emailAddr of recipientEmails) {
-                    await sendEmail(emailAddr, `XploitX 2.0 Beta CTF - Payment Verified & Registration Confirmed`, textContent, htmlContent, attachments);
+                    await sendEmail({ to: emailAddr, subject: 'XploitX 2.0 Beta CTF - Payment Verified & Registration Confirmed', text: textContent, html: htmlContent, attachments });
                 }
             }
         }
@@ -995,7 +1355,7 @@ app.post('/api/admin/resend_confirmation', verifyAdmin, async (req, res) => {
     const { teamId, memberName, email, event } = req.body;
     try {
         const memberObj = { name: memberName, email: email };
-        await sendRegistrationEmails([memberObj], teamId, event);
+        await sendRegistrationVerificationEmail(memberObj, teamId || event);
         logAdminActivity('RESEND CONFIRMATION', `Team ID: ${teamId}, Email: ${email} by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
     } catch (e) {
@@ -1046,13 +1406,13 @@ async function generateODPdfInternal(teamObj) {
             }
 
             doc.font('Times-Bold').fontSize(16).fillColor('#000000')
-               .text('PRATHYUSHA ENGINEERING COLLEGE', 105, headerY, { width: 455, align: 'center' });
-            
+                .text('PRATHYUSHA ENGINEERING COLLEGE', 105, headerY, { width: 455, align: 'center' });
+
             doc.font('Times-Bold').fontSize(11)
-               .text('AN AUTONOMOUS INSTITUTION', 105, headerY + 20, { width: 455, align: 'center' });
+                .text('AN AUTONOMOUS INSTITUTION', 105, headerY + 20, { width: 455, align: 'center' });
 
             doc.font('Times-Roman').fontSize(8.5)
-               .text('Approved by AICTE | Affiliated to Anna University', 105, headerY + 34, { width: 455, align: 'center' });
+                .text('Approved by AICTE | Affiliated to Anna University', 105, headerY + 34, { width: 455, align: 'center' });
             doc.text("Accredited by NAAC with 'A' Grade", 105, headerY + 45, { width: 455, align: 'center' });
             doc.text('Tiruvallur – 602 025, Tamil Nadu, India.', 105, headerY + 56, { width: 455, align: 'center' });
 
@@ -1097,7 +1457,7 @@ async function generateODPdfInternal(teamObj) {
             currentY += 15;
 
             // --- TABLE DRAWING ---
-            const colWidths = [30, 70, 115, 75, 115, 65, 55]; 
+            const colWidths = [30, 70, 115, 75, 115, 65, 55];
             const headers = ['S. No.', 'Role', 'Name of the Participant', 'Register /\nID No.', 'College /\nInstitution', 'Department', 'Year'];
             const startX = 35;
             const headerHeight = 24;
@@ -1131,10 +1491,10 @@ async function generateODPdfInternal(teamObj) {
                     (idx + 1).toString(),
                     idx === 0 ? 'Team Leader' : 'Team Member',
                     m.name || '-',
-                    '', 
+                    '',
                     m.college || members[0].college || 'Prathyusha Engineering College',
-                    '', 
-                    ''  
+                    '',
+                    ''
                 ];
 
                 rowData.forEach((val, cIdx) => {
