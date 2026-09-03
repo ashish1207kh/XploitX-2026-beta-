@@ -1148,6 +1148,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
 
         const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
         verificationOtps[email] = otp;
+        await saveOtp({ email, otp, durationMinutes: 10, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
 
         const subject = "Email Verification OTP - XPLOITX 2.0 BETA";
         const recipientName = name ? name.trim() : "Team Leader";
@@ -1199,7 +1200,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     }
 });
 
-app.post('/api/auth/verify-email-otp', (req, res) => {
+app.post('/api/auth/verify-email-otp', async (req, res) => {
     try {
         let { email, otp } = req.body;
         if (!email || !otp) return res.status(400).json({ error: 'Email and OTP required' });
@@ -1207,12 +1208,22 @@ app.post('/api/auth/verify-email-otp', (req, res) => {
         email = email.trim().toLowerCase();
         otp = otp.trim();
 
+        // 1. Direct in-memory check fallback
         if (verificationOtps[email] && verificationOtps[email] === otp) {
             delete verificationOtps[email];
+            await deleteOtp(email, { isMongoConnected: isDbMongo(), OtpModel: Otp, db });
             logActivity('OTP VERIFIED', `Email address ${email} successfully verified`);
-            res.json({ success: true });
+            return res.json({ success: true });
+        }
+
+        // 2. Persistent storage check (MongoDB Atlas, SQLite, & global inMemoryOtps)
+        const result = await verifyOtp({ email, inputOtp: otp, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
+        if (result.success) {
+            delete verificationOtps[email];
+            logActivity('OTP VERIFIED', `Email address ${email} successfully verified`);
+            return res.json({ success: true });
         } else {
-            res.status(400).json({ error: 'Invalid OTP' });
+            return res.status(400).json({ error: result.error || 'Invalid OTP code' });
         }
     } catch (err) {
         console.error('Error in /api/auth/verify-email-otp:', err);
