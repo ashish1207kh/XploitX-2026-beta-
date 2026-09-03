@@ -1739,4 +1739,194 @@ body.loader-locked {
     }
 }
 
+/* Custom Cyber HUD File Upload Dropzone */
+.hud-file-dropzone {
+    display: block;
+    position: relative;
+    background: rgba(2, 6, 18, 0.9);
+    border: 2px dashed rgba(0, 255, 102, 0.4);
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.hud-file-dropzone:hover, .hud-file-dropzone.dragover {
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 102, 0.06);
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.25), inset 0 0 20px rgba(0, 255, 102, 0.1);
+    transform: translateY(-2px);
+}
+
+.hud-file-dropzone.has-file {
+    border-style: solid;
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 102, 0.05);
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+}
+
+.hud-file-dropzone.has-error {
+    border-style: solid;
+    border-color: #ff4757 !important;
+    background: rgba(255, 71, 87, 0.08) !important;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.3) !important;
+}
+
+/* Corner Accents */
+.dropzone-corners .corner {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--neon-green);
+    border-style: solid;
+    pointer-events: none;
+}
+.dropzone-corners .corner.top-left { top: 4px; left: 4px; border-width: 2px 0 0 2px; }
+.dropzone-corners .corner.top-right { top: 4px; right: 4px; border-width: 2px 2px 0 0; }
+.dropzone-corners .corner.bottom-left { bottom: 4px; left: 4px; border-width: 0 0 2px 2px; }
+.dropzone-corners .corner.bottom-right { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+
+.dropzone-icon-ring {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    background: rgba(0, 255, 102, 0.1);
+    border: 1px solid var(--neon-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+    transition: all 0.3s ease;
+}
+
+.hud-file-dropzone:hover .dropzone-icon-ring {
+    transform: scale(1.1);
+    background: var(--neon-green);
+    color: #000000;
+    box-shadow: 0 0 25px var(--neon-green);
+}
+
+.dropzone-text-primary {
+    font-family: var(--font-brand);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.dropzone-text-sub {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.btn-browse-hud {
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid #00f0ff;
+    color: #00f0ff;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 7px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.btn-browse-hud:hover {
+    background: #00f0ff;
+    color: #000000;
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+}
+
+/* Preview Layout */
+.dropzone-preview-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+}
+
+.preview-thumbnail-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid var(--neon-green);
+    box-shadow: 0 0 12px rgba(0, 255, 102, 0.3);
+    flex-shrink: 0;
+    background: #000;
+}
+
+.preview-thumbnail-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-info-col {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.preview-badge-status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--neon-green);
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.preview-filename {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-filesize {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.btn-remove-file {
+    background: rgba(255, 71, 87, 0.15);
+    border: 1px solid #ff4757;
+    color: #ff4757;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-remove-file:hover {
+    background: #ff4757;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 71, 87, 0.5);
+}
+
 

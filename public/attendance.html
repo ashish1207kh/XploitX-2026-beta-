@@ -547,7 +547,7 @@
                 <table class="hud-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>S.NO</th>
                             <th>TEAM ID</th>
                             <th>OPERATIVE NAME</th>
                             <th>ROLE</th>
@@ -575,6 +575,41 @@
         let isScanning = false;
         let attendanceRawData = [];
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        // Helper to format ISO or SQLite timestamp safely
+        function formatEntryTime(entryTime) {
+            if (!entryTime) return '-';
+            try {
+                let d;
+                if (entryTime instanceof Date) {
+                    d = entryTime;
+                } else if (typeof entryTime === 'string') {
+                    const cleanStr = entryTime.trim();
+                    if (cleanStr.includes('T')) {
+                        d = new Date(cleanStr);
+                    } else if (cleanStr.includes(' ')) {
+                        d = new Date(cleanStr.replace(' ', 'T') + 'Z');
+                    } else {
+                        d = new Date(cleanStr);
+                    }
+                } else {
+                    d = new Date(entryTime);
+                }
+
+                if (isNaN(d.getTime())) return '-';
+
+                return d.toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
 
         // API Base URL Resolution
         let API_BASE_URL = '';
@@ -698,7 +733,7 @@
                             <span style="font-size: 0.8rem; color: #8b9bb4;">${m.college || 'College N/A'}</span>
                         </div>
                         <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" class="attendance-checkbox" data-id="${m.id}" ${m.status === 'PRESENT' ? 'checked' : ''} style="transform: scale(1.3); accent-color: var(--doom-green);">
+                            <input type="checkbox" class="attendance-checkbox" data-id="${m.id}" data-name="${m.name}" ${m.status === 'PRESENT' ? 'checked' : ''} style="transform: scale(1.3); accent-color: var(--doom-green);">
                             <span style="font-family: var(--font-mono); font-weight: bold; font-size: 0.85rem; color: var(--doom-green);">PRESENT</span>
                         </label>
                     </div>
@@ -734,6 +769,7 @@
             const checkboxes = document.querySelectorAll('.attendance-checkbox');
             const memberStatuses = Array.from(checkboxes).map(cb => ({
                 id: cb.getAttribute('data-id'),
+                name: cb.getAttribute('data-name'),
                 status: cb.checked ? 'PRESENT' : 'ABSENT'
             }));
 
@@ -751,6 +787,7 @@
 
                 if (response.ok) {
                     feedback.innerHTML = '<span style="color: var(--doom-green); font-weight: bold;">✓ ATTENDANCE SUCCESSFULLY RECORDED</span>';
+                    fetchAttendanceData();
                 } else {
                     feedback.innerHTML = `<span style="color: var(--deep-magenta);">Failed: ${resData.error}</span>`;
                 }
@@ -792,17 +829,18 @@
                     return;
                 }
 
-                const tableData = data.map(r => [
+                const tableData = data.map((r, index) => [
+                    `#${String(index + 1).padStart(2, '0')}`,
                     r.team_id || '-',
                     r.member_name || r.name || '-',
                     r.role || '-',
                     r.college || '-',
                     r.status || 'ABSENT',
-                    r.entry_time ? new Date(r.entry_time.replace(' ', 'T') + 'Z').toLocaleString() : '-'
+                    formatEntryTime(r.entry_time)
                 ]);
 
                 doc.autoTable({
-                    head: [['Team ID', 'Name', 'Role', 'College', 'Status', 'Time']],
+                    head: [['S.No', 'Team ID', 'Name', 'Role', 'College', 'Status', 'Check-In Time']],
                     body: tableData,
                     startY: 38,
                     theme: 'grid',
@@ -875,21 +913,22 @@
                 return;
             }
 
-            tbody.innerHTML = data.map(r => {
+            tbody.innerHTML = data.map((r, index) => {
                 const isPresent = r.status === 'PRESENT';
                 const statusClass = isPresent ? 'status-present' : 'status-absent';
                 const isLeader = r.role === 'LEADER';
+                const sno = `#${String(index + 1).padStart(2, '0')}`;
 
                 return `
                     <tr>
-                        <td style="color: #8b9bb4;">${r.id}</td>
+                        <td style="color: #8b9bb4; font-weight: bold;" title="DB ID: ${r.id}">${sno}</td>
                         <td style="color: var(--doom-green); font-weight: bold;">${r.team_id || '-'}</td>
                         <td style="color: #fff; font-weight: 600;">${r.member_name || r.name || '-'}</td>
                         <td><span class="role-badge ${isLeader ? 'leader' : ''}">${r.role || 'MEMBER'}</span></td>
                         <td>${r.college || '-'}</td>
                         <td><span class="status-badge ${statusClass}">${r.status || 'ABSENT'}</span></td>
                         <td style="color: #8b9bb4; font-size: 0.8rem;">
-                            ${r.entry_time ? new Date(r.entry_time.replace(' ', 'T') + 'Z').toLocaleString() : '-'}
+                            ${formatEntryTime(r.entry_time)}
                         </td>
                     </tr>
                 `;

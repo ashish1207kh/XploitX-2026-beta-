@@ -454,7 +454,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }
+    limits: { fileSize: 1 * 1024 * 1024 }
 });
 
 // --- MONGOOSE SCHEMAS & MODELS FOR MONGODB ATLAS ---
@@ -799,10 +799,11 @@ async function createTeamRecord({ teamName, email, event, day, transactionId, pa
 async function updatePaymentStatus(teamId, status) {
     if (isDbMongo()) {
         await Team.updateOne({ team_id: teamId }, { payment_verified: status });
-        return;
     }
     if (db) {
-        await db.run(`UPDATE teams SET payment_verified = ? WHERE team_id = ?`, [status, teamId]);
+        try {
+            await db.run(`UPDATE teams SET payment_verified = ? WHERE team_id = ?`, [status, teamId]);
+        } catch (e) {}
     }
 }
 
@@ -811,14 +812,15 @@ async function updatePaymentProof(teamId, proofPath, transactionId) {
         const updateDoc = { payment_proof: proofPath };
         if (transactionId) updateDoc.transaction_id = transactionId;
         await Team.updateOne({ team_id: teamId }, updateDoc);
-        return;
     }
     if (db) {
-        if (transactionId) {
-            await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [proofPath, transactionId, teamId]);
-        } else {
-            await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
-        }
+        try {
+            if (transactionId) {
+                await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [proofPath, transactionId, teamId]);
+            } else {
+                await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
+            }
+        } catch (e) {}
     }
 }
 
@@ -841,21 +843,23 @@ async function updateTeamAndMembers(teamId, name, event, members) {
                 role
             }).save();
         }
-        return;
     }
     if (db) {
-        const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
-        if (!team) throw new Error('Team not found');
-        await db.run(`UPDATE teams SET name = ?, event = ? WHERE id = ?`, [name, event, team.id]);
-        await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
-        for (let i = 0; i < members.length; i++) {
-            const m = members[i];
-            const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
-            await db.run(
-                `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
-            );
-        }
+        try {
+            const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
+            if (team) {
+                await db.run(`UPDATE teams SET name = ?, event = ? WHERE id = ?`, [name, event, team.id]);
+                await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
+                for (let i = 0; i < members.length; i++) {
+                    const m = members[i];
+                    const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
+                    await db.run(
+                        `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+                    );
+                }
+            }
+        } catch (e) {}
     }
 }
 
@@ -864,15 +868,16 @@ async function deleteTeamRecord(teamId) {
         await Team.deleteOne({ team_id: teamId });
         await Member.deleteMany({ team_id: teamId });
         await Attendance.deleteOne({ team_id: teamId });
-        return;
     }
     if (db) {
-        const team = await db.get(`SELECT id FROM teams WHERE team_id = ?`, [teamId]);
-        if (team) {
-            await db.run('DELETE FROM members WHERE team_db_id = ?', [team.id]);
-            await db.run('DELETE FROM teams WHERE id = ?', [team.id]);
-            await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
-        }
+        try {
+            const team = await db.get(`SELECT id FROM teams WHERE team_id = ?`, [teamId]);
+            if (team) {
+                await db.run('DELETE FROM members WHERE team_db_id = ?', [team.id]);
+                await db.run('DELETE FROM teams WHERE id = ?', [team.id]);
+                await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
+            }
+        } catch (e) {}
     }
 }
 
@@ -883,11 +888,12 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
             { $setOnInsert: { team_id: teamId, team_name: teamName, team_leader_name: leaderName, team_leader_phone: leaderPhone, status: 'ABSENT' } },
             { upsert: true }
         );
-        return;
     }
     if (db) {
-        await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
-            [teamId, teamName, leaderName, leaderPhone]);
+        try {
+            await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
+                [teamId, teamName, leaderName, leaderPhone]);
+        } catch (e) {}
     }
 }
 
@@ -1717,25 +1723,92 @@ app.post('/api/attendance/mark_members', async (req, res) => {
         const data = await getTeamDataWithMembers(teamId);
         if (!data) return res.status(404).json({ error: 'Team not found' });
 
+        const now = new Date();
+        let anyPresent = false;
+
         for (const item of memberStatuses) {
+            const isPresent = item.status === 'PRESENT';
+            if (isPresent) anyPresent = true;
+
+            // 1. Update MongoDB Atlas Member Collection
             if (isDbMongo()) {
-                if (item.status === 'PRESENT') {
-                    await Member.findByIdAndUpdate(item.id, { attendance_status: 'PRESENT', entry_time: new Date() });
-                } else {
-                    await Member.findByIdAndUpdate(item.id, { attendance_status: 'ABSENT' });
+                let updated = false;
+                // Attempt 1: Match by ObjectId (_id)
+                if (item.id && typeof item.id === 'string' && item.id.length === 24 && /^[0-9a-fA-F]{24}$/.test(item.id)) {
+                    const resMongo = await Member.updateOne(
+                        { _id: item.id },
+                        { 
+                            $set: { 
+                                attendance_status: isPresent ? 'PRESENT' : 'ABSENT',
+                                ...(isPresent ? { entry_time: now } : {})
+                            } 
+                        }
+                    );
+                    if (resMongo.matchedCount > 0) updated = true;
                 }
-            } else if (db) {
-                const currentMember = await db.get('SELECT attendance_status FROM members WHERE id = ?', [item.id]);
-                if (!currentMember) continue;
-                if (item.status === 'PRESENT' && currentMember.attendance_status !== 'PRESENT') {
-                    await db.run(`UPDATE members SET attendance_status = 'PRESENT', entry_time = CURRENT_TIMESTAMP WHERE id = ?`, [item.id]);
-                } else if (item.status === 'ABSENT' && currentMember.attendance_status !== 'ABSENT') {
-                    await db.run(`UPDATE members SET attendance_status = 'ABSENT' WHERE id = ?`, [item.id]);
+
+                // Attempt 2: Fallback match by team_id and member name
+                if (!updated && (item.name || item.id)) {
+                    await Member.updateOne(
+                        { team_id: teamId, name: item.name || item.id },
+                        { 
+                            $set: { 
+                                attendance_status: isPresent ? 'PRESENT' : 'ABSENT',
+                                ...(isPresent ? { entry_time: now } : {})
+                            } 
+                        }
+                    );
+                }
+            }
+
+            // 2. Update SQLite Database Members Table
+            if (db) {
+                try {
+                    if (item.id && !isNaN(parseInt(item.id))) {
+                        await db.run(
+                            `UPDATE members SET attendance_status = ?, entry_time = ? WHERE id = ?`,
+                            [isPresent ? 'PRESENT' : 'ABSENT', isPresent ? new Date().toISOString() : null, item.id]
+                        );
+                    } else {
+                        await db.run(
+                            `UPDATE members SET attendance_status = ?, entry_time = ? WHERE team_db_id = (SELECT id FROM teams WHERE team_id = ?) AND name = ?`,
+                            [isPresent ? 'PRESENT' : 'ABSENT', isPresent ? new Date().toISOString() : null, teamId, item.name || item.id]
+                        );
+                    }
+                } catch (sqliteErr) {
+                    console.error('[SQLite Attendance Sync Warning]:', sqliteErr.message);
                 }
             }
         }
-        res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+
+        // 3. Update Overall Team Attendance Record in both MongoDB and SQLite
+        const overallStatus = anyPresent ? 'PRESENT' : 'ABSENT';
+        if (isDbMongo()) {
+            await Attendance.updateOne(
+                { team_id: teamId },
+                { 
+                    $set: { 
+                        status: overallStatus,
+                        ...(anyPresent ? { entry_time: now } : {})
+                    } 
+                },
+                { upsert: true }
+            );
+        }
+        if (db) {
+            try {
+                await db.run(
+                    `UPDATE attendance SET status = ?, entry_time = ? WHERE team_id = ?`,
+                    [overallStatus, anyPresent ? new Date().toISOString() : null, teamId]
+                );
+            } catch (sqliteErr) { }
+        }
+
+        res.json({ success: true, message: 'Attendance status successfully updated across database' });
+    } catch (e) {
+        console.error('[Mark Members Error]:', e);
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.get('/api/attendance/all', async (req, res) => {

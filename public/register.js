@@ -670,6 +670,118 @@ function initFormSubmission() {
         }
     });
 
+    const paymentProofInputEl = document.getElementById('paymentProof');
+    const dropzoneEl = document.getElementById('hud-file-dropzone');
+    const dropzoneDefault = document.getElementById('dropzone-default');
+    const dropzonePreview = document.getElementById('dropzone-preview');
+    const previewImg = document.getElementById('preview-thumbnail-img');
+    const previewFilename = document.getElementById('preview-filename');
+    const previewFilesize = document.getElementById('preview-filesize');
+    const btnRemoveFile = document.getElementById('btn-remove-file');
+
+    function resetDropzoneUI() {
+        if (paymentProofInputEl) paymentProofInputEl.value = '';
+        if (dropzoneEl) {
+            dropzoneEl.classList.remove('has-file', 'has-error', 'dragover');
+        }
+        if (dropzoneDefault) dropzoneDefault.style.display = 'block';
+        if (dropzonePreview) dropzonePreview.style.display = 'none';
+        if (previewImg) previewImg.src = '';
+    }
+
+    function processSelectedFile(file) {
+        if (!file) {
+            resetDropzoneUI();
+            return;
+        }
+
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        const maxSize = 1 * 1024 * 1024; // 1 MB
+
+        if (!allowedExtensions.includes(fileExt)) {
+            showCyberAlert('Invalid file format! Only JPG, JPEG, and PNG images are allowed.', 'INVALID FILE FORMAT');
+            resetDropzoneUI();
+            if (dropzoneEl) dropzoneEl.classList.add('has-error');
+            markInputError(paymentProofInputEl, 'Only JPG, JPEG, and PNG images allowed.');
+            return;
+        }
+
+        if (file.size > maxSize) {
+            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+            showCyberAlert(`File size is ${sizeMB} MB. Please upload a screenshot smaller than 1 MB.`, 'FILE SIZE EXCEEDED');
+            resetDropzoneUI();
+            if (dropzoneEl) dropzoneEl.classList.add('has-error');
+            markInputError(paymentProofInputEl, 'File size must be less than 1 MB.');
+            return;
+        }
+
+        clearInputError(paymentProofInputEl);
+        if (dropzoneEl) {
+            dropzoneEl.classList.remove('has-error', 'dragover');
+            dropzoneEl.classList.add('has-file');
+        }
+
+        // Display File Details
+        if (previewFilename) previewFilename.textContent = file.name;
+        if (previewFilesize) {
+            const kbSize = (file.size / 1024).toFixed(1);
+            previewFilesize.textContent = `${kbSize} KB / 1.00 MB`;
+        }
+
+        // Generate Image Preview Thumbnail
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (previewImg) previewImg.src = e.target.result;
+            if (dropzoneDefault) dropzoneDefault.style.display = 'none';
+            if (dropzonePreview) dropzonePreview.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    if (paymentProofInputEl) {
+        paymentProofInputEl.addEventListener('change', () => {
+            processSelectedFile(paymentProofInputEl.files[0]);
+        });
+    }
+
+    if (btnRemoveFile) {
+        btnRemoveFile.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            resetDropzoneUI();
+        });
+    }
+
+    if (dropzoneEl) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzoneEl.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzoneEl.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzoneEl.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzoneEl.classList.remove('dragover');
+            }, false);
+        });
+
+        dropzoneEl.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                if (paymentProofInputEl) {
+                    paymentProofInputEl.files = files;
+                }
+                processSelectedFile(files[0]);
+            }
+        });
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -823,6 +935,24 @@ function initFormSubmission() {
             setError(utrNumberInput, 'Please enter a valid 12-digit UTR / Bank Reference Number.');
         }
 
+        // 11. Payment Screenshot File Validation (< 1 MB & JPG/JPEG/PNG)
+        const paymentProofInput = document.getElementById('paymentProof');
+        const paymentProofFile = paymentProofInput ? paymentProofInput.files[0] : null;
+
+        if (!paymentProofFile) {
+            setError(paymentProofInput, 'Please upload your payment screenshot (< 1 MB, JPG/JPEG/PNG).');
+        } else {
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+            const fileExt = paymentProofFile.name.split('.').pop().toLowerCase();
+            const maxSize = 1 * 1024 * 1024; // 1 MB
+
+            if (!allowedExtensions.includes(fileExt)) {
+                setError(paymentProofInput, 'Invalid file format! Only JPG, JPEG, and PNG images are allowed.');
+            } else if (paymentProofFile.size > maxSize) {
+                setError(paymentProofInput, 'File size exceeds 1 MB limit! Please upload a screenshot smaller than 1 MB.');
+            }
+        }
+
         // Focus & scroll to first invalid field if form is incomplete
         if (!isValid) {
             if (firstErrorInput) {
@@ -845,6 +975,9 @@ function initFormSubmission() {
             formData.append('day', '09 OCTOBER 2026');
             formData.append('utrNumber', utrNumber);
             formData.append('members', JSON.stringify(membersList));
+            if (paymentProofFile) {
+                formData.append('paymentProof', paymentProofFile);
+            }
 
             const response = await fetch('/api/auth/register-with-payment', {
                 method: 'POST',

@@ -349,6 +349,53 @@
                                             <input type="text" id="utrNumber" name="utrNumber" placeholder="12-digit UPI / Bank Ref UTR Number" maxlength="20" required autocomplete="off">
                                         </div>
                                     </div>
+
+                                    <!-- Payment Screenshot Upload -->
+                                    <div class="form-group-hud" style="margin-top: 16px;">
+                                        <label class="form-label-hud">
+                                            <i class="fas fa-file-upload form-icon-hud"></i> PAYMENT SCREENSHOT <span class="req">*</span>
+                                            <span style="font-size: 0.76rem; color: var(--doom-gold); font-weight: normal; margin-left: auto;">(&lt; 1 MB | JPG, JPEG, PNG)</span>
+                                        </label>
+                                        <div class="input-wrapper-hud">
+                                            <!-- Hidden native file input -->
+                                            <input type="file" id="paymentProof" name="paymentProof" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required style="display: none;">
+
+                                            <!-- Custom HUD Dropzone -->
+                                            <label for="paymentProof" class="hud-file-dropzone" id="hud-file-dropzone">
+                                                <div class="dropzone-corners">
+                                                    <span class="corner top-left"></span>
+                                                    <span class="corner top-right"></span>
+                                                    <span class="corner bottom-left"></span>
+                                                    <span class="corner bottom-right"></span>
+                                                </div>
+
+                                                <!-- Default / Empty State -->
+                                                <div class="dropzone-default-content" id="dropzone-default">
+                                                    <div class="dropzone-icon-ring">
+                                                        <i class="fas fa-cloud-upload-alt"></i>
+                                                    </div>
+                                                    <div class="dropzone-text-primary">CHOOSE SCREENSHOT OR DRAG &amp; DROP HERE</div>
+                                                    <div class="dropzone-text-sub">SUPPORTED FORMATS: JPG, JPEG, PNG | MAX SIZE: 1 MB</div>
+                                                    <span class="btn-browse-hud">[ SELECT FILE ]</span>
+                                                </div>
+
+                                                <!-- File Selected Preview State -->
+                                                <div class="dropzone-preview-content" id="dropzone-preview" style="display: none;">
+                                                    <div class="preview-thumbnail-wrapper">
+                                                        <img id="preview-thumbnail-img" src="" alt="Payment Screenshot Preview">
+                                                    </div>
+                                                    <div class="preview-info-col">
+                                                        <div class="preview-badge-status"><i class="fas fa-check-circle"></i> SCREENSHOT ATTACHED</div>
+                                                        <div class="preview-filename" id="preview-filename">screenshot.png</div>
+                                                        <div class="preview-filesize" id="preview-filesize">0 KB / 1.00 MB</div>
+                                                    </div>
+                                                    <button type="button" class="btn-remove-file" id="btn-remove-file" title="Remove Screenshot">
+                                                        <i class="fas fa-trash-alt"></i> REMOVE
+                                                    </button>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
