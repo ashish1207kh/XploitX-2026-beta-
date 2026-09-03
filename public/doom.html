@@ -1598,13 +1598,24 @@
                     const isLeader = m.role === 'LEADER';
                     membersHtml += `
                         <div class="member-row-card">
-                            <strong style="color: #ffffff;">${m.name}</strong> 
-                            <span class="member-role-badge ${isLeader ? 'leader' : ''}">${m.role || 'MEMBER'}</span><br>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">
-                                <i class="fas fa-phone-alt" style="font-size:0.75rem;"></i> ${m.phone || 'N/A'}<br>
-                                <i class="fas fa-envelope" style="font-size:0.75rem;"></i> <span style="color: var(--electric-blue);">${m.email || 'N/A'}</span><br>
-                                <i class="fas fa-university" style="font-size:0.75rem;"></i> ${m.college || 'N/A'} (${m.district || 'N/A'})
-                            </span>
+                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px;">
+                                <strong style="color: #ffffff;">${m.name}</strong> 
+                                <span class="member-role-badge ${isLeader ? 'leader' : ''}">${m.role || 'MEMBER'}</span>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 0.85rem; display: flex; flex-direction: column; gap: 3px; margin-top: 4px;">
+                                <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <i class="fas fa-phone-alt" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center;"></i> 
+                                    <span>${m.phone || 'N/A'}</span>
+                                </div>
+                                <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--electric-blue); word-break: break-all;">
+                                    <i class="fas fa-envelope" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center; color: var(--text-muted);"></i> 
+                                    <span style="color: var(--electric-blue);">${m.email || 'N/A'}</span>
+                                </div>
+                                <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <i class="fas fa-university" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center;"></i> 
+                                    <span>${m.college || 'N/A'} (${m.district || 'N/A'})</span>
+                                </div>
+                            </div>
                         </div>`;
                 });
 

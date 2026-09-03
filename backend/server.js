@@ -20,6 +20,53 @@ const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+// --- REAL-TIME AUDIT LOGGING SYSTEM (KOLKATA TIMEZONE: Asia/Kolkata IST) ---
+if (!global.activityLogs) {
+    global.activityLogs = [];
+}
+
+function getKolkataTimestamp() {
+    const now = new Date();
+    try {
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+        const parts = new Intl.DateTimeFormat('en-GB', options).formatToParts(now);
+        const map = {};
+        parts.forEach(p => map[p.type] = p.value);
+        return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}:${map.second} IST`;
+    } catch (e) {
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istDate = new Date(now.getTime() + istOffset);
+        return istDate.toISOString().replace('T', ' ').substring(0, 19) + ' IST';
+    }
+}
+
+function logActivity(action, details = '') {
+    const timestamp = getKolkataTimestamp();
+    const formattedLine = `[${timestamp}] ${action.toUpperCase()}${details ? ': ' + details : ''}`;
+    console.log(`[AUDIT LOG] ${formattedLine}`);
+
+    global.activityLogs.unshift(formattedLine);
+    if (global.activityLogs.length > 300) {
+        global.activityLogs.pop();
+    }
+
+    try {
+        const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
+        fs.appendFileSync(logFilePath, formattedLine + '\n', 'utf8');
+    } catch (err) {
+        console.warn('[Audit Log Write Warning]:', err.message);
+    }
+}
+
 // --- OTP MANAGEMENT HELPERS ---
 const inMemoryOtps = new Map();
 
@@ -1002,26 +1049,37 @@ app.post('/api/admin/login', (req, res) => {
 
     if (isValid) {
         const canonicalUser = usernameKey;
-        logAdminActivity('USER LOGIN', canonicalUser);
+        logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged in successfully`);
         const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
         res.json({ success: true, token: token, user: canonicalUser });
     } else {
+        logActivity('ADMIN LOGIN FAILED', `Failed login attempt for username "${username}"`);
         res.status(401).json({ error: 'Invalid Credentials' });
     }
 });
 
-// Admin Activity Log
+// Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, (req, res) => {
-    const logPath = path.join(__dirname, 'admin_activity.log');
-    if (fs.existsSync(logPath)) {
-        fs.readFile(logPath, 'utf8', (err, data) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to read log file' });
+    try {
+        let logs = global.activityLogs || [];
+
+        if (logs.length === 0) {
+            const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
+            if (fs.existsSync(logFilePath)) {
+                const content = fs.readFileSync(logFilePath, 'utf8');
+                logs = content.trim().split('\n').filter(Boolean).reverse();
+                global.activityLogs = logs;
             }
-            res.json({ log: data || '[SYSTEM AUDIT LOG]\nNo activity recorded yet.' });
-        });
-    } else {
-        res.json({ log: '[SYSTEM AUDIT LOG]\nNo activity recorded yet.' });
+        }
+
+        const logOutput = logs.length > 0 
+            ? logs.join('\n') 
+            : `[SYSTEM AUDIT LOG - ${getKolkataTimestamp()}]\nNo system activity recorded yet in current session.`;
+
+        res.json({ log: logOutput, count: logs.length });
+    } catch (err) {
+        console.error('Error serving activity log:', err);
+        res.status(500).json({ error: 'Failed to retrieve system audit log: ' + err.message });
     }
 });
 
@@ -1133,6 +1191,7 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
             console.log(`[MOCK EMAIL] OTP for ${email} is ${otp}`);
         }
 
+        logActivity('SEND OTP', `Verification OTP generated & dispatched to ${email}`);
         res.json({ success: true, message: 'OTP sent' });
     } catch (err) {
         console.error('Error in /api/auth/send-verification-otp:', err);
@@ -1150,6 +1209,7 @@ app.post('/api/auth/verify-email-otp', (req, res) => {
 
         if (verificationOtps[email] && verificationOtps[email] === otp) {
             delete verificationOtps[email];
+            logActivity('OTP VERIFIED', `Email address ${email} successfully verified`);
             res.json({ success: true });
         } else {
             res.status(400).json({ error: 'Invalid OTP' });
@@ -1322,6 +1382,8 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
         const leaderObj = members[0] || { name: teamName, email: email };
         await sendRegistrationVerificationEmail(leaderObj, teamName);
 
+        logActivity('NEW REGISTRATION', `Team ID: ${teamIdStr} | Team Name: "${teamName}" | Leader: ${leaderObj.name} (${email}) | Members: ${members.length} | UTR: ${utrNumber || 'N/A'}`);
+
         res.json({ success: true, teamId: teamIdStr });
 
     } catch (err) {
@@ -1470,7 +1532,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 }
             }
         }
-        logAdminActivity('PAYMENT VERIFIED & OD LETTER SENT', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('PAYMENT VERIFIED', `Registration confirmed & OD Letter PDF sent for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true, message: 'Registration confirmed and OD Letter PDF sent' });
     } catch (e) {
         console.error("Verify Payment Error:", e);
@@ -1486,6 +1548,8 @@ app.get('/api/admin/od_letter/:teamId', verifyAdmin, async (req, res) => {
         const pdfBuffer = await generateODPdfInternal(data.team);
         if (!pdfBuffer) return res.status(500).json({ error: 'Failed to generate OD PDF' });
 
+        logActivity('DOWNLOAD OD PDF', `OD Letter PDF downloaded for Team ID: ${req.params.teamId} by ${req.user ? req.user.username : 'Admin'}`);
+
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${req.params.teamId}_OD_Letter.pdf"`);
         res.send(pdfBuffer);
@@ -1498,7 +1562,7 @@ app.post('/api/admin/reject_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await updatePaymentStatus(teamId, -1);
-        logAdminActivity('PAYMENT REJECTED', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('REJECT PAYMENT', `Marked WRONG DETAILS for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1508,7 +1572,7 @@ app.post('/api/admin/resend_confirmation', verifyAdmin, async (req, res) => {
     try {
         const memberObj = { name: memberName, email: email };
         await sendRegistrationVerificationEmail(memberObj, teamId || event);
-        logAdminActivity('RESEND CONFIRMATION', `Team ID: ${teamId}, Email: ${email} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('RESEND CONFIRMATION', `Verification email resent to ${email} (Team ID: ${teamId}) by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -1519,7 +1583,7 @@ app.post('/api/admin/restore_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await updatePaymentStatus(teamId, 0);
-        logAdminActivity('PAYMENT RESTORED', `Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('RESTORE PAYMENT', `Restored Team ID: ${teamId} to Standby by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1722,6 +1786,7 @@ app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     try {
         await deleteTeamRecord(teamId);
+        logActivity('DELETE TEAM', `Deleted record for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1841,6 +1906,8 @@ app.post('/api/attendance/mark_members', async (req, res) => {
                 );
             } catch (sqliteErr) { }
         }
+
+        logActivity('ATTENDANCE MARKED', `Attendance status updated for Team ID: ${teamId} (Status: ${overallStatus})`);
 
         res.json({ success: true, message: 'Attendance status successfully updated across database' });
     } catch (e) {
