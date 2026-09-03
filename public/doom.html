@@ -1512,13 +1512,12 @@
             }
 
             if (success) {
-                document.getElementById('login-overlay').style.display = 'none';
-                showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
-
                 if (sessionToken) {
                     sessionStorage.setItem('admin_token', sessionToken);
                     sessionStorage.setItem('admin_user', authenticatedUser);
                 }
+
+                document.getElementById('login-overlay').style.display = 'none';
 
                 const logBtn = document.getElementById('activity-log-btn');
                 if (logBtn) {
@@ -1529,6 +1528,13 @@
                 if (formatBtn) formatBtn.style.display = 'inline-flex';
 
                 loadData();
+
+                // Live Auto-Refresh to display new registrations automatically
+                if (!window.adminDataInterval) {
+                    window.adminDataInterval = setInterval(loadData, 6000);
+                }
+
+                showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
             } else {
                 showCustomAlert('ACCESS DENIED: Invalid Username or Password.');
             }
@@ -2441,6 +2447,27 @@
                 canvas.height = window.innerHeight;
             });
         }
+
+        // Auto-restore session if previously authenticated
+        document.addEventListener('DOMContentLoaded', () => {
+            const existingToken = sessionStorage.getItem('admin_token');
+            const existingUser = sessionStorage.getItem('admin_user') || 'Administrator';
+            if (existingToken) {
+                const loginOverlay = document.getElementById('login-overlay');
+                if (loginOverlay) loginOverlay.style.display = 'none';
+
+                const logBtn = document.getElementById('activity-log-btn');
+                if (logBtn) logBtn.style.display = (existingUser === 'Administrator') ? 'inline-flex' : 'none';
+
+                const formatBtn = document.getElementById('format-btn');
+                if (formatBtn) formatBtn.style.display = 'inline-flex';
+
+                loadData();
+                if (!window.adminDataInterval) {
+                    window.adminDataInterval = setInterval(loadData, 6000);
+                }
+            }
+        });
     </script>
     <script src="script.js"></script>
 </body>

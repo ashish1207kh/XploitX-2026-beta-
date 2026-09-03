@@ -583,7 +583,23 @@ function initAccordions() {
 // ==========================================
 // 8. GLOBAL CYBER HUD ALERT DIALOG SYSTEM
 // ==========================================
-function showCyberAlert(msg, title = 'SYSTEM ALERT') {
+window.currentAlertCallback = null;
+
+function showCyberAlert(msg, title = 'SYSTEM ALERT', callback = null) {
+    if (typeof title === 'function') {
+        callback = title;
+        title = 'SYSTEM ALERT';
+    }
+    window.currentAlertCallback = callback;
+
+    let doomMsg = document.getElementById('custom-alert-msg');
+    let doomOverlay = document.getElementById('custom-alert-overlay');
+    if (doomOverlay && doomMsg) {
+        doomMsg.innerText = msg;
+        doomOverlay.style.display = 'flex';
+        return;
+    }
+
     let alertModal = document.getElementById('custom-alert-modal');
     if (!alertModal) {
         alertModal = document.createElement('div');
@@ -604,8 +620,8 @@ function showCyberAlert(msg, title = 'SYSTEM ALERT') {
         document.body.appendChild(alertModal);
     }
     
-    const msgEl = document.getElementById('custom-alert-msg');
-    const titleEl = document.getElementById('custom-alert-title');
+    const msgEl = alertModal.querySelector('#custom-alert-msg');
+    const titleEl = alertModal.querySelector('#custom-alert-title');
     if (titleEl) titleEl.textContent = title;
     if (msgEl) msgEl.textContent = msg;
     
@@ -617,22 +633,34 @@ function closeCustomAlert() {
     if (alertModal) {
         alertModal.classList.remove('active');
     }
+    const doomOverlay = document.getElementById('custom-alert-overlay');
+    if (doomOverlay) {
+        doomOverlay.style.display = 'none';
+    }
+    if (typeof window.currentAlertCallback === 'function') {
+        const cb = window.currentAlertCallback;
+        window.currentAlertCallback = null;
+        cb();
+    }
 }
 
 window.closeCustomAlert = closeCustomAlert;
 window.showCyberAlert = showCyberAlert;
+window.showCustomAlert = showCyberAlert;
 
 // Override native browser alert globally to use HUD dialog
-window.alert = function (msg) {
-    showCyberAlert(msg);
+window.alert = function (msg, title = 'SYSTEM ALERT') {
+    showCyberAlert(msg, title);
 };
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Enter') {
         const alertModal = document.getElementById('custom-alert-modal');
-        if (alertModal && alertModal.classList.contains('active')) {
+        const doomOverlay = document.getElementById('custom-alert-overlay');
+        if ((alertModal && alertModal.classList.contains('active')) || (doomOverlay && doomOverlay.style.display !== 'none')) {
             closeCustomAlert();
         }
     }
 });
+
 
