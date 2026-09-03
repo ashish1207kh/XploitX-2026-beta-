@@ -327,15 +327,17 @@
                             <div class="payment-grid-hud">
                                 <!-- QR Code & UPI Scan Box -->
                                 <div class="payment-qr-box">
-                                    <div class="qr-code-wrapper">
-                                        <img src="load.png" id="qr-code-img" alt="Payment QR Code" class="payment-qr-display">
-                                    </div>
-                                    <div class="upi-id-badge">
-                                        <span>UPI ID:</span> <strong class="text-green">prathyushactf@upi</strong>
-                                    </div>
+                                    <a id="qr-code-link" href="upi://pay?pa=8122079494%40pthdfc&pn=XploitX%202.0%20CTF%20Registration&am=500&cu=INR" title="Click or Tap to open UPI App directly" style="display: inline-block; cursor: pointer;">
+                                        <div class="qr-code-wrapper">
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi%3A%2F%2Fpay%3Fpa%3D8122079494%40pthdfc%26pn%3DXploitX%25202.0%2520CTF%2520Registration%26am%3D500%26cu%3DINR" id="qr-code-img" alt="Scan or Click to Pay" class="payment-qr-display">
+                                        </div>
+                                    </a>
                                     <div class="amount-payable-badge">
                                         AMOUNT: <strong id="payment-amount-display" class="text-gold">₹500</strong>
                                     </div>
+                                    <a id="btn-pay-upi" href="upi://pay?pa=8122079494%40pthdfc&pn=XploitX%202.0%20CTF%20Registration&am=500&cu=INR" class="btn-pay-upi-hud" style="margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 10px; background: linear-gradient(135deg, rgba(0,255,102,0.2), rgba(0,180,216,0.2)); border: 1px solid var(--border-green); color: #00ff66; font-family: var(--font-mono); font-size: 0.78rem; font-weight: bold; border-radius: 4px; text-decoration: none; transition: all 0.25s ease;">
+                                        <i class="fas fa-mobile-alt"></i> PAY VIA UPI APP
+                                    </a>
                                 </div>
 
                                 <!-- Payment Inputs (UTR & Proof Screenshot) -->

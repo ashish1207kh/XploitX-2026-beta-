@@ -445,15 +445,25 @@ function updateFeeCalculations() {
     if (paymentAmount) paymentAmount.textContent = `₹${totalFee}`;
     if (slotCount) slotCount.textContent = memberCount;
 
-    // Dynamically update QR image if specific fee images exist (e.g. 250R, 500R, 750R, 1000R or load.png)
+    // Dynamic UPI Deep Link URI & Scannable QR Generation
+    const upiId = "8122079494@pthdfc";
+    const payeeName = "XploitX 2.0 CTF Registration";
+    const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
+    const dynamicQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUri)}`;
+
     const qrImg = document.getElementById('qr-code-img');
     if (qrImg) {
-        // Look for matching QR asset in public folder or fallback
-        const possibleQR = `${totalFee}R.jpeg`;
-        const testImg = new Image();
-        testImg.onload = () => { qrImg.src = possibleQR; };
-        testImg.onerror = () => { qrImg.src = 'load.png'; };
-        testImg.src = possibleQR;
+        qrImg.src = dynamicQrUrl;
+    }
+
+    const payBtn = document.getElementById('btn-pay-upi');
+    if (payBtn) {
+        payBtn.href = upiUri;
+    }
+
+    const qrLink = document.getElementById('qr-code-link');
+    if (qrLink) {
+        qrLink.href = upiUri;
     }
 }
 
