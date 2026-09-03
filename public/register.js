@@ -4,7 +4,53 @@
  * Department of Cyber Security | Prathyusha Engineering College
  */
 
+// ==========================================
+// 0. GLOBAL CYBER HUD ALERT DIALOG ENGINE
+// ==========================================
+function showCyberAlert(msg, title = 'SYSTEM ALERT') {
+    let alertModal = document.getElementById('custom-alert-modal');
+    if (!alertModal) {
+        alertModal = document.createElement('div');
+        alertModal.className = 'hud-modal-overlay';
+        alertModal.id = 'custom-alert-modal';
+        alertModal.innerHTML = `
+            <div class="hud-modal-card alert-modal-card" style="border: 2px solid #ffd700; box-shadow: 0 15px 45px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.4); max-width: 480px; width: 92%; background: rgba(4, 10, 26, 0.93); backdrop-filter: blur(8px); border-radius: 8px; padding: 32px 24px; text-align: center; margin: auto; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+                <div class="modal-icon-glow alert-icon-glow" style="color: #ffd700; font-size: 3.2rem; text-shadow: 0 0 25px rgba(255, 215, 0, 0.6); margin-bottom: 14px;">
+                    <i class="fas fa-exclamation-triangle" id="custom-alert-icon"></i>
+                </div>
+                <h3 class="modal-title" id="custom-alert-title" style="font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; color: #ffffff; margin-bottom: 12px; font-family: 'Orbitron', 'Share Tech Mono', sans-serif;">${title}</h3>
+                <p class="modal-msg" id="custom-alert-msg" style="font-size: 1.05rem; color: #d1d5db; margin-bottom: 24px; font-family: 'Rajdhani', 'Space Grotesk', sans-serif; line-height: 1.5; font-weight: 600;"></p>
+                <div class="modal-actions" style="display: flex; justify-content: center;">
+                    <button type="button" class="btn-modal-close" onclick="closeCustomAlert()" style="background: #ffd700; color: #000000; font-weight: 900; border: none; padding: 11px 28px; border-radius: 4px; cursor: pointer; font-family: 'Orbitron', sans-serif; letter-spacing: 1.5px; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">[ ACKNOWLEDGE ]</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(alertModal);
+    }
+    
+    const msgEl = document.getElementById('custom-alert-msg');
+    const titleEl = document.getElementById('custom-alert-title');
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = msg;
+    
+    alertModal.classList.add('active');
+}
+
+function closeCustomAlert() {
+    const alertModal = document.getElementById('custom-alert-modal');
+    if (alertModal) {
+        alertModal.classList.remove('active');
+    }
+}
+
+window.closeCustomAlert = closeCustomAlert;
+window.showCyberAlert = showCyberAlert;
+window.alert = function (msg) {
+    showCyberAlert(msg);
+};
+
 let memberCount = 1; // Leader is Slot 1
+const MIN_MEMBERS = 2;
 const MAX_MEMBERS = 4;
 const PER_HEAD_FEE = 250;
 let isEmailVerified = false;
@@ -280,83 +326,99 @@ function initRealtimeInputSanitizers() {
 // ==========================================
 // 4. DYNAMIC MEMBER ROSTER (1 TO 4 MEMBERS)
 // ==========================================
+function createMemberCard(memberIndex) {
+    const memberCard = document.createElement('div');
+    memberCard.className = 'member-card-hud';
+    memberCard.id = `member-card-${memberIndex}`;
+
+    memberCard.innerHTML = `
+        <div class="member-card-header">
+            <span>◈ OPERATIVE 0${memberIndex} // SQUAD MEMBER</span>
+            <button type="button" class="btn-remove-member" onclick="removeMember(${memberIndex})">
+                <i class="fas fa-trash-alt"></i> REMOVE
+            </button>
+        </div>
+        <div class="form-row-2col">
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-user form-icon-hud"></i> FULL NAME <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="text" class="m-name" placeholder="Member full name" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="text" class="m-age" placeholder="Age" inputmode="numeric" maxlength="2" required autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <div class="form-row-2col">
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-envelope form-icon-hud"></i> EMAIL ADDRESS <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="email" class="m-email" placeholder="Member email" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="tel" class="m-phone" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" required autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <div class="form-row-2col">
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="text" class="m-college" placeholder="College name" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group-hud">
+                <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPT <span class="req">*</span></label>
+                <div class="input-wrapper-hud">
+                    <input type="text" class="m-district" placeholder="District or Dept" required autocomplete="off">
+                </div>
+            </div>
+        </div>
+    `;
+    return memberCard;
+}
+
+function addMemberSlot() {
+    const container = document.getElementById('additional-members-container');
+    if (!container) return;
+
+    if (memberCount >= MAX_MEMBERS) {
+        showCyberAlert(`Maximum team capacity reached (${MAX_MEMBERS} members max).`, 'CAPACITY REACHED');
+        return;
+    }
+
+    memberCount++;
+    const card = createMemberCard(memberCount);
+    container.appendChild(card);
+    initRealtimeInputSanitizers();
+    updateFeeCalculations();
+}
+
 function initMemberManagement() {
     const btnAdd = document.getElementById('btn-add-member');
     const container = document.getElementById('additional-members-container');
 
     if (!btnAdd || !container) return;
 
-    btnAdd.addEventListener('click', () => {
-        if (memberCount >= MAX_MEMBERS) {
-            alert(`Maximum team capacity reached (${MAX_MEMBERS} squad members max).`);
-            return;
-        }
+    btnAdd.addEventListener('click', addMemberSlot);
 
-        memberCount++;
-        const memberIndex = memberCount; // 2, 3, or 4
-
-        const memberCard = document.createElement('div');
-        memberCard.className = 'member-card-hud';
-        memberCard.id = `member-card-${memberIndex}`;
-
-        memberCard.innerHTML = `
-            <div class="member-card-header">
-                <span>◈ OPERATIVE 0${memberIndex} // SQUAD MEMBER</span>
-                <button type="button" class="btn-remove-member" onclick="removeMember(${memberIndex})">
-                    <i class="fas fa-trash-alt"></i> REMOVE
-                </button>
-            </div>
-            <div class="form-row-2col">
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-user form-icon-hud"></i> FULL NAME <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="text" class="m-name" placeholder="Member full name" required autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="text" class="m-age" placeholder="Age" inputmode="numeric" maxlength="2" required autocomplete="off">
-                    </div>
-                </div>
-            </div>
-            <div class="form-row-2col">
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-envelope form-icon-hud"></i> EMAIL ADDRESS <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="email" class="m-email" placeholder="Member email" required autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="tel" class="m-phone" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" required autocomplete="off">
-                    </div>
-                </div>
-            </div>
-            <div class="form-row-2col">
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="text" class="m-college" placeholder="College name" required autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group-hud">
-                    <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPT <span class="req">*</span></label>
-                    <div class="input-wrapper-hud">
-                        <input type="text" class="m-district" placeholder="District or Dept" required autocomplete="off">
-                    </div>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(memberCard);
-        initRealtimeInputSanitizers();
-        updateFeeCalculations();
-    });
+    // Auto-populate Operative 02 on load to enforce minimum 2 members
+    if (container.children.length === 0) {
+        addMemberSlot();
+    }
 }
 
 function removeMember(index) {
+    if (memberCount <= MIN_MEMBERS) {
+        showCyberAlert(`Minimum team size requirement is ${MIN_MEMBERS} members (Team Leader + 1 Squad Member).`, 'ROSTER REQUIREMENT');
+        return;
+    }
     const card = document.getElementById(`member-card-${index}`);
     if (card) {
         card.remove();
@@ -750,6 +812,11 @@ function initFormSubmission() {
             });
         }
 
+        if (membersList.length < MIN_MEMBERS || membersList.length > MAX_MEMBERS) {
+            showCyberAlert(`Team size must be minimum ${MIN_MEMBERS} and maximum ${MAX_MEMBERS} members.`, 'INVALID SQUAD SIZE');
+            isValid = false;
+        }
+
         // 10. UTR Number Validation
         const utrNumber = utrNumberInput.value.trim();
         if (!utrNumber || !validateUTR(utrNumber)) {
@@ -787,7 +854,7 @@ function initFormSubmission() {
             const data = await response.json();
 
             if (!response.ok) {
-                alert(`Registration Error: ${data.error || 'Failed to submit registration.'}`);
+                showCyberAlert(`Registration Error: ${data.error || 'Failed to submit registration.'}`, 'REGISTRATION FAILED');
                 return;
             }
 
@@ -803,7 +870,7 @@ function initFormSubmission() {
             form.reset();
         } catch (err) {
             console.warn('Registration network or server error:', err);
-            alert('Unable to connect to server. Please check your network connection and try again.');
+            showCyberAlert('Unable to connect to server. Please check your network connection and try again.', 'CONNECTION ERROR');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;

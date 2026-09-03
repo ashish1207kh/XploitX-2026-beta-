@@ -581,11 +581,58 @@ function initAccordions() {
 }
 
 // ==========================================
-// 7. SECRET HOTKEY LISTENER (Ctrl + Alt + D) -> DOOM CONSOLE
+// 8. GLOBAL CYBER HUD ALERT DIALOG SYSTEM
 // ==========================================
-window.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
-        e.preventDefault();
-        window.location.href = 'doom.html';
+function showCyberAlert(msg, title = 'SYSTEM ALERT') {
+    let alertModal = document.getElementById('custom-alert-modal');
+    if (!alertModal) {
+        alertModal = document.createElement('div');
+        alertModal.className = 'hud-modal-overlay';
+        alertModal.id = 'custom-alert-modal';
+        alertModal.innerHTML = `
+            <div class="hud-modal-card alert-modal-card" style="border: 2px solid #ffd700; box-shadow: 0 15px 45px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.4); max-width: 480px; width: 92%; background: rgba(4, 10, 26, 0.93); backdrop-filter: blur(8px); border-radius: 8px; padding: 32px 24px; text-align: center; margin: auto; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+                <div class="modal-icon-glow alert-icon-glow" style="color: #ffd700; font-size: 3.2rem; text-shadow: 0 0 25px rgba(255, 215, 0, 0.6); margin-bottom: 14px;">
+                    <i class="fas fa-exclamation-triangle" id="custom-alert-icon"></i>
+                </div>
+                <h3 class="modal-title" id="custom-alert-title" style="font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; color: #ffffff; margin-bottom: 12px; font-family: 'Orbitron', 'Share Tech Mono', sans-serif;">${title}</h3>
+                <p class="modal-msg" id="custom-alert-msg" style="font-size: 1.05rem; color: #d1d5db; margin-bottom: 24px; font-family: 'Rajdhani', 'Space Grotesk', sans-serif; line-height: 1.5; font-weight: 600;"></p>
+                <div class="modal-actions" style="display: flex; justify-content: center;">
+                    <button type="button" class="btn-modal-close" onclick="closeCustomAlert()" style="background: #ffd700; color: #000000; font-weight: 900; border: none; padding: 11px 28px; border-radius: 4px; cursor: pointer; font-family: 'Orbitron', sans-serif; letter-spacing: 1.5px; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">[ ACKNOWLEDGE ]</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(alertModal);
+    }
+    
+    const msgEl = document.getElementById('custom-alert-msg');
+    const titleEl = document.getElementById('custom-alert-title');
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = msg;
+    
+    alertModal.classList.add('active');
+}
+
+function closeCustomAlert() {
+    const alertModal = document.getElementById('custom-alert-modal');
+    if (alertModal) {
+        alertModal.classList.remove('active');
+    }
+}
+
+window.closeCustomAlert = closeCustomAlert;
+window.showCyberAlert = showCyberAlert;
+
+// Override native browser alert globally to use HUD dialog
+window.alert = function (msg) {
+    showCyberAlert(msg);
+};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.key === 'Enter') {
+        const alertModal = document.getElementById('custom-alert-modal');
+        if (alertModal && alertModal.classList.contains('active')) {
+            closeCustomAlert();
+        }
     }
 });
+

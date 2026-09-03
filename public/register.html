@@ -122,12 +122,12 @@
                     </div>
                     <div class="fee-row">
                         <span>ACTIVE MEMBERS:</span>
-                        <strong id="summary-member-count" class="text-gold">1</strong>
+                        <strong id="summary-member-count" class="text-gold">2</strong>
                     </div>
                     <div class="fee-divider"></div>
                     <div class="fee-row total-row">
                         <span>TOTAL PAYABLE:</span>
-                        <strong id="summary-total-fee" class="text-green">₹250</strong>
+                        <strong id="summary-total-fee" class="text-green">₹500</strong>
                     </div>
                 </div>
 
@@ -308,7 +308,7 @@
                             <div class="section-badge-title-between">
                                 <span><i class="fas fa-user-plus"></i> ADDITIONAL SQUAD MEMBERS</span>
                                 <button type="button" id="btn-add-member" class="btn-add-member-hud">
-                                    <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">1</span>/4)
+                                    <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">2</span>/4)
                                 </button>
                             </div>
 
@@ -334,7 +334,7 @@
                                         <span>UPI ID:</span> <strong class="text-green">prathyushactf@upi</strong>
                                     </div>
                                     <div class="amount-payable-badge">
-                                        AMOUNT: <strong id="payment-amount-display" class="text-gold">₹250</strong>
+                                        AMOUNT: <strong id="payment-amount-display" class="text-gold">₹500</strong>
                                     </div>
                                 </div>
 
@@ -478,6 +478,20 @@
             <div class="modal-actions">
                 <a href="index.html" class="btn-modal-return">[ RETURN TO BRIEFING ]</a>
                 <button type="button" class="btn-modal-close" onclick="closeModal()">[ CLOSE ]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cyber HUD Alert Modal Dialog -->
+    <div class="hud-modal-overlay" id="custom-alert-modal">
+        <div class="hud-modal-card alert-modal-card">
+            <div class="modal-icon-glow alert-icon-glow" style="color: #ffd700; text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);">
+                <i class="fas fa-exclamation-triangle" id="custom-alert-icon"></i>
+            </div>
+            <h3 class="modal-title" id="custom-alert-title" style="letter-spacing: 2px;">SYSTEM ALERT</h3>
+            <p class="modal-msg" id="custom-alert-msg" style="font-family: var(--font-body); font-weight: 600; line-height: 1.5; color: var(--text-muted);"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-close" onclick="closeCustomAlert()" style="background: var(--neon-gold, #ffd700); color: #000; font-weight: 900; border: none; padding: 11px 28px;">[ ACKNOWLEDGE ]</button>
             </div>
         </div>
     </div>

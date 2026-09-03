@@ -405,6 +405,23 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Database Connection Middleware for Serverless/Express Environment
+app.use(async (req, res, next) => {
+    try {
+        if (!isDbMongo() && !db) {
+            if (!dbInitPromise) {
+                dbInitPromise = initialiseDBAndServer();
+            }
+            await dbInitPromise;
+        }
+    } catch (e) {
+        console.error('Middleware DB connect error:', e.message);
+    } finally {
+        dbInitPromise = null;
+    }
+    next();
+});
+
 // Multer Storage
 const multer = require('multer');
 
@@ -491,24 +508,33 @@ const Otp = mongoose.model('Otp', otpSchema);
 
 let isMongoConnected = false;
 let db = null;
+let dbInitPromise = null;
 const DBPath = path.join(__dirname, 'hackathon.db');
 
+function isDbMongo() {
+    return mongoose.connection && mongoose.connection.readyState === 1;
+}
+
 const initialiseDBAndServer = async () => {
-    const mongoUri = process.env.MONGODB_URI;
-    if (mongoUri && mongoUri.trim() !== '') {
+    if (isDbMongo()) {
+        isMongoConnected = true;
+        return;
+    }
+    const mongoUri = (process.env.MONGODB_URI || "mongodb+srv://jeshwanthv751_db_user:BqVftSj4VJzuts3h@cluster0.vy8bb6x.mongodb.net/?appName=Cluster0").trim();
+    if (mongoUri) {
         try {
-            await mongoose.connect(mongoUri.trim());
+            await mongoose.connect(mongoUri, {
+                serverSelectionTimeoutMS: 5000
+            });
             isMongoConnected = true;
             console.log('✅ Connected to MongoDB Atlas successfully!');
         } catch (err) {
             console.error('❌ MongoDB Atlas Connection Error:', err.message);
             console.log('⚠️ Falling back to local SQLite database...');
         }
-    } else {
-        console.log('ℹ️ MONGODB_URI is not set in .env. Will connect to MongoDB Atlas as soon as credentials are input.');
     }
 
-    if (!isMongoConnected) {
+    if (!isDbMongo() && !db) {
         try {
             db = await open({
                 filename: DBPath,
@@ -521,14 +547,17 @@ const initialiseDBAndServer = async () => {
     }
 
     if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
-        app.listen(PORT, () => {
-            console.log(`🚀 Server started at http://localhost:${PORT}/`);
-            if (isMongoConnected) {
-                console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
-            } else {
-                console.log(`📁 Database Engine: SQLite (Local Backup)`);
-            }
-        });
+        if (!app.get('server_started')) {
+            app.listen(PORT, () => {
+                console.log(`🚀 Server started at http://localhost:${PORT}/`);
+                if (isDbMongo()) {
+                    console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
+                } else {
+                    console.log(`📁 Database Engine: SQLite (Local Backup)`);
+                }
+            });
+            app.set('server_started', true);
+        }
     } else {
         console.log(`🚀 Vercel Serverless environment initialized.`);
     }
@@ -596,59 +625,83 @@ async function initDb() {
 // --- UNIFIED DATA ACCESS LAYER (MONGO ATLAS + SQLITE FALLBACK) ---
 
 async function getTeamCount() {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         return await Team.countDocuments();
     }
-    if (!db) return 0;
-    const result = await db.get('SELECT COUNT(*) as count FROM teams');
-    return result ? result.count : 0;
+    if (db) {
+        const result = await db.get('SELECT COUNT(*) as count FROM teams');
+        return result ? result.count : 0;
+    }
+    return 0;
 }
 
 async function getNextTeamId() {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         const count = await Team.countDocuments();
         const nextNum = count + 1;
         return `XB2026-${String(nextNum).padStart(4, '0')}`;
     }
-    const result = await db.get('SELECT COUNT(*) as count FROM teams');
-    const nextNum = (result && result.count ? result.count : 0) + 1;
-    return `XB2026-${String(nextNum).padStart(4, '0')}`;
+    if (db) {
+        const result = await db.get('SELECT COUNT(*) as count FROM teams');
+        const nextNum = (result && result.count ? result.count : 0) + 1;
+        return `XB2026-${String(nextNum).padStart(4, '0')}`;
+    }
+    return `XB2026-${String(Math.floor(1000 + Math.random() * 9000))}`;
 }
 
 async function findTeamByName(name) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         return await Team.findOne({ name: new RegExp('^' + name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
     }
-    if (!db) return null;
-    return await db.get('SELECT * FROM teams WHERE name = ? COLLATE NOCASE', [name]);
+    if (db) {
+        return await db.get('SELECT * FROM teams WHERE name = ? COLLATE NOCASE', [name]);
+    }
+    return null;
 }
 
 async function findTeamByEmail(email) {
-    if (isMongoConnected) {
-        return await Team.findOne({ email }).lean();
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail) return null;
+
+    if (isDbMongo()) {
+        try {
+            return await Team.findOne({ email: cleanEmail }).lean();
+        } catch (e) {
+            console.error('Error checking MongoDB for existing team:', e.message);
+        }
     }
-    if (!db) return null;
-    return await db.get('SELECT * FROM teams WHERE email = ?', [email]);
+    if (db) {
+        try {
+            return await db.get('SELECT * FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
+        } catch (e) {
+            console.error('Error checking SQLite for existing team:', e.message);
+        }
+    }
+    return null;
 }
 
 async function findTeamById(teamId) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         return await Team.findOne({ team_id: teamId }).lean();
     }
-    if (!db) return null;
-    return await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
+    if (db) {
+        return await db.get('SELECT * FROM teams WHERE team_id = ?', [teamId]);
+    }
+    return null;
 }
 
 async function findTeamByUTR(utr) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         return await Team.findOne({ transaction_id: utr }).lean();
     }
-    if (!db) return null;
-    return await db.get('SELECT team_id FROM teams WHERE transaction_id = ?', [utr]);
+    if (db) {
+        return await db.get('SELECT team_id FROM teams WHERE transaction_id = ?', [utr]);
+    }
+    return null;
 }
 
 async function getAllTeamsData() {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         const teams = await Team.find().lean();
         const fullData = [];
         for (const t of teams) {
@@ -657,30 +710,36 @@ async function getAllTeamsData() {
         }
         return fullData;
     }
-    const teams = await db.all(`SELECT * FROM teams`);
-    const fullData = [];
-    for (const team of teams) {
-        const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
-        fullData.push({ ...team, members });
+    if (db) {
+        const teams = await db.all(`SELECT * FROM teams`);
+        const fullData = [];
+        for (const team of teams) {
+            const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
+            fullData.push({ ...team, members });
+        }
+        return fullData;
     }
-    return fullData;
+    return [];
 }
 
 async function getTeamDataWithMembers(teamId) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         const team = await Team.findOne({ team_id: teamId }).lean();
         if (!team) return null;
         const members = await Member.find({ team_id: teamId }).lean();
         return { team: { ...team, id: team._id.toString() }, members };
     }
-    const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
-    if (!team) return null;
-    const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
-    return { team, members };
+    if (db) {
+        const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
+        if (!team) return null;
+        const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
+        return { team, members };
+    }
+    return null;
 }
 
 async function createTeamRecord({ teamName, email, event, day, transactionId, paymentProof, members }) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         const teamIdStr = await getNextTeamId();
         const newTeam = new Team({
             team_id: teamIdStr,
@@ -713,50 +772,58 @@ async function createTeamRecord({ teamName, email, event, day, transactionId, pa
         return { teamId: teamIdStr, teamDbId: newTeam._id.toString() };
     }
 
-    const tempId = 'TEMP_' + Date.now();
-    const result = await db.run(
-        `INSERT INTO teams (team_id, name, email, event, day, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
-        [tempId, teamName, email, event, day || "N/A", transactionId || "NOT_PROVIDED", paymentProof || ""]
-    );
-    const teamDbId = result.lastID;
-    const teamIdStr = `XB2026-${String(teamDbId).padStart(4, '0')}`;
-    await db.run(`UPDATE teams SET team_id = ? WHERE id = ?`, [teamIdStr, teamDbId]);
-
-    for (let i = 0; i < members.length; i++) {
-        const m = members[i];
-        const role = i === 0 ? 'LEADER' : 'MEMBER';
-        await db.run(
-            `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [teamDbId, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+    if (db) {
+        const tempId = 'TEMP_' + Date.now();
+        const result = await db.run(
+            `INSERT INTO teams (team_id, name, email, event, day, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
+            [tempId, teamName, email, event, day || "N/A", transactionId || "NOT_PROVIDED", paymentProof || ""]
         );
+        const teamDbId = result.lastID;
+        const teamIdStr = `XB2026-${String(teamDbId).padStart(4, '0')}`;
+        await db.run(`UPDATE teams SET team_id = ? WHERE id = ?`, [teamIdStr, teamDbId]);
+
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i];
+            const role = i === 0 ? 'LEADER' : 'MEMBER';
+            await db.run(
+                `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [teamDbId, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+            );
+        }
+        return { teamId: teamIdStr, teamDbId };
     }
-    return { teamId: teamIdStr, teamDbId };
+
+    throw new Error('Database server is initializing or unavailable. Please try again in a few seconds.');
 }
 
 async function updatePaymentStatus(teamId, status) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         await Team.updateOne({ team_id: teamId }, { payment_verified: status });
         return;
     }
-    await db.run(`UPDATE teams SET payment_verified = ? WHERE team_id = ?`, [status, teamId]);
+    if (db) {
+        await db.run(`UPDATE teams SET payment_verified = ? WHERE team_id = ?`, [status, teamId]);
+    }
 }
 
 async function updatePaymentProof(teamId, proofPath, transactionId) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         const updateDoc = { payment_proof: proofPath };
         if (transactionId) updateDoc.transaction_id = transactionId;
         await Team.updateOne({ team_id: teamId }, updateDoc);
         return;
     }
-    if (transactionId) {
-        await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [proofPath, transactionId, teamId]);
-    } else {
-        await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
+    if (db) {
+        if (transactionId) {
+            await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [proofPath, transactionId, teamId]);
+        } else {
+            await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
+        }
     }
 }
 
 async function updateTeamAndMembers(teamId, name, event, members) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         await Team.updateOne({ team_id: teamId }, { name, event });
         await Member.deleteMany({ team_id: teamId });
         for (let i = 0; i < members.length; i++) {
@@ -776,37 +843,41 @@ async function updateTeamAndMembers(teamId, name, event, members) {
         }
         return;
     }
-    const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
-    if (!team) throw new Error('Team not found');
-    await db.run(`UPDATE teams SET name = ?, event = ? WHERE id = ?`, [name, event, team.id]);
-    await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
-    for (let i = 0; i < members.length; i++) {
-        const m = members[i];
-        const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
-        await db.run(
-            `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
-        );
+    if (db) {
+        const team = await db.get(`SELECT * FROM teams WHERE team_id = ?`, [teamId]);
+        if (!team) throw new Error('Team not found');
+        await db.run(`UPDATE teams SET name = ?, event = ? WHERE id = ?`, [name, event, team.id]);
+        await db.run(`DELETE FROM members WHERE team_db_id = ?`, [team.id]);
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i];
+            const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
+            await db.run(
+                `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+            );
+        }
     }
 }
 
 async function deleteTeamRecord(teamId) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         await Team.deleteOne({ team_id: teamId });
         await Member.deleteMany({ team_id: teamId });
         await Attendance.deleteOne({ team_id: teamId });
         return;
     }
-    const team = await db.get(`SELECT id FROM teams WHERE team_id = ?`, [teamId]);
-    if (team) {
-        await db.run('DELETE FROM members WHERE team_db_id = ?', [team.id]);
-        await db.run('DELETE FROM teams WHERE id = ?', [team.id]);
-        await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
+    if (db) {
+        const team = await db.get(`SELECT id FROM teams WHERE team_id = ?`, [teamId]);
+        if (team) {
+            await db.run('DELETE FROM members WHERE team_db_id = ?', [team.id]);
+            await db.run('DELETE FROM teams WHERE id = ?', [team.id]);
+            await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
+        }
     }
 }
 
 async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
-    if (isMongoConnected) {
+    if (isDbMongo()) {
         await Attendance.updateOne(
             { team_id: teamId },
             { $setOnInsert: { team_id: teamId, team_name: teamName, team_leader_name: leaderName, team_leader_phone: leaderPhone, status: 'ABSENT' } },
@@ -814,8 +885,10 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
         );
         return;
     }
-    await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
-        [teamId, teamName, leaderName, leaderPhone]);
+    if (db) {
+        await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
+            [teamId, teamName, leaderName, leaderPhone]);
+    }
 }
 
 initialiseDBAndServer();
@@ -951,26 +1024,7 @@ function getEmailFooterHtml(includeWhatsApp = true) {
     `;
 }
 
-async function findTeamByEmail(email) {
-    const cleanEmail = (email || '').trim().toLowerCase();
-    if (!cleanEmail) return null;
 
-    if (isMongoConnected) {
-        try {
-            return await Team.findOne({ email: cleanEmail });
-        } catch (e) {
-            console.error('Error checking MongoDB for existing team:', e.message);
-        }
-    }
-    if (db) {
-        try {
-            return await db.get('SELECT * FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
-        } catch (e) {
-            console.error('Error checking SQLite for existing team:', e.message);
-        }
-    }
-    return null;
-}
 
 // Send OTP
 app.post('/api/auth/send-verification-otp', async (req, res) => {
@@ -1169,6 +1223,10 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
 
         const file = req.file;
         if (!teamName || !members) return res.status(400).json({ error: 'Missing required fields' });
+
+        if (!Array.isArray(members) || members.length < 2 || members.length > 4) {
+            return res.status(400).json({ error: 'Team size must be between 2 and 4 members (1 Leader + 1 to 3 Squad Members).' });
+        }
 
         const existingTeamName = await findTeamByName(teamName);
         if (existingTeamName) return res.status(400).json({ error: 'Team Name taken.' });
@@ -1434,9 +1492,9 @@ async function generateODPdfInternal(teamObj) {
             doc.on('error', err => reject(err));
 
             let members = [];
-            if (isMongoConnected) {
+            if (isDbMongo()) {
                 members = await Member.find({ team_id: teamObj.team_id }).lean();
-            } else {
+            } else if (db) {
                 members = await db.all('SELECT * FROM members WHERE team_db_id = ?', [teamObj.id]);
             }
 
@@ -1644,7 +1702,7 @@ app.get('/api/attendance/scan_info/:teamId', async (req, res) => {
                 college: leader.college || 'Unknown'
             },
             members: members.map(m => ({
-                id: isMongoConnected ? m._id.toString() : m.id,
+                id: isDbMongo() ? m._id.toString() : m.id,
                 name: m.name,
                 college: m.college,
                 status: m.attendance_status || 'ABSENT'
@@ -1660,13 +1718,13 @@ app.post('/api/attendance/mark_members', async (req, res) => {
         if (!data) return res.status(404).json({ error: 'Team not found' });
 
         for (const item of memberStatuses) {
-            if (isMongoConnected) {
+            if (isDbMongo()) {
                 if (item.status === 'PRESENT') {
                     await Member.findByIdAndUpdate(item.id, { attendance_status: 'PRESENT', entry_time: new Date() });
                 } else {
                     await Member.findByIdAndUpdate(item.id, { attendance_status: 'ABSENT' });
                 }
-            } else {
+            } else if (db) {
                 const currentMember = await db.get('SELECT attendance_status FROM members WHERE id = ?', [item.id]);
                 if (!currentMember) continue;
                 if (item.status === 'PRESENT' && currentMember.attendance_status !== 'PRESENT') {
@@ -1682,7 +1740,7 @@ app.post('/api/attendance/mark_members', async (req, res) => {
 
 app.get('/api/attendance/all', async (req, res) => {
     try {
-        if (isMongoConnected) {
+        if (isDbMongo()) {
             const members = await Member.find().lean();
             const rows = members.map(m => ({
                 id: m._id.toString(),
@@ -1695,20 +1753,23 @@ app.get('/api/attendance/all', async (req, res) => {
             }));
             return res.json(rows);
         }
-        const rows = await db.all(`
-            SELECT 
-                m.id, 
-                t.team_id, 
-                m.name, 
-                m.role, 
-                m.college, 
-                m.attendance_status as status, 
-                m.entry_time 
-            FROM members m 
-            JOIN teams t ON m.team_db_id = t.id 
-            ORDER BY t.team_id ASC
-        `);
-        res.json(rows);
+        if (db) {
+            const rows = await db.all(`
+                SELECT 
+                    m.id, 
+                    t.team_id, 
+                    m.name, 
+                    m.role, 
+                    m.college, 
+                    m.attendance_status as status, 
+                    m.entry_time 
+                FROM members m 
+                JOIN teams t ON m.team_db_id = t.id 
+                ORDER BY t.team_id ASC
+            `);
+            return res.json(rows);
+        }
+        res.json([]);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
