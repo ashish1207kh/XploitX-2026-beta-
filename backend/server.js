@@ -8,6 +8,7 @@ try {
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const bcrypt = require('bcrypt');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const bodyParser = require('body-parser');
@@ -404,6 +405,26 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(os.tmpdir(), 'uploads')));
+app.use('/uploads', express.static(os.tmpdir()));
+
+// Explicit file serving route fallback for uploads (especially on Vercel/serverless)
+app.get('/uploads/:filename', (req, res) => {
+    const filename = path.basename(req.params.filename);
+    const localPath = path.join(__dirname, 'uploads', filename);
+    const tmpPath = path.join(os.tmpdir(), 'uploads', filename);
+    const directTmpPath = path.join(os.tmpdir(), filename);
+
+    if (fs.existsSync(localPath)) {
+        return res.sendFile(localPath);
+    } else if (fs.existsSync(tmpPath)) {
+        return res.sendFile(tmpPath);
+    } else if (fs.existsSync(directTmpPath)) {
+        return res.sendFile(directTmpPath);
+    } else {
+        return res.status(404).send('File not found');
+    }
+});
 
 // Database Connection Middleware for Serverless/Express Environment
 app.use(async (req, res, next) => {
@@ -422,16 +443,33 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Multer Storage
+// Multer Storage - Serverless Safe (Vercel / Local)
 const multer = require('multer');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = path.join(__dirname, 'uploads');
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
+        let uploadDir;
+        if (process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
+            uploadDir = path.join(os.tmpdir(), 'uploads');
+        } else {
+            uploadDir = path.join(__dirname, 'uploads');
         }
-        cb(null, dir);
+
+        try {
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+            cb(null, uploadDir);
+        } catch (err) {
+            console.warn('Primary upload dir creation failed, falling back to os.tmpdir():', err.message);
+            const fallbackDir = os.tmpdir();
+            try {
+                if (!fs.existsSync(fallbackDir)) {
+                    fs.mkdirSync(fallbackDir, { recursive: true });
+                }
+            } catch (e) {}
+            cb(null, fallbackDir);
+        }
     },
     filename: (req, file, cb) => {
         const teamId = req.body.teamId || 'unknown-' + Date.now();
