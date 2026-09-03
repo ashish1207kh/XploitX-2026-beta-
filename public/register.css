@@ -1321,6 +1321,40 @@ body {
         margin-bottom: 16px;
     }
 
+    /* Step Tracker Bar Mobile Fitting Safeguard */
+    .form-step-tracker {
+        padding: 8px 6px;
+        gap: 3px;
+        justify-content: space-between;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .step-item {
+        gap: 4px;
+        font-size: 0.68rem;
+        letter-spacing: 0;
+        flex-shrink: 0;
+    }
+
+    .step-num {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+        flex-shrink: 0;
+    }
+
+    .step-text {
+        font-size: 0.66rem;
+        letter-spacing: 0.2px;
+    }
+
+    .step-line {
+        flex-grow: 1;
+        max-width: 20px;
+        min-width: 6px;
+    }
+
     .form-section-block {
         padding: 14px 10px;
         margin-bottom: 14px;
@@ -1426,6 +1460,31 @@ body {
 
     .registration-form-card {
         padding: 14px 8px;
+    }
+
+    .form-step-tracker {
+        padding: 6px 3px;
+        gap: 2px;
+    }
+
+    .step-item {
+        gap: 2px;
+    }
+
+    .step-num {
+        width: 16px;
+        height: 16px;
+        font-size: 0.6rem;
+    }
+
+    .step-text {
+        font-size: 0.58rem;
+        letter-spacing: 0;
+    }
+
+    .step-line {
+        max-width: 12px;
+        min-width: 4px;
     }
 
     .dropzone-preview-content {
