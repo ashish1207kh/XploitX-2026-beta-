@@ -1748,26 +1748,16 @@
                 const img = document.createElement('img');
                 img.src = proofUrl;
                 img.style.maxWidth = "100%";
-                img.style.maxHeight = "380px";
+                img.style.maxHeight = "420px";
+                img.style.objectFit = "contain";
+                img.style.display = "block";
+                img.style.margin = "0 auto";
                 img.style.borderRadius = "6px";
                 img.style.border = "1.5px solid var(--doom-green)";
-                img.style.cursor = "pointer";
-                img.title = "Click to inspect in full screen window";
                 img.onerror = () => {
                     imgContainer.innerHTML = `<span style="color:var(--deep-magenta); font-family:var(--font-mono); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> FILE EXPIRED / NOT FOUND ON DISK</span>`;
                 };
-                img.onclick = () => {
-                    const win = window.open();
-                    if (win) {
-                        win.document.write(`<html><head><title>${team.team_id} - Payment Proof</title></head><body style="margin:0; background:#050814; display:flex; justify-content:center; align-items:center; min-height:100vh;"><img src="${proofUrl}" style="max-width:95vw; max-height:95vh; object-fit:contain; border:2px solid #00ff66; border-radius:8px;"></body></html>`);
-                    }
-                };
                 imgContainer.appendChild(img);
-
-                const openTabBtn = document.createElement('div');
-                openTabBtn.style.marginTop = "8px";
-                openTabBtn.innerHTML = `<button onclick="const win = window.open(); if(win){ win.document.write('<html><head><title>${team.team_id} - Payment Proof</title></head><body style=\\'margin:0; background:#050814; display:flex; justify-content:center; align-items:center; min-height:100vh;\\'><img src=\\'${proofUrl}\\' style=\\'max-width:95vw; max-height:95vh; object-fit:contain; border:2px solid #00ff66; border-radius:8px;\\'></body></html>'); }" class="action-btn-hud action-btn-green" style="padding: 4px 10px; font-size: 0.78rem;"><i class="fas fa-external-link-alt"></i> [ EXPAND IN NEW WINDOW ]</button>`;
-                imgContainer.appendChild(openTabBtn);
             } else {
                 imgContainer.innerHTML = `<span style="color:var(--deep-magenta); font-family:var(--font-mono); font-weight:bold;">NO PAYMENT PROOF UPLOADED YET</span>`;
             }

@@ -301,12 +301,12 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 5. UTR Number field (Alphanumeric, Uppercase, Max 20)
+    // 5. UTR Number field (Numbers only, Max 30 digits)
     document.querySelectorAll('#utrNumber').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 20);
+                this.value = this.value.replace(/\D/g, '').slice(0, 30);
             });
         }
     });
@@ -626,7 +626,12 @@ function initOtpFlow() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, otp: otp })
             });
-            const data = await res.json();
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (e) {
+                console.error('Non-JSON response from server:', e);
+            }
 
             if (res.ok && data.success) {
                 isEmailVerified = true;
@@ -647,11 +652,11 @@ function initOtpFlow() {
                 verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
                 emailInput.parentElement.parentElement.appendChild(verifiedBadge);
             } else {
-                setFeedback(`Invalid OTP code! ${data.error || 'Please check and enter the correct code.'}`, false);
+                setFeedback(data.error || 'Invalid OTP code! Please check and enter the correct code.', false);
             }
         } catch (err) {
             console.error('Error verifying OTP:', err);
-            setFeedback('Failed to connect to server during OTP verification.', false);
+            setFeedback('Server verification error. Please try again.', false);
         } finally {
             btnVerifyOtp.disabled = false;
             btnVerifyOtp.innerHTML = '<i class="fas fa-check"></i> VERIFY CODE';
@@ -873,7 +878,7 @@ function validateAge(ageStr) {
 }
 
 function validateUTR(utr) {
-    return /^[a-zA-Z0-9]{12,25}$/.test(utr);
+    return /^\d{6,30}$/.test(utr);
 }
 
 function markInputError(inputEl, msg) {
@@ -1179,7 +1184,7 @@ function initFormSubmission() {
         // 10. UTR Number Validation
         const utrNumber = utrNumberInput.value.trim();
         if (!utrNumber || !validateUTR(utrNumber)) {
-            setError(utrNumberInput, 'Please enter a valid 12-digit UTR / Bank Reference Number.');
+            setError(utrNumberInput, 'Please enter a valid numeric UTR ID.');
         }
 
         // 11. Payment Screenshot File Validation (< 1 MB & JPG/JPEG/PNG)
@@ -1249,7 +1254,7 @@ function initFormSubmission() {
                 return;
             }
 
-            const generatedTeamId = data.teamId || `XB2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            const generatedTeamId = data.teamId || `XCTF-26-${Math.floor(1000 + Math.random() * 9000)}`;
 
             // Populate and show HUD Confirmation Modal
             document.getElementById('modal-team-name').textContent = teamName;
