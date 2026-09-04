@@ -20,6 +20,17 @@ const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+// --- PRODUCTION CHANGE & DESTRUCTIVE OPERATION PROTECTION GUARD ---
+function checkProductionSafety(operationName, isDestructive = false) {
+    if (process.env.NODE_ENV === 'production' && isDestructive) {
+        if (process.env.ALLOW_DESTRUCTIVE_PRODUCTION_OPERATIONS !== 'CONFIRMED_AND_APPROVED') {
+            const errMessage = `[SECURITY GUARD] Destructive operation "${operationName}" blocked in production! Requires explicit env ALLOW_DESTRUCTIVE_PRODUCTION_OPERATIONS="CONFIRMED_AND_APPROVED".`;
+            console.error(errMessage);
+            throw new Error(errMessage);
+        }
+    }
+}
+
 // --- REAL-TIME AUDIT LOGGING SYSTEM (KOLKATA TIMEZONE: Asia/Kolkata IST) ---
 if (!global.activityLogs) {
     global.activityLogs = [];
@@ -768,9 +779,20 @@ async function getTeamCount() {
 
 async function getNextTeamId() {
     if (isDbMongo()) {
-        const count = await Team.countDocuments();
-        const nextNum = count + 1;
-        return `XB2026-${String(nextNum).padStart(4, '0')}`;
+        const lastTeam = await Team.findOne({}).sort({ _id: -1 }).lean();
+        let nextNum = 1;
+        if (lastTeam && lastTeam.team_id) {
+            const match = lastTeam.team_id.match(/\d+/);
+            if (match) {
+                nextNum = parseInt(match[0], 10) + 1;
+            }
+        }
+        let candidateId = `XB2026-${String(nextNum).padStart(4, '0')}`;
+        while (await Team.exists({ team_id: candidateId })) {
+            nextNum++;
+            candidateId = `XB2026-${String(nextNum).padStart(4, '0')}`;
+        }
+        return candidateId;
     }
     if (db) {
         const result = await db.get('SELECT COUNT(*) as count FROM teams');
@@ -1224,6 +1246,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 // Admin Clear Activity Log Endpoint
 app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
     try {
+        checkProductionSafety('CLEAR_ACTIVITY_LOG', true);
         await initialiseDBAndServer();
 
         global.activityLogs = [];
