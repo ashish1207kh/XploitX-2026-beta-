@@ -807,9 +807,19 @@ body {
 
 .payment-grid-hud {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 200px minmax(0, 1fr);
     gap: 20px;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.payment-inputs-col {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .payment-qr-box {
@@ -1874,12 +1884,15 @@ body.loader-locked {
     background: rgba(2, 6, 18, 0.9);
     border: 2px dashed rgba(0, 255, 102, 0.4);
     border-radius: 8px;
-    padding: 20px 16px;
+    padding: 18px 14px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
     overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .hud-file-dropzone:hover, .hud-file-dropzone.dragover {
@@ -1982,13 +1995,17 @@ body.loader-locked {
 .dropzone-preview-content {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     text-align: left;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .preview-thumbnail-wrapper {
-    width: 60px;
-    height: 60px;
+    width: 54px;
+    height: 54px;
     border-radius: 6px;
     overflow: hidden;
     border: 2px solid var(--neon-green);
@@ -2004,7 +2021,8 @@ body.loader-locked {
 }
 
 .preview-info-col {
-    flex-grow: 1;
+    flex: 1 1 0%;
+    min-width: 0;
     overflow: hidden;
 }
 
@@ -2018,16 +2036,22 @@ body.loader-locked {
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .preview-filename {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    max-width: 100%;
 }
 
 .preview-filesize {
