@@ -62,6 +62,12 @@ async function logActivity(action, details = '') {
         global.activityLogs.pop();
     }
 
+    try {
+        if (!isDbMongo() && !db) {
+            await initialiseDBAndServer();
+        }
+    } catch (e) {}
+
     if (isDbMongo() && mongoose.models.ActivityLog) {
         try {
             await new mongoose.models.ActivityLog({
@@ -1167,6 +1173,8 @@ app.post('/api/admin/login', (req, res) => {
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
+        await initialiseDBAndServer();
+
         let logs = [];
 
         if (isDbMongo() && mongoose.models.ActivityLog) {
@@ -1210,6 +1218,43 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     } catch (err) {
         console.error('Error serving activity log:', err);
         res.status(500).json({ error: 'Failed to retrieve system audit log: ' + err.message });
+    }
+});
+
+// Admin Clear Activity Log Endpoint
+app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
+    try {
+        await initialiseDBAndServer();
+
+        global.activityLogs = [];
+
+        if (isDbMongo() && mongoose.models.ActivityLog) {
+            try {
+                await mongoose.models.ActivityLog.deleteMany({});
+            } catch (err) {
+                console.error('Error clearing MongoDB logs:', err.message);
+            }
+        }
+
+        if (db) {
+            try {
+                await db.run('DELETE FROM activity_logs');
+            } catch (err) {}
+        }
+
+        const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
+        try {
+            if (fs.existsSync(logFilePath)) {
+                fs.writeFileSync(logFilePath, '', 'utf8');
+            }
+        } catch (e) {}
+
+        await logActivity('LOGS CLEARED', `Activity audit logs manually cleared by admin`);
+
+        res.json({ message: 'Activity logs cleared successfully' });
+    } catch (err) {
+        console.error('Error clearing activity logs:', err);
+        res.status(500).json({ error: 'Failed to clear activity log: ' + err.message });
     }
 });
 

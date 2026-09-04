@@ -706,11 +706,6 @@
 
 <body>
 
-    <!-- Floating Register Button -->
-    <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
-        <span class="reg-btn-status"><span class="pulse-dot"></span> REGISTRATION OPEN</span>
-        <span class="reg-btn-label">[ REGISTER NOW ] <i class="fas fa-arrow-right"></i></span>
-    </a>
 
     <!-- Background Layers: Matrix Canvas & Cyber Grid Overlay -->
     <canvas id="matrix-bg"
@@ -718,7 +713,7 @@
     <div class="cyber-grid-overlay"></div>
 
     <!-- ==========================================
-         TOP ROW: COLLEGE DETAILS & ACCREDITATION
+         TOP ROW: COLLEGE DETAILS (LOGO ON LEFT)
          ========================================== -->
     <header class="college-header-wrapper">
         <div class="college-info-block">
@@ -733,7 +728,7 @@
             </div>
         </div>
 
-        <!-- Tag Strip Marquee -->
+        <!-- Accreditations & Recognitions Marquee Banner -->
         <div class="logo-marquee-container">
             <div class="logo-marquee-content">
                 <img src="tag.png" alt="Accreditation Logos">
@@ -743,12 +738,12 @@
             </div>
         </div>
 
-        <!-- Live News Strip -->
+        <!-- Live News Marquee -->
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
-                    <span>⚡ MULTIVERSE INCURSION DETECTED ... XPLOITX 2.0 BETA ... COMMAND OVERWATCH ACTIVE ... VERIFICATION PORTAL ENGAGED ... </span>
-                    <span>⚡ MULTIVERSE INCURSION DETECTED ... XPLOITX 2.0 BETA ... COMMAND OVERWATCH ACTIVE ... VERIFICATION PORTAL ENGAGED ... </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹250 / HEAD (INCLUDES LUNCH) • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹250 / HEAD (INCLUDES LUNCH) • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
                 </a>
             </div>
         </div>
@@ -856,9 +851,6 @@
                     </button>
                     <button id="activity-log-btn" onclick="openLogModal()" class="action-btn-hud action-btn-cyan" style="display:none;">
                         <i class="fas fa-list-alt"></i> [ ACTIVITY LOG ]
-                    </button>
-                    <button id="logout-btn" onclick="logoutAdmin()" class="action-btn-hud action-btn-magenta">
-                        <i class="fas fa-sign-out-alt"></i> [ LOGOUT ]
                     </button>
                 </div>
             </div>
@@ -1009,9 +1001,13 @@
     <!-- ACTIVITY LOG MODAL -->
     <div id="log-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 850px; height: 80vh; display: flex; flex-direction: column;">
-            <div class="modal-header-hud">
+            <div class="modal-header-hud" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="modal-title-hud"><i class="fas fa-list-alt text-cyan"></i> SERVER ACTIVITY AUDIT LOG</div>
-                <button onclick="closeLogModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button onclick="fetchActivityLogs()" class="modal-close-btn" style="color: var(--neon-green); border-color: var(--neon-green); font-size: 0.8rem; padding: 4px 10px;">[ 🔄 REFRESH ]</button>
+                    <button onclick="clearActivityLogs()" class="modal-close-btn" style="color: #ff4757; border-color: #ff4757; font-size: 0.8rem; padding: 4px 10px;">[ 🗑️ CLEAR ]</button>
+                    <button onclick="closeLogModal()" class="modal-close-btn" style="font-size: 0.8rem; padding: 4px 10px;">[ ✕ CLOSE ]</button>
+                </div>
             </div>
             <pre id="log-content" style="flex: 1; overflow-y: auto; color: var(--doom-green); font-family: 'Share Tech Mono', monospace; font-size: 0.88rem; background: rgba(0,5,10,0.95); padding: 18px; border: 1px solid var(--border-subtle); border-radius: 6px; white-space: pre-wrap; margin: 0;"></pre>
         </div>
@@ -1768,10 +1764,13 @@
 
         async function openLogModal() {
             const modal = document.getElementById('log-modal');
+            modal.style.display = 'flex';
+            await fetchActivityLogs();
+        }
+
+        async function fetchActivityLogs() {
             const content = document.getElementById('log-content');
             content.innerText = "Connecting to server activity log stream...";
-            modal.style.display = 'flex';
-
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
                 if (res.ok) {
@@ -1784,6 +1783,27 @@
             } catch (e) {
                 content.innerText = "OFFLINE MODE / ERROR: " + e.message;
             }
+        }
+
+        async function clearActivityLogs() {
+            showCustomConfirm("Are you sure you want to CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
+                const content = document.getElementById('log-content');
+                content.innerText = "Clearing server activity logs...";
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, { method: 'POST' });
+                    if (res.ok) {
+                        await fetchActivityLogs();
+                        showCustomAlert("System activity logs have been cleared.");
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        showCustomAlert("Failed to clear logs: " + (errData.error || "Server error"));
+                        await fetchActivityLogs();
+                    }
+                } catch (e) {
+                    showCustomAlert("Error: " + e.message);
+                    await fetchActivityLogs();
+                }
+            });
         }
 
         function closeLogModal() {

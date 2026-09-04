@@ -176,6 +176,31 @@ body::after {
     background: linear-gradient(135deg, rgba(0, 255, 102, 0.25) 0%, rgba(0, 200, 80, 0.4) 100%);
 }
 
+.reg-btn-offer {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 800;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: rgba(5, 12, 28, 0.95);
+    border: 1px solid var(--doom-gold);
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 10px var(--doom-gold-glow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
 .reg-btn-status {
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -1582,6 +1607,7 @@ section {
         align-items: flex-start;
         gap: 12px;
     }
+
     .organizer-person-phone {
         width: 100%;
         justify-content: center;
@@ -1918,7 +1944,9 @@ section {
 }
 
 @media (max-width: 768px) {
-    html, body {
+
+    html,
+    body {
         overflow-x: hidden !important;
         width: 100%;
         max-width: 100vw;
@@ -2044,15 +2072,15 @@ section {
         z-index: 100001;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        
+
         /* Smooth Entrance Fade & Scale/Slide */
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
         pointer-events: none;
-        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                    visibility 0.3s ease;
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            visibility 0.3s ease;
     }
 
     .nav-links.open {
@@ -2345,6 +2373,21 @@ section {
         width: 100%;
     }
 
+    .hero-early-bird-banner {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        gap: 6px;
+        letter-spacing: 0.8px;
+        max-width: calc(100vw - 20px);
+        box-sizing: border-box;
+        margin: 16px 0 20px 0;
+    }
+
+    .hero-early-bird-banner .banner-price {
+        padding: 2px 8px;
+        font-size: 0.85rem;
+    }
+
     .joint-separator {
         display: none;
     }
@@ -2430,6 +2473,16 @@ section {
         min-height: 44px;
         max-width: calc(100vw - 24px);
         box-sizing: border-box;
+    }
+
+    .reg-btn-offer {
+        font-size: 0.52rem;
+        padding: 2px 6px;
+        letter-spacing: 0.3px;
+        bottom: calc(100% + 5px);
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 24px);
     }
 
     .reg-btn-label {
@@ -2696,7 +2749,7 @@ body.loader-locked .register-floating-btn {
 .loader-bg-grid {
     position: absolute;
     inset: 0;
-    background-image: 
+    background-image:
         linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
     background-size: 40px 40px;
@@ -2936,9 +2989,19 @@ body.loader-locked .register-floating-btn {
 }
 
 @keyframes scanPass {
-    0% { left: -40%; opacity: 0; }
-    50% { opacity: 1; }
-    100% { left: 100%; opacity: 0; }
+    0% {
+        left: -40%;
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
 }
 
 .loader-granted-text {
@@ -2979,6 +3042,7 @@ body.loader-locked .register-floating-btn {
         filter: drop-shadow(0 0 15px rgba(0, 255, 65, 0.5));
         transform: scale(0.99);
     }
+
     100% {
         filter: drop-shadow(0 0 28px rgba(0, 255, 65, 0.85));
         transform: scale(1.01);
@@ -2990,13 +3054,13 @@ body.loader-locked .register-floating-btn {
     #loader-overlay.xploitx-access-loader {
         transition: opacity 0.2s linear;
     }
-    
+
     .cyber-ring-svg,
     .loader-horizontal-scan,
     #loader-particles-canvas {
         display: none !important;
     }
-    
+
     .loader-granted-reveal-box {
         transition: opacity 0.2s linear !important;
         transform: none !important;

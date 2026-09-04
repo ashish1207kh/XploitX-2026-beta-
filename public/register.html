@@ -14,46 +14,75 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Registration Specific Avengers Doomsday Design -->
+    <link rel="stylesheet" href="styles.css?v=2.5">
     <link rel="stylesheet" href="register.css?v=2.5">
     <link rel="icon" type="image/png" href="logo_favicon.png">
 </head>
 
 <body>
 
-
-
     <!-- Interactive Background Canvas (Matrix Circuit & Starfield Particle Grid) -->
     <canvas id="cyber-canvas"></canvas>
     <div class="cyber-scanline-overlay"></div>
     <div class="circuit-grid-overlay"></div>
 
-    <div class="registration-wrapper">
-        <!-- ==========================================
-             1. TOP HEADER ROW (AVENGERS HUD)
-             ========================================== -->
-        <header class="hud-top-header">
-            <!-- Top Left: College Seal & Identity -->
-            <a href="index.html" class="college-identity-group" title="Back to Home Portal">
-                <img src="PEC Logo.png" alt="Prathyusha Engineering College" class="pec-seal-logo">
-                <div class="college-identity-text">
-                    <h1 class="college-name">PRATHYUSHA ENGINEERING COLLEGE</h1>
-                    <div class="college-tagline">(AN AUTONOMOUS INSTITUTION)</div>
+    <!-- ==========================================
+         TOP ROW: COLLEGE DETAILS (LOGO ON LEFT)
+         ========================================== -->
+    <header class="college-header-wrapper">
+        <div class="college-info-block">
+            <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
+            <div class="college-text-details">
+                <h1 class="header-college-title">PRATHYUSHA ENGINEERING COLLEGE</h1>
+                <div class="header-college-subtitle">(AN AUTONOMOUS INSTITUTION)</div>
+                <div class="header-accreditation-text">
+                    Approved by AICTE & Affiliated to Anna University, NAAC "A" Grade Accredited Institution<br>
+                    National Board of Accreditation (NBA) Accredited Programmes
                 </div>
-            </a>
-
-            <!-- Top Center: Department Title -->
-            <div class="dept-title-badge">
-                <span class="dept-bracket">[</span>
-                <span class="dept-name">DEPARTMENT OF CYBER SECURITY</span>
-                <span class="dept-bracket">]</span>
             </div>
+        </div>
 
-            <!-- Top Right: Live Status Pill -->
-            <div class="reg-status-pill">
-                <span class="live-pulse-dot"></span>
-                <span class="status-label">REGISTRATION OPEN</span>
+        <!-- Accreditations & Recognitions Marquee Banner -->
+        <div class="logo-marquee-container">
+            <div class="logo-marquee-content">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
             </div>
-        </header>
+        </div>
+
+        <!-- Live News Marquee -->
+        <div class="news-marquee-container">
+            <div class="news-marquee-content">
+                <a href="register.html">
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹250 / HEAD (INCLUDES LUNCH) • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹250 / HEAD (INCLUDES LUNCH) • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         1. CLEAN MINIMALIST CENTERED NAVBAR
+         ========================================== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <ul class="nav-links" id="nav-links-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> HOME</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> ABOUT</a></li>
+                <li><a href="rules.html" class="nav-link"><i class="fas fa-gavel"></i> RULES</a></li>
+                <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> PRIZES</a></li>
+                <li><a href="register.html" class="nav-link active"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+            </ul>
+
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="registration-wrapper">
 
         <!-- ==========================================
              2. HERO LOGO & EVENT SUBTITLE
@@ -91,7 +120,7 @@
                     
                     <div class="mission-item">
                         <div class="mission-key">DURATION</div>
-                        <div class="mission-val">24 HOURS NON-STOP</div>
+                        <div class="mission-val">24 HOURS CTF</div>
                     </div>
 
                     <div class="mission-item">
@@ -117,8 +146,8 @@
 
                     <h4 class="hud-card-title" style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-calculator"></i> TICKET SUMMARY</h4>
                     <div class="fee-row">
-                        <span>FEE PER HEAD:</span>
-                        <strong class="text-green">₹250</strong>
+                        <span>EARLY BIRD FEE:</span>
+                        <strong class="text-green">₹250 <span style="font-size: 0.72rem; color: var(--doom-gold); font-weight: normal;">(INCLUDES LUNCH)</span></strong>
                     </div>
                     <div class="fee-row">
                         <span>ACTIVE MEMBERS:</span>
@@ -134,7 +163,7 @@
             </aside>
 
             <!-- CENTER COLUMN: Comprehensive Registration Terminal -->
-            <section class="hud-col hud-col-center">
+            <div class="hud-col hud-col-center">
                 <div class="hud-card registration-form-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -321,7 +350,7 @@
                         <!-- SECTION 4: PAYMENT VERIFICATION & PROOF UPLOAD -->
                         <div class="form-section-block payment-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (₹250 / HEAD)
+                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (EARLY BIRD: ₹250 / HEAD - INCLUDES LUNCH)
                             </div>
 
                             <div class="payment-grid-hud">
@@ -413,7 +442,7 @@
 
                     </form>
                 </div>
-            </section>
+            </div>
 
             <!-- RIGHT COLUMN: Event Intel & Secure Channel -->
             <aside class="hud-col hud-col-right">
@@ -455,8 +484,8 @@
                             <i class="fas fa-ticket-alt"></i>
                         </div>
                         <div class="meta-text-box">
-                            <div class="meta-label">ENTRY FEE</div>
-                            <div class="meta-value text-green">₹250 / HEAD</div>
+                            <div class="meta-label">ENTRY FEE (EARLY BIRD)</div>
+                            <div class="meta-value text-green">₹250 / HEAD <span style="font-size: 0.76rem; color: var(--doom-gold); font-weight: normal; display: block;">(INCLUDES LUNCH)</span></div>
                         </div>
                     </div>
 
