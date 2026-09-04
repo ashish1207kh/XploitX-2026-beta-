@@ -1295,44 +1295,48 @@ section {
 
 .partner-card-link {
     text-decoration: none;
+    display: inline-block;
 }
 
 .partner-logo-box {
     width: 140px;
     height: 140px;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0;
+    aspect-ratio: 1 / 1;
+    background: rgba(10, 20, 32, 0.75) !important;
+    border: 1.5px solid rgba(0, 255, 102, 0.35) !important;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    backdrop-filter: none;
-    transition: all 0.3s ease;
-    box-shadow: none !important;
+    padding: 12px;
+    backdrop-filter: blur(8px);
+    transition: all 0.35s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .partner-logo-box:hover {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: translateY(-4px);
+    background: rgba(15, 30, 44, 0.9) !important;
+    border-color: var(--doom-green) !important;
+    box-shadow: 0 0 22px rgba(0, 255, 102, 0.5) !important;
+    transform: translateY(-5px) scale(1.03);
 }
 
 .partner-logo-img {
+    width: 100%;
+    height: 100%;
     max-width: 100%;
     max-height: 100%;
-    width: auto;
-    height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+    border-radius: 6px;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
     transition: all 0.3s ease;
 }
 
 .partner-logo-box:hover .partner-logo-img {
-    filter: drop-shadow(0 0 14px rgba(0, 255, 102, 0.85)) brightness(1.15);
-    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(0, 255, 102, 0.85)) brightness(1.1);
+    transform: scale(1.04);
 }
 
 /* ========================================================
@@ -1697,18 +1701,17 @@ section {
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
-    max-width: 90%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 96%;
+    width: max-content;
     background: var(--bg-deep);
     border: 1.5px solid var(--doom-green);
     color: var(--doom-green);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.62rem;
     font-weight: 700;
-    padding: 3px 12px;
+    padding: 3px 8px;
     border-radius: 20px;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
     z-index: 2;
 }
@@ -2404,22 +2407,29 @@ section {
     }
 
     .partner-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
         width: 100%;
     }
 
     .partner-logo-box {
-        width: 120px;
-        height: 120px;
-        padding: 8px;
+        width: 110px;
+        height: 110px;
+        aspect-ratio: 1 / 1;
+        padding: 10px;
         box-sizing: border-box;
-        border: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
+        border: 1.5px solid rgba(0, 255, 102, 0.35) !important;
+        background: rgba(10, 20, 32, 0.75) !important;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
     }
 
     .partner-logo-img {
+        width: 100%;
+        height: 100%;
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;

@@ -165,10 +165,10 @@ For detailed disaster recovery policies and production safety rules, refer to [D
 - **Mrs. Aswini** — Assistant Professor
 
 ### Student Lead Coordinators
-- **Ashish N**, **Madhumitha Narayanan** — Overall Student Coordinators
-- **Jesin Milesh S** — Registration Head (`+91 74184 31480`)
-- **Jeshwanth V**, **Libinesh R U** — Marketing Heads
+- **Ashish N**, **Madhumitha Narayanan** — Overall Coordinators
 - **Amuthini K**, **Niranjan M** — CTF Heads
+- **Jesin Milesh S** — Registration & Technical Head (`+91 74184 31480`)
+- **Libinesh R U**, **Jeshwanth V** — Marketing Heads
 
 ---
 
