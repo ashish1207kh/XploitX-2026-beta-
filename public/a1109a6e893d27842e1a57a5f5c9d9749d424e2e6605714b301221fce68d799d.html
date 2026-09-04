@@ -1442,8 +1442,6 @@
             let success = false;
             let authenticatedUser = 'Administrator';
             let sessionToken = '';
-            let errorMessage = 'Invalid Username or Password.';
-
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                     method: 'POST',
