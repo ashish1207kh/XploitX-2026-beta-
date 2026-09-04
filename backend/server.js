@@ -66,7 +66,9 @@ function getKolkataTimestamp() {
 
 async function logActivity(action, details = '') {
     const timestamp = getKolkataTimestamp();
-    const formattedLine = `[${timestamp}] ${action.toUpperCase()}${details ? ': ' + details : ''}`;
+    const cleanAction = String(action || '').replace(/[\r\n\t]/g, ' ').trim().toUpperCase();
+    const cleanDetails = String(details || '').replace(/[\r\n\t]/g, ' ').trim();
+    const formattedLine = `[${timestamp}] ${cleanAction}${cleanDetails ? ': ' + cleanDetails : ''}`;
     console.log(`[AUDIT LOG] ${formattedLine}`);
 
     if (!global.activityLogs) {
@@ -494,6 +496,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
 }
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = process.env.PORT || 3000;
 
 // Security Headers (Helmet)
@@ -541,9 +544,15 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '5mb' }));
 
 // NoSQL Injection Sanitization (HIGH-01)
-app.use(mongoSanitize({
-    replaceWith: '_'
-}));
+app.use((req, res, next) => {
+    if (req.body && typeof req.body === 'object') {
+        mongoSanitize.sanitize(req.body, { replaceWith: '_' });
+    }
+    if (req.params && typeof req.params === 'object') {
+        mongoSanitize.sanitize(req.params, { replaceWith: '_' });
+    }
+    next();
+});
 
 // Rate Limiters (HIGH-02)
 const adminLoginLimiter = rateLimit({
@@ -805,6 +814,8 @@ const initialiseDBAndServer = async () => {
         return;
     }
     const mongoUri = (process.env.MONGODB_URI || "").trim();
+    const isProductionEnv = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
+
     if (mongoUri) {
         try {
             await mongoose.connect(mongoUri, {
@@ -814,11 +825,16 @@ const initialiseDBAndServer = async () => {
             console.log('✅ Connected to MongoDB Atlas successfully!');
         } catch (err) {
             console.error('❌ MongoDB Atlas Connection Error:', err.message);
-            console.log('⚠️ Falling back to local SQLite database...');
+            if (isProductionEnv) {
+                console.error('[SECURITY GUARD] Production environment requires MongoDB Atlas. Silent SQLite fallback disabled to prevent data divergence.');
+                return;
+            } else {
+                console.log('⚠️ Falling back to local SQLite database in development...');
+            }
         }
     }
 
-    if (!isDbMongo() && !db) {
+    if (!isDbMongo() && !db && !isProductionEnv) {
         try {
             db = await open({
                 filename: DBPath,
@@ -1312,8 +1328,10 @@ const verifyAdmin = (req, res, next) => {
         return res.status(401).json({ error: 'Access Denied: No Token Provided' });
     }
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
+    // Explicitly enforce allowed algorithms to block algorithm confusion attacks (e.g. alg: none)
+    jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
         if (err || !user || !user.username || user.role !== 'admin') {
+            logActivity('ADMIN AUTH FAILURE', `Invalid or rejected token attempt from IP: ${req.ip || req.socket.remoteAddress}`);
             return res.status(403).json({ error: 'Access Denied: Invalid or Expired Token' });
         }
         req.user = user;
@@ -1382,13 +1400,15 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
             }
         }
 
+        const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || req.socket.remoteAddress || '127.0.0.1')).replace(/^::ffff:/, '');
+
         if (isValid) {
             const canonicalUser = canonicalMap[cleanUsername] || username;
-            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
-            const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
+            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console from IP: ${clientIp}`);
+            const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h', algorithm: 'HS256' });
             res.json({ success: true, token: token, user: canonicalUser });
         } else {
-            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
+            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt from IP: ${clientIp}`);
             res.status(401).json({ error: 'Invalid Credentials' });
         }
     } catch (err) {
@@ -1464,7 +1484,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 
         const logOutput = logs.length > 0 
             ? logs.join('\n') 
-            : `[ADMIN AUDIT LOG - ${getKolkataTimestamp()}]\nNo admin activities recorded yet on doom.html console.`;
+            : `[ADMIN AUDIT LOG - ${getKolkataTimestamp()}]\nNo admin activities recorded yet on console.`;
 
         res.json({ log: logOutput, count: logs.length });
     } catch (err) {
@@ -1729,7 +1749,7 @@ app.get('/api/team/:id', async (req, res) => {
         let isAdmin = false;
         if (token) {
             try {
-                const decoded = jwt.verify(token, JWT_SECRET);
+                const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
                 if (decoded && decoded.role === 'admin') isAdmin = true;
             } catch (e) {}
         }

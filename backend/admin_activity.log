@@ -1,0 +1,4 @@
+[2026-09-04 23:36:52 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1
+[2026-09-04 23:36:53 IST] ADMIN LOGIN FAILED: Operative "Administrator" failed login attempt from IP: 127.0.0.1
+[2026-09-04 23:36:53 IST] ADMIN LOGIN: Operative "Administrator" logged into Admin Console from IP: 127.0.0.1
+[2026-09-04 23:36:53 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1

@@ -54,39 +54,6 @@ The platform provides a complete end-to-end event management experience—from c
 
 ---
 
-## 📁 Repository Structure
-
-```text
-XploitX-2026-beta/
-├── backend/
-│   ├── server.js               # Core Express server, API endpoints, & MongoDB/SQLite bindings
-│   ├── .env                    # Local environment variables (Git-ignored)
-│   ├── database_backup.json    # JSON fallback snapshot
-│   └── hackathon.db            # Local SQLite fallback database
-├── public/
-│   ├── index.html              # Main landing page & cinematic launch portal
-│   ├── register.html           # Secure team registration page with CAPTCHA & payment upload
-│   ├── register.css            # Registration stylesheet & HUD layout grid
-│   ├── register.js             # Registration state-machine, OTP verification, & form logic
-│   ├── about.html              # Coordinators, patrons, & organizing team grid
-│   ├── prizes.html             # Event prize pool breakdown
-│   ├── rules.html              # Guidelines & code of conduct
-│   ├── doom.html               # Cyberpunk Doomsday CTF portal
-│   ├── attendance.html         # Live organizer & admin attendance portal
-│   ├── styles.css              # Main sitewide stylesheet & responsive media queries
-│   └── script.js               # Global UI scripts, mobile drawer, & interactive features
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yml           # GitHub Actions CI/CD pipeline (syntax & asset validation)
-├── .env.example                # Safe environment configuration template
-├── DEPLOYMENT.md               # Detailed deployment, disaster recovery, & safety gate guide
-├── README.md                   # Project documentation
-├── package.json                # Project dependencies & npm scripts
-└── vercel.json                 # Vercel serverless routing configuration
-```
-
----
-
 ## ⚡ Quick Start Guide (Local Development)
 
 ### 1. Prerequisites
@@ -116,14 +83,14 @@ PORT=3000
 NODE_ENV=development
 
 # Database Connection (MongoDB Atlas Cloud Storage)
-MONGODB_URI=mongodb+srv://<db_user>:<db_password>@cluster0.vy8bb6x.mongodb.net/?appName=Cluster0
+MONGODB_URI=mongodb+srv://<db_user>:<db_password>@your-cluster-url.mongodb.net/?appName=Cluster0
 
 # Authentication
 JWT_SECRET=your_super_secret_jwt_key_2026
 
 # Email Infrastructure (Brevo REST API)
 BREVO_API_KEY=your_brevo_api_key_here
-BREVO_SENDER_EMAIL=jeshwanthv751@gmail.com
+BREVO_SENDER_EMAIL=your_verified_sender@domain.com
 BREVO_SENDER_NAME=XploitX 2.0 BETA
 ```
 
@@ -155,19 +122,19 @@ For detailed disaster recovery policies and production safety rules, refer to [D
 ## 👥 Organizing Committee & Coordinators
 
 ### Patrons & HOD
-- **Mr. S. S. S. Jaganathan** — Chairman
-- **Mrs. Anithalakshmi** — Head of Department (CSE)
+- **Mr. Jaganathan** — Chairman
+- **Mrs. Anithalakshmi** — Head of Department
 
 ### Staff Coordinators
-- **Mrs. S Devi** — Staff Coordinator (`+91 99405 92672`)
-- **Mrs. G Ramya** — Assistant Professor
-- **Mrs. S Rama Mathrasi** — Assistant Professor
+- **Mrs. Devi** — Staff Coordinator 
+- **Mrs. Ramya** — Assistant Professor
+- **Mrs. Rama Mathrasi** — Assistant Professor
 - **Mrs. Aswini** — Assistant Professor
 
 ### Student Lead Coordinators
 - **Ashish N**, **Madhumitha Narayanan** — Overall Coordinators
 - **Amuthini K**, **Niranjan M** — CTF Heads
-- **Jesin Milesh S** — Registration & Technical Head (`+91 74184 31480`)
+- **Jesin Milesh S** — Registration & Technical Head
 - **Libinesh R U**, **Jeshwanth V** — Marketing Heads
 
 ---
