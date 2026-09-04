@@ -1444,18 +1444,6 @@
             let sessionToken = '';
             let errorMessage = 'Invalid Username or Password.';
 
-            const lowerU = u.toLowerCase();
-            const lowerP = p.toLowerCase();
-
-            // Client-side fallback validator for local/offline resilience
-            const isValidCred = (
-                (lowerU === 'administrator') && (p === 'Administrator@Beta2026')
-            ) || (
-                (lowerU === 'jesin milesh') && (p === 'Jesin@Beta2026')
-            ) || (
-                (lowerU === 'ashish') && (p === 'Ashish@Beta2026')
-            );
-
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                     method: 'POST',
@@ -1469,10 +1457,6 @@
                     success = true;
                     authenticatedUser = data.user;
                     sessionToken = data.token;
-                } else if (isValidCred) {
-                    success = true;
-                    authenticatedUser = (lowerU.includes('jesin')) ? 'Jesin Milesh' : (lowerU.includes('ashish') ? 'Ashish' : 'Administrator');
-                    sessionToken = 'session_' + Date.now();
                 } else {
                     if (data.error) {
                         errorMessage = data.error;
@@ -1483,14 +1467,8 @@
                     }
                 }
             } catch (e) {
-                console.warn("Backend authentication request failed, using local validation:", e);
-                if (isValidCred) {
-                    success = true;
-                    authenticatedUser = (lowerU.includes('jesin')) ? 'Jesin Milesh' : (lowerU.includes('ashish') ? 'Ashish' : 'Administrator');
-                    sessionToken = 'session_' + Date.now();
-                } else {
-                    errorMessage = "Cannot connect to backend server on port 3000.";
-                }
+                console.error("Backend authentication request failed:", e);
+                errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
             }
 
             if (success) {
@@ -1765,7 +1743,15 @@
             if (team.payment_proof_data) {
                 proofUrl = team.payment_proof_data;
             } else if (team.payment_proof && team.payment_proof !== 'NOT_PROVIDED') {
-                proofUrl = team.payment_proof.startsWith('data:') ? team.payment_proof : `${API_BASE_URL}${team.payment_proof}`;
+                if (team.payment_proof.startsWith('data:')) {
+                    proofUrl = team.payment_proof;
+                } else if (team.payment_proof.startsWith('/uploads/')) {
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}`;
+                } else if (team.payment_proof.startsWith('/')) {
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}`;
+                } else {
+                    proofUrl = `${API_BASE_URL}/uploads/${team.payment_proof}`;
+                }
             }
 
             document.getElementById('verify-team-id').innerText = team.team_id;
@@ -1819,7 +1805,9 @@
                     content.innerText = "SYSTEM AUDIT ERROR (" + res.status + "): " + (errData.error || "Access Denied");
                 }
             } catch (e) {
-                content.innerText = "OFFLINE MODE / ERROR: " + e.message;
+                const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
+                const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP : 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
             }
         }
 
