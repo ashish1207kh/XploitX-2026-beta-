@@ -79,9 +79,10 @@ async function logActivity(action, details = '') {
         }
     } catch (e) {}
 
-    if (isDbMongo() && mongoose.models.ActivityLog) {
+    if (isDbMongo()) {
         try {
-            await new mongoose.models.ActivityLog({
+            const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
+            await new ActivityLogModel({
                 timestamp,
                 action: action.toUpperCase(),
                 details,
@@ -91,7 +92,9 @@ async function logActivity(action, details = '') {
         } catch (err) {
             console.warn('[Audit Log Mongo Write Warning]:', err.message);
         }
-    } else if (db) {
+    }
+
+    if (db) {
         try {
             await db.run('INSERT INTO activity_logs (timestamp, action, details, formatted) VALUES (?, ?, ?, ?)',
                 [timestamp, action.toUpperCase(), details, formattedLine]);
@@ -490,12 +493,22 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../public')));
+// Ensure local uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    try {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+    } catch (e) {
+        console.warn("Could not create uploads directory:", e.message);
+    }
+}
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static(path.join(os.tmpdir(), 'uploads')));
 app.use('/uploads', express.static(os.tmpdir()));
 
-// Explicit file serving route fallback for uploads (especially on Vercel/serverless)
-app.get('/uploads/:filename', (req, res) => {
+// Explicit file serving route fallback for uploads (with DB Base64 backup for Vercel/serverless/restart persistence)
+app.get('/uploads/:filename', async (req, res) => {
     const filename = path.basename(req.params.filename);
     const localPath = path.join(__dirname, 'uploads', filename);
     const tmpPath = path.join(os.tmpdir(), 'uploads', filename);
@@ -507,9 +520,46 @@ app.get('/uploads/:filename', (req, res) => {
         return res.sendFile(tmpPath);
     } else if (fs.existsSync(directTmpPath)) {
         return res.sendFile(directTmpPath);
-    } else {
-        return res.status(404).send('File not found');
     }
+
+    // Fallback: DB lookup if static file doesn't exist on disk
+    try {
+        const teamIdMatch = filename.split('.')[0];
+        let team = null;
+
+        if (isDbMongo()) {
+            team = await Team.findOne({
+                $or: [
+                    { payment_proof: { $regex: filename, $options: 'i' } },
+                    { team_id: teamIdMatch }
+                ]
+            }).lean();
+        } else if (db) {
+            team = await db.get(
+                `SELECT * FROM teams WHERE payment_proof LIKE ? OR team_id = ?`,
+                [`%${filename}%`, teamIdMatch]
+            );
+        }
+
+        if (team) {
+            const rawData = team.payment_proof_data || (team.payment_proof && team.payment_proof.startsWith('data:') ? team.payment_proof : null);
+            if (rawData) {
+                const matches = rawData.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
+                if (matches) {
+                    const mimeType = matches[1];
+                    const base64Data = matches[2];
+                    const imgBuffer = Buffer.from(base64Data, 'base64');
+                    res.set('Content-Type', mimeType);
+                    res.set('Cache-Control', 'public, max-age=86400');
+                    return res.send(imgBuffer);
+                }
+            }
+        }
+    } catch (dbErr) {
+        console.error('[Upload Serve] DB Fallback lookup error:', dbErr.message);
+    }
+
+    return res.status(404).send('File not found');
 });
 
 // Database Connection Middleware for Serverless/Express Environment
@@ -590,6 +640,7 @@ const teamSchema = new mongoose.Schema({
     day: String,
     transaction_id: String,
     payment_proof: String,
+    payment_proof_data: String,
     payment_verified: { type: Number, default: 0 },
     created_at: { type: Date, default: Date.now }
 });
@@ -707,10 +758,12 @@ async function initDb() {
         transaction_id TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         payment_proof TEXT,
+        payment_proof_data TEXT,
         payment_verified INTEGER DEFAULT 0
     )`);
 
     try { await db.run(`ALTER TABLE teams ADD COLUMN payment_proof TEXT`); } catch (e) { }
+    try { await db.run(`ALTER TABLE teams ADD COLUMN payment_proof_data TEXT`); } catch (e) { }
     try { await db.run(`ALTER TABLE teams ADD COLUMN payment_verified INTEGER DEFAULT 0`); } catch (e) { }
     try { await db.run(`ALTER TABLE teams ADD COLUMN day TEXT`); } catch (e) { }
 
@@ -778,28 +831,24 @@ async function getTeamCount() {
 }
 
 async function getNextTeamId() {
+    let existingIds = new Set();
+
     if (isDbMongo()) {
-        const lastTeam = await Team.findOne({}).sort({ _id: -1 }).lean();
-        let nextNum = 1;
-        if (lastTeam && lastTeam.team_id) {
-            const match = lastTeam.team_id.match(/\d+/);
-            if (match) {
-                nextNum = parseInt(match[0], 10) + 1;
-            }
-        }
-        let candidateId = `XB2026-${String(nextNum).padStart(4, '0')}`;
-        while (await Team.exists({ team_id: candidateId })) {
-            nextNum++;
-            candidateId = `XB2026-${String(nextNum).padStart(4, '0')}`;
-        }
-        return candidateId;
+        const teams = await Team.find({}, { team_id: 1 }).lean();
+        teams.forEach(t => { if (t.team_id) existingIds.add(t.team_id); });
+    } else if (db) {
+        const teams = await db.all('SELECT team_id FROM teams');
+        teams.forEach(t => { if (t.team_id) existingIds.add(t.team_id); });
     }
-    if (db) {
-        const result = await db.get('SELECT COUNT(*) as count FROM teams');
-        const nextNum = (result && result.count ? result.count : 0) + 1;
-        return `XB2026-${String(nextNum).padStart(4, '0')}`;
+
+    let i = 1;
+    while (true) {
+        const candidate = `XB2026-${String(i).padStart(4, '0')}`;
+        if (!existingIds.has(candidate)) {
+            return candidate;
+        }
+        i++;
     }
-    return `XB2026-${String(Math.floor(1000 + Math.random() * 9000))}`;
 }
 
 async function findTeamByName(name) {
@@ -891,7 +940,7 @@ async function getTeamDataWithMembers(teamId) {
     return null;
 }
 
-async function createTeamRecord({ teamName, email, event, day, transactionId, paymentProof, members }) {
+async function createTeamRecord({ teamName, email, event, day, transactionId, paymentProof, paymentProofData, members }) {
     if (isDbMongo()) {
         const teamIdStr = await getNextTeamId();
         const newTeam = new Team({
@@ -902,6 +951,7 @@ async function createTeamRecord({ teamName, email, event, day, transactionId, pa
             day: day || "N/A",
             transaction_id: transactionId || "NOT_PROVIDED",
             payment_proof: paymentProof || "",
+            payment_proof_data: paymentProofData || "",
             payment_verified: 0
         });
         await newTeam.save();
@@ -926,14 +976,12 @@ async function createTeamRecord({ teamName, email, event, day, transactionId, pa
     }
 
     if (db) {
-        const tempId = 'TEMP_' + Date.now();
+        const teamIdStr = await getNextTeamId();
         const result = await db.run(
-            `INSERT INTO teams (team_id, name, email, event, day, transaction_id, payment_proof, payment_verified) VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
-            [tempId, teamName, email, event, day || "N/A", transactionId || "NOT_PROVIDED", paymentProof || ""]
+            `INSERT INTO teams (team_id, name, email, event, day, transaction_id, payment_proof, payment_proof_data, payment_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+            [teamIdStr, teamName, email, event, day || "N/A", transactionId || "NOT_PROVIDED", paymentProof || "", paymentProofData || ""]
         );
         const teamDbId = result.lastID;
-        const teamIdStr = `XB2026-${String(teamDbId).padStart(4, '0')}`;
-        await db.run(`UPDATE teams SET team_id = ? WHERE id = ?`, [teamIdStr, teamDbId]);
 
         for (let i = 0; i < members.length; i++) {
             const m = members[i];
@@ -960,15 +1008,20 @@ async function updatePaymentStatus(teamId, status) {
     }
 }
 
-async function updatePaymentProof(teamId, proofPath, transactionId) {
+async function updatePaymentProof(teamId, proofPath, transactionId, proofData = null) {
     if (isDbMongo()) {
         const updateDoc = { payment_proof: proofPath };
         if (transactionId) updateDoc.transaction_id = transactionId;
+        if (proofData) updateDoc.payment_proof_data = proofData;
         await Team.updateOne({ team_id: teamId }, updateDoc);
     }
     if (db) {
         try {
-            if (transactionId) {
+            if (transactionId && proofData) {
+                await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ?, payment_proof_data = ? WHERE team_id = ?`, [proofPath, transactionId, proofData, teamId]);
+            } else if (proofData) {
+                await db.run(`UPDATE teams SET payment_proof = ?, payment_proof_data = ? WHERE team_id = ?`, [proofPath, proofData, teamId]);
+            } else if (transactionId) {
                 await db.run(`UPDATE teams SET payment_proof = ?, transaction_id = ? WHERE team_id = ?`, [proofPath, transactionId, teamId]);
             } else {
                 await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
@@ -1199,9 +1252,10 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 
         let logs = [];
 
-        if (isDbMongo() && mongoose.models.ActivityLog) {
+        if (isDbMongo()) {
             try {
-                const dbLogs = await mongoose.models.ActivityLog.find().sort({ created_at: -1 }).limit(500).lean();
+                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
+                const dbLogs = await ActivityLogModel.find().sort({ created_at: -1 }).limit(500).lean();
                 if (dbLogs && dbLogs.length > 0) {
                     logs = dbLogs.map(l => l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`);
                 }
@@ -1566,6 +1620,19 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
             }
         }
 
+        let proofBase64 = null;
+        if (file) {
+            try {
+                const fileBuf = file.buffer || (file.path && fs.existsSync(file.path) ? fs.readFileSync(file.path) : null);
+                if (fileBuf) {
+                    const mimeType = file.mimetype || 'image/jpeg';
+                    proofBase64 = `data:${mimeType};base64,${fileBuf.toString('base64')}`;
+                }
+            } catch (e) {
+                console.error("Base64 conversion error in register:", e.message);
+            }
+        }
+
         const initialFilePath = file ? ('/uploads/' + file.filename) : 'NOT_PROVIDED';
         const record = await createTeamRecord({
             teamName,
@@ -1574,27 +1641,33 @@ app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async
             day: req.body.day,
             transactionId: utrNumber,
             paymentProof: initialFilePath,
+            paymentProofData: proofBase64,
             members
         });
 
         const teamIdStr = record.teamId;
 
-        // Rename Payment Proof File if uploaded
-        if (file && file.path) {
-            const oldPath = file.path;
-            const ext = path.extname(file.originalname);
-            const newFilename = teamIdStr + ext;
-            const newPath = path.join(path.dirname(oldPath), newFilename);
+        // Rename Payment Proof File if uploaded & sync Base64 data
+        if (file) {
+            let newDbPath = initialFilePath;
+            if (file.path && fs.existsSync(file.path)) {
+                const oldPath = file.path;
+                const ext = path.extname(file.originalname);
+                const newFilename = teamIdStr + ext;
+                const newPath = path.join(path.dirname(oldPath), newFilename);
 
-            try {
-                if (fs.existsSync(oldPath)) {
+                try {
                     fs.renameSync(oldPath, newPath);
-                    const newDbPath = '/uploads/' + newFilename;
-                    await updatePaymentProof(teamIdStr, newDbPath);
+                    newDbPath = '/uploads/' + newFilename;
+                } catch (renameErr) {
+                    console.error("File Rename Error:", renameErr);
                 }
-            } catch (renameErr) {
-                console.error("File Rename Error:", renameErr);
+            } else if (file.filename) {
+                const ext = path.extname(file.originalname);
+                newDbPath = '/uploads/' + teamIdStr + ext;
             }
+
+            await updatePaymentProof(teamIdStr, newDbPath, utrNumber, proofBase64);
         }
 
         // Send Initial Verification Email to Team Leader Only
@@ -1623,8 +1696,29 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
         }
     }
 
-    const filePath = '/uploads/' + file.filename;
-    await updatePaymentProof(teamId, filePath, utrNumber);
+    let proofBase64 = null;
+    try {
+        const fileBuf = file.buffer || (file.path && fs.existsSync(file.path) ? fs.readFileSync(file.path) : null);
+        if (fileBuf) {
+            const mimeType = file.mimetype || 'image/jpeg';
+            proofBase64 = `data:${mimeType};base64,${fileBuf.toString('base64')}`;
+        }
+    } catch (e) {
+        console.error("Base64 conversion error in payment/upload:", e.message);
+    }
+
+    let filePath = '/uploads/' + file.filename;
+    if (file.path && fs.existsSync(file.path)) {
+        const ext = path.extname(file.originalname);
+        const newFilename = teamId + ext;
+        const newPath = path.join(path.dirname(file.path), newFilename);
+        try {
+            fs.renameSync(file.path, newPath);
+            filePath = '/uploads/' + newFilename;
+        } catch (e) {}
+    }
+
+    await updatePaymentProof(teamId, filePath, utrNumber, proofBase64);
 
     res.json({ success: true });
 });
