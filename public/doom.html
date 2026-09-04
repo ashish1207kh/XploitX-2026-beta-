@@ -1511,6 +1511,8 @@
         function logoutAdmin() {
             sessionStorage.removeItem('admin_token');
             sessionStorage.removeItem('admin_user');
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
             if (window.adminDataInterval) {
                 clearInterval(window.adminDataInterval);
                 window.adminDataInterval = null;
@@ -2472,25 +2474,24 @@
             });
         }
 
-        // Auto-restore session if previously authenticated
+        // Require admin credentials on every page open / refresh / exit
         document.addEventListener('DOMContentLoaded', () => {
-            const existingToken = sessionStorage.getItem('admin_token');
-            const existingUser = sessionStorage.getItem('admin_user') || 'Administrator';
-            if (existingToken) {
-                const loginOverlay = document.getElementById('login-overlay');
-                if (loginOverlay) loginOverlay.style.display = 'none';
+            sessionStorage.removeItem('admin_token');
+            sessionStorage.removeItem('admin_user');
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
 
-                const logBtn = document.getElementById('activity-log-btn');
-                if (logBtn) logBtn.style.display = (existingUser === 'Administrator') ? 'inline-flex' : 'none';
-
-                const formatBtn = document.getElementById('format-btn');
-                if (formatBtn) formatBtn.style.display = 'inline-flex';
-
-                loadData();
-                if (!window.adminDataInterval) {
-                    window.adminDataInterval = setInterval(loadData, 6000);
-                }
+            const loginOverlay = document.getElementById('login-overlay');
+            if (loginOverlay) {
+                loginOverlay.style.display = 'flex';
             }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.removeItem('admin_token');
+            sessionStorage.removeItem('admin_user');
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
         });
     </script>
     <script src="script.js"></script>
