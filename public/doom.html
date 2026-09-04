@@ -758,19 +758,23 @@
          NAVIGATION BAR
          ========================================== -->
     <nav class="navbar" id="navbar">
-        <div class="container nav-container">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center;">
             <ul class="nav-links" id="nav-links-menu">
                 <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> HOME</a></li>
                 <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> ABOUT</a></li>
                 <li><a href="rules.html" class="nav-link"><i class="fas fa-gavel"></i> RULES</a></li>
                 <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> PRIZES</a></li>
                 <li><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li><a href="doom.html" class="nav-link active"><i class="fas fa-user-shield"></i> ADMIN CONSOLE</a></li>
             </ul>
 
-            <button class="hamburger-btn" id="mobile-menu-open" aria-label="Toggle navigation">
-                <i class="fas fa-ellipsis-v"></i>
-            </button>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="top-nav-logout-btn" onclick="logoutAdmin()" class="action-btn-hud action-btn-magenta" style="padding: 8px 18px; font-size: 0.88rem; box-shadow: 0 0 12px rgba(255, 0, 102, 0.4);">
+                    <i class="fas fa-sign-out-alt"></i> [ LOGOUT ]
+                </button>
+                <button class="hamburger-btn" id="mobile-menu-open" aria-label="Toggle navigation">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
         </div>
     </nav>
 

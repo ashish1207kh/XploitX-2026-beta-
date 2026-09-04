@@ -1020,9 +1020,75 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
                 [teamId, teamName, leaderName, leaderPhone]);
         } catch (e) {}
     }
+    exportDatabaseBackup().catch(() => {});
 }
 
-initialiseDBAndServer();
+// --- AUTOMATED DATABASE BACKUP SYSTEM ---
+const BACKUP_JSON_PATH = path.join(process.env.VERCEL ? os.tmpdir() : __dirname, 'database_backup.json');
+const BACKUP_DB_PATH = path.join(process.env.VERCEL ? os.tmpdir() : __dirname, 'hackathon_backup.db');
+
+async function exportDatabaseBackup() {
+    try {
+        let teams = [];
+        let members = [];
+        let attendance = [];
+        let otps = [];
+        let activityLogs = [];
+
+        if (isDbMongo()) {
+            teams = await Team.find().lean();
+            members = await Member.find().lean();
+            attendance = await Attendance.find().lean();
+            otps = await Otp.find().lean();
+            if (mongoose.models.ActivityLog) {
+                activityLogs = await mongoose.models.ActivityLog.find().lean();
+            }
+        }
+        
+        if (teams.length === 0 && db) {
+            teams = await db.all('SELECT * FROM teams');
+            members = await db.all('SELECT * FROM members');
+            attendance = await db.all('SELECT * FROM attendance');
+            otps = await db.all('SELECT * FROM otps');
+            activityLogs = await db.all('SELECT * FROM activity_logs');
+        }
+
+        const backupData = {
+            export_timestamp: getKolkataTimestamp(),
+            summary: {
+                total_teams: teams.length,
+                total_members: members.length,
+                total_attendance_records: attendance.length,
+                total_activity_logs: activityLogs.length
+            },
+            teams,
+            members,
+            attendance,
+            otps,
+            activityLogs
+        };
+
+        fs.writeFileSync(BACKUP_JSON_PATH, JSON.stringify(backupData, null, 2), 'utf8');
+
+        if (fs.existsSync(DBPath)) {
+            try {
+                fs.copyFileSync(DBPath, BACKUP_DB_PATH);
+            } catch (copyErr) {}
+        }
+
+        console.log(`[DATABASE BACKUP SUCCESS] Backup exported (${teams.length} teams) to database_backup.json & hackathon_backup.db`);
+        return backupData;
+    } catch (err) {
+        console.error('[DATABASE BACKUP ERROR]:', err.message);
+        return null;
+    }
+}
+
+initialiseDBAndServer().then(() => {
+    setTimeout(() => {
+        exportDatabaseBackup().catch(() => {});
+    }, 3000);
+});
 
 // --- EMAIL CONFIGURATION ---
 // NOTE: The primary sendEmail function using the Brevo HTTPS REST API is defined
@@ -1144,6 +1210,16 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     } catch (err) {
         console.error('Error serving activity log:', err);
         res.status(500).json({ error: 'Failed to retrieve system audit log: ' + err.message });
+    }
+});
+
+// Admin Route: Retrieve Instant Secondary Database Backup
+app.get('/api/admin/backup-db', verifyAdmin, async (req, res) => {
+    try {
+        const backup = await exportDatabaseBackup();
+        res.json({ success: true, backup });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to generate database backup: ' + err.message });
     }
 });
 
