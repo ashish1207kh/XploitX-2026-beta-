@@ -1,0 +1,258 @@
+{
+  "export_timestamp": "2026-09-04 21:29:02 IST",
+  "summary": {
+    "total_teams": 0,
+    "total_members": 0,
+    "total_attendance_records": 0,
+    "total_activity_logs": 27
+  },
+  "teams": [],
+  "members": [],
+  "attendance": [],
+  "otps": [],
+  "activityLogs": [
+    {
+      "_id": "6a9a700dda07d49cd5542a1d",
+      "timestamp": "2026-09-04 12:45:25 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 12:45:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T07:15:25.737Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a7a913b75c7233dbccc22",
+      "timestamp": "2026-09-04 13:30:17 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged in successfully",
+      "formatted": "[2026-09-04 13:30:17 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged in successfully",
+      "created_at": "2026-09-04T08:00:17.976Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a7ac03b75c7233dbccc23",
+      "timestamp": "2026-09-04 13:31:04 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 13:31:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T08:01:04.009Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a7ffb89347c18b7dce953",
+      "timestamp": "2026-09-04 13:53:23 IST",
+      "action": "SEND OTP",
+      "details": "Verification OTP generated & dispatched to jesinmilesh@gmail.com",
+      "formatted": "[2026-09-04 13:53:23 IST] SEND OTP: Verification OTP generated & dispatched to jesinmilesh@gmail.com",
+      "created_at": "2026-09-04T08:23:23.328Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a801189347c18b7dce954",
+      "timestamp": "2026-09-04 13:53:45 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address jesinmilesh@gmail.com successfully verified",
+      "formatted": "[2026-09-04 13:53:45 IST] OTP VERIFIED: Email address jesinmilesh@gmail.com successfully verified",
+      "created_at": "2026-09-04T08:23:45.710Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8d7e102d3c00fe95b88f",
+      "timestamp": "2026-09-04 14:51:02 IST",
+      "action": "SEND OTP",
+      "details": "Verification OTP generated & dispatched to libineshr7@gmail.com",
+      "formatted": "[2026-09-04 14:51:02 IST] SEND OTP: Verification OTP generated & dispatched to libineshr7@gmail.com",
+      "created_at": "2026-09-04T09:21:02.597Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8e96102d3c00fe95b890",
+      "timestamp": "2026-09-04 14:55:42 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address libineshr7@gmail.com successfully verified",
+      "formatted": "[2026-09-04 14:55:42 IST] OTP VERIFIED: Email address libineshr7@gmail.com successfully verified",
+      "created_at": "2026-09-04T09:25:42.136Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8f22102d3c00fe95b894",
+      "timestamp": "2026-09-04 14:58:02 IST",
+      "action": "NEW REGISTRATION",
+      "details": "Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
+      "formatted": "[2026-09-04 14:58:02 IST] NEW REGISTRATION: Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
+      "created_at": "2026-09-04T09:28:02.349Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a912fa30dd7cbd91f30ed",
+      "timestamp": "2026-09-04 15:06:47 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 15:06:47 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T09:36:47.478Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a97a5574576be23504b11",
+      "timestamp": "2026-09-04 15:34:21 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XB2026-0001 by Ashish",
+      "formatted": "[2026-09-04 15:34:21 IST] DELETE TEAM: Deleted record for Team ID: XB2026-0001 by Ashish",
+      "created_at": "2026-09-04T10:04:21.557Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9957574576be23504b12",
+      "timestamp": "2026-09-04 15:41:35 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged in successfully",
+      "formatted": "[2026-09-04 15:41:35 IST] ADMIN LOGIN: Operative \"Ashish\" logged in successfully",
+      "created_at": "2026-09-04T10:11:35.678Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9babe6ee07e2740517ca",
+      "timestamp": "2026-09-04 15:51:31 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 15:51:31 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:21:31.412Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9bbae6ee07e2740517cb",
+      "timestamp": "2026-09-04 15:51:46 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 15:51:46 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:21:46.824Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c2de6ee07e2740517d1",
+      "timestamp": "2026-09-04 15:53:41 IST",
+      "action": "MODIFY TEAM",
+      "details": "Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "formatted": "[2026-09-04 15:53:41 IST] MODIFY TEAM: Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "created_at": "2026-09-04T10:23:41.115Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c42e6ee07e2740517d2",
+      "timestamp": "2026-09-04 15:54:02 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "formatted": "[2026-09-04 15:54:02 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "created_at": "2026-09-04T10:24:02.441Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c9be6ee07e2740517d3",
+      "timestamp": "2026-09-04 15:55:31 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 15:55:31 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T10:25:31.128Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9dc0f3762adb1257d79e",
+      "timestamp": "2026-09-04 16:00:24 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 16:00:24 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:30:24.855Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9dd0f3762adb1257d79f",
+      "timestamp": "2026-09-04 16:00:40 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 16:00:40 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T10:30:40.654Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ab94556826a32dc7448b9",
+      "timestamp": "2026-09-04 17:57:49 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 17:57:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T12:27:49.033Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace571354b5632528197d",
+      "timestamp": "2026-09-04 19:27:43 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "formatted": "[2026-09-04 19:27:43 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "created_at": "2026-09-04T13:57:43.760Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace591354b5632528197e",
+      "timestamp": "2026-09-04 19:27:45 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "formatted": "[2026-09-04 19:27:45 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "created_at": "2026-09-04T13:57:45.698Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace5f1354b5632528197f",
+      "timestamp": "2026-09-04 19:27:51 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:27:51 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T13:57:51.494Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace6d1354b56325281980",
+      "timestamp": "2026-09-04 19:28:05 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:28:05 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T13:58:05.454Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace9b1354b56325281981",
+      "timestamp": "2026-09-04 19:28:51 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:28:51 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T13:58:51.092Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9acec61354b56325281982",
+      "timestamp": "2026-09-04 19:29:34 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:29:34 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T13:59:34.141Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ad5dc94f66ac995bb8fad",
+      "timestamp": "2026-09-04 19:59:48 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:59:48 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T14:29:48.110Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ae6f23f0a21d84b72a989",
+      "timestamp": "2026-09-04 21:12:42 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-04 21:12:42 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T15:42:42.109Z",
+      "__v": 0
+    }
+  ]
+}

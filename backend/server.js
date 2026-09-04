@@ -19,6 +19,10 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const { z } = require('zod');
 
 // --- PRODUCTION CHANGE & DESTRUCTIVE OPERATION PROTECTION GUARD ---
 function checkProductionSafety(operationName, isDestructive = false) {
@@ -492,9 +496,96 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+// Security Headers (Helmet)
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
+            imgSrc: ["'self'", "data:", "https://raw.githubusercontent.com", "https://img.icons8.com", "https://api.qrserver.com", "blob:"],
+            connectSrc: ["'self'", "https://api.brevo.com", "https://api.resend.com", "https://api.sendgrid.com"],
+            frameAncestors: ["'none'"],
+            objectSrc: ["'none'"]
+        }
+    },
+    crossOriginEmbedderPolicy: false
+}));
+
+// Restrict CORS Origins (MED-01)
+const allowedOrigins = [
+    'https://xploitxctf.me',
+    'https://www.xploitxctf.me',
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (
+            !origin ||
+            origin === 'null' ||
+            origin.startsWith('file://') ||
+            origin.startsWith('http://localhost') ||
+            origin.startsWith('http://127.0.0.1') ||
+            allowedOrigins.includes(origin)
+        ) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS Policy Blocked: Access from origin ' + origin + ' is not allowed'));
+        }
+    },
+    credentials: true
+}));
+
+app.use(bodyParser.json({ limit: '5mb' }));
+
+// NoSQL Injection Sanitization (HIGH-01)
+app.use(mongoSanitize({
+    replaceWith: '_'
+}));
+
+// Rate Limiters (HIGH-02)
+const adminLoginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: { error: 'Too many admin login attempts. Please try again after 15 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const otpRequestLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 3,
+    message: { error: 'Too many OTP requests. Please wait 10 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const otpVerifyLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 5,
+    message: { error: 'Too many OTP verification attempts. Please wait 10 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const registrationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { error: 'Registration limit reached for this IP. Please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const uploadLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { error: 'Upload limit reached. Please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 // Ensure local uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -527,13 +618,15 @@ app.get('/uploads/:filename', async (req, res) => {
 
     // Fallback: DB lookup if static file doesn't exist on disk
     try {
-        const teamIdMatch = filename.split('.')[0];
+        const teamIdMatch = path.basename(filename).split('.')[0].replace(/[^a-zA-Z0-9_-]/g, '');
+        const escapedFilename = filename.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         let team = null;
 
         if (isDbMongo()) {
             team = await Team.findOne({
                 $or: [
-                    { payment_proof: { $regex: filename, $options: 'i' } },
+                    { payment_proof: filename },
+                    { payment_proof: { $regex: escapedFilename, $options: 'i' } },
                     { team_id: teamIdMatch }
                 ]
             }).lean();
@@ -611,8 +704,12 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
-        const teamId = req.body.teamId || 'unknown-' + Date.now();
-        cb(null, teamId + path.extname(file.originalname));
+        const rawTeamId = req.body && typeof req.body.teamId === 'string' ? req.body.teamId : 'upload';
+        const safeTeamId = path.basename(rawTeamId).replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50) || 'team';
+        const ext = path.extname(file.originalname || '').toLowerCase();
+        const safeExt = ['.jpg', '.jpeg', '.png'].includes(ext) ? ext : '.png';
+        const safeFilename = `${safeTeamId}-${Date.now()}-${crypto.randomBytes(4).toString('hex')}${safeExt}`;
+        cb(null, safeFilename);
     }
 });
 
@@ -707,7 +804,7 @@ const initialiseDBAndServer = async () => {
         isMongoConnected = true;
         return;
     }
-    const mongoUri = (process.env.MONGODB_URI || "mongodb+srv://jeshwanthv751_db_user:BqVftSj4VJzuts3h@cluster0.vy8bb6x.mongodb.net/?appName=Cluster0").trim();
+    const mongoUri = (process.env.MONGODB_URI || "").trim();
     if (mongoUri) {
         try {
             await mongoose.connect(mongoUri, {
@@ -734,8 +831,17 @@ const initialiseDBAndServer = async () => {
     }
 
     if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
-        if (!app.get('server_started')) {
-            app.listen(PORT, () => {
+        if (!app.get('server_started') && require.main === module) {
+            const http = require('http');
+            const serverInst = http.createServer(app);
+            serverInst.on('error', (err) => {
+                if (err.code === 'EADDRINUSE') {
+                    console.log(`[Server Notice]: Port ${PORT} is already in use by another running process.`);
+                } else {
+                    console.error('[Server Error]:', err.message);
+                }
+            });
+            serverInst.listen(PORT, () => {
                 console.log(`🚀 Server started at http://localhost:${PORT}/`);
                 if (isDbMongo()) {
                     console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
@@ -1184,23 +1290,32 @@ initialiseDBAndServer().then(() => {
 // API Routes
 
 // --- JWT & ADMIN SECURITY LAYER ---
-const JWT_SECRET = process.env.JWT_SECRET || 'xploitx_super_secret_key_2026';
+const getJwtSecret = () => {
+    const secret = process.env.JWT_SECRET;
+    if (secret && secret.trim().length > 0) {
+        return secret.trim();
+    }
+    if (process.env.NODE_ENV === 'production') {
+        console.error('[SECURITY GUARD] FATAL: JWT_SECRET environment variable must be explicitly defined in production!');
+        throw new Error('JWT_SECRET configuration missing in production');
+    }
+    return 'xploitx_dev_only_jwt_secret_key_2026';
+};
+
+const JWT_SECRET = getJwtSecret();
 
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
     if (!token) {
         return res.status(401).json({ error: 'Access Denied: No Token Provided' });
     }
 
-    if (token.startsWith('local_session_')) {
-        req.user = { username: 'Administrator', role: 'admin' };
-        return next();
-    }
-
     jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: 'Access Denied: Invalid Token' });
+        if (err || !user || !user.username || user.role !== 'admin') {
+            return res.status(403).json({ error: 'Access Denied: Invalid or Expired Token' });
+        }
         req.user = user;
         next();
     });
@@ -1215,37 +1330,70 @@ function logAdminActivity(action, details = '') {
     });
 }
 
-// Admin Login
-app.post('/api/admin/login', (req, res) => {
-    let { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password required' });
-    }
+// Zod Input Schemas (HIGH-01)
+const adminLoginSchema = z.object({
+    username: z.string().min(1, 'Username required').max(50).trim(),
+    password: z.string().min(1, 'Password required').max(100).trim()
+});
 
-    const cleanUsername = username.trim().toLowerCase();
-    const cleanPassword = password.trim();
+const otpRequestSchema = z.object({
+    email: z.string().email('Invalid email address').max(100).trim().toLowerCase(),
+    name: z.string().max(100).optional()
+});
 
-    const adminCredentials = {
-        "Administrator": ["Administrator@Beta2026"],
-        "Jesin Milesh": ["Jesin@Beta2026"],
-        "Ashish": ["Ashish@Beta2026"]
-    };
+const otpVerifySchema = z.object({
+    email: z.string().email('Invalid email address').max(100).trim().toLowerCase(),
+    otp: z.string().length(6, 'OTP must be 6 digits').regex(/^\d+$/, 'OTP must be numeric')
+});
 
-    const usernameKey = Object.keys(adminCredentials).find(
-        key => key.toLowerCase() === cleanUsername
-    );
+// Admin Login Route (CRIT-02 & HIGH-02)
+app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
+    try {
+        const validation = adminLoginSchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ error: validation.error.issues[0].message });
+        }
+        const { username, password } = validation.data;
 
-    const allowedPasswords = usernameKey ? adminCredentials[usernameKey] : [];
-    const isValid = allowedPasswords.includes(cleanPassword);
+        const cleanUsername = username.toLowerCase();
+        const cleanPassword = password;
 
-    if (isValid) {
-        const canonicalUser = usernameKey;
-        logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
-        const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
-        res.json({ success: true, token: token, user: canonicalUser });
-    } else {
-        logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
-        res.status(401).json({ error: 'Invalid Credentials' });
+        // Secure credential lookup without plaintext hardcoding in codebase
+        const adminAccounts = {
+            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
+        };
+
+        const canonicalMap = {
+            "administrator": "Administrator",
+            "jesin milesh": "Jesin Milesh",
+            "ashish": "Ashish"
+        };
+
+        let isValid = false;
+        const expectedPass = adminAccounts[cleanUsername];
+
+        if (expectedPass) {
+            if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
+                isValid = bcrypt.compareSync(cleanPassword, expectedPass);
+            } else {
+                isValid = (cleanPassword === expectedPass);
+            }
+        }
+
+        if (isValid) {
+            const canonicalUser = canonicalMap[cleanUsername] || username;
+            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
+            const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
+            res.json({ success: true, token: token, user: canonicalUser });
+        } else {
+            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
+            res.status(401).json({ error: 'Invalid Credentials' });
+        }
+    } catch (err) {
+        console.error('Error in /api/admin/login:', err);
+        res.status(500).json({ error: 'Authentication failed' });
     }
 });
 
@@ -1419,12 +1567,13 @@ function getEmailFooterHtml(includeWhatsApp = true) {
 
 
 // Send OTP
-app.post('/api/auth/send-verification-otp', async (req, res) => {
+app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) => {
     try {
-        let { email, name } = req.body;
-        if (!email) return res.status(400).json({ error: 'Email required' });
-
-        email = email.trim().toLowerCase();
+        const validation = otpRequestSchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ error: validation.error.issues[0].message });
+        }
+        let { email, name } = validation.data;
 
         const isValidDomain = await validateEmailDomain(email);
         if (!isValidDomain) {
@@ -1489,13 +1638,13 @@ app.post('/api/auth/send-verification-otp', async (req, res) => {
     }
 });
 
-app.post('/api/auth/verify-email-otp', async (req, res) => {
+app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
     try {
-        let { email, otp } = req.body;
-        if (!email || !otp) return res.status(400).json({ error: 'Email and OTP required' });
-
-        email = email.trim().toLowerCase();
-        otp = otp.trim();
+        const validation = otpVerifySchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ error: validation.error.issues[0].message });
+        }
+        const { email, otp } = validation.data;
 
         // 1. Direct in-memory check fallback
         if (verificationOtps[email] && verificationOtps[email] === otp) {
@@ -1575,10 +1724,38 @@ app.get('/api/admin/data', verifyAdmin, async (req, res) => {
 
 app.get('/api/team/:id', async (req, res) => {
     try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+        let isAdmin = false;
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                if (decoded && decoded.role === 'admin') isAdmin = true;
+            } catch (e) {}
+        }
+
         const data = await getTeamDataWithMembers(req.params.id);
         if (!data) return res.status(404).json({ error: 'Team not found' });
-        res.json(data);
-    } catch (e) { res.status(500).json({ error: e.message }); }
+
+        if (isAdmin) {
+            return res.json(data);
+        } else {
+            // Return sanitized non-PII team view for unauthenticated requests (CRIT-03)
+            const sanitizedData = {
+                team_id: data.team_id,
+                name: data.name,
+                event: data.event,
+                day: data.day,
+                payment_verified: data.payment_verified,
+                members: (data.members || []).map(m => ({
+                    name: m.name,
+                    role: m.role,
+                    college: m.college
+                }))
+            };
+            return res.json(sanitizedData);
+        }
+    } catch (e) { res.status(500).json({ error: 'Failed to retrieve team details' }); }
 });
 
 // Total Registration Count
@@ -1603,7 +1780,7 @@ app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
     }
 });
 
-app.post('/api/team/:id/update', async (req, res) => {
+app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
     const { members } = req.body;
     try {
         const team = await findTeamById(req.params.id);
@@ -1611,10 +1788,10 @@ app.post('/api/team/:id/update', async (req, res) => {
         await updateTeamAndMembers(req.params.id, team.name, team.event, members);
         logActivity('MODIFY TEAM', `Modified record for Team ID: ${req.params.id} by ${req.user ? req.user.username : 'Admin'}`);
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(500).json({ error: 'Failed to update team record' }); }
 });
 
-app.post('/api/auth/register-with-payment', upload.single('paymentProof'), async (req, res) => {
+app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('paymentProof'), async (req, res) => {
     try {
         const { teamName, email, event, utrNumber } = req.body;
         let members;
@@ -2157,7 +2334,7 @@ app.get('/api/attendance/scan_info/:teamId', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/attendance/mark_members', async (req, res) => {
+app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
     const { teamId, memberStatuses } = req.body;
     try {
         const data = await getTeamDataWithMembers(teamId);
@@ -2249,11 +2426,11 @@ app.post('/api/attendance/mark_members', async (req, res) => {
         res.json({ success: true, message: 'Attendance status successfully updated across database' });
     } catch (e) {
         console.error('[Mark Members Error]:', e);
-        res.status(500).json({ error: e.message });
+        res.status(500).json({ error: 'Failed to update attendance records' });
     }
 });
 
-app.get('/api/attendance/all', async (req, res) => {
+app.get('/api/attendance/all', verifyAdmin, async (req, res) => {
     try {
         if (isDbMongo()) {
             const members = await Member.find().lean();
@@ -2285,13 +2462,17 @@ app.get('/api/attendance/all', async (req, res) => {
             return res.json(rows);
         }
         res.json([]);
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(500).json({ error: 'Failed to fetch attendance log' }); }
 });
 
 app.use((err, req, res, next) => {
     if (err) {
-        console.error('[Error Middleware Caught]:', err.message);
-        return res.status(400).json({ error: err.message });
+        console.error('[Global Error Middleware Caught]:', err);
+        const status = err.status || err.statusCode || 400;
+        const msg = process.env.NODE_ENV === 'production' 
+            ? 'An unexpected error occurred processing your request.' 
+            : err.message;
+        return res.status(status).json({ error: msg });
     }
     next();
 });

@@ -419,7 +419,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2147483647 !important;
+            z-index: 999999;
         }
 
         .login-card-hud {
@@ -1020,19 +1020,21 @@
             <h2 class="login-title-text">ADMIN ACCESS</h2>
             <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
 
-            <div class="login-field-group">
-                <i class="fas fa-user login-field-icon"></i>
-                <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
-                    onkeypress="handleLoginKey(event)" autocomplete="username">
-            </div>
+            <form onsubmit="event.preventDefault(); checkAdmin();">
+                <div class="login-field-group">
+                    <i class="fas fa-user login-field-icon"></i>
+                    <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
+                        autocomplete="username">
+                </div>
 
-            <div class="login-field-group">
-                <i class="fas fa-lock login-field-icon"></i>
-                <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
-                    onkeypress="handleLoginKey(event)" autocomplete="current-password">
-            </div>
+                <div class="login-field-group">
+                    <i class="fas fa-lock login-field-icon"></i>
+                    <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
+                        autocomplete="current-password">
+                </div>
 
-            <button onclick="checkAdmin()" class="login-submit-btn"> UNLOCK </button>
+                <button type="submit" class="login-submit-btn"> UNLOCK </button>
+            </form>
         </div>
     </div>
 
@@ -1363,7 +1365,7 @@
                 overlay = document.createElement('div');
                 overlay.id = 'custom-alert-overlay';
                 overlay.className = 'modal-overlay-hud';
-                overlay.style.zIndex = '100000';
+                overlay.style.zIndex = '2147483647';
                 overlay.innerHTML = `
                     <div class="modal-content-hud" style="max-width: 420px; text-align: center;">
                         <h2 style="color: var(--doom-green); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 18px; font-family: var(--font-brand); font-size: 1.2rem;">&gt;_ SYSTEM_ALERT</h2>
@@ -1395,7 +1397,7 @@
                 overlay = document.createElement('div');
                 overlay.id = 'custom-confirm-overlay';
                 overlay.className = 'modal-overlay-hud';
-                overlay.style.zIndex = '100001';
+                overlay.style.zIndex = '2147483647';
                 document.body.appendChild(overlay);
             }
             overlay.innerHTML = `
@@ -1428,6 +1430,7 @@
             let success = false;
             let authenticatedUser = 'Administrator';
             let sessionToken = '';
+            let errorMessage = 'Invalid Username or Password.';
 
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
@@ -1436,38 +1439,24 @@
                     body: JSON.stringify({ username: u, password: p })
                 });
 
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        success = true;
-                        authenticatedUser = data.user;
-                        sessionToken = data.token;
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.success) {
+                    success = true;
+                    authenticatedUser = data.user;
+                    sessionToken = data.token;
+                } else {
+                    if (data.error) {
+                        errorMessage = data.error;
+                    } else if (res.status === 429) {
+                        errorMessage = 'Too many login attempts. Please wait a few minutes before trying again.';
+                    } else if (res.status) {
+                        errorMessage = `HTTP ${res.status}: Failed to authenticate with server.`;
                     }
                 }
             } catch (e) {
-                console.warn("Server auth attempt failed, checking client credentials:", e);
-            }
-
-            // Fallback verification for local / offline mode
-            if (!success) {
-                const cleanU = u.trim().toLowerCase();
-                const cleanP = p.trim();
-                const localAdmins = {
-                    "Administrator": ["Administrator@Beta2026"],
-                    "Jesin Milesh": ["Jesin@Beta2026"],
-                    "Ashish": ["Ashish@Beta2026"]
-                };
-
-                const matchedKey = Object.keys(localAdmins).find(
-                    key => key.toLowerCase() === cleanU
-                );
-
-                const validPasses = matchedKey ? localAdmins[matchedKey] : [];
-                if (validPasses.includes(cleanP)) {
-                    success = true;
-                    authenticatedUser = matchedKey;
-                    sessionToken = 'local_session_' + Date.now();
-                }
+                console.error("Server authentication request failed:", e);
+                errorMessage = "Cannot connect to backend server. Ensure server is running on port 3000.";
             }
 
             if (success) {
@@ -1495,7 +1484,7 @@
 
                 showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
             } else {
-                showCustomAlert('ACCESS DENIED: Invalid Username or Password.');
+                showCustomAlert('ACCESS DENIED: ' + errorMessage);
             }
 
             btn.innerText = originalText;
