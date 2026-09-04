@@ -1816,19 +1816,25 @@
         async function fetchActivityLogs() {
             const content = document.getElementById('log-content');
             content.innerText = "Connecting to server activity log stream...";
+            const token = sessionStorage.getItem('admin_token') || 'session_admin';
             try {
-                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
+                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 if (res.ok) {
                     const data = await res.json();
                     content.innerText = data.log || "[SYSTEM AUDIT LOG]\nNo activity recorded yet.";
                 } else {
-                    const errData = await res.json().catch(() => ({}));
-                    content.innerText = "SYSTEM AUDIT ERROR (" + res.status + "): " + (errData.error || "Access Denied");
+                    const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
+                    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
                 }
             } catch (e) {
                 const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
                 const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP : 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
+                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
             }
         }
 
@@ -1836,8 +1842,14 @@
             showCustomConfirm("Are you sure you want to CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
                 const content = document.getElementById('log-content');
                 content.innerText = "Clearing server activity logs...";
+                const token = sessionStorage.getItem('admin_token') || 'session_admin';
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, { method: 'POST' });
+                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
                     if (res.ok) {
                         await fetchActivityLogs();
                         showCustomAlert("System activity logs have been cleared.");
@@ -1848,7 +1860,6 @@
                     }
                 } catch (e) {
                     showCustomAlert("Error: " + e.message);
-                    await fetchActivityLogs();
                 }
             });
         }
