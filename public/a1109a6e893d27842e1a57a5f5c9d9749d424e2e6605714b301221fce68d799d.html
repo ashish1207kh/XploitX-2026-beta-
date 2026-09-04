@@ -1321,11 +1321,18 @@
          ========================================== -->
     <script>
         // API Base URL Resolution
-        const isLocal = window.location.protocol === 'file:' ||
-            window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1';
+        let API_BASE_URL = '';
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const port = window.location.port;
 
-        const API_BASE_URL = isLocal ? 'http://localhost:3000' : '';
+        if (protocol === 'file:') {
+            API_BASE_URL = 'http://localhost:3000';
+        } else if (port && port !== '3000' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+            API_BASE_URL = `http://${hostname}:3000`;
+        } else {
+            API_BASE_URL = '';
+        }
         console.log("Admin Panel API_BASE_URL:", API_BASE_URL);
 
         // Active State Tracking

@@ -1373,8 +1373,8 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         }
         const { username, password } = validation.data;
 
-        const cleanUsername = username.toLowerCase();
-        const cleanPassword = password;
+        const cleanUsername = username.toLowerCase().trim();
+        const cleanPassword = password.trim();
 
         // Secure credential lookup without plaintext hardcoding in codebase
         const adminAccounts = {
