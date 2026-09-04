@@ -853,6 +853,9 @@
                     <button id="activity-log-btn" onclick="openLogModal()" class="action-btn-hud action-btn-cyan" style="display:none;">
                         <i class="fas fa-list-alt"></i> [ ACTIVITY LOG ]
                     </button>
+                    <button id="logout-btn" onclick="logoutAdmin()" class="action-btn-hud action-btn-magenta">
+                        <i class="fas fa-sign-out-alt"></i> [ LOGOUT ]
+                    </button>
                 </div>
             </div>
         </div>
@@ -1202,14 +1205,14 @@
                             </a>
                         </div>
 
-                        <!-- Jeswanth V -->
+                        <!-- Jeshwanth V -->
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
-                                    <img src="Jeswanth.jpeg" alt="Jeswanth V" class="organizer-person-avatar-img">
+                                    <img src="Jeswanth.jpeg" alt="Jeshwanth V" class="organizer-person-avatar-img">
                                 </div>
                                 <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Jeswanth V</div>
+                                    <div class="organizer-person-name">Jeshwanth V</div>
                                     <div class="organizer-person-role">Student Coordinator</div>
                                 </div>
                             </div>
@@ -1505,6 +1508,25 @@
             if (event.key === 'Enter') {
                 checkAdmin();
             }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('admin_token');
+            sessionStorage.removeItem('admin_user');
+            if (window.adminDataInterval) {
+                clearInterval(window.adminDataInterval);
+                window.adminDataInterval = null;
+            }
+            const userIn = document.getElementById('admin-user');
+            const passIn = document.getElementById('admin-pass');
+            if (userIn) userIn.value = '';
+            if (passIn) passIn.value = '';
+
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
+            showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
         }
 
         // Render Table & Metrics Dashboard

@@ -49,14 +49,36 @@ function getKolkataTimestamp() {
     }
 }
 
-function logActivity(action, details = '') {
+async function logActivity(action, details = '') {
     const timestamp = getKolkataTimestamp();
     const formattedLine = `[${timestamp}] ${action.toUpperCase()}${details ? ': ' + details : ''}`;
     console.log(`[AUDIT LOG] ${formattedLine}`);
 
+    if (!global.activityLogs) {
+        global.activityLogs = [];
+    }
     global.activityLogs.unshift(formattedLine);
-    if (global.activityLogs.length > 300) {
+    if (global.activityLogs.length > 500) {
         global.activityLogs.pop();
+    }
+
+    if (isDbMongo() && mongoose.models.ActivityLog) {
+        try {
+            await new mongoose.models.ActivityLog({
+                timestamp,
+                action: action.toUpperCase(),
+                details,
+                formatted: formattedLine,
+                created_at: new Date()
+            }).save();
+        } catch (err) {
+            console.warn('[Audit Log Mongo Write Warning]:', err.message);
+        }
+    } else if (db) {
+        try {
+            await db.run('INSERT INTO activity_logs (timestamp, action, details, formatted) VALUES (?, ?, ?, ?)',
+                [timestamp, action.toUpperCase(), details, formattedLine]);
+        } catch (err) {}
     }
 
     try {
@@ -586,10 +608,19 @@ const otpSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now }
 });
 
+const activityLogSchema = new mongoose.Schema({
+    timestamp: { type: String, required: true },
+    action: { type: String, required: true },
+    details: { type: String, default: '' },
+    formatted: { type: String, required: true },
+    created_at: { type: Date, default: Date.now }
+});
+
 const Team = mongoose.model('Team', teamSchema);
 const Member = mongoose.model('Member', memberSchema);
 const Attendance = mongoose.model('Attendance', attendanceSchema);
 const Otp = mongoose.model('Otp', otpSchema);
+const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
 
 let isMongoConnected = false;
 let db = null;
@@ -696,6 +727,15 @@ async function initDb() {
         otp TEXT,
         expires_at DATETIME,
         attempts INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    await db.run(`CREATE TABLE IF NOT EXISTS activity_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp TEXT,
+        action TEXT,
+        details TEXT,
+        formatted TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -1059,9 +1099,33 @@ app.post('/api/admin/login', (req, res) => {
 });
 
 // Admin Real-time System Audit Log Endpoint
-app.get('/api/admin/activity-log', verifyAdmin, (req, res) => {
+app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
-        let logs = global.activityLogs || [];
+        let logs = [];
+
+        if (isDbMongo() && mongoose.models.ActivityLog) {
+            try {
+                const dbLogs = await mongoose.models.ActivityLog.find().sort({ created_at: -1 }).limit(500).lean();
+                if (dbLogs && dbLogs.length > 0) {
+                    logs = dbLogs.map(l => l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`);
+                }
+            } catch (err) {
+                console.error('Error fetching logs from MongoDB Atlas:', err.message);
+            }
+        }
+
+        if (logs.length === 0 && db) {
+            try {
+                const dbLogs = await db.all('SELECT formatted FROM activity_logs ORDER BY id DESC LIMIT 500');
+                if (dbLogs && dbLogs.length > 0) {
+                    logs = dbLogs.map(l => l.formatted);
+                }
+            } catch (err) {}
+        }
+
+        if (logs.length === 0 && global.activityLogs && global.activityLogs.length > 0) {
+            logs = global.activityLogs;
+        }
 
         if (logs.length === 0) {
             const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
@@ -1074,7 +1138,7 @@ app.get('/api/admin/activity-log', verifyAdmin, (req, res) => {
 
         const logOutput = logs.length > 0 
             ? logs.join('\n') 
-            : `[SYSTEM AUDIT LOG - ${getKolkataTimestamp()}]\nNo system activity recorded yet in current session.`;
+            : `[SYSTEM AUDIT LOG - ${getKolkataTimestamp()}]\nNo system activity recorded yet.`;
 
         res.json({ log: logOutput, count: logs.length });
     } catch (err) {
