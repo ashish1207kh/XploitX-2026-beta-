@@ -1457,11 +1457,11 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 
         if (isValid) {
             const canonicalUser = canonicalMap[cleanUsername] || username;
-            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console from IP: ${clientIp}`);
+            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
             const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h', algorithm: 'HS256' });
             res.json({ success: true, token: token, user: canonicalUser });
         } else {
-            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt from IP: ${clientIp}`);
+            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
             res.status(401).json({ error: 'Invalid Credentials' });
         }
     } catch (err) {
@@ -1475,17 +1475,46 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
         let logs = [];
 
-        if (global.activityLogs && global.activityLogs.length > 0) {
-            logs = [...global.activityLogs];
+        // 1. Load historical logs from database_backup.json
+        const backupPath = path.join(__dirname, 'database_backup.json');
+        if (fs.existsSync(backupPath)) {
+            try {
+                const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+                if (backupData.activityLogs && Array.isArray(backupData.activityLogs)) {
+                    backupData.activityLogs.forEach(l => {
+                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
+                        if (line && !logs.includes(line)) {
+                            logs.push(line);
+                        }
+                    });
+                }
+            } catch (err) {}
         }
 
+        // 2. Load from MongoDB Atlas if active
+        if (isDbMongo()) {
+            try {
+                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
+                const dbLogs = await ActivityLogModel.find().sort({ created_at: 1 }).limit(500).lean();
+                if (dbLogs && dbLogs.length > 0) {
+                    dbLogs.forEach(l => {
+                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
+                        if (line && !logs.includes(line)) {
+                            logs.push(line);
+                        }
+                    });
+                }
+            } catch (err) {}
+        }
+
+        // 3. Load from disk log files
         const adminLogPath = process.env.VERCEL ? path.join(os.tmpdir(), 'admin_activity.log') : path.join(__dirname, 'admin_activity.log');
         if (fs.existsSync(adminLogPath)) {
             try {
                 const adminContent = fs.readFileSync(adminLogPath, 'utf8');
-                const adminLines = adminContent.trim().split('\n').filter(Boolean).reverse();
+                const adminLines = adminContent.trim().split('\n').filter(Boolean);
                 adminLines.forEach(line => {
-                    if (!logs.includes(line)) {
+                    if (line && !logs.includes(line)) {
                         logs.push(line);
                     }
                 });
@@ -1496,15 +1525,25 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         if (fs.existsSync(logFilePath)) {
             try {
                 const content = fs.readFileSync(logFilePath, 'utf8');
-                const fileLines = content.trim().split('\n').filter(Boolean).reverse();
+                const fileLines = content.trim().split('\n').filter(Boolean);
                 fileLines.forEach(line => {
-                    if (!logs.includes(line)) {
+                    if (line && !logs.includes(line)) {
                         logs.push(line);
                     }
                 });
             } catch (err) {}
         }
 
+        // 4. Load in-memory activity logs
+        if (global.activityLogs && global.activityLogs.length > 0) {
+            global.activityLogs.forEach(line => {
+                if (line && !logs.includes(line)) {
+                    logs.push(line);
+                }
+            });
+        }
+
+        // Filter out non-admin logs (OTP and standard registrations)
         const isAdminLog = (l) => {
             if (!l) return false;
             const str = String(l).toUpperCase();
@@ -1516,9 +1555,15 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 
         logs = logs.filter(isAdminLog);
 
+        // Strip "from IP: ..." suffix from all log lines per user preference
+        logs = logs.map(line => line.replace(/\s*from IP:\s*[^\n\r]+/gi, ''));
+
+        // Deduplicate and reverse so newest log is at the top
+        logs = Array.from(new Set(logs)).reverse();
+
         const logOutput = logs.length > 0 
             ? logs.join('\n') 
-            : `[${getKolkataTimestamp()}] ADMIN LOGIN: Operative "${req.user ? req.user.username : 'Administrator'}" logged into Admin Console from IP: 127.0.0.1`;
+            : `[${getKolkataTimestamp()}] ADMIN LOGIN: Operative "${req.user ? req.user.username : 'Administrator'}" logged into Admin Console`;
 
         res.json({ log: logOutput, count: logs.length });
     } catch (err) {

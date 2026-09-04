@@ -1830,15 +1830,15 @@
                         content.innerText = data.log;
                     } else {
                         const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                        content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
+                        content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
                     }
                 } else {
                     const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
+                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
                 }
             } catch (e) {
                 const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
+                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
             }
         }
 
