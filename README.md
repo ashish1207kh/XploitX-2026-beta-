@@ -165,10 +165,10 @@ For detailed disaster recovery policies and production safety rules, refer to [D
 - **Mrs. Aswini** — Assistant Professor
 
 ### Student Lead Coordinators
-- **Jesin Milesh S** (`+91 63795 72635`)
-- **Libinesh S** (`+91 93454 48512`)
-- **Jeswanth V** (`+91 73584 76606`)
-- **Madhu S**, **Ashish G**, **Nirajan S**, **Kalaiarasan K**
+- **Ashish N**, **Madhumitha Narayanan** — Overall Student Coordinators
+- **Jesin Milesh S** — Registration Head (`+91 74184 31480`)
+- **Jeshwanth V**, **Libinesh R U** — Marketing Heads
+- **Amuthini K**, **Niranjan M** — CTF Heads
 
 ---
 
