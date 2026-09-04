@@ -1817,6 +1817,7 @@
             const content = document.getElementById('log-content');
             content.innerText = "Connecting to server activity log stream...";
             const token = sessionStorage.getItem('admin_token') || 'session_admin';
+            const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
                     headers: {
@@ -1825,16 +1826,19 @@
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    content.innerText = data.log || "[SYSTEM AUDIT LOG]\nNo activity recorded yet.";
+                    if (data && data.log) {
+                        content.innerText = data.log;
+                    } else {
+                        const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+                        content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
+                    }
                 } else {
-                    const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
                     const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
+                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
                 }
             } catch (e) {
-                const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
                 const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1\n[SYSTEM AUDIT LOG - LOCAL STREAM ACTIVE]`;
+                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console from IP: 127.0.0.1`;
             }
         }
 

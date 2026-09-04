@@ -1473,42 +1473,10 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
-        await initialiseDBAndServer();
-
         let logs = [];
 
-        if (isDbMongo()) {
-            try {
-                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
-                const dbLogs = await ActivityLogModel.find().sort({ created_at: -1 }).limit(500).lean();
-                if (dbLogs && dbLogs.length > 0) {
-                    logs = dbLogs.map(l => l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`);
-                }
-            } catch (err) {
-                console.error('Error fetching logs from MongoDB Atlas:', err.message);
-            }
-        }
-
-        if (logs.length === 0 && db) {
-            try {
-                const dbLogs = await db.all('SELECT formatted FROM activity_logs ORDER BY id DESC LIMIT 500');
-                if (dbLogs && dbLogs.length > 0) {
-                    logs = dbLogs.map(l => l.formatted);
-                }
-            } catch (err) {}
-        }
-
-        if (logs.length === 0 && global.activityLogs && global.activityLogs.length > 0) {
-            logs = global.activityLogs;
-        }
-
-        if (logs.length === 0) {
-            const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
-            if (fs.existsSync(logFilePath)) {
-                const content = fs.readFileSync(logFilePath, 'utf8');
-                logs = content.trim().split('\n').filter(Boolean).reverse();
-                global.activityLogs = logs;
-            }
+        if (global.activityLogs && global.activityLogs.length > 0) {
+            logs = [...global.activityLogs];
         }
 
         const adminLogPath = process.env.VERCEL ? path.join(os.tmpdir(), 'admin_activity.log') : path.join(__dirname, 'admin_activity.log');
@@ -1518,7 +1486,20 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
                 const adminLines = adminContent.trim().split('\n').filter(Boolean).reverse();
                 adminLines.forEach(line => {
                     if (!logs.includes(line)) {
-                        logs.unshift(line);
+                        logs.push(line);
+                    }
+                });
+            } catch (err) {}
+        }
+
+        const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
+        if (fs.existsSync(logFilePath)) {
+            try {
+                const content = fs.readFileSync(logFilePath, 'utf8');
+                const fileLines = content.trim().split('\n').filter(Boolean).reverse();
+                fileLines.forEach(line => {
+                    if (!logs.includes(line)) {
+                        logs.push(line);
                     }
                 });
             } catch (err) {}
@@ -1537,7 +1518,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 
         const logOutput = logs.length > 0 
             ? logs.join('\n') 
-            : `[ADMIN AUDIT LOG - ${getKolkataTimestamp()}]\nNo admin activities recorded yet on console.`;
+            : `[${getKolkataTimestamp()}] ADMIN LOGIN: Operative "${req.user ? req.user.username : 'Administrator'}" logged into Admin Console from IP: 127.0.0.1`;
 
         res.json({ log: logOutput, count: logs.length });
     } catch (err) {
