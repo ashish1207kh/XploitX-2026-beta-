@@ -664,22 +664,15 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==========================================
-// 9. SECRET ADMIN CONSOLE SHORTCUT (Ctrl + Alt + Shift + X + B)
+// 9. SECRET ADMIN CONSOLE SHORTCUT (Ctrl + Alt + Shift + B)
 // ==========================================
 (function initSecretAdminShortcut() {
-    let lastXTime = 0;
     const targetUrl = 'a1109a6e893d27842e1a57a5f5c9d9749d424e2e6605714b301221fce68d799d.html';
 
     window.addEventListener('keydown', (e) => {
-        if (!e.ctrlKey || !e.altKey || !e.shiftKey) return;
-
-        const key = (e.key || '').toLowerCase();
-        const now = Date.now();
-
-        if (key === 'x') {
-            lastXTime = now;
-        } else if (key === 'b') {
-            if (now - lastXTime <= 3000) {
+        if (e.ctrlKey && e.altKey && e.shiftKey) {
+            const key = (e.key || '').toLowerCase();
+            if (key === 'b' || e.code === 'KeyB') {
                 e.preventDefault();
                 window.location.href = targetUrl;
             }
