@@ -1379,17 +1379,13 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         // Secure credential lookup without plaintext hardcoding in codebase
         const adminAccounts = {
             "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
-            "admin": process.env.ADMIN_PASS_ADMIN || "Administrator@Beta2026",
             "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
         };
 
         const canonicalMap = {
             "administrator": "Administrator",
-            "admin": "Administrator",
             "jesin milesh": "Jesin Milesh",
-            "jesin": "Jesin Milesh",
             "ashish": "Ashish"
         };
 
