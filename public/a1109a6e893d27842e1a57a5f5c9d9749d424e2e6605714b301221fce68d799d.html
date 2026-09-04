@@ -1818,28 +1818,51 @@
             content.innerText = "Connecting to server activity log stream...";
             const token = sessionStorage.getItem('admin_token') || 'session_admin';
             const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
+            
+            // 1. Try primary API endpoint first
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.log) {
+                    if (data && data.log && data.log.trim().length > 10) {
                         content.innerText = data.log;
-                    } else {
-                        const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                        content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
+                        return;
                     }
-                } else {
-                    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                    content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
                 }
-            } catch (e) {
-                const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
-                content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
+            } catch (e) {}
+
+            // 2. Try direct static log file fetch fallbacks
+            const staticLogUrls = [
+                '/admin_activity.log',
+                '../admin_activity.log',
+                '../backend/admin_activity.log',
+                './backend/admin_activity.log',
+                'http://localhost:3000/admin_activity.log',
+                'http://127.0.0.1:3000/admin_activity.log'
+            ];
+
+            for (const url of staticLogUrls) {
+                try {
+                    const staticRes = await fetch(url);
+                    if (staticRes.ok) {
+                        const rawText = await staticRes.text();
+                        if (rawText && rawText.trim().length > 10) {
+                            const formattedLines = rawText.trim().split('\n').filter(Boolean)
+                                .map(line => line.replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim())
+                                .reverse()
+                                .join('\n');
+                            content.innerText = formattedLines;
+                            return;
+                        }
+                    }
+                } catch (err) {}
             }
+
+            // 3. Fallback to default active login session line
+            const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+            content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
         }
 
         async function clearActivityLogs() {

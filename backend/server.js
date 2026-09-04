@@ -1499,20 +1499,28 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             }
         }
 
-        // 2. Load from MongoDB Atlas if active
-        if (typeof isDbMongo === 'function' && isDbMongo()) {
-            try {
-                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
-                const dbLogs = await ActivityLogModel.find().sort({ created_at: 1 }).limit(500).lean();
-                if (dbLogs && dbLogs.length > 0) {
-                    dbLogs.forEach(l => {
-                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
-                        if (line && !logs.includes(line)) {
-                            logs.push(line);
-                        }
-                    });
+        // 2. Load directly from MongoDB Atlas if MONGODB_URI is available
+        try {
+            const mongoUri = (process.env.MONGODB_URI || "").trim();
+            if (mongoUri) {
+                if (!isDbMongo()) {
+                    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 }).catch(() => {});
                 }
-            } catch (err) {}
+                if (isDbMongo()) {
+                    const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
+                    const dbLogs = await ActivityLogModel.find().sort({ created_at: -1 }).limit(500).lean();
+                    if (dbLogs && dbLogs.length > 0) {
+                        dbLogs.forEach(l => {
+                            const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
+                            if (line && !logs.includes(line)) {
+                                logs.push(line);
+                            }
+                        });
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('MongoDB Atlas activity log query warning:', err.message);
         }
 
         // 3. Load from SQLite database if active
@@ -1595,6 +1603,21 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         console.error('Error serving activity log:', err);
         const fallbackLog = `[${getKolkataTimestamp()}] ADMIN LOGIN: Operative "${req.user ? req.user.username : 'Administrator'}" logged into Admin Console`;
         res.json({ log: fallbackLog, count: 1 });
+    }
+});
+
+// Static endpoint to download/view raw admin_activity.log
+app.get('/admin_activity.log', (req, res) => {
+    const adminLogPath = path.join(__dirname, 'admin_activity.log');
+    if (fs.existsSync(adminLogPath)) {
+        res.sendFile(adminLogPath);
+    } else {
+        const rootPath = path.join(process.cwd(), 'admin_activity.log');
+        if (fs.existsSync(rootPath)) {
+            res.sendFile(rootPath);
+        } else {
+            res.status(404).send('Log file not found');
+        }
     }
 });
 
