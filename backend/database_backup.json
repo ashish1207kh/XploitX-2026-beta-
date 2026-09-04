@@ -1,10 +1,10 @@
 {
-  "export_timestamp": "2026-09-04 21:29:02 IST",
+  "export_timestamp": "2026-09-04 23:50:00 IST",
   "summary": {
     "total_teams": 0,
     "total_members": 0,
     "total_attendance_records": 0,
-    "total_activity_logs": 27
+    "total_activity_logs": 28
   },
   "teams": [],
   "members": [],
@@ -252,6 +252,15 @@
       "details": "Operative \"Ashish\" logged into Admin Console",
       "formatted": "[2026-09-04 21:12:42 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
       "created_at": "2026-09-04T15:42:42.109Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9aebb8dee9174ede434a29",
+      "timestamp": "2026-09-04 21:33:04 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 21:33:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T16:03:04.322Z",
       "__v": 0
     }
   ]

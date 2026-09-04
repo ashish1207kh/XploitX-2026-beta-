@@ -1020,20 +1020,20 @@
             <h2 class="login-title-text">ADMIN ACCESS</h2>
             <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
 
-            <form onsubmit="event.preventDefault(); checkAdmin();">
+            <form onsubmit="event.preventDefault(); checkAdmin(); return false;">
                 <div class="login-field-group">
                     <i class="fas fa-user login-field-icon"></i>
                     <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
-                        autocomplete="username">
+                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
                 </div>
 
                 <div class="login-field-group">
                     <i class="fas fa-lock login-field-icon"></i>
                     <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
-                        autocomplete="current-password">
+                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
                 </div>
 
-                <button type="submit" class="login-submit-btn"> UNLOCK </button>
+                <button type="button" onclick="checkAdmin();" class="login-submit-btn"> UNLOCK </button>
             </form>
         </div>
     </div>
