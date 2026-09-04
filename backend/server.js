@@ -1473,9 +1473,46 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
+        await initialiseDBAndServer();
+
         let logs = [];
 
-        // 1. Load historical logs from database_backup.json
+        // 1. Load from MongoDB Atlas if active
+        if (isDbMongo()) {
+            try {
+                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
+                const dbLogs = await ActivityLogModel.find().sort({ created_at: 1 }).limit(500).lean();
+                if (dbLogs && dbLogs.length > 0) {
+                    dbLogs.forEach(l => {
+                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
+                        if (line && !logs.includes(line)) {
+                            logs.push(line);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.warn('MongoDB activity log query warning:', err.message);
+            }
+        }
+
+        // 2. Load from SQLite database if active
+        if (db) {
+            try {
+                const dbLogs = await db.all('SELECT formatted, timestamp, action, details FROM activity_logs ORDER BY id ASC LIMIT 500');
+                if (dbLogs && dbLogs.length > 0) {
+                    dbLogs.forEach(l => {
+                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
+                        if (line && !logs.includes(line)) {
+                            logs.push(line);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.warn('SQLite activity log query warning:', err.message);
+            }
+        }
+
+        // 3. Load historical logs from database_backup.json
         const backupPath = path.join(__dirname, 'database_backup.json');
         if (fs.existsSync(backupPath)) {
             try {
@@ -1491,23 +1528,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             } catch (err) {}
         }
 
-        // 2. Load from MongoDB Atlas if active
-        if (isDbMongo()) {
-            try {
-                const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
-                const dbLogs = await ActivityLogModel.find().sort({ created_at: 1 }).limit(500).lean();
-                if (dbLogs && dbLogs.length > 0) {
-                    dbLogs.forEach(l => {
-                        const line = l.formatted || `[${l.timestamp}] ${l.action}${l.details ? ': ' + l.details : ''}`;
-                        if (line && !logs.includes(line)) {
-                            logs.push(line);
-                        }
-                    });
-                }
-            } catch (err) {}
-        }
-
-        // 3. Load from disk log files
+        // 4. Load from disk log files
         const adminLogPath = process.env.VERCEL ? path.join(os.tmpdir(), 'admin_activity.log') : path.join(__dirname, 'admin_activity.log');
         if (fs.existsSync(adminLogPath)) {
             try {
@@ -1534,7 +1555,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             } catch (err) {}
         }
 
-        // 4. Load in-memory activity logs
+        // 5. Load in-memory activity logs
         if (global.activityLogs && global.activityLogs.length > 0) {
             global.activityLogs.forEach(line => {
                 if (line && !logs.includes(line)) {
@@ -1543,20 +1564,8 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             });
         }
 
-        // Filter out non-admin logs (OTP and standard registrations)
-        const isAdminLog = (l) => {
-            if (!l) return false;
-            const str = String(l).toUpperCase();
-            if (str.includes('SEND OTP') || str.includes('OTP VERIFIED') || str.includes('NEW REGISTRATION')) {
-                return false;
-            }
-            return true;
-        };
-
-        logs = logs.filter(isAdminLog);
-
         // Strip "from IP: ..." suffix from all log lines per user preference
-        logs = logs.map(line => line.replace(/\s*from IP:\s*[^\n\r]+/gi, ''));
+        logs = logs.map(line => String(line).replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim()).filter(Boolean);
 
         // Deduplicate and reverse so newest log is at the top
         logs = Array.from(new Set(logs)).reverse();
