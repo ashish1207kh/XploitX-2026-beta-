@@ -1394,7 +1394,7 @@ function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY | PRATHYUSH
 
 function getEmailFooterHtml(includeWhatsApp = true) {
     const whatsappIcon = includeWhatsApp ? `
-                <a href="https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
+                <a href="https://chat.whatsapp.com/LDDhYBN90bJEJWyAxEBLFR" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://img.icons8.com/color/96/whatsapp.png" alt="WhatsApp Group" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>` : '';
 
@@ -1788,7 +1788,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 });
             }
 
-            const whatsappLink = "https://chat.whatsapp.com/I2iJI6mlg5F5EFgEHkLqdg";
+            const whatsappLink = "https://chat.whatsapp.com/LDDhYBN90bJEJWyAxEBLFR";
             const recipientEmails = Array.from(new Set(members.map(m => m.email).concat([teamData.email]).filter(e => e && e.includes('@'))));
 
             const membersListText = members.map((m, i) => `${i + 1}. ${m.name} – ${m.college || leader.college || 'Prathyusha Engineering College'}`).join('\n');
@@ -2297,3 +2297,6 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
+module.exports.sendEmail = sendEmail;
+module.exports.getEmailHeaderHtml = getEmailHeaderHtml;
+module.exports.getEmailFooterHtml = getEmailFooterHtml;
