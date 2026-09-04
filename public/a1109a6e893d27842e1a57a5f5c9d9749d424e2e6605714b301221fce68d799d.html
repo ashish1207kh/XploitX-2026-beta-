@@ -2487,24 +2487,31 @@
             });
         }
 
-        // Require admin credentials on every page open / refresh / exit
+        // Strictly require admin credentials on every page load / refresh / tab reopening
         document.addEventListener('DOMContentLoaded', () => {
-            sessionStorage.removeItem('admin_token');
-            sessionStorage.removeItem('admin_user');
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
+            sessionStorage.clear();
+            localStorage.clear();
+            document.cookie.split(";").forEach(c => {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+
+            const userEl = document.getElementById('admin-user');
+            const passEl = document.getElementById('admin-pass');
+            if (userEl) userEl.value = '';
+            if (passEl) passEl.value = '';
 
             const loginOverlay = document.getElementById('login-overlay');
             if (loginOverlay) {
-                loginOverlay.style.display = 'flex';
+                loginOverlay.style.setProperty('display', 'flex', 'important');
             }
         });
 
         window.addEventListener('beforeunload', () => {
-            sessionStorage.removeItem('admin_token');
-            sessionStorage.removeItem('admin_user');
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
+            sessionStorage.clear();
+            localStorage.clear();
+            document.cookie.split(";").forEach(c => {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
         });
     </script>
     <script src="script.js"></script>
