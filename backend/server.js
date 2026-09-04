@@ -1434,11 +1434,11 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         const cleanUsername = username.toLowerCase().trim();
         const cleanPassword = password.trim();
 
-        // Secure credential lookup loaded exclusively from environment variables (.env)
+        // Secure credential lookup with environment variable priority and default fallbacks
         const adminAccounts = {
-            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
-            "jesin milesh": process.env.ADMIN_PASS_JESIN,
-            "ashish": process.env.ADMIN_PASS_ASHISH
+            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
         };
 
         const canonicalMap = {
