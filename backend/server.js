@@ -497,6 +497,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
 
 const app = express();
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // Security Headers (Helmet)
@@ -565,7 +566,7 @@ const adminLoginLimiter = rateLimit({
 
 const otpRequestLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 3,
+    max: process.env.NODE_ENV === 'production' ? 5 : 50,
     message: { error: 'Too many OTP requests. Please wait 10 minutes.' },
     standardHeaders: true,
     legacyHeaders: false
@@ -573,7 +574,7 @@ const otpRequestLimiter = rateLimit({
 
 const otpVerifyLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 5,
+    max: process.env.NODE_ENV === 'production' ? 10 : 50,
     message: { error: 'Too many OTP verification attempts. Please wait 10 minutes.' },
     standardHeaders: true,
     legacyHeaders: false

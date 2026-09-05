@@ -49,6 +49,24 @@ window.alert = function (msg) {
     showCyberAlert(msg);
 };
 
+// ==========================================
+// API BASE URL RESOLUTION
+// ==========================================
+let API_BASE_URL = '';
+const currentHostname = window.location.hostname;
+const currentProtocol = window.location.protocol;
+const currentPort = window.location.port;
+
+if (currentProtocol === 'file:') {
+    API_BASE_URL = 'http://localhost:3000';
+} else if (currentPort && currentPort !== '3000' && (currentHostname === 'localhost' || currentHostname === '127.0.0.1')) {
+    API_BASE_URL = `http://${currentHostname}:3000`;
+} else if (currentPort && currentPort !== '3000' && (currentHostname.startsWith('192.168.') || currentHostname.startsWith('10.') || currentHostname.startsWith('172.'))) {
+    API_BASE_URL = `http://${currentHostname}:3000`;
+} else {
+    API_BASE_URL = '';
+}
+
 let memberCount = 1; // Leader is Slot 1
 const MIN_MEMBERS = 2;
 const MAX_MEMBERS = 4;
@@ -571,14 +589,20 @@ function initOtpFlow() {
         const timeoutId = setTimeout(() => controller.abort(), 25000);
 
         try {
-            const res = await fetch('/api/auth/send-verification-otp', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/send-verification-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, name: leaderName }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
-            const data = await res.json();
+
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                console.warn('Non-JSON response from server:', jsonErr);
+            }
 
             if (res.ok && data.success) {
                 otpBox.style.display = 'block';
@@ -590,7 +614,8 @@ function initOtpFlow() {
                 }
             } else {
                 otpBox.style.display = 'none';
-                setFeedback(`Error: ${data.error || 'Failed to send OTP. Check server settings.'}`, false);
+                const errorMsg = data.error || (res.status === 429 ? 'Too many OTP requests. Please wait a few minutes.' : (res.status === 404 ? 'API route not found. Please ensure backend server is running on port 3000.' : 'Failed to send OTP. Check server settings.'));
+                setFeedback(`Error: ${errorMsg}`, false);
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
         } catch (err) {
@@ -600,7 +625,7 @@ function initOtpFlow() {
             if (err.name === 'AbortError') {
                 setFeedback('Server response timeout. Please try again.', false);
             } else {
-                setFeedback('Failed to connect to server. Please try again.', false);
+                setFeedback('Failed to connect to server. Please ensure the backend is running (run "npm start" on port 3000).', false);
             }
             btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
         } finally {
@@ -621,7 +646,7 @@ function initOtpFlow() {
         btnVerifyOtp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
 
         try {
-            const res = await fetch('/api/auth/verify-email-otp', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/verify-email-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, otp: otp })
@@ -1242,12 +1267,17 @@ function initFormSubmission() {
                 formData.append('paymentProof', paymentProofFile);
             }
 
-            const response = await fetch('/api/auth/register-with-payment', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register-with-payment`, {
                 method: 'POST',
                 body: formData
             });
 
-            const data = await response.json();
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.warn('Non-JSON response from server:', e);
+            }
 
             if (!response.ok) {
                 showCyberAlert(`Registration Error: ${data.error || 'Failed to submit registration.'}`, 'REGISTRATION FAILED');
