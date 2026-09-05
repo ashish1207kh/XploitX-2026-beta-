@@ -1439,7 +1439,7 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         const canonicalMap = {
             "administrator": "Administrator",
             "jesin milesh": "Jesin Milesh",
-            "ashish": "Ashish"
+            "ashish": "Ashish N"
         };
 
         let isValid = false;
