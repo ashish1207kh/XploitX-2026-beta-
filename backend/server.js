@@ -1,8 +1,10 @@
 const dns = require('dns');
-try {
-    dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
-} catch (e) {
-    console.warn('DNS server configuration warning:', e.message);
+if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FUNCTION_NAME && process.platform === 'win32') {
+    try {
+        dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+    } catch (e) {
+        console.warn('DNS server configuration warning:', e.message);
+    }
 }
 
 const express = require('express');
@@ -500,6 +502,13 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+    if (req.url && req.url.includes('/api/auth/')) {
+        console.log(`[AUTH API] ${req.method} ${req.url} from ${req.ip} (Origin: ${req.headers.origin || 'none'})`);
+    }
+    next();
+});
+
 // Security Headers (Helmet)
 app.use(helmet({
     contentSecurityPolicy: {
@@ -910,8 +919,8 @@ const initialiseDBAndServer = async () => {
                     console.error('[Server Error]:', err.message);
                 }
             });
-            serverInst.listen(PORT, () => {
-                console.log(`🚀 Server started at http://localhost:${PORT}/`);
+            serverInst.listen(PORT, '0.0.0.0', () => {
+                console.log(`🚀 Server started at http://localhost:${PORT}/ (Bound to 0.0.0.0)`);
                 if (isDbMongo()) {
                     console.log(`🍃 Database Engine: MongoDB Atlas Connected`);
                 } else {

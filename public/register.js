@@ -59,10 +59,10 @@ const currentPort = window.location.port;
 
 if (currentProtocol === 'file:') {
     API_BASE_URL = 'http://localhost:3000';
-} else if (currentPort && currentPort !== '3000' && (currentHostname === 'localhost' || currentHostname === '127.0.0.1')) {
-    API_BASE_URL = `http://${currentHostname}:3000`;
-} else if (currentPort && currentPort !== '3000' && (currentHostname.startsWith('192.168.') || currentHostname.startsWith('10.') || currentHostname.startsWith('172.'))) {
-    API_BASE_URL = `http://${currentHostname}:3000`;
+} else if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+    API_BASE_URL = currentPort === '3000' ? '' : 'http://localhost:3000';
+} else if (currentHostname.startsWith('192.168.') || currentHostname.startsWith('10.') || currentHostname.startsWith('172.')) {
+    API_BASE_URL = currentPort === '3000' ? '' : `http://${currentHostname}:3000`;
 } else {
     API_BASE_URL = '';
 }
@@ -598,13 +598,19 @@ function initOtpFlow() {
             clearTimeout(timeoutId);
 
             let data = {};
+            let rawText = '';
             try {
-                data = await res.json();
-            } catch (jsonErr) {
-                console.warn('Non-JSON response from server:', jsonErr);
+                rawText = await res.text();
+                try {
+                    data = JSON.parse(rawText);
+                } catch (jsonErr) {
+                    console.warn('Non-JSON response from server:', rawText);
+                }
+            } catch (readErr) {
+                console.warn('Failed to read response body:', readErr);
             }
 
-            if (res.ok && data.success) {
+            if (res.ok && (data.success || data.message === 'OTP sent')) {
                 otpBox.style.display = 'block';
                 setFeedback('✓ Enter the 6-digit OTP sent to your email', true);
                 btnSendOtp.innerHTML = '<i class="fas fa-redo"></i> RESEND OTP';
@@ -614,7 +620,20 @@ function initOtpFlow() {
                 }
             } else {
                 otpBox.style.display = 'none';
-                const errorMsg = data.error || (res.status === 429 ? 'Too many OTP requests. Please wait a few minutes.' : (res.status === 404 ? 'API route not found. Please ensure backend server is running on port 3000.' : 'Failed to send OTP. Check server settings.'));
+                let errorMsg = data.error;
+                if (!errorMsg) {
+                    if (res.status === 429) {
+                        errorMsg = 'Too many OTP requests. Please wait a few minutes.';
+                    } else if (res.status === 404) {
+                        errorMsg = 'API endpoint not found. Please ensure backend server is running on port 3000.';
+                    } else if (res.status === 405) {
+                        errorMsg = 'Method Not Allowed. Please open the registration page via http://localhost:3000/register.html';
+                    } else if (res.status >= 500) {
+                        errorMsg = `Server error (${res.status}). Ensure backend is running with "npm start".`;
+                    } else {
+                        errorMsg = `Unable to send OTP (HTTP ${res.status || 'unknown'}). Check server settings.`;
+                    }
+                }
                 setFeedback(`Error: ${errorMsg}`, false);
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
             }
