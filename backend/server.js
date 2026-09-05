@@ -15,8 +15,14 @@ const bcrypt = require('bcrypt');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { open } = require('sqlite');
-const sqlite3 = require('sqlite3').verbose();
+let open = null;
+let sqlite3 = null;
+try {
+    open = require('sqlite').open;
+    sqlite3 = require('sqlite3').verbose();
+} catch (e) {
+    console.warn('[SQLite Notice] SQLite native bindings unavailable in serverless environment:', e.message);
+}
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
@@ -304,10 +310,10 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    const brevoApiKey = process.env.BREVO_API_KEY || null;
+    const brevoApiKey = (process.env.BREVO_API_KEY || '').trim();
     const resendApiKey = process.env.RESEND_API_KEY || (process.env.EMAIL_API_KEY && process.env.EMAIL_API_KEY.startsWith('re_') ? process.env.EMAIL_API_KEY : null);
     const sendgridApiKey = process.env.SENDGRID_API_KEY;
-    const senderEmail = (process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || process.env.SMTP_USER || process.env.EMAIL_USER || 'xploitxbeta2.0@gmail.com').trim();
+    const senderEmail = (process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || process.env.SMTP_USER || process.env.EMAIL_USER || 'jeshwanthv751@gmail.com').trim();
     const senderName = (process.env.BREVO_SENDER_NAME || 'XploitX 2.0 BETA').trim();
     const fromAddress = senderEmail.includes('<') ? senderEmail : `"${senderName}" <${senderEmail}>`;
 
@@ -875,7 +881,8 @@ const initialiseDBAndServer = async () => {
         isMongoConnected = true;
         return;
     }
-    const mongoUri = (process.env.MONGODB_URI || "").trim();
+    const defaultMongoUri = 'mongodb+srv://jeshwanthv751_db_user:BqVftSj4VJzuts3h@cluster0.vy8bb6x.mongodb.net/?appName=Cluster0';
+    const mongoUri = (process.env.MONGODB_URI || defaultMongoUri).trim();
     const isProductionEnv = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
 
     if (mongoUri) {
@@ -896,7 +903,7 @@ const initialiseDBAndServer = async () => {
         }
     }
 
-    if (!isDbMongo() && !db && !isProductionEnv) {
+    if (!isDbMongo() && !db && !isProductionEnv && open && sqlite3) {
         try {
             db = await open({
                 filename: DBPath,
@@ -1353,11 +1360,13 @@ async function exportDatabaseBackup() {
     }
 }
 
-initialiseDBAndServer().then(() => {
-    setTimeout(() => {
-        exportDatabaseBackup().catch(() => {});
-    }, 3000);
-});
+if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    initialiseDBAndServer().then(() => {
+        setTimeout(() => {
+            exportDatabaseBackup().catch(() => {});
+        }, 3000);
+    });
+}
 
 // --- EMAIL CONFIGURATION ---
 // NOTE: The primary sendEmail function using the Brevo HTTPS REST API is defined
