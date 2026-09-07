@@ -10,6 +10,30 @@
       "destination": "/api"
     },
     {
+      "source": "/attendance",
+      "destination": "/public/attendance.html"
+    },
+    {
+      "source": "/attendance-login",
+      "destination": "/public/attendance.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/public/register.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/public/about.html"
+    },
+    {
+      "source": "/rules",
+      "destination": "/public/rules.html"
+    },
+    {
+      "source": "/prizes",
+      "destination": "/public/prizes.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/public/$1"
     }

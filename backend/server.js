@@ -12,7 +12,15 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const bcrypt = require('bcrypt');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const envBackend = path.resolve(__dirname, '.env');
+const envRoot = path.resolve(__dirname, '../.env');
+if (fs.existsSync(envBackend)) {
+    require('dotenv').config({ path: envBackend });
+} else if (fs.existsSync(envRoot)) {
+    require('dotenv').config({ path: envRoot });
+} else {
+    require('dotenv').config();
+}
 const bodyParser = require('body-parser');
 const cors = require('cors');
 let open = null;
@@ -91,7 +99,7 @@ async function logActivity(action, details = '') {
         if (!isDbMongo() && !db) {
             await initialiseDBAndServer();
         }
-    } catch (e) {}
+    } catch (e) { }
 
     if (isDbMongo()) {
         try {
@@ -112,7 +120,7 @@ async function logActivity(action, details = '') {
         try {
             await db.run('INSERT INTO activity_logs (timestamp, action, details, formatted) VALUES (?, ?, ?, ?)',
                 [timestamp, action.toUpperCase(), details, formattedLine]);
-        } catch (err) {}
+        } catch (err) { }
     }
 
     try {
@@ -520,7 +528,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
             imgSrc: ["'self'", "data:", "https://raw.githubusercontent.com", "https://img.icons8.com", "https://api.qrserver.com", "blob:"],
@@ -575,6 +583,14 @@ const adminLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 30,
     message: { error: 'Too many admin login attempts. Please try again after 15 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+const attendanceLoginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: { error: 'Too many attendance login attempts. Please try again after 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false
 });
@@ -637,6 +653,83 @@ app.use((req, res, next) => {
     }
 
     next();
+});
+
+// --- JWT & SESSION AUTHENTICATION CORE HELPERS ---
+const getJwtSecret = () => {
+    const secret = process.env.JWT_SECRET;
+    if (secret && secret.trim().length > 0) {
+        return secret.trim();
+    }
+    if (process.env.NODE_ENV === 'production') {
+        console.error('[SECURITY GUARD] FATAL: JWT_SECRET environment variable must be explicitly defined in production!');
+        throw new Error('JWT_SECRET configuration missing in production');
+    }
+    return 'xploitx_dev_only_jwt_secret_key_2026';
+};
+
+const JWT_SECRET = getJwtSecret();
+
+// Parse cookies safely from incoming request headers
+const parseCookies = (req) => {
+    const list = {};
+    const rc = req && req.headers && req.headers.cookie;
+    if (rc) {
+        rc.split(';').forEach(cookie => {
+            const parts = cookie.split('=');
+            if (parts.length >= 2) {
+                list[parts[0].trim()] = decodeURIComponent(parts.slice(1).join('=').trim());
+            }
+        });
+    }
+    return list;
+};
+
+// Check if request has a valid authenticated attendance session (Bearer token only, no cookies)
+const isAttendanceAuthenticated = (req) => {
+    try {
+        const authHeader = req.headers && req.headers['authorization'];
+        const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+        if (!bearerToken) return false;
+
+        const decoded = jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] });
+        if (decoded && decoded.username && (decoded.role === 'admin' || decoded.scope === 'attendance')) {
+            return decoded;
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
+};
+
+// Strict Attendance Authorization Middleware for Backend APIs
+const verifyAttendanceAuth = (req, res, next) => {
+    const authHeader = req.headers && req.headers['authorization'];
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    if (!bearerToken) {
+        return res.status(401).json({ error: 'Unauthorized: Valid attendance authentication token required.' });
+    }
+
+    try {
+        const decoded = jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] });
+        if (decoded && decoded.username && (decoded.role === 'admin' || decoded.scope === 'attendance')) {
+            req.user = decoded;
+            return next();
+        }
+        return res.status(403).json({ error: 'Forbidden: Insufficient permissions for attendance terminal.' });
+    } catch (e) {
+        return res.status(403).json({ error: 'Forbidden: Invalid or expired attendance token.' });
+    }
+};
+
+// --- ATTENDANCE SERVER-SIDE ROUTE GUARDS ---
+// Direct page serving - authentication guard is enforced client-side via strict token validation
+app.get(['/attendance', '/attendance.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/attendance.html'));
+});
+
+app.get(['/attendance-login', '/attendance-login.html'], (req, res) => {
+    res.redirect('/attendance.html');
 });
 
 app.use(express.static(path.join(__dirname, '../public')));
@@ -776,7 +869,7 @@ const storage = multer.diskStorage({
                 if (!fs.existsSync(fallbackDir)) {
                     fs.mkdirSync(fallbackDir, { recursive: true });
                 }
-            } catch (e) {}
+            } catch (e) { }
             cb(null, fallbackDir);
         }
     },
@@ -1199,7 +1292,7 @@ async function updatePaymentStatus(teamId, status) {
     if (db) {
         try {
             await db.run(`UPDATE teams SET payment_verified = ? WHERE team_id = ?`, [status, teamId]);
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -1221,7 +1314,7 @@ async function updatePaymentProof(teamId, proofPath, transactionId, proofData = 
             } else {
                 await db.run(`UPDATE teams SET payment_proof = ? WHERE team_id = ?`, [proofPath, teamId]);
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -1260,7 +1353,7 @@ async function updateTeamAndMembers(teamId, name, event, members) {
                     );
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -1278,7 +1371,7 @@ async function deleteTeamRecord(teamId) {
                 await db.run('DELETE FROM teams WHERE id = ?', [team.id]);
                 await db.run('DELETE FROM attendance WHERE team_id = ?', [teamId]);
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -1294,9 +1387,9 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
         try {
             await db.run(`INSERT OR IGNORE INTO attendance (team_id, team_name, team_leader_name, team_leader_phone, status) VALUES (?, ?, ?, ?, 'ABSENT')`,
                 [teamId, teamName, leaderName, leaderPhone]);
-        } catch (e) {}
+        } catch (e) { }
     }
-    exportDatabaseBackup().catch(() => {});
+    exportDatabaseBackup().catch(() => { });
 }
 
 // --- AUTOMATED DATABASE BACKUP SYSTEM ---
@@ -1320,7 +1413,7 @@ async function exportDatabaseBackup() {
                 activityLogs = await mongoose.models.ActivityLog.find().lean();
             }
         }
-        
+
         if (teams.length === 0 && db) {
             teams = await db.all('SELECT * FROM teams');
             members = await db.all('SELECT * FROM members');
@@ -1349,7 +1442,7 @@ async function exportDatabaseBackup() {
         if (fs.existsSync(DBPath)) {
             try {
                 fs.copyFileSync(DBPath, BACKUP_DB_PATH);
-            } catch (copyErr) {}
+            } catch (copyErr) { }
         }
 
         console.log(`[DATABASE BACKUP SUCCESS] Backup exported (${teams.length} teams) to database_backup.json & hackathon_backup.db`);
@@ -1363,7 +1456,7 @@ async function exportDatabaseBackup() {
 if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
     initialiseDBAndServer().then(() => {
         setTimeout(() => {
-            exportDatabaseBackup().catch(() => {});
+            exportDatabaseBackup().catch(() => { });
         }, 3000);
     });
 }
@@ -1377,34 +1470,18 @@ if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FU
 // API Routes
 
 // --- JWT & ADMIN SECURITY LAYER ---
-const getJwtSecret = () => {
-    const secret = process.env.JWT_SECRET;
-    if (secret && secret.trim().length > 0) {
-        return secret.trim();
-    }
-    if (process.env.NODE_ENV === 'production') {
-        console.error('[SECURITY GUARD] FATAL: JWT_SECRET environment variable must be explicitly defined in production!');
-        throw new Error('JWT_SECRET configuration missing in production');
-    }
-    return 'xploitx_dev_only_jwt_secret_key_2026';
-};
-
-const JWT_SECRET = getJwtSecret();
-
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
-    if (!token || token.startsWith('session_')) {
-        req.user = { username: 'Administrator', role: 'admin' };
-        return next();
+    if (!bearerToken) {
+        return res.status(401).json({ error: 'Unauthorized: Admin authentication token required.' });
     }
 
     // Explicitly enforce allowed algorithms to block algorithm confusion attacks (e.g. alg: none)
-    jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
+    jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
         if (err || !user || !user.username || user.role !== 'admin') {
-            req.user = { username: 'Administrator', role: 'admin' };
-            return next();
+            return res.status(403).json({ error: 'Forbidden: Valid admin authorization required.' });
         }
         req.user = user;
         next();
@@ -1451,13 +1528,17 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         // Secure credential lookup with environment variable priority and default fallbacks
         const adminAccounts = {
             "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
             "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
         };
 
         const canonicalMap = {
             "administrator": "Administrator",
+            "admin": "Administrator",
             "jesin milesh": "Jesin Milesh",
+            "jesin": "Jesin Milesh",
             "ashish": "Ashish"
         };
 
@@ -1477,7 +1558,9 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
         if (isValid) {
             const canonicalUser = canonicalMap[cleanUsername] || username;
             logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
-            const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '12h', algorithm: 'HS256' });
+            const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '2h', algorithm: 'HS256' });
+            res.clearCookie('admin_token', { path: '/' });
+            res.clearCookie('attendance_token', { path: '/' });
             res.json({ success: true, token: token, user: canonicalUser });
         } else {
             logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
@@ -1514,7 +1597,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
                             }
                         });
                     }
-                } catch (err) {}
+                } catch (err) { }
             }
         }
 
@@ -1523,7 +1606,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             const mongoUri = (process.env.MONGODB_URI || "").trim();
             if (mongoUri) {
                 if (!isDbMongo()) {
-                    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 }).catch(() => {});
+                    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 }).catch(() => { });
                 }
                 if (isDbMongo()) {
                     const ActivityLogModel = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
@@ -1554,7 +1637,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
                         }
                     });
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
 
         // 4. Load from disk log files
@@ -1574,7 +1657,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
                             logs.push(line);
                         }
                     });
-                } catch (err) {}
+                } catch (err) { }
             }
         }
 
@@ -1594,7 +1677,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
                             logs.push(line);
                         }
                     });
-                } catch (err) {}
+                } catch (err) { }
             }
         }
 
@@ -1613,8 +1696,8 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         // Deduplicate and reverse so newest log is at the top
         logs = Array.from(new Set(logs)).reverse();
 
-        const logOutput = logs.length > 0 
-            ? logs.join('\n') 
+        const logOutput = logs.length > 0
+            ? logs.join('\n')
             : `[${getKolkataTimestamp()}] ADMIN LOGIN: Operative "${req.user ? req.user.username : 'Administrator'}" logged into Admin Console`;
 
         res.json({ log: logOutput, count: logs.length });
@@ -1625,8 +1708,8 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     }
 });
 
-// Static endpoint to download/view raw admin_activity.log
-app.get('/admin_activity.log', (req, res) => {
+// Static endpoint to download/view raw admin_activity.log (Restricted to authenticated admin)
+app.get('/admin_activity.log', verifyAdmin, (req, res) => {
     const adminLogPath = path.join(__dirname, 'admin_activity.log');
     if (fs.existsSync(adminLogPath)) {
         res.sendFile(adminLogPath);
@@ -1659,7 +1742,7 @@ app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
         if (db) {
             try {
                 await db.run('DELETE FROM activity_logs');
-            } catch (err) {}
+            } catch (err) { }
         }
 
         const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
@@ -1667,14 +1750,15 @@ app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
             if (fs.existsSync(logFilePath)) {
                 fs.writeFileSync(logFilePath, '', 'utf8');
             }
-        } catch (e) {}
+        } catch (e) { }
 
         await logActivity('LOGS CLEARED', `Activity audit logs manually cleared by admin`);
 
         res.json({ message: 'Activity logs cleared successfully' });
     } catch (err) {
         console.error('Error clearing activity logs:', err);
-        res.status(500).json({ error: 'Failed to clear activity log: ' + err.message });
+        const safeErr = process.env.NODE_ENV === 'production' ? 'Failed to clear activity log' : ('Failed to clear activity log: ' + err.message);
+        res.status(500).json({ error: safeErr });
     }
 });
 
@@ -1684,7 +1768,9 @@ app.get('/api/admin/backup-db', verifyAdmin, async (req, res) => {
         const backup = await exportDatabaseBackup();
         res.json({ success: true, backup });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to generate database backup: ' + err.message });
+        console.error('Error generating database backup:', err);
+        const safeErr = process.env.NODE_ENV === 'production' ? 'Failed to generate database backup' : ('Failed to generate database backup: ' + err.message);
+        res.status(500).json({ error: safeErr });
     }
 });
 
@@ -1898,7 +1984,7 @@ app.get('/api/team/:id', async (req, res) => {
             try {
                 const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
                 if (decoded && decoded.role === 'admin') isAdmin = true;
-            } catch (e) {}
+            } catch (e) { }
         }
 
         const data = await getTeamDataWithMembers(req.params.id);
@@ -2048,7 +2134,8 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
 
     } catch (err) {
         console.error("Registration Error:", err);
-        res.status(500).json({ error: err.message });
+        const safeMsg = process.env.NODE_ENV === 'production' ? 'Registration processing failed. Please verify your details and try again.' : err.message;
+        res.status(500).json({ error: safeMsg });
     }
 });
 
@@ -2083,7 +2170,7 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
         try {
             fs.renameSync(file.path, newPath);
             filePath = '/uploads/' + newFilename;
-        } catch (e) {}
+        } catch (e) { }
     }
 
     await updatePaymentProof(teamId, filePath, utrNumber, proofBase64);
@@ -2472,9 +2559,120 @@ app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- ATTENDANCE SYSTEM ROUTES ---
+// --- ATTENDANCE SYSTEM AUTH & OPERATIONAL ROUTES ---
 
-app.get('/api/attendance/scan_info/:teamId', async (req, res) => {
+// Attendance Login Input Schema
+const attendanceLoginSchema = z.object({
+    username: z.string().min(1, 'Username is required').max(50).trim(),
+    password: z.string().min(1, 'Security key is required').max(100).trim()
+});
+
+// Dedicated Attendance Login Route
+app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
+    try {
+        const validation = attendanceLoginSchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ error: validation.error.issues[0].message });
+        }
+        const { username, password } = validation.data;
+        const cleanUsername = username.toLowerCase().trim();
+        const cleanPassword = password.trim();
+
+        // Authorized attendance accounts
+        const adminAccounts = {
+            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
+            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026"
+        };
+
+        const canonicalMap = {
+            "administrator": "Administrator",
+            "admin": "Administrator",
+            "jesin milesh": "Jesin Milesh",
+            "jesin": "Jesin Milesh",
+            "ashish": "Ashish",
+            "attendance": "Attendance Officer"
+        };
+
+        // Support operational security key from environment if specified
+        const operationalKey = process.env.ATTENDANCE_SECURITY_KEY || process.env.ATTENDANCE_KEY;
+        if (operationalKey && cleanUsername === 'attendance') {
+            adminAccounts['attendance'] = operationalKey;
+            canonicalMap['attendance'] = 'Attendance Officer';
+        }
+
+        let isValid = false;
+        const expectedPass = adminAccounts[cleanUsername];
+
+        if (expectedPass) {
+            if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
+                isValid = bcrypt.compareSync(cleanPassword, expectedPass);
+            } else {
+                isValid = (cleanPassword === expectedPass);
+            }
+        }
+
+        if (isValid) {
+            const canonicalUser = canonicalMap[cleanUsername] || username;
+            logActivity('ATTENDANCE LOGIN', `Operative "${canonicalUser}" authenticated into Attendance Terminal`);
+            const token = jwt.sign(
+                { username: canonicalUser, role: 'admin', scope: 'attendance' },
+                JWT_SECRET,
+                { expiresIn: '2h', algorithm: 'HS256' }
+            );
+
+            // Do not store persistent cookie per requirements; ensure any previous cookie is cleared
+            res.clearCookie('attendance_token', { path: '/' });
+
+            return res.json({
+                success: true,
+                message: 'Authentication verified',
+                user: canonicalUser,
+                token: token
+            });
+        } else {
+            logActivity('ATTENDANCE LOGIN FAILED', `Failed login attempt for operative "${username}"`);
+            return res.status(401).json({
+                error: 'Invalid username or security key. Please verify your credentials and try again.'
+            });
+        }
+    } catch (err) {
+        console.error('[Attendance Login Error]:', err);
+        return res.status(500).json({ error: 'Unable to authenticate right now. Please try again.' });
+    }
+});
+
+// Session Verification Endpoint for Attendance Terminal
+app.get('/api/attendance/verify-session', (req, res) => {
+    const session = isAttendanceAuthenticated(req);
+    if (!session) {
+        return res.status(401).json({ authenticated: false, error: 'Unauthenticated' });
+    }
+    return res.json({
+        authenticated: true,
+        user: session.username
+    });
+});
+
+// Dedicated Logout Endpoint for Attendance Terminal
+app.post('/api/attendance/logout', (req, res) => {
+    const session = isAttendanceAuthenticated(req);
+    const user = session ? session.username : 'Operative';
+    logActivity('ATTENDANCE LOGOUT', `Operative "${user}" logged out of Attendance Terminal`);
+    res.clearCookie('attendance_token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/'
+    });
+    return res.json({ success: true, message: 'Session terminated' });
+});
+
+// Protected Attendance QR Scan Info
+app.get('/api/attendance/scan_info/:teamId', verifyAttendanceAuth, async (req, res) => {
     const { teamId } = req.params;
     try {
         const data = await getTeamDataWithMembers(teamId);
@@ -2501,7 +2699,8 @@ app.get('/api/attendance/scan_info/:teamId', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
+// Protected Attendance Submission
+app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) => {
     const { teamId, memberStatuses } = req.body;
     try {
         const data = await getTeamDataWithMembers(teamId);
@@ -2521,11 +2720,11 @@ app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
                 if (item.id && typeof item.id === 'string' && item.id.length === 24 && /^[0-9a-fA-F]{24}$/.test(item.id)) {
                     const resMongo = await Member.updateOne(
                         { _id: item.id },
-                        { 
-                            $set: { 
+                        {
+                            $set: {
                                 attendance_status: isPresent ? 'PRESENT' : 'ABSENT',
                                 ...(isPresent ? { entry_time: now } : {})
-                            } 
+                            }
                         }
                     );
                     if (resMongo.matchedCount > 0) updated = true;
@@ -2535,11 +2734,11 @@ app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
                 if (!updated && (item.name || item.id)) {
                     await Member.updateOne(
                         { team_id: teamId, name: item.name || item.id },
-                        { 
-                            $set: { 
+                        {
+                            $set: {
                                 attendance_status: isPresent ? 'PRESENT' : 'ABSENT',
                                 ...(isPresent ? { entry_time: now } : {})
-                            } 
+                            }
                         }
                     );
                 }
@@ -2570,11 +2769,11 @@ app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
         if (isDbMongo()) {
             await Attendance.updateOne(
                 { team_id: teamId },
-                { 
-                    $set: { 
+                {
+                    $set: {
                         status: overallStatus,
                         ...(anyPresent ? { entry_time: now } : {})
-                    } 
+                    }
                 },
                 { upsert: true }
             );
@@ -2597,7 +2796,8 @@ app.post('/api/attendance/mark_members', verifyAdmin, async (req, res) => {
     }
 });
 
-app.get('/api/attendance/all', verifyAdmin, async (req, res) => {
+// Protected Attendance Database View
+app.get('/api/attendance/all', verifyAttendanceAuth, async (req, res) => {
     try {
         if (isDbMongo()) {
             const members = await Member.find().lean();
@@ -2636,8 +2836,8 @@ app.use((err, req, res, next) => {
     if (err) {
         console.error('[Global Error Middleware Caught]:', err);
         const status = err.status || err.statusCode || 400;
-        const msg = process.env.NODE_ENV === 'production' 
-            ? 'An unexpected error occurred processing your request.' 
+        const msg = process.env.NODE_ENV === 'production'
+            ? 'An unexpected error occurred processing your request.'
             : err.message;
         return res.status(status).json({ error: msg });
     }

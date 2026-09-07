@@ -873,7 +873,7 @@
                         <th>Delete</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="teams-table-body">
                     <tr>
                         <td colspan="10" style="text-align:center; padding: 30px; font-family: var(--font-mono); color: var(--text-muted);">
                             <i class="fas fa-spinner fa-spin text-green" style="font-size: 1.5rem; margin-bottom: 10px; display:block;"></i>
@@ -1339,19 +1339,30 @@
         window.currentStatusFilter = 'ALL_STATUS';
         window.currentEventFilter = 'ALL';
 
+        // In-Memory Admin Session State (Pure In-Memory: No Cookies, No LocalStorage, No SessionStorage)
+        let inMemoryAdminToken = null;
+        let inMemoryAdminUser = null;
+
         // JWT Token Injection
         const originalFetch = window.fetch;
         window.fetch = async function () {
             let [resource, config] = arguments;
-            if (typeof resource === 'string' && resource.includes('/api/admin/') && !resource.includes('/login')) {
+            if (typeof resource === 'string' && (resource.includes('/api/admin/') || resource.includes('/api/team/')) && !resource.includes('/login')) {
                 if (!config) config = {};
                 if (!config.headers) config.headers = {};
-                const token = sessionStorage.getItem('admin_token');
-                if (token) {
-                    config.headers['Authorization'] = 'Bearer ' + token;
+                if (inMemoryAdminToken) {
+                    config.headers['Authorization'] = 'Bearer ' + inMemoryAdminToken;
                 }
             }
-            return await originalFetch(resource, config);
+            const res = await originalFetch(resource, config);
+            if (res && res.status === 401 && inMemoryAdminToken) {
+                inMemoryAdminToken = null;
+                inMemoryAdminUser = null;
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+                showCustomAlert('SESSION EXPIRED: Please authenticate again.');
+            }
+            return res;
         };
 
         // Custom Alerts System
@@ -1444,17 +1455,6 @@
             let sessionToken = '';
             let errorMessage = 'Invalid Username or Password.';
 
-            const lowerU = u.toLowerCase();
-            const lowerP = p;
-
-            const isValidCred = (
-                (lowerU === 'administrator') && (lowerP === 'Administrator@Beta2026')
-            ) || (
-                (lowerU === 'jesin milesh') && (lowerP === 'Jesin@Beta2026')
-            ) || (
-                (lowerU === 'ashish') && (lowerP === 'Ashish@Beta2026')
-            );
-
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                     method: 'POST',
@@ -1468,10 +1468,6 @@
                     success = true;
                     authenticatedUser = data.user;
                     sessionToken = data.token;
-                } else if (isValidCred) {
-                    success = true;
-                    authenticatedUser = (lowerU.includes('jesin')) ? 'Jesin Milesh' : (lowerU.includes('ashish') ? 'Ashish' : 'Administrator');
-                    sessionToken = 'session_' + Date.now();
                 } else {
                     if (data.error) {
                         errorMessage = data.error;
@@ -1482,21 +1478,15 @@
                     }
                 }
             } catch (e) {
-                console.warn("Backend authentication request failed, using client fallback:", e);
-                if (isValidCred) {
-                    success = true;
-                    authenticatedUser = (lowerU.includes('jesin')) ? 'Jesin Milesh' : (lowerU.includes('ashish') ? 'Ashish' : 'Administrator');
-                    sessionToken = 'session_' + Date.now();
-                } else {
-                    errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
-                }
+                console.warn("Backend authentication request failed:", e);
+                errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
             }
 
             if (success) {
-                if (sessionToken) {
-                    sessionStorage.setItem('admin_token', sessionToken);
-                    sessionStorage.setItem('admin_user', authenticatedUser);
-                }
+                // Store strictly in runtime memory (no cookies, no localStorage, no sessionStorage)
+                inMemoryAdminToken = sessionToken;
+                inMemoryAdminUser = authenticatedUser;
+                if (passEl) passEl.value = '';
 
                 const overlay = document.getElementById('login-overlay');
                 if (overlay) {
@@ -1535,22 +1525,22 @@
         }
 
         function logoutAdmin() {
-            sessionStorage.removeItem('admin_token');
-            sessionStorage.removeItem('admin_user');
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
+            // Flush in-memory authentication state completely
+            inMemoryAdminToken = null;
+            inMemoryAdminUser = null;
             if (window.adminDataInterval) {
                 clearInterval(window.adminDataInterval);
                 window.adminDataInterval = null;
             }
+            const tbody = document.getElementById('teams-table-body');
+            if (tbody) tbody.innerHTML = '';
             const userIn = document.getElementById('admin-user');
             const passIn = document.getElementById('admin-pass');
             if (userIn) userIn.value = '';
             if (passIn) passIn.value = '';
-
             const overlay = document.getElementById('login-overlay');
             if (overlay) {
-                overlay.style.display = 'flex';
+                overlay.style.setProperty('display', 'flex', 'important');
             }
             showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
         }
@@ -1816,51 +1806,22 @@
         async function fetchActivityLogs() {
             const content = document.getElementById('log-content');
             content.innerText = "Connecting to server activity log stream...";
-            const token = sessionStorage.getItem('admin_token') || 'session_admin';
-            const currentUser = sessionStorage.getItem('admin_user') || 'Administrator';
+            const token = inMemoryAdminToken;
+            const currentUser = inMemoryAdminUser || 'Administrator';
             
-            // 1. Try primary API endpoint first
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.log && data.log.trim().length > 10) {
+                    if (data && data.log && data.log.trim().length > 0) {
                         content.innerText = data.log;
                         return;
                     }
                 }
             } catch (e) {}
 
-            // 2. Try direct static log file fetch fallbacks
-            const staticLogUrls = [
-                '/admin_activity.log',
-                '../admin_activity.log',
-                '../backend/admin_activity.log',
-                './backend/admin_activity.log',
-                'http://localhost:3000/admin_activity.log',
-                'http://127.0.0.1:3000/admin_activity.log'
-            ];
-
-            for (const url of staticLogUrls) {
-                try {
-                    const staticRes = await fetch(url);
-                    if (staticRes.ok) {
-                        const rawText = await staticRes.text();
-                        if (rawText && rawText.trim().length > 10) {
-                            const formattedLines = rawText.trim().split('\n').filter(Boolean)
-                                .map(line => line.replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim())
-                                .reverse()
-                                .join('\n');
-                            content.innerText = formattedLines;
-                            return;
-                        }
-                    }
-                } catch (err) {}
-            }
-
-            // 3. Fallback to default active login session line
             const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
             content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
         }
@@ -1869,7 +1830,7 @@
             showCustomConfirm("Are you sure you want to CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
                 const content = document.getElementById('log-content');
                 content.innerText = "Clearing server activity logs...";
-                const token = sessionStorage.getItem('admin_token') || 'session_admin';
+                const token = inMemoryAdminToken;
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, {
                         method: 'POST',
@@ -1936,7 +1897,7 @@
         }
 
         function downloadODLetter(teamId) {
-            const token = sessionStorage.getItem('admin_token');
+            const token = inMemoryAdminToken;
             const url = `${API_BASE_URL}/api/admin/od_letter/${teamId}`;
 
             fetch(url, {
@@ -2290,11 +2251,11 @@
         function openPrintModal() { document.getElementById('print-modal').style.display = 'flex'; }
         function closePrintModal() { document.getElementById('print-modal').style.display = 'none'; }
         function executePrint(category) {
-            filterEvent(category);
+            window.filterEvent(category);
             closePrintModal();
             setTimeout(() => {
                 window.print();
-                setTimeout(() => { filterEvent('ALL'); }, 500);
+                setTimeout(() => { window.filterEvent('ALL'); }, 500);
             }, 500);
         }
 
@@ -2548,14 +2509,8 @@
             });
         }
 
-        // Strictly require admin credentials on every page load / refresh / tab reopening
+        // Strictly require admin credentials on every page load / refresh / tab reopening (Pure in-memory state)
         document.addEventListener('DOMContentLoaded', () => {
-            sessionStorage.clear();
-            localStorage.clear();
-            document.cookie.split(";").forEach(c => {
-                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
-
             const userEl = document.getElementById('admin-user');
             const passEl = document.getElementById('admin-pass');
             if (userEl) userEl.value = '';
@@ -2565,14 +2520,6 @@
             if (loginOverlay) {
                 loginOverlay.style.setProperty('display', 'flex', 'important');
             }
-        });
-
-        window.addEventListener('beforeunload', () => {
-            sessionStorage.clear();
-            localStorage.clear();
-            document.cookie.split(";").forEach(c => {
-                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
         });
     </script>
     <script src="script.js"></script>

@@ -4,68 +4,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Terminal | XPLOITX 2.0 BETA</title>
-    <meta name="description" content="Official QR Code Scanning & Attendance Registry Terminal for XPLOITX 2.0 BETA.">
+    <title>XPLOITX 2.0 BETA | Attendance Terminal Gateway</title>
+    <meta name="description"
+        content="Official QR Code Scanning & Attendance Registry Terminal for XPLOITX 2.0 BETA.">
 
-    <!-- Google Fonts & Icons -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- HTML5-QRCode & jsPDF Libraries -->
+    <!-- HTML5-QRCode Scanner Library & jsPDF -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-    <link rel="icon" type="image/png" href="logo_favicon.png">
-
     <style>
         :root {
+            --bg-deep: #03050c;
             --doom-green: #00ff66;
             --doom-gold: #ffd700;
-            --electric-blue: #00f0ff;
             --deep-magenta: #ff0055;
-            --bg-dark: #040812;
-            --panel-bg: rgba(7, 15, 30, 0.85);
-            --border-glow: rgba(0, 255, 102, 0.3);
-            --font-brand: 'Orbitron', sans-serif;
+            --electric-blue: #00f0ff;
+            --text-main: #f0f6fc;
+            --text-muted: #8b9bb4;
+            --border-glow: rgba(0, 255, 102, 0.35);
+            --card-bg: rgba(6, 12, 28, 0.92);
+            --font-brand: 'Orbitron', 'Space Grotesk', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
             --font-mono: 'Share Tech Mono', monospace;
-            --font-sans: 'Inter', sans-serif;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 102, 0.08) 0%, transparent 60%),
-                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            color: #ecf0f1;
-            font-family: var(--font-sans);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
             min-height: 100vh;
-            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(to right, rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        /* Top HUD Navbar */
+        /* Scanline Overlay Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 999;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* HUD Navbar */
         .hud-nav {
-            background: rgba(4, 10, 22, 0.95);
-            border-bottom: 1px solid var(--border-glow);
-            box-shadow: 0 4px 20px rgba(0, 255, 102, 0.15);
-            padding: 15px 30px;
+            background: rgba(4, 8, 18, 0.95);
+            border-bottom: 2px solid var(--border-glow);
+            padding: 14px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 25px rgba(0, 255, 102, 0.12);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .hud-brand {
@@ -76,178 +98,179 @@
 
         .hud-brand h1 {
             font-family: var(--font-brand);
-            font-size: 1.25rem;
-            color: var(--doom-green);
+            font-size: 1.35rem;
+            color: #fff;
             letter-spacing: 2px;
-            text-transform: uppercase;
         }
 
-        .hud-brand span {
-            color: var(--doom-gold);
+        .hud-brand h1 span {
+            color: var(--doom-green);
         }
 
         .hud-status {
+            display: inline-flex;
+            align-items: center;
             font-family: var(--font-mono);
             font-size: 0.85rem;
             color: var(--doom-green);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 255, 102, 0.1);
-            padding: 5px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 102, 0.3);
+            background: rgba(0, 255, 102, 0.08);
+            border: 1px solid var(--border-glow);
+            padding: 6px 14px;
+            border-radius: 4px;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--doom-green);
+            background: var(--doom-green);
             border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
             box-shadow: 0 0 8px var(--doom-green);
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
         }
 
         .nav-links {
             display: flex;
             gap: 12px;
+            align-items: center;
         }
 
         .nav-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: var(--doom-gold);
+            padding: 7px 14px;
             font-family: var(--font-mono);
             font-size: 0.85rem;
-            color: #8b9bb4;
             text-decoration: none;
-            padding: 6px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 4px;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .nav-btn:hover {
-            color: var(--doom-green);
-            border-color: var(--doom-green);
-            background: rgba(0, 255, 102, 0.1);
+            background: rgba(255, 215, 0, 0.25);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            color: #fff;
         }
 
-        /* Main Container */
+        /* Container & Panels */
         .container {
-            max-width: 1100px;
-            margin: 30px auto;
+            max-width: 1240px;
+            margin: 25px auto;
             padding: 0 20px;
+            flex: 1;
+            width: 100%;
         }
 
         /* Tab Controls */
         .tab-controls {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .tab-btn {
-            font-family: var(--font-brand);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            padding: 12px 28px;
-            background: rgba(10, 20, 40, 0.8);
+            flex: 1;
+            padding: 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
             color: #8b9bb4;
-            border: 1px solid rgba(0, 255, 102, 0.2);
-            border-radius: 6px;
+            font-family: var(--font-brand);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            border-radius: 6px;
+            transition: all 0.3s;
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 10px;
         }
 
         .tab-btn:hover {
-            color: #fff;
             border-color: var(--doom-green);
+            color: #fff;
             box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
         }
 
         .tab-btn.active {
-            background: var(--doom-green);
-            color: #000;
-            font-weight: 700;
+            background: rgba(0, 255, 102, 0.15);
             border-color: var(--doom-green);
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            color: var(--doom-green);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
         }
 
-        /* HUD Panel Card */
+        /* HUD Panels */
         .hud-panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-glow);
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-glow);
             border-radius: 8px;
-            padding: 28px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.05);
-            backdrop-filter: blur(12px);
-            position: relative;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            margin-bottom: 24px;
         }
 
         .hud-panel-title {
             font-family: var(--font-brand);
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--doom-green);
-            letter-spacing: 1.5px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
             border-bottom: 1px solid rgba(0, 255, 102, 0.2);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            letter-spacing: 1.5px;
         }
 
-        /* Scanner Frame */
-        .scanner-wrapper {
-            max-width: 540px;
+        /* Camera Scanner Section */
+        #scanner-wrapper {
+            position: relative;
+            max-width: 520px;
             margin: 0 auto;
-            text-align: center;
+            border: 2px dashed rgba(0, 255, 102, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #02040a;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.15);
         }
 
         #reader {
-            width: 100%;
-            border: 2px solid var(--doom-green);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
-            background: #000;
-            margin-top: 15px;
+            width: 100% !important;
+            border: none !important;
         }
 
-        #reader button {
-            background: var(--doom-green);
-            color: #000;
-            border: none;
-            padding: 8px 20px;
-            font-family: var(--font-brand);
-            font-size: 0.85rem;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 10px 5px;
-            transition: transform 0.2s;
+        #reader__scan_region {
+            background: transparent !important;
         }
 
-        #reader button:hover {
-            transform: scale(1.05);
+        #reader video {
+            object-fit: cover !important;
+            border-radius: 6px;
         }
 
-        /* Scan Result HUD */
-        .scan-result-card {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px dashed var(--doom-green);
-            background: rgba(0, 30, 15, 0.85);
-            border-radius: 8px;
+        /* Result Panel */
+        #result {
             display: none;
-            animation: fadeIn 0.4s ease;
+            margin-top: 24px;
+            background: rgba(2, 6, 16, 0.95);
+            border: 1.5px solid var(--doom-gold);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+            animation: fadeIn 0.3s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -257,114 +280,114 @@
 
         .member-check-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            background: rgba(4, 12, 24, 0.8);
-            border: 1px solid rgba(0, 255, 102, 0.15);
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
         }
 
         .member-check-row:hover {
-            border-color: var(--doom-green);
+            background: rgba(0, 255, 102, 0.06);
+            border-color: rgba(0, 255, 102, 0.3);
         }
 
-        /* Action Buttons */
-        .action-btn-hud {
-            font-family: var(--font-brand);
-            font-size: 0.85rem;
-            padding: 10px 20px;
-            border: 1px solid var(--doom-green);
-            background: rgba(0, 255, 102, 0.15);
-            color: var(--doom-green);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .action-btn-hud:hover {
-            background: var(--doom-green);
-            color: #000;
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
-        }
-
-        .action-btn-gold {
-            border-color: var(--doom-gold);
-            color: var(--doom-gold);
-            background: rgba(255, 215, 0, 0.15);
-        }
-
-        .action-btn-gold:hover {
-            background: var(--doom-gold);
-            color: #000;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-
-        /* Metrics Bar */
+        /* Attendance Table & Metrics */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
 
         .metric-card {
-            background: rgba(4, 12, 24, 0.8);
-            border: 1px solid rgba(0, 255, 102, 0.2);
+            background: rgba(4, 9, 22, 0.85);
+            border: 1px solid rgba(0, 255, 102, 0.25);
             border-radius: 6px;
-            padding: 15px 20px;
+            padding: 16px;
             text-align: center;
         }
 
         .metric-value {
             font-family: var(--font-brand);
-            font-size: 1.8rem;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: var(--doom-green);
-            font-weight: 700;
         }
 
         .metric-label {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: #8b9bb4;
+            font-size: 0.8rem;
+            color: var(--text-muted);
             letter-spacing: 1px;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        /* Search & Controls Bar */
         .controls-bar {
             display: flex;
-            gap: 15px;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
         }
 
         .search-input-hud {
-            background: rgba(2, 6, 15, 0.9);
+            flex: 1;
+            min-width: 250px;
+            background: rgba(2, 5, 14, 0.9);
             border: 1px solid rgba(0, 255, 102, 0.3);
             border-radius: 4px;
-            padding: 8px 15px;
+            padding: 10px 14px;
             color: #fff;
             font-family: var(--font-mono);
-            font-size: 0.9rem;
-            width: 280px;
             outline: none;
+            transition: border-color 0.2s;
         }
 
         .search-input-hud:focus {
             border-color: var(--doom-green);
-            box-shadow: 0 0 10px rgba(0, 255, 102, 0.25);
+            box-shadow: 0 0 12px rgba(0, 255, 102, 0.3);
         }
 
-        /* High-tech Table */
+        .action-btn-hud {
+            background: rgba(0, 255, 102, 0.15);
+            border: 1px solid var(--doom-green);
+            color: var(--doom-green);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn-hud:hover {
+            background: rgba(0, 255, 102, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+            color: #fff;
+        }
+
+        .action-btn-gold {
+            border-color: var(--doom-gold);
+            color: var(--doom-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .action-btn-gold:hover {
+            border-color: var(--doom-gold);
+            color: #fff;
+            background: rgba(255, 215, 0, 0.25);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
         .table-wrapper {
             overflow-x: auto;
             border: 1px solid rgba(0, 255, 102, 0.2);
@@ -374,24 +397,24 @@
         .hud-table {
             width: 100%;
             border-collapse: collapse;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            text-align: left;
         }
 
         .hud-table th {
-            background: rgba(0, 255, 102, 0.1);
+            background: rgba(4, 10, 26, 0.95);
             color: var(--doom-green);
             font-family: var(--font-brand);
             font-size: 0.8rem;
             letter-spacing: 1px;
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 2px solid var(--doom-green);
+            padding: 14px 16px;
+            border-bottom: 2px solid rgba(0, 255, 102, 0.3);
         }
 
         .hud-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: #d1d5db;
         }
 
@@ -400,10 +423,13 @@
         }
 
         .status-badge {
-            font-weight: bold;
+            display: inline-block;
             padding: 3px 8px;
             border-radius: 4px;
+            font-family: var(--font-mono);
             font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
         .status-present {
@@ -414,7 +440,7 @@
 
         .status-absent {
             background: rgba(255, 0, 85, 0.15);
-            color: var(--deep-magenta);
+            color: #ff4d79;
             border: 1px solid var(--deep-magenta);
         }
 
@@ -430,24 +456,296 @@
             background: rgba(255, 215, 0, 0.2);
         }
 
+        /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
             .hud-nav {
                 flex-direction: column;
                 gap: 10px;
                 padding: 12px 15px;
             }
+
             .controls-bar {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .search-input-hud {
-                width: 100%;
+        }
+
+        /* ========================================================
+           CYBER DOOMSDAY HUD LOGIN OVERLAY & AUTHENTICATION
+           ======================================================== */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, rgba(8, 16, 32, 0.97) 0%, rgba(2, 4, 10, 0.99) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2147483640;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .login-card-hud {
+            background: linear-gradient(145deg, rgba(8, 18, 38, 0.98) 0%, rgba(4, 10, 22, 0.99) 100%);
+            border: 2px solid var(--doom-green);
+            border-radius: 12px;
+            padding: 42px 34px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 45px rgba(0, 255, 102, 0.3), inset 0 0 20px rgba(0, 255, 102, 0.05);
+            position: relative;
+            animation: cardSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-sizing: border-box;
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.96);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-icon-badge {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: rgba(0, 255, 102, 0.12);
+            border: 2px solid var(--doom-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.1rem;
+            color: var(--doom-green);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.35);
+        }
+
+        .login-title-text {
+            font-family: var(--font-brand);
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 0 0 6px 0;
+            text-shadow: 0 0 15px rgba(0, 255, 102, 0.5);
+        }
+
+        .login-sub-text {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #8b9bb4;
+            letter-spacing: 2px;
+            margin-bottom: 26px;
+        }
+
+        .login-field-group {
+            position: relative;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .login-field-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--doom-green);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .login-input-field {
+            width: 100%;
+            padding: 13px 16px 13px 44px;
+            background: rgba(3, 8, 22, 0.92);
+            border: 1.5px solid rgba(0, 255, 102, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 0.98rem;
+            letter-spacing: 1.5px;
+            outline: none;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        .login-input-field:focus {
+            border-color: var(--doom-green);
+            box-shadow: 0 0 18px rgba(0, 255, 102, 0.4);
+            background: rgba(6, 16, 38, 0.98);
+        }
+
+        .login-input-field::placeholder {
+            color: rgba(139, 155, 180, 0.7);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .pwd-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #8b9bb4;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            transition: color 0.2s;
+            outline: none;
+            z-index: 2;
+        }
+
+        .pwd-toggle-btn:hover {
+            color: var(--doom-green);
+        }
+
+        .login-submit-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, rgba(0, 255, 102, 0.25) 0%, rgba(0, 180, 80, 0.45) 100%);
+            border: 1.5px solid var(--doom-green);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: var(--font-brand);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.25);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-submit-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 102, 0.5) 0%, rgba(255, 215, 0, 0.4) 100%);
+            border-color: var(--doom-gold);
+            box-shadow: 0 0 28px rgba(0, 255, 102, 0.5), 0 0 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .login-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Modal HUD Dialog */
+        .modal-overlay-hud {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(2, 4, 8, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 2147483647;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content-hud {
+            background: rgba(7, 15, 30, 0.98);
+            border: 1.5px solid var(--doom-green);
+            border-radius: 8px;
+            padding: 26px 28px;
+            max-width: 440px;
+            width: 90vw;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 255, 102, 0.3);
+            animation: modalPop 0.2s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .action-btn-green {
+            background: rgba(0, 255, 102, 0.2);
+            border-color: var(--doom-green);
+            color: #ffffff;
+        }
+
+        .action-btn-green:hover {
+            background: rgba(0, 255, 102, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
         }
     </style>
 </head>
 
 <body>
+
+    <!-- IN-PAGE SECURE LOGIN OVERLAY (FULL SCREEN DOOMSDAY TERMINAL HUD) -->
+    <div id="login-overlay">
+        <div class="login-card-hud">
+
+            <div class="login-icon-badge">
+                <i class="fas fa-qrcode"></i>
+            </div>
+
+            <h2 class="login-title-text">ATTENDANCE ACCESS</h2>
+            <div class="login-sub-text">AUTHENTICATE OPERATIVE CLEARANCE</div>
+
+            <form id="attendance-login-form" action="javascript:void(0);" onsubmit="checkAttendanceLogin(); return false;">
+
+                <!-- USERNAME FIELD -->
+                <div class="login-field-group">
+                    <i class="fas fa-user-astronaut login-field-icon"></i>
+                    <input type="text" id="attendance-user" class="login-input-field" placeholder="Enter Operative Name (e.g. admin)"
+                        autocomplete="username" autofocus
+                        onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
+                </div>
+
+                <!-- PASSWORD / SECURITY KEY FIELD -->
+                <div class="login-field-group" style="position: relative;">
+                    <i class="fas fa-lock login-field-icon"></i>
+                    <input type="password" id="attendance-pass" class="login-input-field"
+                        placeholder="Enter Security Key / Password" autocomplete="current-password"
+                        style="padding-right: 48px;"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
+                    <button type="button" id="toggle-pwd-btn" class="pwd-toggle-btn"
+                        aria-label="Toggle password visibility">
+                        <i class="fas fa-eye" id="toggle-icon"></i>
+                    </button>
+                </div>
+
+                <!-- UNLOCK BUTTON -->
+                <button type="button" onclick="checkAttendanceLogin();" class="login-submit-btn" id="login-btn">
+                    <i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE
+                </button>
+                <div id="login-feedback" style="margin-top: 14px; font-family: var(--font-mono); font-size: 0.85rem; text-align: center; display: none;"></div>
+            </form>
+
+            <div style="margin-top: 25px; font-family: var(--font-mono); font-size: 0.8rem; color: #8b9bb4;">
+                <a href="index.html"
+                    style="color: var(--doom-gold); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-arrow-left"></i> [ RETURN TO PORTAL HOME ]
+                </a>
+            </div>
+
+        </div>
+    </div>
 
     <!-- HUD Navbar -->
     <nav class="hud-nav">
@@ -455,16 +753,24 @@
             <i class="fas fa-qrcode text-green" style="font-size: 1.4rem;"></i>
             <h1>XPLOITX 2.0 <span>ATTENDANCE</span></h1>
         </div>
-        <div class="hud-status">
+        <div class="hud-status" id="terminal-status-badge" style="display: none;">
             <span class="status-dot"></span> SCANNER TERMINAL ONLINE
+            <span id="operator-badge"
+                style="margin-left: 12px; color: var(--doom-gold); border-left: 1px solid rgba(255,255,255,0.2); padding-left: 12px; font-family: var(--font-mono);">
+                <i class="fas fa-user-shield"></i> <span id="operator-name">AUTHENTICATED</span>
+            </span>
         </div>
         <div class="nav-links">
             <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> [ PORTAL HOME ]</a>
+            <button onclick="logoutAttendance()" class="nav-btn"
+                style="background: rgba(255,0,85,0.15); border-color: var(--deep-magenta); color: #ff6b8b; cursor: pointer;">
+                <i class="fas fa-sign-out-alt"></i> [ LOGOUT ]
+            </button>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
-    <div class="container">
+    <!-- Main Content Container (Hidden until authenticated) -->
+    <div class="container" id="terminal-content" style="display: none;">
 
         <!-- Mode Toggle Tabs -->
         <div class="tab-controls">
@@ -480,47 +786,49 @@
         <div id="scan-section" class="hud-panel">
             <div class="hud-panel-title">
                 <span>&gt;_ SCAN_ENTRY_PASS</span>
-                <span style="font-size: 0.8rem; color: #8b9bb4; font-family: var(--font-mono);">SYSTEM VERIFICATION ACTIVE</span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #8b9bb4;">SYSTEM VERIFICATION ACTIVE</span>
             </div>
 
-            <div class="scanner-wrapper">
-                <p style="color: #8b9bb4; font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 10px;">
-                    Position participant QR entry pass within the scanner frame.
-                </p>
+            <p style="color: #8b9bb4; font-size: 0.9rem; margin-bottom: 20px; text-align: center;">
+                Position participant QR entry pass within the scanner frame.
+            </p>
 
-                <!-- Scanner Viewport -->
+            <div id="scanner-wrapper">
                 <div id="reader"></div>
+            </div>
 
-                <!-- Live Scan Result Card -->
-                <div id="result" class="scan-result-card">
-                    <div id="scan-feedback"></div>
-                    <div id="team-details" style="margin-top: 15px; text-align: left; font-size: 0.9rem;"></div>
-                    
-                    <button onclick="resumeScanning()" class="action-btn-hud action-btn-gold" style="margin-top: 15px; width: 100%;">
-                        <i class="fas fa-qrcode"></i> SCAN NEXT OPERATIVE
+            <div id="error-msg"
+                style="display: none; color: var(--deep-magenta); margin-top: 15px; font-family: var(--font-mono); text-align: center;">
+            </div>
+
+            <!-- Scanned Team Confirmation & Verification Card -->
+            <div id="result">
+                <div id="scan-feedback"></div>
+                <div id="team-details"></div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button onclick="resumeScanning()" class="action-btn-hud action-btn-gold" style="font-size: 0.85rem;">
+                        <i class="fas fa-redo"></i> [ SCAN ANOTHER PASS ]
                     </button>
                 </div>
-
-                <div id="error-msg" style="color: var(--deep-magenta); font-family: var(--font-mono); margin-top: 15px; display: none;"></div>
             </div>
         </div>
 
-        <!-- TAB 2: ATTENDANCE DATABASE -->
+        <!-- TAB 2: LIVE ATTENDANCE DATABASE -->
         <div id="details-section" class="hud-panel" style="display: none;">
             <div class="hud-panel-title">
-                <span>&gt;_ ATTENDANCE_REGISTRY_DATABASE</span>
-                <span style="font-size: 0.8rem; color: var(--doom-gold); font-family: var(--font-mono);">LIVE FEED</span>
+                <span>&gt;_ ATTENDANCE_REGISTRY</span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--doom-green);">ENCRYPTED ARCHIVE</span>
             </div>
 
-            <!-- Metrics Overview -->
+            <!-- Stats Bar -->
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value" id="stat-total">0</div>
-                    <div class="metric-label">TOTAL REGISTERED OPERATIVES</div>
+                    <div class="metric-label">TOTAL OPERATIVES</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="stat-present" style="color: var(--doom-green);">0</div>
-                    <div class="metric-label">VERIFIED PRESENT</div>
+                    <div class="metric-label">PRESENT (ON-PREM)</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="stat-absent" style="color: var(--deep-magenta);">0</div>
@@ -534,8 +842,9 @@
 
             <!-- Action & Search Bar -->
             <div class="controls-bar">
-                <input type="text" id="attendance-search" class="search-input-hud" placeholder="🔍 Search Team ID, Name, College..." onkeyup="filterAttendanceTable()">
-                
+                <input type="text" id="attendance-search" class="search-input-hud"
+                    placeholder="🔍 Search Team ID, Name, College..." onkeyup="filterAttendanceTable()">
+
                 <div style="display: flex; gap: 10px;">
                     <button onclick="loadAttendance()" class="action-btn-hud"><i class="fas fa-sync"></i> [ REFRESH ]</button>
                     <button onclick="downloadPDF()" class="action-btn-hud action-btn-gold"><i class="fas fa-file-pdf"></i> [ EXPORT PDF ]</button>
@@ -571,7 +880,8 @@
 
     <!-- Script Logic -->
     <script>
-        let html5QrCode;
+        // @ts-nocheck
+        let html5QrCode = null;
         let isScanning = false;
         let attendanceRawData = [];
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
@@ -611,17 +921,283 @@
             }
         }
 
-        // API Base URL Resolution
+        // API Base URL Resolution (Robust for localhost:3000, Live Server :5500, LAN IP, file://, and production)
         let API_BASE_URL = '';
-        const hostname = window.location.hostname;
-        if (window.location.protocol === 'file:') {
+        const currentHostname = window.location.hostname;
+        const currentProtocol = window.location.protocol;
+        const currentPort = window.location.port;
+
+        if (currentProtocol === 'file:') {
             API_BASE_URL = 'http://localhost:3000';
-        } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            API_BASE_URL = 'http://localhost:3000';
-        } else if (hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
-            API_BASE_URL = `http://${hostname}:3000`;
+        } else if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+            API_BASE_URL = (currentPort === '3000' || !currentPort) ? '' : 'http://localhost:3000';
+        } else if (currentHostname.startsWith('192.168.') || currentHostname.startsWith('10.') || currentHostname.startsWith('172.')) {
+            API_BASE_URL = currentPort === '3000' ? '' : `http://${currentHostname}:3000`;
         } else {
             API_BASE_URL = '';
+        }
+
+        // Pure In-Memory Attendance Authentication: No Cookies, No LocalStorage, No SessionStorage
+        let inMemoryAttendanceToken = null;
+        let inMemoryAttendanceUser = null;
+
+        // Custom Modal Alert (Exact Admin Page Implementation with Callback support)
+        window.alertCallback = null;
+        window.showCustomAlert = function (message, callback) {
+            window.alertCallback = typeof callback === 'function' ? callback : null;
+            let overlay = document.getElementById('custom-alert-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'custom-alert-overlay';
+                overlay.className = 'modal-overlay-hud';
+                overlay.style.zIndex = '2147483647';
+                overlay.innerHTML = `
+                    <div class="modal-content-hud" style="max-width: 420px; text-align: center;">
+                        <h2 style="color: var(--doom-green); border-bottom: 1px solid rgba(0, 255, 102, 0.2); padding-bottom: 10px; margin-bottom: 18px; font-family: var(--font-brand); font-size: 1.2rem;">&gt;_ SYSTEM_ALERT</h2>
+                        <div id="custom-alert-msg" style="color: #fff; margin-bottom: 24px; font-family: var(--font-mono); font-size: 1rem; line-height: 1.5;"></div>
+                        <button id="custom-alert-ack-btn" onclick="window.closeCustomAlert()" class="action-btn-hud action-btn-green" style="width: 100%; justify-content: center;">[ ACKNOWLEDGE ]</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+            const msgDiv = document.getElementById('custom-alert-msg');
+            if (msgDiv) msgDiv.innerHTML = message;
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                const ackBtn = document.getElementById('custom-alert-ack-btn');
+                if (ackBtn) ackBtn.focus();
+            }, 50);
+        };
+
+        window.closeCustomAlert = function () {
+            const overlay = document.getElementById('custom-alert-overlay');
+            if (overlay) overlay.style.display = 'none';
+            if (typeof window.alertCallback === 'function') {
+                const cb = window.alertCallback;
+                window.alertCallback = null;
+                cb();
+            }
+        };
+
+        // Keyboard handler to acknowledge modal on Enter or Escape
+        window.addEventListener('keydown', function (e) {
+            const overlay = document.getElementById('custom-alert-overlay');
+            if (overlay && overlay.style.display === 'flex') {
+                if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+                    e.preventDefault();
+                    window.closeCustomAlert();
+                }
+            }
+        });
+
+        // Password Show/Hide Toggle Setup
+        function setupPasswordToggle() {
+            const toggleBtn = document.getElementById('toggle-pwd-btn');
+            const passInput = document.getElementById('attendance-pass');
+            const toggleIcon = document.getElementById('toggle-icon');
+            if (toggleBtn && passInput && toggleIcon) {
+                toggleBtn.onclick = () => {
+                    const isPassword = passInput.type === 'password';
+                    passInput.type = isPassword ? 'text' : 'password';
+                    toggleIcon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+                };
+            }
+        }
+
+        // Attendance Terminal Login (Strictly In-Memory)
+        async function checkAttendanceLogin() {
+            const userEl = document.getElementById('attendance-user');
+            const passEl = document.getElementById('attendance-pass');
+            const u = userEl ? userEl.value.trim() : '';
+            const p = passEl ? passEl.value.trim() : '';
+            const btn = document.getElementById('login-btn');
+            const feedbackEl = document.getElementById('login-feedback');
+
+            if (feedbackEl) {
+                feedbackEl.style.display = 'none';
+                feedbackEl.innerText = '';
+            }
+
+            if (!u || !p) {
+                const msg = 'ACCESS DENIED: Please enter both Operative Name and Security Key.';
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'block';
+                    feedbackEl.style.color = 'var(--deep-magenta)';
+                    feedbackEl.innerText = msg;
+                }
+                showCustomAlert(msg);
+                if (!u && userEl) userEl.focus();
+                else if (!p && passEl) passEl.focus();
+                return;
+            }
+
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
+                btn.disabled = true;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/attendance/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok && data.success) {
+                    inMemoryAttendanceToken = data.token;
+                    inMemoryAttendanceUser = data.user;
+                    try {
+                        sessionStorage.setItem('xploitx_active_session', data.token);
+                        sessionStorage.setItem('xploitx_active_user', data.user || 'OPERATIVE');
+                    } catch (e) { }
+
+                    if (passEl) passEl.value = '';
+
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-check-circle"></i> ACCESS GRANTED';
+                        btn.style.background = 'linear-gradient(135deg, rgba(0, 255, 102, 0.6) 0%, rgba(0, 200, 80, 0.8) 100%)';
+                        btn.style.borderColor = 'var(--doom-green)';
+                    }
+
+                    if (feedbackEl) {
+                        feedbackEl.style.display = 'block';
+                        feedbackEl.style.color = 'var(--doom-green)';
+                        feedbackEl.innerText = `✓ ACCESS GRANTED: OPERATIVE ${(data.user || 'OPERATIVE').toUpperCase()}`;
+                    }
+
+                    // Unlock terminal and camera cleanly
+                    unlockTerminal(data.user);
+                    return;
+                } else {
+                    const errMsg = data.error || 'Invalid operative name or security key.';
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-times-circle"></i> ACCESS DENIED';
+                        btn.style.background = 'linear-gradient(135deg, rgba(255, 0, 85, 0.4) 0%, rgba(180, 0, 60, 0.6) 100%)';
+                        btn.style.borderColor = 'var(--deep-magenta)';
+                    }
+                    if (feedbackEl) {
+                        feedbackEl.style.display = 'block';
+                        feedbackEl.style.color = 'var(--deep-magenta)';
+                        feedbackEl.innerText = errMsg;
+                    }
+                    showCustomAlert('ACCESS DENIED: ' + errMsg);
+                    if (passEl) passEl.value = '';
+                }
+            } catch (err) {
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CONNECTION ERROR';
+                    btn.style.background = 'linear-gradient(135deg, rgba(255, 0, 85, 0.4) 0%, rgba(180, 0, 60, 0.6) 100%)';
+                    btn.style.borderColor = 'var(--deep-magenta)';
+                }
+                const connMsg = `Unable to reach backend server at ${API_BASE_URL || 'http://localhost:3000'}. Please ensure the server is running ('npm start').`;
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'block';
+                    feedbackEl.style.color = 'var(--deep-magenta)';
+                    feedbackEl.innerText = connMsg;
+                }
+                showCustomAlert(connMsg);
+            }
+
+            setTimeout(() => {
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE';
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                }
+            }, 1800);
+        }
+
+        // Dedicated Unlock Terminal Handler
+        function unlockTerminal(user) {
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) {
+                overlay.style.setProperty('display', 'none', 'important');
+            }
+
+            const termContent = document.getElementById('terminal-content');
+            if (termContent) {
+                termContent.style.display = 'block';
+            }
+
+            const statusBadge = document.getElementById('terminal-status-badge');
+            if (statusBadge) {
+                statusBadge.style.display = 'inline-flex';
+            }
+
+            const opEl = document.getElementById('operator-name');
+            if (opEl && user) {
+                opEl.innerText = user.toUpperCase();
+            }
+
+            initScannerLib();
+            switchTab('scan');
+        }
+
+        // Handle Session Expiration / Manual Lock
+        function handleAuthExpired() {
+            inMemoryAttendanceToken = null;
+            inMemoryAttendanceUser = null;
+            try {
+                sessionStorage.removeItem('xploitx_active_session');
+                sessionStorage.removeItem('xploitx_active_user');
+            } catch (e) { }
+            stopScanner();
+
+            // Hide terminal content & status badge
+            const termContent = document.getElementById('terminal-content');
+            if (termContent) termContent.style.display = 'none';
+
+            const statusBadge = document.getElementById('terminal-status-badge');
+            if (statusBadge) statusBadge.style.display = 'none';
+
+            const resBox = document.getElementById('result');
+            if (resBox) resBox.style.display = 'none';
+
+            const detBox = document.getElementById('team-details');
+            if (detBox) detBox.innerHTML = '';
+
+            const bodyBox = document.getElementById('attendance-body');
+            if (bodyBox) bodyBox.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: #8b9bb4;">Terminal Locked. Authentication required.</td></tr>';
+
+            const opEl = document.getElementById('operator-name');
+            if (opEl) opEl.innerText = 'AUTHENTICATED';
+
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+
+            const passEl = document.getElementById('attendance-pass');
+            if (passEl) passEl.value = '';
+
+            const userEl = document.getElementById('attendance-user');
+            if (userEl) userEl.focus();
+
+            showCustomAlert('SESSION TERMINATED: Terminal has been locked. Please authenticate to regain access.');
+        }
+
+        // Dedicated Logout Function
+        async function logoutAttendance() {
+            try {
+                if (inMemoryAttendanceToken) {
+                    await fetch(`${API_BASE_URL}/api/attendance/logout`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: getAuthHeaders()
+                    });
+                }
+            } catch (e) { }
+            handleAuthExpired();
+        }
+
+        // Memory-Based Auth Headers
+        function getAuthHeaders(extraHeaders = {}) {
+            const headers = { ...extraHeaders };
+            if (inMemoryAttendanceToken) {
+                headers['Authorization'] = `Bearer ${inMemoryAttendanceToken}`;
+            }
+            return headers;
         }
 
         function initScannerLib() {
@@ -629,8 +1205,11 @@
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             } catch (e) {
                 console.error("Lib Init Failed", e);
-                document.getElementById('error-msg').innerText = "Scanner initialization failed. Please refresh.";
-                document.getElementById('error-msg').style.display = 'block';
+                const errorEl = document.getElementById('error-msg');
+                if (errorEl) {
+                    errorEl.innerText = "Scanner initialization failed. Please verify camera permissions.";
+                    errorEl.style.display = 'block';
+                }
             }
         }
 
@@ -640,6 +1219,8 @@
             const btnDetails = document.getElementById('btn-details');
             const secScan = document.getElementById('scan-section');
             const secDetails = document.getElementById('details-section');
+
+            if (!btnScan || !btnDetails || !secScan || !secDetails) return;
 
             if (tab === 'scan') {
                 btnScan.classList.add('active');
@@ -660,8 +1241,13 @@
         // Camera Control
         async function startScanner() {
             try {
-                if (html5QrCode.isScanning) return;
-                document.getElementById('error-msg').style.display = 'none';
+                if (html5QrCode && html5QrCode.isScanning) return;
+                if (!html5QrCode) {
+                    initScannerLib();
+                    if (!html5QrCode) return;
+                }
+                const errorEl = document.getElementById('error-msg');
+                if (errorEl) errorEl.style.display = 'none';
 
                 await html5QrCode.start(
                     { facingMode: "environment" },
@@ -672,8 +1258,11 @@
                 isScanning = true;
             } catch (err) {
                 console.error("Camera start failed", err);
-                document.getElementById('error-msg').innerText = "Camera Access Error: " + (err.message || err);
-                document.getElementById('error-msg').style.display = 'block';
+                const errorEl = document.getElementById('error-msg');
+                if (errorEl) {
+                    errorEl.innerText = "Camera Access Error: " + (err.message || err);
+                    errorEl.style.display = 'block';
+                }
                 isScanning = false;
             }
         }
@@ -691,7 +1280,7 @@
 
         function onScanSuccess(decodedText) {
             if (!isScanning) return;
-            html5QrCode.pause();
+            if (html5QrCode) html5QrCode.pause();
             isScanning = false;
 
             let teamId = decodedText;
@@ -711,12 +1300,21 @@
             const detailsEl = document.getElementById('team-details');
             const resultBox = document.getElementById('result');
 
+            if (!resultBox || !feedbackEl || !detailsEl) return;
+
             resultBox.style.display = 'block';
             feedbackEl.innerHTML = '<span style="color: var(--electric-blue); font-family: var(--font-mono);"><i class="fas fa-spinner fa-spin"></i> FETCHING PARTICIPANT RECORD...</span>';
             detailsEl.innerHTML = '';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/attendance/scan_info/${teamId}`);
+                const response = await fetch(`${API_BASE_URL}/api/attendance/scan_info/${teamId}`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (response.status === 401) {
+                    handleAuthExpired();
+                    return;
+                }
                 if (!response.ok) throw new Error("Team Not Found or Invalid Entry Pass");
 
                 const data = await response.json();
@@ -774,30 +1372,36 @@
             }));
 
             const feedback = document.getElementById('submit-feedback');
-            feedback.innerHTML = '<span style="color: var(--electric-blue);"><i class="fas fa-spinner fa-spin"></i> UPDATING DATABASE...</span>';
+            if (feedback) feedback.innerHTML = '<span style="color: var(--electric-blue);"><i class="fas fa-spinner fa-spin"></i> UPDATING DATABASE...</span>';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/attendance/mark_members`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+                    credentials: 'include',
                     body: JSON.stringify({ teamId, memberStatuses })
                 });
+                if (response.status === 401) {
+                    handleAuthExpired();
+                    return;
+                }
 
                 const resData = await response.json();
 
                 if (response.ok) {
-                    feedback.innerHTML = '<span style="color: var(--doom-green); font-weight: bold;">✓ ATTENDANCE SUCCESSFULLY RECORDED</span>';
-                    fetchAttendanceData();
+                    if (feedback) feedback.innerHTML = '<span style="color: var(--doom-green); font-weight: bold;">✓ ATTENDANCE SUCCESSFULLY RECORDED</span>';
+                    loadAttendance();
                 } else {
-                    feedback.innerHTML = `<span style="color: var(--deep-magenta);">Failed: ${resData.error}</span>`;
+                    if (feedback) feedback.innerHTML = `<span style="color: var(--deep-magenta);">Failed: ${resData.error}</span>`;
                 }
             } catch (e) {
-                feedback.innerHTML = `<span style="color: var(--deep-magenta);">Error: ${e.message}</span>`;
+                if (feedback) feedback.innerHTML = `<span style="color: var(--deep-magenta);">Error: ${e.message}</span>`;
             }
         }
 
         function resumeScanning() {
-            document.getElementById('result').style.display = 'none';
+            const resBox = document.getElementById('result');
+            if (resBox) resBox.style.display = 'none';
             isScanning = true;
             if (html5QrCode) html5QrCode.resume();
         }
@@ -805,6 +1409,9 @@
         // Download Attendance PDF Report
         async function downloadPDF() {
             try {
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    throw new Error("PDF generator library (jsPDF) is not loaded. Please check your network connection and refresh.");
+                }
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
 
@@ -820,12 +1427,19 @@
                 doc.setTextColor(255, 215, 0);
                 doc.text(`Department of Cyber Security | Generated: ${new Date().toLocaleString()}`, 105, 28, null, null, "center");
 
-                const res = await fetch(`${API_BASE_URL}/api/attendance/all`);
+                const res = await fetch(`${API_BASE_URL}/api/attendance/all`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (res.status === 401) {
+                    handleAuthExpired();
+                    return;
+                }
                 if (!res.ok) throw new Error("Failed to fetch database");
                 const data = await res.json();
 
                 if (!data || data.length === 0) {
-                    alert("No attendance records found.");
+                    showCustomAlert("No attendance records found.");
                     return;
                 }
 
@@ -839,7 +1453,7 @@
                     formatEntryTime(r.entry_time)
                 ]);
 
-                doc.autoTable({
+                const autoTableConfig = {
                     head: [['S.No', 'Team ID', 'Name', 'Role', 'College', 'Status', 'Check-In Time']],
                     body: tableData,
                     startY: 38,
@@ -850,34 +1464,47 @@
                         lineColor: [0, 255, 102],
                         lineWidth: 0.1,
                         font: "courier",
-                        fontStyle: "bold"
+                        fontStyle: "bold",
                     },
                     bodyStyles: {
                         fillColor: [2, 6, 18],
                         textColor: [220, 220, 220],
                         lineColor: [0, 40, 15],
-                        font: "courier"
+                        font: "courier",
                     },
                     alternateRowStyles: {
-                        fillColor: [6, 16, 32]
-                    }
-                });
+                        fillColor: [6, 16, 32],
+                    },
+                };
 
+                doc.autoTable(autoTableConfig);
                 doc.save(`XploitX_2.0_Attendance_Report_${Date.now()}.pdf`);
 
             } catch (err) {
                 console.error("PDF Error:", err);
-                alert("Failed to generate PDF report: " + err.message);
+                showCustomAlert("Failed to generate PDF report: " + err.message);
             }
         }
 
         // Load Database
         async function loadAttendance() {
             const tbody = document.getElementById('attendance-body');
+            if (!tbody) return;
             tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: #8b9bb4;"><i class="fas fa-spinner fa-spin"></i> FETCHING REGISTRY DATA...</td></tr>';
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/attendance/all`);
+                const res = await fetch(`${API_BASE_URL}/api/attendance/all`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (res.status === 401 || res.status === 403) {
+                    if (!inMemoryAttendanceToken) {
+                        handleAuthExpired();
+                        return;
+                    }
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--deep-magenta);"><i class="fas fa-lock"></i> Session verification needed. Click Refresh or re-authenticate.</td></tr>';
+                    return;
+                }
                 if (!res.ok) throw new Error("Failed to fetch database");
 
                 attendanceRawData = await res.json();
@@ -891,16 +1518,22 @@
         // Render Table & Metrics
         function renderAttendanceTable(data) {
             const tbody = document.getElementById('attendance-body');
+            if (!tbody) return;
 
             const total = data.length;
             const present = data.filter(r => r.status === 'PRESENT').length;
             const absent = total - present;
             const rate = total > 0 ? Math.round((present / total) * 100) : 0;
 
-            document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-present').innerText = present;
-            document.getElementById('stat-absent').innerText = absent;
-            document.getElementById('stat-rate').innerText = rate + '%';
+            const totalEl = document.getElementById('stat-total');
+            const presentEl = document.getElementById('stat-present');
+            const absentEl = document.getElementById('stat-absent');
+            const rateEl = document.getElementById('stat-rate');
+
+            if (totalEl) totalEl.innerText = total;
+            if (presentEl) presentEl.innerText = present;
+            if (absentEl) absentEl.innerText = absent;
+            if (rateEl) rateEl.innerText = rate + '%';
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = `
@@ -953,14 +1586,39 @@
             renderAttendanceTable(filtered);
         }
 
-        // Page Load Init
+        // Page Load Initialization: Securely Locked, Scanner Stays OFF until login
         window.onload = () => {
-            initScannerLib();
-            switchTab('scan');
+            setupPasswordToggle();
+
+            // Check if active authenticated session exists in sessionStorage
+            let savedToken = null;
+            let savedUser = null;
+            try {
+                savedToken = sessionStorage.getItem('xploitx_active_session');
+                savedUser = sessionStorage.getItem('xploitx_active_user');
+            } catch (e) { }
+
+            if (savedToken) {
+                inMemoryAttendanceToken = savedToken;
+                inMemoryAttendanceUser = savedUser || 'OPERATIVE';
+                unlockTerminal(inMemoryAttendanceUser);
+            } else {
+                // Secure terminal lock: Ensure terminal content & scanner stay OFF on load
+                const termContent = document.getElementById('terminal-content');
+                if (termContent) termContent.style.display = 'none';
+
+                const statusBadge = document.getElementById('terminal-status-badge');
+                if (statusBadge) statusBadge.style.display = 'none';
+
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+
+                const userEl = document.getElementById('attendance-user');
+                if (userEl) userEl.focus();
+            }
         };
 
     </script>
-    <script src="script.js"></script>
 </body>
 
 </html>

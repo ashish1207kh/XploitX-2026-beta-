@@ -644,9 +644,13 @@ function closeCustomAlert() {
     }
 }
 
-window.closeCustomAlert = closeCustomAlert;
 window.showCyberAlert = showCyberAlert;
-window.showCustomAlert = showCyberAlert;
+if (!window.closeCustomAlert) {
+    window.closeCustomAlert = closeCustomAlert;
+}
+if (!window.showCustomAlert) {
+    window.showCustomAlert = showCyberAlert;
+}
 
 // Override native browser alert globally to use HUD dialog
 window.alert = function (msg, title = 'SYSTEM ALERT') {

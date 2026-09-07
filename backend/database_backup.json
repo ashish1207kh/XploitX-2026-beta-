@@ -1,10 +1,10 @@
 {
-  "export_timestamp": "2026-09-05 23:48:44 IST",
+  "export_timestamp": "2026-09-07 14:47:46 IST",
   "summary": {
     "total_teams": 0,
     "total_members": 0,
     "total_attendance_records": 0,
-    "total_activity_logs": 55
+    "total_activity_logs": 96
   },
   "teams": [],
   "members": [],
@@ -514,6 +514,375 @@
       "details": "Operative \"Administrator\" logged into Admin Console",
       "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
       "created_at": "2026-09-05T17:16:22.248Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce0ffbe1f4135bcdec91d",
+      "timestamp": "2026-09-06 09:11:51 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:41:51.854Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce0ffbe1f4135bcdec91c",
+      "timestamp": "2026-09-06 09:11:51 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:41:51.838Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce100be1f4135bcdec91e",
+      "timestamp": "2026-09-06 09:11:52 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:11:52 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:41:52.017Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec91f",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:42:23.400Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec920",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:42:23.404Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec921",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:42:23.552Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce1bbbe1f4135bcdec922",
+      "timestamp": "2026-09-06 09:14:59 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:14:59 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:44:59.001Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce204be1f4135bcdec923",
+      "timestamp": "2026-09-06 09:16:12 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:16:12 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:46:12.566Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce23bbe1f4135bcdec924",
+      "timestamp": "2026-09-06 09:17:07 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:17:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:47:07.176Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce25ebe1f4135bcdec925",
+      "timestamp": "2026-09-06 09:17:42 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:17:42 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:47:42.348Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4963",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:50:38.851Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4962",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:50:38.840Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4964",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:50:38.967Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce32cb273361a580e4965",
+      "timestamp": "2026-09-06 09:21:08 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:21:08 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:51:08.345Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce3df049b0e1c29b789b2",
+      "timestamp": "2026-09-06 09:24:07 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:07.487Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce400049b0e1c29b789b3",
+      "timestamp": "2026-09-06 09:24:40 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:40 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:40.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce410049b0e1c29b789b4",
+      "timestamp": "2026-09-06 09:24:56 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:56 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:56.493Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce4df049b0e1c29b789b5",
+      "timestamp": "2026-09-06 09:28:23 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"Jesin Milesh\"",
+      "formatted": "[2026-09-06 09:28:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"Jesin Milesh\"",
+      "created_at": "2026-09-06T03:58:23.863Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce4f7049b0e1c29b789b6",
+      "timestamp": "2026-09-06 09:28:47 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:28:47 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:58:47.374Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce657049b0e1c29b789b7",
+      "timestamp": "2026-09-06 09:34:39 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:34:39 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:04:39.562Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce8b90922aa3c5e8f3be6",
+      "timestamp": "2026-09-06 09:44:49 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:44:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:14:49.139Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea140922aa3c5e8f3be7",
+      "timestamp": "2026-09-06 09:50:36 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"coordinator\"",
+      "formatted": "[2026-09-06 09:50:36 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"coordinator\"",
+      "created_at": "2026-09-06T04:20:36.315Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea140922aa3c5e8f3be8",
+      "timestamp": "2026-09-06 09:50:36 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:50:36 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:20:36.316Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea43e5ea2b9c7908be15",
+      "timestamp": "2026-09-06 09:51:23 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:51:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:21:23.654Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea43e5ea2b9c7908be16",
+      "timestamp": "2026-09-06 09:51:23 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:51:23 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:21:23.699Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea5ee5ea2b9c7908be17",
+      "timestamp": "2026-09-06 09:51:50 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:51:50 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:21:50.372Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea5ee5ea2b9c7908be18",
+      "timestamp": "2026-09-06 09:51:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:51:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:21:50.411Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ceaf9e5ea2b9c7908be19",
+      "timestamp": "2026-09-06 09:54:25 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:54:25 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:24:25.210Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ceaf9e5ea2b9c7908be1a",
+      "timestamp": "2026-09-06 09:54:25 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:54:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:24:25.367Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4abe",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.329Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4abf",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.337Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac0",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.339Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac3",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Attendance Officer\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Attendance Officer\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.346Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac1",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.342Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac2",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Ashish\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Ashish\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.344Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73d11fa9636be91e4ac4",
+      "timestamp": "2026-09-07 13:50:33 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:33 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:33.909Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73d11fa9636be91e4ac5",
+      "timestamp": "2026-09-07 13:50:33 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 13:50:33 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T08:20:33.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e75011fa9636be91e4ac6",
+      "timestamp": "2026-09-07 13:55:37 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:55:37 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:25:37.061Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e75011fa9636be91e4ac7",
+      "timestamp": "2026-09-07 13:55:37 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 13:55:37 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T08:25:37.124Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e7f621fa9636be91e4ac8",
+      "timestamp": "2026-09-07 14:39:54 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:39:54 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:09:54.895Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e7f621fa9636be91e4ac9",
+      "timestamp": "2026-09-07 14:39:54 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 14:39:54 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T09:09:54.957Z",
       "__v": 0
     }
   ]
