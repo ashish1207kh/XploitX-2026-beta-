@@ -707,13 +707,13 @@
             <h2 class="login-title-text">ATTENDANCE ACCESS</h2>
             <div class="login-sub-text">AUTHENTICATE OPERATIVE CLEARANCE</div>
 
-            <form id="attendance-login-form" action="javascript:void(0);" onsubmit="checkAttendanceLogin(); return false;">
+            <form id="attendance-login-form" action="javascript:void(0);" onsubmit="checkAttendanceLogin(); return false;" autocomplete="off">
 
                 <!-- USERNAME FIELD -->
                 <div class="login-field-group">
                     <i class="fas fa-user-astronaut login-field-icon"></i>
                     <input type="text" id="attendance-user" class="login-input-field" placeholder="Enter Operative Name (e.g. admin)"
-                        autocomplete="username" autofocus
+                        autocomplete="off" autofocus
                         onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
                 </div>
 
@@ -721,7 +721,7 @@
                 <div class="login-field-group" style="position: relative;">
                     <i class="fas fa-lock login-field-icon"></i>
                     <input type="password" id="attendance-pass" class="login-input-field"
-                        placeholder="Enter Security Key / Password" autocomplete="current-password"
+                        placeholder="Enter Security Key / Password" autocomplete="new-password"
                         style="padding-right: 48px;"
                         onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
                     <button type="button" id="toggle-pwd-btn" class="pwd-toggle-btn"
@@ -1004,6 +1004,37 @@
             }
         }
 
+        // Reset Login Form to Fresh State (clears inputs, restores button, hides feedback)
+        function resetAttendanceLoginForm() {
+            const userEl = document.getElementById('attendance-user');
+            const passEl = document.getElementById('attendance-pass');
+            const btn = document.getElementById('login-btn');
+            const feedbackEl = document.getElementById('login-feedback');
+            const toggleIcon = document.getElementById('toggle-icon');
+
+            if (userEl) {
+                userEl.value = '';
+            }
+            if (passEl) {
+                passEl.value = '';
+                passEl.type = 'password';
+            }
+            if (toggleIcon) {
+                toggleIcon.className = 'fas fa-eye';
+            }
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE';
+                btn.disabled = false;
+                btn.style.background = '';
+                btn.style.borderColor = '';
+            }
+            if (feedbackEl) {
+                feedbackEl.style.display = 'none';
+                feedbackEl.innerText = '';
+                feedbackEl.style.color = '';
+            }
+        }
+
         // Attendance Terminal Login (Strictly In-Memory)
         async function checkAttendanceLogin() {
             const userEl = document.getElementById('attendance-user');
@@ -1053,8 +1084,6 @@
                         sessionStorage.setItem('xploitx_active_user', data.user || 'OPERATIVE');
                     } catch (e) { }
 
-                    if (passEl) passEl.value = '';
-
                     if (btn) {
                         btn.innerHTML = '<i class="fas fa-check-circle"></i> ACCESS GRANTED';
                         btn.style.background = 'linear-gradient(135deg, rgba(0, 255, 102, 0.6) 0%, rgba(0, 200, 80, 0.8) 100%)';
@@ -1067,8 +1096,10 @@
                         feedbackEl.innerText = `✓ ACCESS GRANTED: OPERATIVE ${(data.user || 'OPERATIVE').toUpperCase()}`;
                     }
 
-                    // Unlock terminal and camera cleanly
-                    unlockTerminal(data.user);
+                    // Unlock terminal and camera cleanly, then wipe login credentials & feedback
+                    setTimeout(() => {
+                        unlockTerminal(data.user);
+                    }, 400);
                     return;
                 } else {
                     const errMsg = data.error || 'Invalid operative name or security key.';
@@ -1132,12 +1163,15 @@
                 opEl.innerText = user.toUpperCase();
             }
 
+            // Immediately reset login modal inputs and buttons so nothing lingers in the DOM
+            resetAttendanceLoginForm();
+
             initScannerLib();
             switchTab('scan');
         }
 
         // Handle Session Expiration / Manual Lock
-        function handleAuthExpired() {
+        function handleAuthExpired(isManualLogout = false) {
             inMemoryAttendanceToken = null;
             inMemoryAttendanceUser = null;
             try {
@@ -1168,19 +1202,31 @@
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.style.setProperty('display', 'flex', 'important');
 
-            const passEl = document.getElementById('attendance-pass');
-            if (passEl) passEl.value = '';
+            // CRITICAL FIX: Completely reset the login form, clear username & password, restore button, and hide access granted feedback
+            resetAttendanceLoginForm();
 
             const userEl = document.getElementById('attendance-user');
             if (userEl) userEl.focus();
 
-            showCustomAlert('SESSION TERMINATED: Terminal has been locked. Please authenticate to regain access.');
+            if (isManualLogout) {
+                showCustomAlert('LOGGED OUT: Operative terminal locked. Please enter your operative name and security key to authenticate.');
+            } else {
+                showCustomAlert('SESSION TERMINATED: Terminal has been locked. Please authenticate to regain access.');
+            }
         }
 
         // Dedicated Logout Function
         async function logoutAttendance() {
             const userToLogout = inMemoryAttendanceUser || sessionStorage.getItem('xploitx_active_user') || 'Operative';
             const tokenToLogout = inMemoryAttendanceToken || sessionStorage.getItem('xploitx_active_session');
+
+            inMemoryAttendanceToken = null;
+            inMemoryAttendanceUser = null;
+            try {
+                sessionStorage.removeItem('xploitx_active_session');
+                sessionStorage.removeItem('xploitx_active_user');
+            } catch (e) { }
+
             try {
                 await fetch(`${API_BASE_URL}/api/attendance/logout`, {
                     method: 'POST',
@@ -1192,7 +1238,7 @@
                     body: JSON.stringify({ username: userToLogout })
                 });
             } catch (e) { }
-            handleAuthExpired();
+            handleAuthExpired(true);
         }
 
         // Memory-Based Auth Headers
@@ -1617,6 +1663,7 @@
                 const overlay = document.getElementById('login-overlay');
                 if (overlay) overlay.style.setProperty('display', 'flex', 'important');
 
+                resetAttendanceLoginForm();
                 const userEl = document.getElementById('attendance-user');
                 if (userEl) userEl.focus();
             }
