@@ -1851,13 +1851,32 @@ async function validateEmailDomain(email) {
 
 const verificationOtps = {};
 
-function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE') {
+function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY') {
+    let deptText = 'DEPARTMENT OF CYBER SECURITY';
+    if (subtitle && !subtitle.includes('PRATHYUSHA')) {
+        deptText = subtitle;
+    }
     return `
-        <div style="text-align: center; margin-bottom: 22px;">
-            <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png" alt="XploitX 2.0 BETA Logo" width="110" style="vertical-align: middle; margin-bottom: 10px; border: 0; outline: none; display: inline-block; max-width: 110px; height: auto;" />
-            <h1 style="color: #00ff66; font-size: 22px; margin: 4px 0 0 0; letter-spacing: 3px; font-weight: bold;">XPLOITX 2.0 BETA</h1>
-            <p style="color: #ffd700; font-size: 12px; margin-top: 6px; font-weight: bold; letter-spacing: 1px;">${subtitle}</p>
-        </div>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+            <tr>
+                <!-- PEC Logo on Left Side -->
+                <td align="left" valign="middle" style="width: 75px; min-width: 70px; padding-right: 8px;">
+                    <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/PEC%20Logo.png" alt="Prathyusha Engineering College Logo" width="75" style="width: 75px; max-width: 75px; height: auto; display: block; border: 0; outline: none;" />
+                </td>
+                <!-- Center: First Prathyusha Engineering College, then Department of Cyber Security (All in White) -->
+                <td align="center" valign="middle" style="padding: 0 6px; text-align: center;">
+                    <div style="color: #ffffff; font-size: 15px; font-weight: bold; letter-spacing: 0.8px; line-height: 1.3; text-transform: uppercase; margin: 0;">PRATHYUSHA ENGINEERING COLLEGE</div>
+                    <div style="color: #ffffff; font-size: 9.5px; letter-spacing: 0.5px; text-transform: uppercase; margin: 2px 0 3px 0; opacity: 0.85;">(AN AUTONOMOUS INSTITUTION)</div>
+                    <div style="color: #ffffff; font-size: 12.5px; font-weight: bold; letter-spacing: 0.8px; text-transform: uppercase; margin: 0 0 4px 0;">${deptText}</div>
+                    <div style="color: #00ff66; font-size: 18px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin: 4px 0 0 0;">XPLOITX 2.0 BETA</div>
+                </td>
+                <!-- XploitX Beta Logo on Right Side (Larger & Clearer) -->
+                <td align="right" valign="middle" style="width: 150px; min-width: 135px; padding-left: 8px;">
+                    <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png" alt="XploitX 2.0 Beta Logo" width="150" style="width: 150px; max-width: 155px; height: auto; display: block; border: 0; outline: none;" />
+                </td>
+            </tr>
+        </table>
+        <div style="height: 1px; background: linear-gradient(90deg, transparent, #00ff66, transparent); margin-bottom: 22px;"></div>
     `;
 }
 
@@ -1884,6 +1903,96 @@ function getEmailFooterHtml(includeWhatsApp = true) {
         </div>
     `;
 }
+
+// Generate Scannable High-Redundancy QR Code with XploitX Logo in the Middle
+async function generateQrWithLogo(qrData) {
+    const QRCode = require('qrcode');
+    const { PNG } = require('pngjs');
+
+    const qrBuffer = await QRCode.toBuffer(qrData, {
+        errorCorrectionLevel: 'H',
+        type: 'png',
+        margin: 2,
+        width: 420,
+        color: {
+            dark: '#000000',
+            light: '#ffffff'
+        }
+    });
+
+    const qrPng = PNG.sync.read(qrBuffer);
+
+    const logoPath = path.join(__dirname, '../public/xploitx_logo.png');
+    if (fs.existsSync(logoPath)) {
+        try {
+            const logoBuffer = fs.readFileSync(logoPath);
+            const logoPng = PNG.sync.read(logoBuffer);
+
+            // Increased size of logo (width 150px, height ~55px)
+            const targetW = 150;
+            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); // 55px
+            const pad = 3;
+
+            const startX = Math.round((qrPng.width - targetW) / 2);
+            const startY = Math.round((qrPng.height - targetH) / 2);
+
+            // Seamless white background (NO dark box, NO border - blends into QR background)
+            for (let y = -pad; y < targetH + pad; y++) {
+                for (let x = -pad; x < targetW + pad; x++) {
+                    const px = startX + x;
+                    const py = startY + y;
+                    if (px >= 0 && px < qrPng.width && py >= 0 && py < qrPng.height) {
+                        const idx = (qrPng.width * py + px) << 2;
+                        qrPng.data[idx] = 255;
+                        qrPng.data[idx + 1] = 255;
+                        qrPng.data[idx + 2] = 255;
+                        qrPng.data[idx + 3] = 255;
+                    }
+                }
+            }
+
+            // Draw enlarged logo
+            for (let y = 0; y < targetH; y++) {
+                for (let x = 0; x < targetW; x++) {
+                    const srcX = Math.floor((x / targetW) * logoPng.width);
+                    const srcY = Math.floor((y / targetH) * logoPng.height);
+                    const srcIdx = (logoPng.width * srcY + srcX) << 2;
+
+                    const srcA = logoPng.data[srcIdx + 3] / 255;
+                    if (srcA > 0.05) {
+                        const destX = startX + x;
+                        const destY = startY + y;
+                        const destIdx = (qrPng.width * destY + destX) << 2;
+
+                        qrPng.data[destIdx] = Math.round(logoPng.data[srcIdx] * srcA + 255 * (1 - srcA));
+                        qrPng.data[destIdx + 1] = Math.round(logoPng.data[srcIdx + 1] * srcA + 255 * (1 - srcA));
+                        qrPng.data[destIdx + 2] = Math.round(logoPng.data[srcIdx + 2] * srcA + 255 * (1 - srcA));
+                        qrPng.data[destIdx + 3] = 255;
+                    }
+                }
+            }
+        } catch (logoErr) {
+            console.warn('[QR] Failed to overlay logo onto QR:', logoErr.message);
+        }
+    }
+
+    const finalBuffer = PNG.sync.write(qrPng);
+    return 'data:image/png;base64,' + finalBuffer.toString('base64');
+}
+
+// Public API endpoint to render QR Code with XploitX Logo
+app.get('/api/qr', async (req, res) => {
+    try {
+        const text = req.query.data || req.query.text || 'XPLOITX 2.0 BETA';
+        const dataUrl = await generateQrWithLogo(text);
+        const imgBuffer = Buffer.from(dataUrl.split('base64,')[1], 'base64');
+        res.setHeader('Content-Type', 'image/png');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.send(imgBuffer);
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+});
 
 
 
@@ -1915,7 +2024,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
 
         const html = `
         <div style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; margin: 0 auto;">
-            ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
+            ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
             
             <div style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px;">
                 <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Verification Code</h2>
@@ -1996,11 +2105,11 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
     const subject = "XploitX 2.0 Beta CTF - Registration Under Verification";
 
-    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
+    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
     const htmlContent = `
     <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
-        ${getEmailHeaderHtml('DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
+        ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
 
         <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
             <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${leader.name}</b>,</p>
@@ -2028,7 +2137,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
             <p>We look forward to seeing you at the event!</p>
 
-            <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Department of Cybersecurity</p>
+            <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Prathyusha Engineering College<br>Department of Cyber Security</p>
         </div>
         ${getEmailFooterHtml(false)}
     </div>`;
@@ -2364,10 +2473,20 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
         if (leader) {
             await addAttendanceRecord(teamId, teamData.name, leader.name, leader.phone);
 
-            // QR Code Generation
-            const QRCode = require('qrcode');
+            // QR Code Generation:
+            // 1. Generate local PNG for attachment pass
             const qrData = JSON.stringify({ teamId, teamName: teamData.name, leaderName: leader.name });
-            const qrImage = await QRCode.toDataURL(qrData);
+            const qrImage = await generateQrWithLogo(qrData);
+
+            // 2. High-availability public HTTPS QR URL for email clients (Gmail, Outlook, Apple Mail)
+            // Major email clients (especially Gmail) block or strip inline data:image/png base64 URIs.
+            // Using a public HTTPS URL guarantees the QR code loads instantly and displays every time the email is opened.
+            const logoUrl = 'https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png';
+            let publicQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&centerImageUrl=${encodeURIComponent(logoUrl)}&ecLevel=H&size=350&centerImageSizeRatio=0.32`;
+            const hostUrl = process.env.APP_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null);
+            if (hostUrl && hostUrl.startsWith('http') && !hostUrl.includes('localhost')) {
+                publicQrUrl = `${hostUrl}/api/qr?data=${encodeURIComponent(qrData)}`;
+            }
 
             // PDF Generation for OD Letter
             let odPdfBuffer = null;
@@ -2397,11 +2516,11 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
             const membersListText = members.map((m, i) => `${i + 1}. ${m.name} – ${m.college || leader.college || 'Prathyusha Engineering College'}`).join('\n');
             const membersListHtml = members.map(m => `<li><b>${m.name}</b> – ${m.college || leader.college || 'Prathyusha Engineering College'}</li>`).join('');
 
-            const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nDepartment of Cybersecurity`;
+            const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
             const htmlContent = `
                 <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
-                    ${getEmailHeaderHtml('DEPARTMENT OF CYBERSECURITY | PRATHYUSHA ENGINEERING COLLEGE')}
+                    ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
 
                     <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
                         <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear Participants,</p>
@@ -2438,55 +2557,36 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                         </div>
 
                         <div style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px;">
-                            <h3 style="color: #ffd700; margin-top: 0;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
-                            <p style="color: #8b9bb4; font-size: 13px;">Present this QR code at the venue check-in desk</p>
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(JSON.stringify({ teamId, teamName: teamData.name, leader: leader.name }))}" style="width: 200px; height: 200px; border: 2px solid #00ff66; border-radius: 6px; background-color: #ffffff; padding: 6px;" alt="Entry QR Code" />
-                            <p style="color: #00ff66; font-weight: bold; font-size: 18px; margin-top: 10px;">${teamId}</p>
+                            <h3 style="color: #ffd700; margin-top: 0; font-size: 16px; letter-spacing: 1px;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
+                            <p style="color: #8b9bb4; font-size: 13px; margin-bottom: 14px;">Present this QR code at the venue check-in desk</p>
+                            <div style="display: inline-block; background-color: #ffffff; padding: 8px; border: 2px solid #00ff66; border-radius: 8px; line-height: 0;">
+                                <img src="${publicQrUrl}" width="200" height="200" style="width: 200px; height: 200px; display: block; margin: 0 auto; border: 0; outline: none;" alt="Entry QR Code - ${teamId}" />
+                            </div>
+                            <p style="color: #00ff66; font-weight: bold; font-size: 18px; margin: 12px 0 4px 0; letter-spacing: 1px;">${teamId}</p>
+                            <p style="color: #8b9bb4; font-size: 12px; margin: 0 0 10px 0;">(High-resolution pass also attached: <b style="color: #ffffff;">${teamId}_Pass.png</b>)</p>
+                            <div>
+                                <a href="${publicQrUrl}" target="_blank" style="color: #00ff66; font-size: 12px; text-decoration: underline; font-weight: bold;">Click here to view / download pass QR</a>
+                            </div>
                         </div>
 
                         <div style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                             <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
                             <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
                         </div>
-                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #030712; color: #f3f4f6; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden;">
-                    <div style="background: linear-gradient(135deg, #00ff66 0%, #00d2ff 100%); padding: 3px;">
-                        <div style="background: #030712; padding: 30px; text-align: center;">
-                            <h1 style="color: #00ff66; margin: 0 0 10px 0; font-size: 28px; letter-spacing: 2px;">PAYMENT VERIFIED</h1>
-                            <p style="color: #9ca3af; margin: 0; font-size: 14px; letter-spacing: 1px;">REGISTRATION CONFIRMED • XPLOITX 2.0 BETA</p>
-                        </div>
-                    </div>
-                    <div style="padding: 30px;">
-                        <p style="font-size: 16px;">Dear <b>${leaderName}</b>,</p>
-                        <p style="color: #d1d5db; line-height: 1.6;">Great news! Your payment for <b>XploitX 2.0 Beta</b> has been <span style="color: #00ff66; font-weight: bold;">VERIFIED</span> by our administration team.</p>
 
-                        <div style="background: #0a0f1d; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; margin: 25px 0;">
-                            <div style="color: #00d2ff; font-weight: bold; margin-bottom: 12px; font-size: 14px; letter-spacing: 1px;">&gt;_ CONFIRMATION DETAILS</div>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Team ID:</td><td style="padding: 6px 0; color: #00ff66; font-weight: bold; font-family: monospace;">${teamId}</td></tr>
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Team Name:</td><td style="padding: 6px 0; color: #ffffff; font-weight: bold;">${teamData.name}</td></tr>
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Event:</td><td style="padding: 6px 0; color: #ffd700;">${teamData.event || 'Capture The Flag (CTF)'}</td></tr>
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Status:</td><td style="padding: 6px 0; color: #00ff66; font-weight: bold;">CONFIRMED (READY)</td></tr>
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Date:</td><td style="padding: 6px 0; color: #ffffff;">09 October 2026</td></tr>
-                                <tr><td style="padding: 6px 0; color: #9ca3af;">Venue:</td><td style="padding: 6px 0; color: #ffffff;">Prathyusha Engineering College</td></tr>
-                            </table>
-                        </div>
+                        <p>Your payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.</p>
 
-                        ${qrImage ? `
-                        <div style="text-align: center; margin: 25px 0; padding: 20px; background: #0a0f1d; border: 1px dashed #374151; border-radius: 8px;">
-                            <p style="color: #9ca3af; font-size: 12px; margin: 0 0 10px 0; letter-spacing: 1px;">YOUR FAST-TRACK ATTENDANCE QR PASS</p>
-                            <img src="${qrImage}" alt="Attendance QR Code" style="width: 180px; height: 180px; border-radius: 6px; border: 2px solid #00ff66;" />
-                            <p style="color: #6b7280; font-size: 11px; margin: 8px 0 0 0;">Present this QR code or your OD letter at the registration desk on event day.</p>
-                        </div>
-                        ` : ''}
+                        <p style="color: #d1d5db; font-size: 14px;"><a href="${whatsappLink}" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here</a> to join the official participant WhatsApp group.</p>
 
-                        <p style="color: #00d2ff; font-size: 14px; margin-top: 20px;">
-                            📄 <b>Your official On-Duty (OD) Letter PDF is attached to this email.</b> Please print or present it at your college for attendance exemption.
-                        </p>
+                        <p>Please keep this email for your future reference and ensure that all team members are informed about the event details.</p>
 
                         <p>Thank you for participating in XploitX 2.0 Beta CTF.</p>
 
                         <p>We look forward to welcoming your team and wish you the very best for the competition!</p>
+
+                        <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Prathyusha Engineering College<br>Department of Cyber Security</p>
                     </div>
+                    ${getEmailFooterHtml(true)}
                 </div>
             `;
 
@@ -3085,3 +3185,4 @@ module.exports = app;
 module.exports.sendEmail = sendEmail;
 module.exports.getEmailHeaderHtml = getEmailHeaderHtml;
 module.exports.getEmailFooterHtml = getEmailFooterHtml;
+module.exports.generateQrWithLogo = generateQrWithLogo;
