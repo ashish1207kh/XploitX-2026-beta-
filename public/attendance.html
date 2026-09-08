@@ -1179,14 +1179,18 @@
 
         // Dedicated Logout Function
         async function logoutAttendance() {
+            const userToLogout = inMemoryAttendanceUser || sessionStorage.getItem('xploitx_active_user') || 'Operative';
+            const tokenToLogout = inMemoryAttendanceToken || sessionStorage.getItem('xploitx_active_session');
             try {
-                if (inMemoryAttendanceToken) {
-                    await fetch(`${API_BASE_URL}/api/attendance/logout`, {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: getAuthHeaders()
-                    });
-                }
+                await fetch(`${API_BASE_URL}/api/attendance/logout`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
+                    },
+                    body: JSON.stringify({ username: userToLogout })
+                });
             } catch (e) { }
             handleAuthExpired();
         }

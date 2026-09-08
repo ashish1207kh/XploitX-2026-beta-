@@ -1572,6 +1572,55 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
     }
 });
 
+// Admin Logout Route
+app.post('/api/admin/logout', async (req, res) => {
+    let user = 'Admin';
+    const authHeader = req.headers && req.headers['authorization'];
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+            if (decoded && decoded.username) user = decoded.username;
+        } catch (e) { }
+    }
+    if (user === 'Admin' && req.body && req.body.username) {
+        user = req.body.username;
+    }
+    await logActivity('ADMIN LOGOUT', `Operative "${user}" logged out of Admin Console`);
+    res.clearCookie('admin_token', { path: '/' });
+    res.json({ success: true });
+});
+
+// Helper: Extract numeric millisecond timestamp from any log line format for exact sorting
+function extractLogTimestamp(line) {
+    if (!line) return 0;
+    // Format 1: [YYYY-MM-DD HH:mm:ss] or [YYYY-MM-DD HH:mm:ss IST]
+    const m1 = String(line).match(/^\[(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})/);
+    if (m1) {
+        const pad = (n) => String(n).padStart(2, '0');
+        const d = new Date(`${m1[1]}-${m1[2]}-${m1[3]}T${pad(m1[4])}:${m1[5]}:${m1[6]}+05:30`);
+        return d.getTime() || 0;
+    }
+    // Format 2: [DD/MM/YYYY, HH:mm:ss am/pm] or [DD/MM/YYYY, HH:mm:ss]
+    const m2 = String(line).match(/^\[(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2}):(\d{2})\s*(am|pm)?/i);
+    if (m2) {
+        let hr = parseInt(m2[4], 10);
+        const ampm = (m2[7] || '').toLowerCase();
+        if (ampm === 'pm' && hr < 12) hr += 12;
+        if (ampm === 'am' && hr === 12) hr = 0;
+        const pad = (n) => String(n).padStart(2, '0');
+        const d = new Date(`${m2[3]}-${pad(m2[2])}-${pad(m2[1])}T${pad(hr)}:${m2[5]}:${m2[6]}+05:30`);
+        return d.getTime() || 0;
+    }
+    // Format 3: ISO [YYYY-MM-DDTHH:mm:ss...]
+    const m3 = String(line).match(/^\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
+    if (m3) {
+        const d = new Date(m3[1]);
+        return d.getTime() || 0;
+    }
+    return 0;
+}
+
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
@@ -1696,8 +1745,18 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         // Strip "from IP: ..." suffix from all log lines per user preference
         logs = logs.map(line => String(line).replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim()).filter(Boolean);
 
-        // Deduplicate and reverse so newest log is at the top
-        logs = Array.from(new Set(logs)).reverse();
+        // Deduplicate
+        logs = Array.from(new Set(logs));
+
+        // Sort chronologically descending (newest timestamp first)
+        logs.sort((a, b) => {
+            const timeA = extractLogTimestamp(a);
+            const timeB = extractLogTimestamp(b);
+            if (timeA !== timeB) {
+                return timeB - timeA;
+            }
+            return 0;
+        });
 
         const logOutput = logs.length > 0
             ? logs.join('\n')
@@ -2061,16 +2120,45 @@ app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
                 diffs.push(`Event: "${existing.team.event}" ➔ "${event}"`);
             }
             if (members && Array.isArray(members)) {
-                const oldMemStr = (existing.members || []).map(m => `${m.name} (${m.role || 'MEMBER'}, ${m.phone || 'No Phone'}, ${m.college || 'PEC'})`).join('; ');
-                const newMemStr = members.map(m => `${m.name} (${m.role || 'MEMBER'}, ${m.phone || 'No Phone'}, ${m.college || 'PEC'})`).join('; ');
-                if (oldMemStr !== newMemStr) {
-                    diffs.push(`Members Roster changed: [${oldMemStr}] ➔ [${newMemStr}]`);
+                const oldMembers = existing.members || [];
+                const maxLen = Math.max(oldMembers.length, members.length);
+                for (let i = 0; i < maxLen; i++) {
+                    const oldM = oldMembers[i];
+                    const newM = members[i];
+                    if (oldM && newM) {
+                        const mLabel = (oldM.role === 'LEADER' || i === 0) ? 'Leader' : `Member ${i + 1}`;
+                        if (oldM.name !== newM.name) {
+                            diffs.push(`${mLabel} Name: "${oldM.name || ''}" ➔ "${newM.name || ''}"`);
+                        }
+                        if (oldM.email !== newM.email) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Email: "${oldM.email || ''}" ➔ "${newM.email || ''}"`);
+                        }
+                        if (oldM.phone !== newM.phone) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Phone: "${oldM.phone || ''}" ➔ "${newM.phone || ''}"`);
+                        }
+                        if (oldM.whatsapp !== newM.whatsapp) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) WhatsApp: "${oldM.whatsapp || ''}" ➔ "${newM.whatsapp || ''}"`);
+                        }
+                        if (oldM.college !== newM.college) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) College: "${oldM.college || ''}" ➔ "${newM.college || ''}"`);
+                        }
+                        if (oldM.district !== newM.district) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) District: "${oldM.district || ''}" ➔ "${newM.district || ''}"`);
+                        }
+                        if (oldM.age !== newM.age) {
+                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Age: "${oldM.age || ''}" ➔ "${newM.age || ''}"`);
+                        }
+                    } else if (!oldM && newM) {
+                        diffs.push(`Added Member ${i + 1}: "${newM.name}" (${newM.role || 'MEMBER'})`);
+                    } else if (oldM && !newM) {
+                        diffs.push(`Removed Member ${i + 1}: "${oldM.name}"`);
+                    }
                 }
             }
         }
         await updateTeamAndMembers(teamId, name, event, members);
-        const diffSummary = diffs.length > 0 ? diffs.join(' | ') : 'No data changes detected';
-        logActivity('DATA MODIFIED', `Team [${teamId}] modified by Operative "${operative}": [${diffSummary}]`);
+        const diffSummary = diffs.length > 0 ? diffs.join(', ') : 'No data changes detected';
+        await logActivity('DATA MODIFIED', `Team [${teamId}] modified by Operative "${operative}": [${diffSummary}]`);
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -2086,15 +2174,44 @@ app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
         const existing = await getTeamDataWithMembers(req.params.id);
         let diffs = [];
         if (existing && existing.members && Array.isArray(members)) {
-            const oldMemStr = existing.members.map(m => m.name).join(', ');
-            const newMemStr = members.map(m => m.name).join(', ');
-            if (oldMemStr !== newMemStr) {
-                diffs.push(`Members list: [${oldMemStr}] ➔ [${newMemStr}]`);
+            const oldMembers = existing.members || [];
+            const maxLen = Math.max(oldMembers.length, members.length);
+            for (let i = 0; i < maxLen; i++) {
+                const oldM = oldMembers[i];
+                const newM = members[i];
+                if (oldM && newM) {
+                    const mLabel = (oldM.role === 'LEADER' || i === 0) ? 'Leader' : `Member ${i + 1}`;
+                    if (oldM.name !== newM.name) {
+                        diffs.push(`${mLabel} Name: "${oldM.name || ''}" ➔ "${newM.name || ''}"`);
+                    }
+                    if (oldM.email !== newM.email) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Email: "${oldM.email || ''}" ➔ "${newM.email || ''}"`);
+                    }
+                    if (oldM.phone !== newM.phone) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Phone: "${oldM.phone || ''}" ➔ "${newM.phone || ''}"`);
+                    }
+                    if (oldM.whatsapp !== newM.whatsapp) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) WhatsApp: "${oldM.whatsapp || ''}" ➔ "${newM.whatsapp || ''}"`);
+                    }
+                    if (oldM.college !== newM.college) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) College: "${oldM.college || ''}" ➔ "${newM.college || ''}"`);
+                    }
+                    if (oldM.district !== newM.district) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) District: "${oldM.district || ''}" ➔ "${newM.district || ''}"`);
+                    }
+                    if (oldM.age !== newM.age) {
+                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Age: "${oldM.age || ''}" ➔ "${newM.age || ''}"`);
+                    }
+                } else if (!oldM && newM) {
+                    diffs.push(`Added Member ${i + 1}: "${newM.name}"`);
+                } else if (oldM && !newM) {
+                    diffs.push(`Removed Member ${i + 1}: "${oldM.name}"`);
+                }
             }
         }
         await updateTeamAndMembers(req.params.id, team.name, team.event, members);
-        const diffSummary = diffs.length > 0 ? diffs.join(' | ') : 'Roster refreshed';
-        logActivity('DATA MODIFIED', `Team [${req.params.id}] modified by Operative "${operative}": [${diffSummary}]`);
+        const diffSummary = diffs.length > 0 ? diffs.join(', ') : 'No data changes detected';
+        await logActivity('DATA MODIFIED', `Team [${req.params.id}] modified by Operative "${operative}": [${diffSummary}]`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: 'Failed to update team record' }); }
 });
@@ -2646,10 +2763,11 @@ app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     try {
         const existing = await getTeamDataWithMembers(teamId);
         const teamName = existing && existing.team ? existing.team.name : 'Unknown';
-        const leaderName = existing && existing.members && existing.members[0] ? existing.members[0].name : 'Unknown';
+        const leader = existing && existing.members ? (existing.members.find(m => m.role === 'LEADER') || existing.members[0]) : null;
+        const leaderName = leader && leader.name ? leader.name : 'Unknown';
         const memCount = existing && existing.members ? existing.members.length : 0;
         await deleteTeamRecord(teamId);
-        logActivity('DATA DELETED', `Team [${teamId}] ("${teamName}", Leader: "${leaderName}", Members: ${memCount}) deleted by Operative "${operative}"`);
+        await logActivity('DATA DELETED', `Deleted record for Team ID: ${teamId} (Leader: ${leaderName}) by ${operative}`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -2753,10 +2871,15 @@ app.get('/api/attendance/verify-session', (req, res) => {
 });
 
 // Dedicated Logout Endpoint for Attendance Terminal
-app.post('/api/attendance/logout', (req, res) => {
+app.post('/api/attendance/logout', async (req, res) => {
+    let user = 'Operative';
     const session = isAttendanceAuthenticated(req);
-    const user = session ? session.username : 'Operative';
-    logActivity('ATTENDANCE LOGOUT', `Operative "${user}" logged out of Attendance Terminal`);
+    if (session && session.username) {
+        user = session.username;
+    } else if (req.body && req.body.username) {
+        user = req.body.username;
+    }
+    await logActivity('ATTENDANCE LOGOUT', `Operative "${user}" logged out of Attendance Terminal`);
     res.clearCookie('attendance_token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -2882,8 +3005,26 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             } catch (sqliteErr) { }
         }
 
-        const memberDiffs = memberStatuses.map(m => `${m.name || m.id}: ${m.status}`).join(', ');
-        logActivity('ATTENDANCE MODIFIED', `Team [${teamId}] ("${data.team.name}") attendance updated by Operative "${req.user ? req.user.username : 'Admin'}": [${memberDiffs}] (Overall Status: ${overallStatus})`);
+        const prevMemberMap = {};
+        if (data && data.members && Array.isArray(data.members)) {
+            data.members.forEach(m => {
+                const key = String(m.id || m._id || m.name);
+                prevMemberMap[key] = m.attendance_status || 'ABSENT';
+                if (m.name) prevMemberMap[m.name] = m.attendance_status || 'ABSENT';
+            });
+        }
+
+        const memberDiffs = memberStatuses.map(m => {
+            const prev = prevMemberMap[String(m.id)] || prevMemberMap[m.name] || 'ABSENT';
+            const curr = m.status;
+            if (prev !== curr) {
+                return `${m.name || m.id}: "${prev}" ➔ "${curr}"`;
+            }
+            return `${m.name || m.id}: "${curr}"`;
+        }).join(', ');
+
+        const operative = req.user ? req.user.username : 'Attendance Officer';
+        await logActivity('ATTENDANCE MODIFIED', `Team [${teamId}] ("${data.team.name}") attendance updated by Operative "${operative}": [${memberDiffs}] (Overall Status: ${overallStatus})`);
 
         res.json({ success: true, message: 'Attendance status successfully updated across database' });
     } catch (e) {

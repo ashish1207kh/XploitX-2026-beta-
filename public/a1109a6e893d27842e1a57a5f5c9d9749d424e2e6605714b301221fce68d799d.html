@@ -1667,6 +1667,21 @@
         }
 
         function logoutAdmin() {
+            // Notify backend of admin logout
+            const tokenToLogout = inMemoryAdminToken;
+            const userToLogout = inMemoryAdminUser;
+            if (tokenToLogout || userToLogout) {
+                fetch(`${API_BASE_URL}/api/admin/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
+                    },
+                    body: JSON.stringify({ username: userToLogout || 'Admin' }),
+                    keepalive: true
+                }).catch(() => {});
+            }
+
             // Flush in-memory authentication state completely
             inMemoryAdminToken = null;
             inMemoryAdminUser = null;
@@ -2021,7 +2036,7 @@
 
             // 1. Filter by category
             if (currentActivityLogFilter === 'LOGIN') {
-                filtered = filtered.filter(l => l.includes('LOGIN'));
+                filtered = filtered.filter(l => l.includes('LOGIN') || l.includes('LOGOUT'));
             } else if (currentActivityLogFilter === 'MODIFIED') {
                 filtered = filtered.filter(l => l.includes('DATA MODIFIED') || l.includes('MODIFY TEAM'));
             } else if (currentActivityLogFilter === 'STATUS') {
@@ -2031,7 +2046,7 @@
             } else if (currentActivityLogFilter === 'ATTENDANCE') {
                 filtered = filtered.filter(l => l.includes('ATTENDANCE'));
             } else if (currentActivityLogFilter === 'DELETE') {
-                filtered = filtered.filter(l => l.includes('DATA DELETED') || l.includes('DELETE TEAM'));
+                filtered = filtered.filter(l => l.includes('DATA DELETED') || l.includes('DELETE TEAM') || l.includes('DELETE'));
             }
 
             // 2. Filter by search query
@@ -2069,7 +2084,19 @@
                 let badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.1);';
                 let actionIcon = '<i class="fas fa-terminal"></i>';
 
-                if (action.includes('LOGIN')) {
+                if (action.includes('ATTENDANCE')) {
+                    badgeStyle = 'border:1px solid #b84dff; color:#b84dff; background:rgba(184,77,255,0.18);';
+                    if (action.includes('LOGOUT')) {
+                        actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                    } else if (action.includes('LOGIN')) {
+                        actionIcon = '<i class="fas fa-sign-in-alt"></i>';
+                    } else {
+                        actionIcon = '<i class="fas fa-clipboard-check"></i>';
+                    }
+                } else if (action.includes('LOGOUT')) {
+                    badgeStyle = 'border:1px solid #ff9900; color:#ff9900; background:rgba(255,153,0,0.18);';
+                    actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                } else if (action.includes('LOGIN')) {
                     badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.15);';
                     actionIcon = '<i class="fas fa-sign-in-alt"></i>';
                 } else if (action.includes('DATA MODIFIED') || action.includes('MODIFY')) {
@@ -2081,9 +2108,6 @@
                 } else if (action.includes('ACCESS')) {
                     badgeStyle = 'border:1px solid #ffd700; color:#ffd700; background:rgba(255,215,0,0.15);';
                     actionIcon = '<i class="fas fa-eye"></i>';
-                } else if (action.includes('ATTENDANCE')) {
-                    badgeStyle = 'border:1px solid #b84dff; color:#b84dff; background:rgba(184,77,255,0.18);';
-                    actionIcon = '<i class="fas fa-clipboard-check"></i>';
                 } else if (action.includes('DELETE')) {
                     badgeStyle = 'border:1px solid #ff0066; color:#ff0066; background:rgba(255,0,102,0.18);';
                     actionIcon = '<i class="fas fa-trash-alt"></i>';
@@ -2098,13 +2122,18 @@
                 // Highlight operative
                 safeDetails = safeDetails.replace(/Operative &quot;([^&]+)&quot;/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
                 safeDetails = safeDetails.replace(/Operative "([^"]+)"/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
+                safeDetails = safeDetails.replace(/\bby ([A-Za-z0-9\s]+?)(?=(\s*\(|$))/g, 'by <span style="color:var(--doom-gold); font-weight:bold;">$1</span>');
 
-                // Highlight Team ID [TM-...]
-                safeDetails = safeDetails.replace(/\[(TM-[^\]]+)\]/g, '<span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.1); padding:2px 6px; border-radius:3px;">[$1]</span>');
+                // Highlight Team ID
+                safeDetails = safeDetails.replace(/Team ID:\s*([A-Za-z0-9-]+)/g, 'Team ID: <span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">$1</span>');
+                safeDetails = safeDetails.replace(/\[([A-Za-z0-9-]+)\]/g, '<span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">[$1]</span>');
 
-                // Highlight Old ➔ New diff transitions
-                safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold;">"$2"</span>');
-                safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold;">"$2"</span>');
+                // Highlight Leader Name: (Leader: ...)
+                safeDetails = safeDetails.replace(/\(Leader:\s*([^)]+)\)/g, '(<span style="color:var(--doom-gold); font-weight:bold;">Leader: $1</span>)');
+
+                // Highlight Old ➔ New diff transitions (e.g. "Jesin" ➔ "Jesi")
+                safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
+                safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
 
                 html += `
                     <div style="display:flex; align-items:flex-start; gap:12px; padding:11px 15px; background:rgba(5,12,24,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,210,255,0.05)'" onmouseout="this.style.background='rgba(5,12,24,0.7)'">
