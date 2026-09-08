@@ -526,8 +526,8 @@ function updateFeeCalculations() {
     // Dynamic UPI Deep Link URI & Scannable QR Generation
     const upiId = "8122079494@pthdfc";
     const payeeName = "XploitX 2.0 CTF Registration";
-    const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
-    const dynamicQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUri)}`;
+    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
+    const dynamicQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&ecc=H&data=${encodeURIComponent(upiUri)}`;
 
     const qrImg = document.getElementById('qr-code-img');
     if (qrImg) {

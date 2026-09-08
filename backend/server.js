@@ -1928,9 +1928,9 @@ async function generateQrWithLogo(qrData) {
             const logoBuffer = fs.readFileSync(logoPath);
             const logoPng = PNG.sync.read(logoBuffer);
 
-            // Increased size of logo (width 150px, height ~55px)
-            const targetW = 150;
-            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); // 55px
+            // Perfectly proportioned logo for guaranteed instant optical scanning
+            const targetW = 110;
+            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); // 40px
             const pad = 3;
 
             const startX = Math.round((qrPng.width - targetW) / 2);

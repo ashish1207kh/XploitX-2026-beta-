@@ -845,8 +845,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     background: #ffffff;
-    padding: 3px 5px;
-    border-radius: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
     border: none;
     display: flex;
     align-items: center;
@@ -856,14 +856,14 @@ body {
 }
 
 .qr-center-logo-img {
-    width: 48px;
+    width: 38px;
     height: auto;
     display: block;
 }
 
 .payment-qr-display {
-    width: 140px;
-    height: 140px;
+    width: 175px;
+    height: 175px;
     object-fit: contain;
     display: block;
 }

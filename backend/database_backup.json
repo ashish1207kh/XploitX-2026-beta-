@@ -1,1231 +1,567 @@
 {
-  "export_timestamp": "2026-09-08 14:06:52 IST",
+  "export_timestamp": "2026-09-08 14:41:37 IST",
   "summary": {
     "total_teams": 0,
     "total_members": 0,
     "total_attendance_records": 0,
-    "total_activity_logs": 133
+    "total_activity_logs": 69
   },
   "teams": [],
   "members": [],
   "attendance": [],
-  "otps": [
-    {
-      "_id": "6a9c59bf22fb9f40767a9937",
-      "email": "testctf2026@gmail.com",
-      "otp": "290904",
-      "expires_at": "2026-09-05T18:14:47.328Z",
-      "attempts": 0,
-      "created_at": "2026-09-05T18:04:47.328Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e852eb64a1ee241c1db57",
-      "email": "libineshr7@gmail.com",
-      "otp": "304883",
-      "expires_at": "2026-09-07T09:44:36.621Z",
-      "attempts": 0,
-      "created_at": "2026-09-07T09:34:36.621Z",
-      "__v": 0
-    }
-  ],
+  "otps": [],
   "activityLogs": [
     {
-      "_id": "6a9a700dda07d49cd5542a1d",
-      "timestamp": "2026-09-04 12:45:25 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged in successfully",
-      "formatted": "[2026-09-04 12:45:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
-      "created_at": "2026-09-04T07:15:25.737Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a7a913b75c7233dbccc22",
-      "timestamp": "2026-09-04 13:30:17 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged in successfully",
-      "formatted": "[2026-09-04 13:30:17 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged in successfully",
-      "created_at": "2026-09-04T08:00:17.976Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a7ac03b75c7233dbccc23",
-      "timestamp": "2026-09-04 13:31:04 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged in successfully",
-      "formatted": "[2026-09-04 13:31:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
-      "created_at": "2026-09-04T08:01:04.009Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a7ffb89347c18b7dce953",
-      "timestamp": "2026-09-04 13:53:23 IST",
-      "action": "SEND OTP",
-      "details": "Verification OTP generated & dispatched to jesinmilesh@gmail.com",
-      "formatted": "[2026-09-04 13:53:23 IST] SEND OTP: Verification OTP generated & dispatched to jesinmilesh@gmail.com",
-      "created_at": "2026-09-04T08:23:23.328Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a801189347c18b7dce954",
-      "timestamp": "2026-09-04 13:53:45 IST",
-      "action": "OTP VERIFIED",
-      "details": "Email address jesinmilesh@gmail.com successfully verified",
-      "formatted": "[2026-09-04 13:53:45 IST] OTP VERIFIED: Email address jesinmilesh@gmail.com successfully verified",
-      "created_at": "2026-09-04T08:23:45.710Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a8d7e102d3c00fe95b88f",
-      "timestamp": "2026-09-04 14:51:02 IST",
-      "action": "SEND OTP",
-      "details": "Verification OTP generated & dispatched to libineshr7@gmail.com",
-      "formatted": "[2026-09-04 14:51:02 IST] SEND OTP: Verification OTP generated & dispatched to libineshr7@gmail.com",
-      "created_at": "2026-09-04T09:21:02.597Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a8e96102d3c00fe95b890",
-      "timestamp": "2026-09-04 14:55:42 IST",
-      "action": "OTP VERIFIED",
-      "details": "Email address libineshr7@gmail.com successfully verified",
-      "formatted": "[2026-09-04 14:55:42 IST] OTP VERIFIED: Email address libineshr7@gmail.com successfully verified",
-      "created_at": "2026-09-04T09:25:42.136Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a8f22102d3c00fe95b894",
-      "timestamp": "2026-09-04 14:58:02 IST",
-      "action": "NEW REGISTRATION",
-      "details": "Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
-      "formatted": "[2026-09-04 14:58:02 IST] NEW REGISTRATION: Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
-      "created_at": "2026-09-04T09:28:02.349Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a912fa30dd7cbd91f30ed",
-      "timestamp": "2026-09-04 15:06:47 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged in successfully",
-      "formatted": "[2026-09-04 15:06:47 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
-      "created_at": "2026-09-04T09:36:47.478Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a97a5574576be23504b11",
-      "timestamp": "2026-09-04 15:34:21 IST",
-      "action": "DELETE TEAM",
-      "details": "Deleted record for Team ID: XB2026-0001 by Ashish",
-      "formatted": "[2026-09-04 15:34:21 IST] DELETE TEAM: Deleted record for Team ID: XB2026-0001 by Ashish",
-      "created_at": "2026-09-04T10:04:21.557Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9957574576be23504b12",
-      "timestamp": "2026-09-04 15:41:35 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged in successfully",
-      "formatted": "[2026-09-04 15:41:35 IST] ADMIN LOGIN: Operative \"Ashish\" logged in successfully",
-      "created_at": "2026-09-04T10:11:35.678Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9babe6ee07e2740517ca",
-      "timestamp": "2026-09-04 15:51:31 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-04 15:51:31 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-04T10:21:31.412Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9bbae6ee07e2740517cb",
-      "timestamp": "2026-09-04 15:51:46 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-04 15:51:46 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-04T10:21:46.824Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9c2de6ee07e2740517d1",
-      "timestamp": "2026-09-04 15:53:41 IST",
-      "action": "MODIFY TEAM",
-      "details": "Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
-      "formatted": "[2026-09-04 15:53:41 IST] MODIFY TEAM: Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
-      "created_at": "2026-09-04T10:23:41.115Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9c42e6ee07e2740517d2",
-      "timestamp": "2026-09-04 15:54:02 IST",
-      "action": "DELETE TEAM",
-      "details": "Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
-      "formatted": "[2026-09-04 15:54:02 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
-      "created_at": "2026-09-04T10:24:02.441Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9c9be6ee07e2740517d3",
-      "timestamp": "2026-09-04 15:55:31 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 15:55:31 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T10:25:31.128Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9dc0f3762adb1257d79e",
-      "timestamp": "2026-09-04 16:00:24 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-04 16:00:24 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-04T10:30:24.855Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9a9dd0f3762adb1257d79f",
-      "timestamp": "2026-09-04 16:00:40 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 16:00:40 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T10:30:40.654Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ab94556826a32dc7448b9",
-      "timestamp": "2026-09-04 17:57:49 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 17:57:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T12:27:49.033Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ace571354b5632528197d",
-      "timestamp": "2026-09-04 19:27:43 IST",
-      "action": "DELETE TEAM",
-      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
-      "formatted": "[2026-09-04 19:27:43 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
-      "created_at": "2026-09-04T13:57:43.760Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ace591354b5632528197e",
-      "timestamp": "2026-09-04 19:27:45 IST",
-      "action": "DELETE TEAM",
-      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
-      "formatted": "[2026-09-04 19:27:45 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
-      "created_at": "2026-09-04T13:57:45.698Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ace5f1354b5632528197f",
-      "timestamp": "2026-09-04 19:27:51 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-04 19:27:51 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-04T13:57:51.494Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ace6d1354b56325281980",
-      "timestamp": "2026-09-04 19:28:05 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-04 19:28:05 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-04T13:58:05.454Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ace9b1354b56325281981",
-      "timestamp": "2026-09-04 19:28:51 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 19:28:51 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T13:58:51.092Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9acec61354b56325281982",
-      "timestamp": "2026-09-04 19:29:34 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 19:29:34 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T13:59:34.141Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ad5dc94f66ac995bb8fad",
-      "timestamp": "2026-09-04 19:59:48 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-04 19:59:48 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-04T14:29:48.110Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ae6f23f0a21d84b72a989",
-      "timestamp": "2026-09-04 21:12:42 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:12:42 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-04T15:42:42.109Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9aebb8dee9174ede434a29",
-      "timestamp": "2026-09-04 21:33:04 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:33:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04T16:03:04.322Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4a5601ea38b0cb20e042",
-      "timestamp": "2026-09-05 22:29:02 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:29:02 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T16:59:02.668Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4a5d01ea38b0cb20e043",
-      "timestamp": "2026-09-05 22:29:09 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:29:09 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T16:59:09.615Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4a6701ea38b0cb20e044",
-      "timestamp": "2026-09-05 22:29:19 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:29:19 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T16:59:19.957Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4a6f01ea38b0cb20e045",
-      "timestamp": "2026-09-05 22:29:27 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:29:27 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T16:59:27.318Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e046",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.108Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e047",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.130Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e048",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.147Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e04b",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.187Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e049",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.160Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4b0501ea38b0cb20e04a",
-      "timestamp": "2026-09-05 22:31:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-05T17:01:57.174Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f998826",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.006Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f998828",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.031Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f998827",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.027Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f99882b",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.039Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f99882d",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.046Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f99882c",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.043Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f99882e",
-      "timestamp": "2026-09-05 22:36:50 IST",
+      "id": 1,
+      "timestamp": "2026-09-04 21:00:11 IST",
       "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"admin\" failed login attempt",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN FAILED: Operative \"admin\" failed login attempt",
-      "created_at": "2026-09-05T17:06:50.049Z",
-      "__v": 0
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 21:00:11 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 15:30:11"
     },
     {
-      "_id": "6a9c4c2a07b2c9999f99882f",
-      "timestamp": "2026-09-05 22:36:50 IST",
+      "id": 2,
+      "timestamp": "2026-09-04 21:00:11 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 21:00:11 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 15:30:11"
+    },
+    {
+      "id": 3,
+      "timestamp": "2026-09-04 21:18:42 IST",
       "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"unknown_user\" failed login attempt",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN FAILED: Operative \"unknown_user\" failed login attempt",
-      "created_at": "2026-09-05T17:06:50.052Z",
-      "__v": 0
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 21:18:42 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 15:48:42"
     },
     {
-      "_id": "6a9c4c2a07b2c9999f998829",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.033Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c2a07b2c9999f99882a",
-      "timestamp": "2026-09-05 22:36:50 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:50.037Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4c3007b2c9999f998830",
-      "timestamp": "2026-09-05 22:36:56 IST",
+      "id": 4,
+      "timestamp": "2026-09-04 21:18:42 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:56 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:06:56.664Z",
-      "__v": 0
+      "formatted": "[2026-09-04 21:18:42 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 15:48:42"
     },
     {
-      "_id": "6a9c4e66d3142e6360f5fa24",
-      "timestamp": "2026-09-05 22:46:22 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.208Z",
-      "__v": 0
+      "id": 5,
+      "timestamp": "2026-09-04 21:23:40 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 21:23:40 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 15:53:40"
     },
     {
-      "_id": "6a9c4e66d3142e6360f5fa25",
-      "timestamp": "2026-09-05 22:46:22 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.233Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4e66d3142e6360f5fa26",
-      "timestamp": "2026-09-05 22:46:22 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.238Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4e66d3142e6360f5fa29",
-      "timestamp": "2026-09-05 22:46:22 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.267Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9c4e66d3142e6360f5fa28",
-      "timestamp": "2026-09-05 22:46:22 IST",
+      "id": 6,
+      "timestamp": "2026-09-04 21:23:40 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.261Z",
-      "__v": 0
+      "formatted": "[2026-09-04 21:23:40 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 15:53:41"
     },
     {
-      "_id": "6a9c4e66d3142e6360f5fa27",
-      "timestamp": "2026-09-05 22:46:22 IST",
+      "id": 7,
+      "timestamp": "2026-09-04 21:26:32 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 21:26:32 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 15:56:32"
+    },
+    {
+      "id": 8,
+      "timestamp": "2026-09-04 21:26:32 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05T17:16:22.248Z",
-      "__v": 0
+      "formatted": "[2026-09-04 21:26:32 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 15:56:32"
     },
     {
-      "_id": "6a9ce0ffbe1f4135bcdec91d",
-      "timestamp": "2026-09-06 09:11:51 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:41:51.854Z",
-      "__v": 0
+      "id": 9,
+      "timestamp": "2026-09-04 21:28:41 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 21:28:41 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 15:58:41"
     },
     {
-      "_id": "6a9ce0ffbe1f4135bcdec91c",
-      "timestamp": "2026-09-06 09:11:51 IST",
-      "action": "ATTENDANCE LOGIN FAILED",
-      "details": "Failed login attempt for operative \"administrator\"",
-      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
-      "created_at": "2026-09-06T03:41:51.838Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce100be1f4135bcdec91e",
-      "timestamp": "2026-09-06 09:11:52 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-06 09:11:52 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
-      "created_at": "2026-09-06T03:41:52.017Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce11fbe1f4135bcdec91f",
-      "timestamp": "2026-09-06 09:12:23 IST",
-      "action": "ATTENDANCE LOGIN FAILED",
-      "details": "Failed login attempt for operative \"administrator\"",
-      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
-      "created_at": "2026-09-06T03:42:23.400Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce11fbe1f4135bcdec920",
-      "timestamp": "2026-09-06 09:12:23 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:42:23.404Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce11fbe1f4135bcdec921",
-      "timestamp": "2026-09-06 09:12:23 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
-      "created_at": "2026-09-06T03:42:23.552Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce1bbbe1f4135bcdec922",
-      "timestamp": "2026-09-06 09:14:59 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:14:59 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:44:59.001Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce204be1f4135bcdec923",
-      "timestamp": "2026-09-06 09:16:12 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:16:12 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:46:12.566Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce23bbe1f4135bcdec924",
-      "timestamp": "2026-09-06 09:17:07 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:17:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:47:07.176Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce25ebe1f4135bcdec925",
-      "timestamp": "2026-09-06 09:17:42 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:17:42 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:47:42.348Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce30eb273361a580e4963",
-      "timestamp": "2026-09-06 09:20:38 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:50:38.851Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce30eb273361a580e4962",
-      "timestamp": "2026-09-06 09:20:38 IST",
-      "action": "ATTENDANCE LOGIN FAILED",
-      "details": "Failed login attempt for operative \"administrator\"",
-      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
-      "created_at": "2026-09-06T03:50:38.840Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce30eb273361a580e4964",
-      "timestamp": "2026-09-06 09:20:38 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
-      "created_at": "2026-09-06T03:50:38.967Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce32cb273361a580e4965",
-      "timestamp": "2026-09-06 09:21:08 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:21:08 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:51:08.345Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce3df049b0e1c29b789b2",
-      "timestamp": "2026-09-06 09:24:07 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:24:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:54:07.487Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce400049b0e1c29b789b3",
-      "timestamp": "2026-09-06 09:24:40 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:24:40 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:54:40.954Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce410049b0e1c29b789b4",
-      "timestamp": "2026-09-06 09:24:56 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:24:56 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:54:56.493Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce4df049b0e1c29b789b5",
-      "timestamp": "2026-09-06 09:28:23 IST",
-      "action": "ATTENDANCE LOGIN FAILED",
-      "details": "Failed login attempt for operative \"Jesin Milesh\"",
-      "formatted": "[2026-09-06 09:28:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"Jesin Milesh\"",
-      "created_at": "2026-09-06T03:58:23.863Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce4f7049b0e1c29b789b6",
-      "timestamp": "2026-09-06 09:28:47 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:28:47 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T03:58:47.374Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce657049b0e1c29b789b7",
-      "timestamp": "2026-09-06 09:34:39 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:34:39 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T04:04:39.562Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ce8b90922aa3c5e8f3be6",
-      "timestamp": "2026-09-06 09:44:49 IST",
+      "id": 10,
+      "timestamp": "2026-09-04 21:28:41 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-06 09:44:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-06T04:14:49.139Z",
-      "__v": 0
+      "formatted": "[2026-09-04 21:28:41 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 15:58:41"
     },
     {
-      "_id": "6a9cea140922aa3c5e8f3be7",
-      "timestamp": "2026-09-06 09:50:36 IST",
-      "action": "ATTENDANCE LOGIN FAILED",
-      "details": "Failed login attempt for operative \"coordinator\"",
-      "formatted": "[2026-09-06 09:50:36 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"coordinator\"",
-      "created_at": "2026-09-06T04:20:36.315Z",
-      "__v": 0
+      "id": 11,
+      "timestamp": "2026-09-04 23:10:22 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 23:10:22 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 17:40:22"
     },
     {
-      "_id": "6a9cea140922aa3c5e8f3be8",
-      "timestamp": "2026-09-06 09:50:36 IST",
+      "id": 12,
+      "timestamp": "2026-09-04 23:10:22 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-06 09:50:36 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-06T04:20:36.316Z",
-      "__v": 0
+      "formatted": "[2026-09-04 23:10:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 17:40:22"
     },
     {
-      "_id": "6a9cea43e5ea2b9c7908be15",
-      "timestamp": "2026-09-06 09:51:23 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:51:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T04:21:23.654Z",
-      "__v": 0
+      "id": 13,
+      "timestamp": "2026-09-04 23:17:12 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:17:12 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:47:12"
     },
     {
-      "_id": "6a9cea43e5ea2b9c7908be16",
-      "timestamp": "2026-09-06 09:51:23 IST",
+      "id": 14,
+      "timestamp": "2026-09-04 23:17:12 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 23:17:12 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 17:47:12"
+    },
+    {
+      "id": 15,
+      "timestamp": "2026-09-04 23:17:12 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-06 09:51:23 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-06T04:21:23.699Z",
-      "__v": 0
+      "formatted": "[2026-09-04 23:17:12 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 17:47:12"
     },
     {
-      "_id": "6a9cea5ee5ea2b9c7908be17",
-      "timestamp": "2026-09-06 09:51:50 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:51:50 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T04:21:50.372Z",
-      "__v": 0
+      "id": 16,
+      "timestamp": "2026-09-04 23:17:12 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:17:12 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:47:12"
     },
     {
-      "_id": "6a9cea5ee5ea2b9c7908be18",
-      "timestamp": "2026-09-06 09:51:50 IST",
+      "id": 17,
+      "timestamp": "2026-09-04 23:17:35 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:17:35 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:47:35"
+    },
+    {
+      "id": 18,
+      "timestamp": "2026-09-04 23:17:35 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 23:17:35 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 17:47:35"
+    },
+    {
+      "id": 19,
+      "timestamp": "2026-09-04 23:17:35 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-06 09:51:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-06T04:21:50.411Z",
-      "__v": 0
+      "formatted": "[2026-09-04 23:17:35 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 17:47:35"
     },
     {
-      "_id": "6a9ceaf9e5ea2b9c7908be19",
-      "timestamp": "2026-09-06 09:54:25 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-06 09:54:25 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-06T04:24:25.210Z",
-      "__v": 0
+      "id": 20,
+      "timestamp": "2026-09-04 23:17:35 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:17:35 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:47:35"
     },
     {
-      "_id": "6a9ceaf9e5ea2b9c7908be1a",
-      "timestamp": "2026-09-06 09:54:25 IST",
+      "id": 21,
+      "timestamp": "2026-09-04 23:24:26 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:24:26 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:54:26"
+    },
+    {
+      "id": 22,
+      "timestamp": "2026-09-04 23:24:26 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 23:24:26 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 17:54:26"
+    },
+    {
+      "id": 23,
+      "timestamp": "2026-09-04 23:24:26 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-06 09:54:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-06T04:24:25.367Z",
-      "__v": 0
+      "formatted": "[2026-09-04 23:24:26 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 17:54:26"
     },
     {
-      "_id": "6a9e73cd1fa9636be91e4abe",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.329Z",
-      "__v": 0
+      "id": 24,
+      "timestamp": "2026-09-04 23:24:26 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:24:26 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:54:26"
     },
     {
-      "_id": "6a9e73cd1fa9636be91e4abf",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.337Z",
-      "__v": 0
+      "id": 25,
+      "timestamp": "2026-09-04 23:26:38 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:26:38 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:56:38"
     },
     {
-      "_id": "6a9e73cd1fa9636be91e4ac0",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.339Z",
-      "__v": 0
+      "id": 26,
+      "timestamp": "2026-09-04 23:26:38 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-04 23:26:38 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-04 17:56:38"
     },
     {
-      "_id": "6a9e73cd1fa9636be91e4ac3",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Attendance Officer\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Attendance Officer\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.346Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e73cd1fa9636be91e4ac1",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.342Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e73cd1fa9636be91e4ac2",
-      "timestamp": "2026-09-07 13:50:29 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Ashish\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Ashish\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:29.344Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e73d11fa9636be91e4ac4",
-      "timestamp": "2026-09-07 13:50:33 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:50:33 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:20:33.909Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e73d11fa9636be91e4ac5",
-      "timestamp": "2026-09-07 13:50:33 IST",
+      "id": 27,
+      "timestamp": "2026-09-04 23:26:38 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 13:50:33 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07T08:20:33.954Z",
-      "__v": 0
+      "formatted": "[2026-09-04 23:26:38 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04 17:56:38"
     },
     {
-      "_id": "6a9e75011fa9636be91e4ac6",
-      "timestamp": "2026-09-07 13:55:37 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:55:37 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T08:25:37.061Z",
-      "__v": 0
+      "id": 28,
+      "timestamp": "2026-09-04 23:26:38 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:26:38 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:56:38"
     },
     {
-      "_id": "6a9e75011fa9636be91e4ac7",
-      "timestamp": "2026-09-07 13:55:37 IST",
+      "id": 29,
+      "timestamp": "2026-09-04 23:28:04 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:28:04 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:58:04"
+    },
+    {
+      "id": 30,
+      "timestamp": "2026-09-04 23:28:04 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:28:04 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "created_at": "2026-09-04 17:58:04"
+    },
+    {
+      "id": 31,
+      "timestamp": "2026-09-04 23:28:04 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:28:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "created_at": "2026-09-04 17:58:04"
+    },
+    {
+      "id": 32,
+      "timestamp": "2026-09-04 23:28:04 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:28:04 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 17:58:04"
+    },
+    {
+      "id": 33,
+      "timestamp": "2026-09-04 23:33:10 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:33:10 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 18:03:10"
+    },
+    {
+      "id": 34,
+      "timestamp": "2026-09-04 23:33:10 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:33:10 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "created_at": "2026-09-04 18:03:10"
+    },
+    {
+      "id": 35,
+      "timestamp": "2026-09-04 23:33:10 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:33:10 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "created_at": "2026-09-04 18:03:10"
+    },
+    {
+      "id": 36,
+      "timestamp": "2026-09-04 23:33:10 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:33:10 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 18:03:10"
+    },
+    {
+      "id": 37,
+      "timestamp": "2026-09-04 23:36:52 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:36:52 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 18:06:53"
+    },
+    {
+      "id": 38,
+      "timestamp": "2026-09-04 23:36:53 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:36:53 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
+      "created_at": "2026-09-04 18:06:53"
+    },
+    {
+      "id": 39,
+      "timestamp": "2026-09-04 23:36:53 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "formatted": "[2026-09-04 23:36:53 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
+      "created_at": "2026-09-04 18:06:53"
+    },
+    {
+      "id": 40,
+      "timestamp": "2026-09-04 23:36:53 IST",
+      "action": "ADMIN AUTH FAILURE",
+      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "formatted": "[2026-09-04 23:36:53 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
+      "created_at": "2026-09-04 18:06:53"
+    },
+    {
+      "id": 41,
+      "timestamp": "2026-09-05 22:03:49 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 13:55:37 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07T08:25:37.124Z",
-      "__v": 0
+      "formatted": "[2026-09-05 22:03:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 16:33:49"
     },
     {
-      "_id": "6a9e7f621fa9636be91e4ac8",
-      "timestamp": "2026-09-07 14:39:54 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:39:54 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:09:54.895Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e7f621fa9636be91e4ac9",
-      "timestamp": "2026-09-07 14:39:54 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 14:39:54 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07T09:09:54.957Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e81491fa9636be91e4aca",
-      "timestamp": "2026-09-07 14:48:01 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:48:01 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:18:01.870Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e815a1fa9636be91e4acb",
-      "timestamp": "2026-09-07 14:48:18 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:48:18 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:18:18.397Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e82021fa9636be91e4acc",
-      "timestamp": "2026-09-07 14:51:06 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:51:06 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:21:06.333Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e832b1fa9636be91e4acd",
-      "timestamp": "2026-09-07 14:56:03 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:56:03 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:26:03.594Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e83681fa9636be91e4ace",
-      "timestamp": "2026-09-07 14:57:04 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:57:04 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:27:04.561Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e83681fa9636be91e4acf",
-      "timestamp": "2026-09-07 14:57:04 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 14:57:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07T09:27:04.801Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9e83b01fa9636be91e4ad0",
-      "timestamp": "2026-09-07 14:58:16 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 14:58:16 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07T09:28:16.969Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ec3b01b3876f92c6c97b0",
-      "timestamp": "2026-09-07 19:31:20 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-07 19:31:20 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-07T14:01:20.741Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9ee126cefc2a04b93c9d76",
-      "timestamp": "2026-09-07 21:37:02 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-07 21:37:02 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-07T16:07:02.082Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9f97b5a293349e31a4bbe9",
-      "timestamp": "2026-09-08 10:35:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 10:35:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T05:05:57.400Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9f98f9a293349e31a4bbea",
-      "timestamp": "2026-09-08 10:41:21 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-08 10:41:21 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-08T05:11:21.559Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9f9ce958a45d57fb7c03ac",
-      "timestamp": "2026-09-08 10:58:09 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-08 10:58:09 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-08T05:28:09.434Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa712c895feca58d5e1db",
-      "timestamp": "2026-09-08 11:41:30 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-08 11:41:30 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-08T06:11:30.208Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa713c895feca58d5e1dc",
-      "timestamp": "2026-09-08 11:41:31 IST",
-      "action": "DATA ACCESS",
-      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
-      "formatted": "[2026-09-08 11:41:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
-      "created_at": "2026-09-08T06:11:31.137Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa728bd50729cfd306bed",
-      "timestamp": "2026-09-08 11:41:51 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 11:41:51 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:11:52.024Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa7c45b655e95fb373de7",
-      "timestamp": "2026-09-08 11:44:28 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 11:44:28 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08T06:14:28.858Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa7dd5b655e95fb373de8",
-      "timestamp": "2026-09-08 11:44:53 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 11:44:53 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:14:53.452Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa7f85b655e95fb373de9",
-      "timestamp": "2026-09-08 11:45:20 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 11:45:20 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:15:20.364Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa88c5b655e95fb373dea",
-      "timestamp": "2026-09-08 11:47:48 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-08 11:47:48 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "created_at": "2026-09-08T06:17:48.445Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fa8a35b655e95fb373deb",
-      "timestamp": "2026-09-08 11:48:11 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 11:48:11 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:18:11.025Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fadb20e1a77aa80e967ac",
-      "timestamp": "2026-09-08 12:09:46 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Ashish\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 12:09:46 IST] ATTENDANCE LOGIN: Operative \"Ashish\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08T06:39:46.184Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fadb20e1a77aa80e967ad",
-      "timestamp": "2026-09-08 12:09:46 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Ashish\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-08 12:09:46 IST] ATTENDANCE LOGOUT: Operative \"Ashish\" logged out of Attendance Terminal",
-      "created_at": "2026-09-08T06:39:46.207Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fadb20e1a77aa80e967af",
-      "timestamp": "2026-09-08 12:09:46 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-08T06:39:46.272Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fadb20e1a77aa80e967ae",
-      "timestamp": "2026-09-08 12:09:46 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:39:46.268Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fadb20e1a77aa80e967b0",
-      "timestamp": "2026-09-08 12:09:46 IST",
-      "action": "ADMIN LOGOUT",
-      "details": "Operative \"Ashish\" logged out of Admin Console",
-      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGOUT: Operative \"Ashish\" logged out of Admin Console",
-      "created_at": "2026-09-08T06:39:46.276Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9faee98cf244065d5c4285",
-      "timestamp": "2026-09-08 12:14:57 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:14:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:44:57.350Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb0d736aa1ba9f5759a9f",
-      "timestamp": "2026-09-08 12:23:11 IST",
+      "id": 42,
+      "timestamp": "2026-09-05 22:03:49 IST",
       "action": "ADMIN LOGIN FAILED",
       "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-08 12:23:11 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-08T06:53:11.369Z",
-      "__v": 0
+      "formatted": "[2026-09-05 22:03:49 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 16:33:49"
     },
     {
-      "_id": "6a9fb1c737ede3d5b2c0bf66",
-      "timestamp": "2026-09-08 12:27:11 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-08 12:27:11 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-08T06:57:11.427Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb1db37ede3d5b2c0bf67",
-      "timestamp": "2026-09-08 12:27:31 IST",
+      "id": 43,
+      "timestamp": "2026-09-05 22:04:04 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:27:31 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T06:57:31.130Z",
-      "__v": 0
+      "formatted": "[2026-09-05 22:04:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 16:34:04"
     },
     {
-      "_id": "6a9fb1bf37ede3d5b2c0bf65",
-      "timestamp": "2026-09-08 12:27:03 IST",
+      "id": 44,
+      "timestamp": "2026-09-05 22:04:04 IST",
       "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-08 12:27:03 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-08T06:57:03.038Z",
-      "__v": 0
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:04:04 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 16:34:04"
     },
     {
-      "_id": "6a9fb22337ede3d5b2c0bf68",
-      "timestamp": "2026-09-08 12:28:43 IST",
+      "id": 45,
+      "timestamp": "2026-09-05 22:13:19 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:13:19 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 16:43:19"
+    },
+    {
+      "id": 46,
+      "timestamp": "2026-09-05 22:13:19 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:13:19 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 16:43:19"
+    },
+    {
+      "id": 47,
+      "timestamp": "2026-09-05 22:14:35 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:14:35 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 16:44:35"
+    },
+    {
+      "id": 48,
+      "timestamp": "2026-09-05 22:14:35 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:14:35 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 16:44:35"
+    },
+    {
+      "id": 49,
+      "timestamp": "2026-09-05 22:18:55 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:18:55 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 16:48:55"
+    },
+    {
+      "id": 50,
+      "timestamp": "2026-09-05 22:18:55 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:18:55 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 16:48:55"
+    },
+    {
+      "id": 51,
+      "timestamp": "2026-09-05 22:34:29 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:34:29 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 17:04:29"
+    },
+    {
+      "id": 52,
+      "timestamp": "2026-09-05 22:34:29 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:34:29 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 17:04:29"
+    },
+    {
+      "id": 53,
+      "timestamp": "2026-09-05 22:36:42 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:42 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 17:06:42"
+    },
+    {
+      "id": 54,
+      "timestamp": "2026-09-05 22:36:42 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:36:42 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 17:06:42"
+    },
+    {
+      "id": 55,
+      "timestamp": "2026-09-05 22:46:45 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:45 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 17:16:45"
+    },
+    {
+      "id": 56,
+      "timestamp": "2026-09-05 22:46:45 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:46:45 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 17:16:45"
+    },
+    {
+      "id": 57,
+      "timestamp": "2026-09-05 22:51:01 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:51:01 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05 17:21:01"
+    },
+    {
+      "id": 58,
+      "timestamp": "2026-09-05 22:51:01 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-05 22:51:01 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-05 17:21:01"
+    },
+    {
+      "id": 59,
+      "timestamp": "2026-09-07 13:21:36 IST",
       "action": "ATTENDANCE LOGIN",
       "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 12:28:43 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08T06:58:43.797Z",
-      "__v": 0
+      "formatted": "[2026-09-07 13:21:36 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07 07:51:36"
     },
     {
-      "_id": "6a9fb22d37ede3d5b2c0bf69",
-      "timestamp": "2026-09-08 12:28:53 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-08 12:28:53 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
-      "created_at": "2026-09-08T06:58:53.455Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb23337ede3d5b2c0bf6a",
-      "timestamp": "2026-09-08 12:28:59 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 12:28:59 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08T06:58:59.411Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb23637ede3d5b2c0bf6b",
-      "timestamp": "2026-09-08 12:29:02 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-08 12:29:02 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "created_at": "2026-09-08T06:59:02.138Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb32c37ede3d5b2c0bf6c",
-      "timestamp": "2026-09-08 12:33:08 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 12:33:08 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08T07:03:08.248Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb32e37ede3d5b2c0bf6d",
-      "timestamp": "2026-09-08 12:33:10 IST",
-      "action": "ATTENDANCE LOGOUT",
-      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "formatted": "[2026-09-08 12:33:10 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
-      "created_at": "2026-09-08T07:03:10.814Z",
-      "__v": 0
-    },
-    {
-      "_id": "6a9fb3cd37ede3d5b2c0bf6e",
-      "timestamp": "2026-09-08 12:35:49 IST",
+      "id": 60,
+      "timestamp": "2026-09-07 13:21:36 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:35:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08T07:05:49.455Z",
-      "__v": 0
+      "formatted": "[2026-09-07 13:21:36 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07 07:51:36"
+    },
+    {
+      "id": 61,
+      "timestamp": "2026-09-07 13:22:01 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 13:22:01 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07 07:52:01"
+    },
+    {
+      "id": 62,
+      "timestamp": "2026-09-07 13:22:01 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:22:01 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07 07:52:01"
+    },
+    {
+      "id": 63,
+      "timestamp": "2026-09-07 13:22:03 IST",
+      "action": "ATTENDANCE MARKED",
+      "details": "Attendance status updated for Team ID: XCTF-26-0001 (Status: PRESENT) by Administrator",
+      "formatted": "[2026-09-07 13:22:03 IST] ATTENDANCE MARKED: Attendance status updated for Team ID: XCTF-26-0001 (Status: PRESENT) by Administrator",
+      "created_at": "2026-09-07 07:52:03"
+    },
+    {
+      "id": 64,
+      "timestamp": "2026-09-07 13:22:04 IST",
+      "action": "DOWNLOAD OD PDF",
+      "details": "OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Administrator",
+      "formatted": "[2026-09-07 13:22:04 IST] DOWNLOAD OD PDF: OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Administrator",
+      "created_at": "2026-09-07 07:52:04"
+    },
+    {
+      "id": 65,
+      "timestamp": "2026-09-07 13:22:09 IST",
+      "action": "PAYMENT VERIFIED",
+      "details": "Registration confirmed & OD Letter PDF sent for Team ID: XCTF-26-0001 by Administrator",
+      "formatted": "[2026-09-07 13:22:09 IST] PAYMENT VERIFIED: Registration confirmed & OD Letter PDF sent for Team ID: XCTF-26-0001 by Administrator",
+      "created_at": "2026-09-07 07:52:09"
+    },
+    {
+      "id": 66,
+      "timestamp": "2026-09-07 13:22:09 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Administrator",
+      "formatted": "[2026-09-07 13:22:09 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Administrator",
+      "created_at": "2026-09-07 07:52:09"
+    },
+    {
+      "id": 67,
+      "timestamp": "2026-09-08 12:24:21 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:24:21 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08 06:54:21"
+    },
+    {
+      "id": 68,
+      "timestamp": "2026-09-08 12:25:24 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 12:25:24 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08 06:55:24"
+    },
+    {
+      "id": 69,
+      "timestamp": "2026-09-08 12:25:31 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-08 12:25:31 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-08 06:55:31"
     }
   ]
 }
