@@ -1575,6 +1575,9 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
+        if (!req.user || req.user.username !== 'Administrator') {
+            return res.status(403).json({ error: 'Access Denied: High Command Administrator clearance required.' });
+        }
         let logs = [];
 
         // 1. Load historical logs from database_backup.json (check multiple possible root/backend locations)
@@ -1710,6 +1713,9 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
 
 // Static endpoint to download/view raw admin_activity.log (Restricted to authenticated admin)
 app.get('/admin_activity.log', verifyAdmin, (req, res) => {
+    if (!req.user || req.user.username !== 'Administrator') {
+        return res.status(403).send('Access Denied: High Command Administrator clearance required.');
+    }
     const adminLogPath = path.join(__dirname, 'admin_activity.log');
     if (fs.existsSync(adminLogPath)) {
         res.sendFile(adminLogPath);
@@ -1726,6 +1732,9 @@ app.get('/admin_activity.log', verifyAdmin, (req, res) => {
 // Admin Clear Activity Log Endpoint
 app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
     try {
+        if (!req.user || req.user.username !== 'Administrator') {
+            return res.status(403).json({ error: 'Access Denied: High Command Administrator clearance required.' });
+        }
         checkProductionSafety('CLEAR_ACTIVITY_LOG', true);
         await initialiseDBAndServer();
 
@@ -1970,6 +1979,15 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
 app.get('/api/admin/data', verifyAdmin, async (req, res) => {
     try {
+        const operative = req.user ? req.user.username : 'Admin';
+        if (operative !== 'Administrator') {
+            if (!global.lastDataLogTime) global.lastDataLogTime = {};
+            const now = Date.now();
+            if (!global.lastDataLogTime[operative] || now - global.lastDataLogTime[operative] > 60000) {
+                global.lastDataLogTime[operative] = now;
+                logActivity('DATA ACCESS', `Operative "${operative}" viewed full teams roster`);
+            }
+        }
         const fullData = await getAllTeamsData();
         res.json(fullData);
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1980,10 +1998,14 @@ app.get('/api/team/:id', async (req, res) => {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
         let isAdmin = false;
+        let operative = 'Admin';
         if (token) {
             try {
                 const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
-                if (decoded && decoded.role === 'admin') isAdmin = true;
+                if (decoded && decoded.role === 'admin') {
+                    isAdmin = true;
+                    if (decoded.username) operative = decoded.username;
+                }
             } catch (e) { }
         }
 
@@ -1991,6 +2013,9 @@ app.get('/api/team/:id', async (req, res) => {
         if (!data) return res.status(404).json({ error: 'Team not found' });
 
         if (isAdmin) {
+            if (operative !== 'Administrator') {
+                logActivity('DATA ACCESS', `Operative "${operative}" inspected dossier for Team [${req.params.id}]`);
+            }
             return res.json(data);
         } else {
             // Return sanitized non-PII team view for unauthenticated requests (CRIT-03)
@@ -2024,9 +2049,28 @@ app.get('/api/registration/count', async (req, res) => {
 // Admin Update Team
 app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
     const { teamId, name, event, members } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
+        const existing = await getTeamDataWithMembers(teamId);
+        let diffs = [];
+        if (existing && existing.team) {
+            if (name && existing.team.name !== name) {
+                diffs.push(`Team Name: "${existing.team.name}" ➔ "${name}"`);
+            }
+            if (event && existing.team.event !== event) {
+                diffs.push(`Event: "${existing.team.event}" ➔ "${event}"`);
+            }
+            if (members && Array.isArray(members)) {
+                const oldMemStr = (existing.members || []).map(m => `${m.name} (${m.role || 'MEMBER'}, ${m.phone || 'No Phone'}, ${m.college || 'PEC'})`).join('; ');
+                const newMemStr = members.map(m => `${m.name} (${m.role || 'MEMBER'}, ${m.phone || 'No Phone'}, ${m.college || 'PEC'})`).join('; ');
+                if (oldMemStr !== newMemStr) {
+                    diffs.push(`Members Roster changed: [${oldMemStr}] ➔ [${newMemStr}]`);
+                }
+            }
+        }
         await updateTeamAndMembers(teamId, name, event, members);
-        logActivity('MODIFY TEAM', `Modified record for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        const diffSummary = diffs.length > 0 ? diffs.join(' | ') : 'No data changes detected';
+        logActivity('DATA MODIFIED', `Team [${teamId}] modified by Operative "${operative}": [${diffSummary}]`);
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -2035,11 +2079,22 @@ app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
 
 app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
     const { members } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
         const team = await findTeamById(req.params.id);
         if (!team) return res.status(404).json({ error: 'Team not found' });
+        const existing = await getTeamDataWithMembers(req.params.id);
+        let diffs = [];
+        if (existing && existing.members && Array.isArray(members)) {
+            const oldMemStr = existing.members.map(m => m.name).join(', ');
+            const newMemStr = members.map(m => m.name).join(', ');
+            if (oldMemStr !== newMemStr) {
+                diffs.push(`Members list: [${oldMemStr}] ➔ [${newMemStr}]`);
+            }
+        }
         await updateTeamAndMembers(req.params.id, team.name, team.event, members);
-        logActivity('MODIFY TEAM', `Modified record for Team ID: ${req.params.id} by ${req.user ? req.user.username : 'Admin'}`);
+        const diffSummary = diffs.length > 0 ? diffs.join(' | ') : 'Roster refreshed';
+        logActivity('DATA MODIFIED', `Team [${req.params.id}] modified by Operative "${operative}": [${diffSummary}]`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: 'Failed to update team record' }); }
 });
@@ -2276,20 +2331,45 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                             <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
                             <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
                         </div>
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #030712; color: #f3f4f6; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, #00ff66 0%, #00d2ff 100%); padding: 3px;">
+                        <div style="background: #030712; padding: 30px; text-align: center;">
+                            <h1 style="color: #00ff66; margin: 0 0 10px 0; font-size: 28px; letter-spacing: 2px;">PAYMENT VERIFIED</h1>
+                            <p style="color: #9ca3af; margin: 0; font-size: 14px; letter-spacing: 1px;">REGISTRATION CONFIRMED • XPLOITX 2.0 BETA</p>
+                        </div>
+                    </div>
+                    <div style="padding: 30px;">
+                        <p style="font-size: 16px;">Dear <b>${leaderName}</b>,</p>
+                        <p style="color: #d1d5db; line-height: 1.6;">Great news! Your payment for <b>XploitX 2.0 Beta</b> has been <span style="color: #00ff66; font-weight: bold;">VERIFIED</span> by our administration team.</p>
 
-                        <p>Your payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.</p>
+                        <div style="background: #0a0f1d; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                            <div style="color: #00d2ff; font-weight: bold; margin-bottom: 12px; font-size: 14px; letter-spacing: 1px;">&gt;_ CONFIRMATION DETAILS</div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Team ID:</td><td style="padding: 6px 0; color: #00ff66; font-weight: bold; font-family: monospace;">${teamId}</td></tr>
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Team Name:</td><td style="padding: 6px 0; color: #ffffff; font-weight: bold;">${teamData.name}</td></tr>
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Event:</td><td style="padding: 6px 0; color: #ffd700;">${teamData.event || 'Capture The Flag (CTF)'}</td></tr>
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Status:</td><td style="padding: 6px 0; color: #00ff66; font-weight: bold;">CONFIRMED (READY)</td></tr>
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Date:</td><td style="padding: 6px 0; color: #ffffff;">09 October 2026</td></tr>
+                                <tr><td style="padding: 6px 0; color: #9ca3af;">Venue:</td><td style="padding: 6px 0; color: #ffffff;">Prathyusha Engineering College</td></tr>
+                            </table>
+                        </div>
 
-                        <p style="color: #d1d5db; font-size: 14px;"><a href="${whatsappLink}" style="color: #00ff66; font-weight: bold; text-decoration: underline;">Click Here</a> to join the official participant WhatsApp group.</p>
+                        ${qrImage ? `
+                        <div style="text-align: center; margin: 25px 0; padding: 20px; background: #0a0f1d; border: 1px dashed #374151; border-radius: 8px;">
+                            <p style="color: #9ca3af; font-size: 12px; margin: 0 0 10px 0; letter-spacing: 1px;">YOUR FAST-TRACK ATTENDANCE QR PASS</p>
+                            <img src="${qrImage}" alt="Attendance QR Code" style="width: 180px; height: 180px; border-radius: 6px; border: 2px solid #00ff66;" />
+                            <p style="color: #6b7280; font-size: 11px; margin: 8px 0 0 0;">Present this QR code or your OD letter at the registration desk on event day.</p>
+                        </div>
+                        ` : ''}
 
-                        <p>Please keep this email for your future reference and ensure that all team members are informed about the event details.</p>
+                        <p style="color: #00d2ff; font-size: 14px; margin-top: 20px;">
+                            📄 <b>Your official On-Duty (OD) Letter PDF is attached to this email.</b> Please print or present it at your college for attendance exemption.
+                        </p>
 
                         <p>Thank you for participating in XploitX 2.0 Beta CTF.</p>
 
                         <p>We look forward to welcoming your team and wish you the very best for the competition!</p>
-
-                        <p style="color: #8b9bb4; font-size: 13px; margin-top: 20px;">Regards,<br><b style="color: #ffffff;">Team XploitX</b><br>Department of Cybersecurity</p>
                     </div>
-                    ${getEmailFooterHtml()}
                 </div>
             `;
 
@@ -2300,7 +2380,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 }
             }
         }
-        logActivity('PAYMENT VERIFIED', `Registration confirmed & OD Letter PDF sent for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "READY (CONFIRMED)" by Operative "${operative}"`);
         res.json({ success: true, message: 'Registration confirmed and OD Letter PDF sent' });
     } catch (e) {
         console.error("Verify Payment Error:", e);
@@ -2328,9 +2408,14 @@ app.get('/api/admin/od_letter/:teamId', verifyAdmin, async (req, res) => {
 
 app.post('/api/admin/reject_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
+        const existing = await getTeamDataWithMembers(teamId);
+        const prevStatus = existing && existing.team ? (existing.team.payment_verified === 1 ? 'READY (CONFIRMED)' : (existing.team.payment_verified === -1 ? 'WRONG DETAILS (REJECTED)' : 'STANDBY (REVIEW)')) : 'STANDBY';
+        const teamName = existing && existing.team ? existing.team.name : 'Unknown';
+
         await updatePaymentStatus(teamId, -1);
-        logActivity('REJECT PAYMENT', `Marked WRONG DETAILS for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "WRONG DETAILS (REJECTED)" by Operative "${operative}"`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -2349,9 +2434,14 @@ app.post('/api/admin/resend_confirmation', verifyAdmin, async (req, res) => {
 
 app.post('/api/admin/restore_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
+        const existing = await getTeamDataWithMembers(teamId);
+        const prevStatus = existing && existing.team ? (existing.team.payment_verified === 1 ? 'READY (CONFIRMED)' : (existing.team.payment_verified === -1 ? 'WRONG DETAILS (REJECTED)' : 'STANDBY (REVIEW)')) : 'WRONG DETAILS';
+        const teamName = existing && existing.team ? existing.team.name : 'Unknown';
+
         await updatePaymentStatus(teamId, 0);
-        logActivity('RESTORE PAYMENT', `Restored Team ID: ${teamId} to Standby by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "STANDBY (REVIEW)" by Operative "${operative}"`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -2552,9 +2642,14 @@ async function generateODPdfInternal(teamObj) {
 // Admin Delete Team
 app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
+        const existing = await getTeamDataWithMembers(teamId);
+        const teamName = existing && existing.team ? existing.team.name : 'Unknown';
+        const leaderName = existing && existing.members && existing.members[0] ? existing.members[0].name : 'Unknown';
+        const memCount = existing && existing.members ? existing.members.length : 0;
         await deleteTeamRecord(teamId);
-        logActivity('DELETE TEAM', `Deleted record for Team ID: ${teamId} by ${req.user ? req.user.username : 'Admin'}`);
+        logActivity('DATA DELETED', `Team [${teamId}] ("${teamName}", Leader: "${leaderName}", Members: ${memCount}) deleted by Operative "${operative}"`);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -2787,7 +2882,8 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             } catch (sqliteErr) { }
         }
 
-        logActivity('ATTENDANCE MARKED', `Attendance status updated for Team ID: ${teamId} (Status: ${overallStatus}) by ${req.user ? req.user.username : 'Admin'}`);
+        const memberDiffs = memberStatuses.map(m => `${m.name || m.id}: ${m.status}`).join(', ');
+        logActivity('ATTENDANCE MODIFIED', `Team [${teamId}] ("${data.team.name}") attendance updated by Operative "${req.user ? req.user.username : 'Admin'}": [${memberDiffs}] (Overall Status: ${overallStatus})`);
 
         res.json({ success: true, message: 'Attendance status successfully updated across database' });
     } catch (e) {

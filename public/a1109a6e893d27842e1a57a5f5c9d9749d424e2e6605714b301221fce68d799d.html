@@ -779,17 +779,17 @@
     <main class="admin-container">
         <!-- Hero Title Banner -->
         <div class="hero-content" style="text-align: center; margin-bottom: 30px;">
-            <div class="status-indicator-badge">
+            <div class="status-indicator-badge" id="admin-hero-badge">
                 <span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]
             </div>
-            <h1 class="hero-main-title">&gt;_ DOOMSDAY COMMAND CONSOLE</h1>
-            <p style="font-family: var(--font-mono); color: var(--text-muted); font-size: 1rem; letter-spacing: 1px;">
+            <h1 class="hero-main-title" id="admin-hero-title">&gt;_ DOOMSDAY COMMAND CONSOLE</h1>
+            <p id="admin-hero-desc" style="font-family: var(--font-mono); color: var(--text-muted); font-size: 1rem; letter-spacing: 1px;">
                 Central Administrative Verification, Strike Team Auditing & Roster Management System
             </p>
         </div>
 
         <!-- Metric Stat Cards Bar -->
-        <div class="admin-stats-grid">
+        <div class="admin-stats-grid" id="admin-stats-container">
             <div class="stat-card">
                 <div class="stat-value text-green" id="stat-total">0</div>
                 <div class="stat-label">TOTAL TEAMS</div>
@@ -809,7 +809,7 @@
         </div>
 
         <!-- Controls & Filter Toolbar -->
-        <div class="admin-controls-panel hud-panel">
+        <div class="admin-controls-panel hud-panel" id="admin-controls-container">
             <!-- Row 1: Event Filter -->
             <div class="control-row">
                 <div class="filter-section-title"><i class="fas fa-filter text-green"></i> EVENT ARENA:</div>
@@ -857,7 +857,7 @@
         </div>
 
         <!-- Table Display Container -->
-        <div class="table-responsive">
+        <div class="table-responsive" id="admin-table-container">
             <table id="teams-table">
                 <thead>
                     <tr>
@@ -882,6 +882,83 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- ==========================================
+             ADMINISTRATOR EXCLUSIVE: ACTIVITY AUDIT CONSOLE
+             (Shown ONLY for the 'Administrator' username login)
+             ========================================== -->
+        <div id="administrator-activity-dashboard" style="display: none; margin-top: 10px;">
+            <div class="hud-panel" style="padding: 24px; border: 1.5px solid var(--neon-cyan); background: rgba(3, 7, 18, 0.95); box-shadow: 0 0 25px rgba(0, 210, 255, 0.15); border-radius: 8px;">
+                <!-- Status bar & Log Metrics -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 16px; margin-bottom: 20px;">
+                    <div>
+                        <div style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-brand); font-size: 1.25rem; color: #fff; letter-spacing: 1px;">
+                            <i class="fas fa-shield-alt text-cyan"></i>
+                            <span>HIGH COMMAND AUDIT &amp; SURVEILLANCE FEED</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem; margin-top: 4px;">
+                            <i class="fas fa-satellite-dish text-green"></i> Live Access Logging, User Authentications, and Field-Level Data Modification Diffs (Old ➔ New)
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span class="status-indicator-badge" style="margin: 0; font-size: 0.8rem;">
+                            <span class="pulse-dot"></span> LIVE SURVEILLANCE ACTIVE
+                        </span>
+                        <span id="admin-log-total-count" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--doom-gold); background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">
+                            TOTAL LOGS: 0
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Filters & Search Bar -->
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+                    <!-- Filter categories -->
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                            <i class="fas fa-filter text-green"></i> FILTER:
+                        </span>
+                        <div class="filter-pills" style="margin: 0; flex-wrap: wrap; gap: 6px;">
+                            <button class="filter-btn active" id="log-filter-all" onclick="filterActivityLogs('ALL', this)">[ ALL LOGS ]</button>
+                            <button class="filter-btn" id="log-filter-login" onclick="filterActivityLogs('LOGIN', this)">[ LOGINS ]</button>
+                            <button class="filter-btn" id="log-filter-modified" onclick="filterActivityLogs('MODIFIED', this)">[ DATA MODIFIED ]</button>
+                            <button class="filter-btn" id="log-filter-status" onclick="filterActivityLogs('STATUS', this)">[ STATUS CHANGES ]</button>
+                            <button class="filter-btn" id="log-filter-access" onclick="filterActivityLogs('ACCESS', this)">[ DATA ACCESS ]</button>
+                            <button class="filter-btn" id="log-filter-attendance" onclick="filterActivityLogs('ATTENDANCE', this)">[ ATTENDANCE ]</button>
+                            <button class="filter-btn" id="log-filter-delete" onclick="filterActivityLogs('DELETE', this)">[ DELETIONS ]</button>
+                        </div>
+                    </div>
+
+                    <!-- Search & Action Toolbar -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div class="search-box-wrapper" style="flex: 1; min-width: 260px;">
+                            <i class="fas fa-search search-icon-inside"></i>
+                            <input type="text" id="admin-log-search-input" class="search-input-field"
+                                placeholder="Search logs by operative, team ID, diff details, or action..."
+                                oninput="renderActivityLogFeed()">
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button onclick="loadAdminActivityLogs()" class="action-btn-hud action-btn-cyan" style="padding: 8px 14px; font-size: 0.82rem;">
+                                <i class="fas fa-sync-alt"></i> [ REFRESH ]
+                            </button>
+                            <button onclick="exportActivityLogText()" class="action-btn-hud action-btn-green" style="padding: 8px 14px; font-size: 0.82rem;">
+                                <i class="fas fa-file-download"></i> [ EXPORT TXT ]
+                            </button>
+                            <button onclick="clearActivityLogs()" class="action-btn-hud action-btn-magenta" style="padding: 8px 14px; font-size: 0.82rem;">
+                                <i class="fas fa-trash-alt"></i> [ CLEAR LOGS ]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed Terminal Container -->
+                <div id="admin-activity-log-stream" style="background: rgba(1, 4, 9, 0.95); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; max-height: 65vh; overflow-y: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                        <i class="fas fa-circle-notch fa-spin text-cyan" style="font-size: 1.8rem; margin-bottom: 12px; display: block;"></i>
+                        LOADING HIGH COMMAND AUDIT TELEMETRY...
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -1493,18 +1570,83 @@
                     overlay.style.setProperty('display', 'none', 'important');
                 }
 
-                const logBtn = document.getElementById('activity-log-btn');
-                if (logBtn) {
-                    logBtn.style.display = (authenticatedUser === 'Administrator') ? 'inline-flex' : 'none';
-                }
+                if (authenticatedUser === 'Administrator') {
+                    // =========================================================================
+                    // FOR ONLY THE ADMINISTRATOR USERNAME LOGIN:
+                    // Remove/hide all standard options: metric cards, filters, and teams roster table
+                    // =========================================================================
+                    const statsCont = document.getElementById('admin-stats-container');
+                    if (statsCont) statsCont.style.display = 'none';
+                    const ctrlCont = document.getElementById('admin-controls-container');
+                    if (ctrlCont) ctrlCont.style.display = 'none';
+                    const tblCont = document.getElementById('admin-table-container');
+                    if (tblCont) tblCont.style.display = 'none';
+                    const coordSec = document.getElementById('coordinators');
+                    if (coordSec) coordSec.style.display = 'none';
 
-                const formatBtn = document.getElementById('format-btn');
-                if (formatBtn) formatBtn.style.display = 'inline-flex';
+                    // Update Hero Header specifically for Administrator
+                    const heroTitle = document.getElementById('admin-hero-title');
+                    if (heroTitle) heroTitle.innerText = '>_ HIGH COMMAND AUDIT & SURVEILLANCE CONSOLE';
+                    const heroDesc = document.getElementById('admin-hero-desc');
+                    if (heroDesc) heroDesc.innerText = 'Exclusive Real-time Activity Logs: Operative Access, Logins, and Old ➔ New Data Modifications';
+                    const heroBadge = document.getElementById('admin-hero-badge');
+                    if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ HIGH COMMAND EXCLUSIVE • AUDIT LOG SYSTEM ]';
 
-                loadData();
+                    // Display exclusive Administrator Activity & Audit Feed
+                    const actDash = document.getElementById('administrator-activity-dashboard');
+                    if (actDash) actDash.style.display = 'block';
 
-                if (!window.adminDataInterval) {
-                    window.adminDataInterval = setInterval(loadData, 6000);
+                    // Stop team data polling if any
+                    if (window.adminDataInterval) {
+                        clearInterval(window.adminDataInterval);
+                        window.adminDataInterval = null;
+                    }
+
+                    // Start live audit log streaming (polls every 3s)
+                    loadAdminActivityLogs();
+                    if (window.adminActivityInterval) clearInterval(window.adminActivityInterval);
+                    window.adminActivityInterval = setInterval(loadAdminActivityLogs, 3000);
+                } else {
+                    // =========================================================================
+                    // FOR OTHER ALL USERS (e.g. Ashish, Jesin Milesh, and other admin users):
+                    // KEEP THE FEATURES WHAT IS THERE BEFORE AND DO NOT CHANGE ANYTHING!
+                    // =========================================================================
+                    const statsCont = document.getElementById('admin-stats-container');
+                    if (statsCont) statsCont.style.display = 'grid';
+                    const ctrlCont = document.getElementById('admin-controls-container');
+                    if (ctrlCont) ctrlCont.style.display = 'block';
+                    const tblCont = document.getElementById('admin-table-container');
+                    if (tblCont) tblCont.style.display = 'block';
+                    const coordSec = document.getElementById('coordinators');
+                    if (coordSec) coordSec.style.display = 'block';
+
+                    const heroTitle = document.getElementById('admin-hero-title');
+                    if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
+                    const heroDesc = document.getElementById('admin-hero-desc');
+                    if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
+                    const heroBadge = document.getElementById('admin-hero-badge');
+                    if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
+
+                    // Hide Administrator exclusive activity dashboard
+                    const actDash = document.getElementById('administrator-activity-dashboard');
+                    if (actDash) actDash.style.display = 'none';
+
+                    if (window.adminActivityInterval) {
+                        clearInterval(window.adminActivityInterval);
+                        window.adminActivityInterval = null;
+                    }
+
+                    const logBtn = document.getElementById('activity-log-btn');
+                    if (logBtn) logBtn.style.display = 'none';
+
+                    const formatBtn = document.getElementById('format-btn');
+                    if (formatBtn) formatBtn.style.display = 'inline-flex';
+
+                    loadData();
+
+                    if (!window.adminDataInterval) {
+                        window.adminDataInterval = setInterval(loadData, 6000);
+                    }
                 }
 
                 showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
@@ -1532,6 +1674,30 @@
                 clearInterval(window.adminDataInterval);
                 window.adminDataInterval = null;
             }
+            if (window.adminActivityInterval) {
+                clearInterval(window.adminActivityInterval);
+                window.adminActivityInterval = null;
+            }
+
+            // Restore all standard controls to default visibility for clean next login
+            const statsCont = document.getElementById('admin-stats-container');
+            if (statsCont) statsCont.style.display = 'grid';
+            const ctrlCont = document.getElementById('admin-controls-container');
+            if (ctrlCont) ctrlCont.style.display = 'block';
+            const tblCont = document.getElementById('admin-table-container');
+            if (tblCont) tblCont.style.display = 'block';
+            const coordSec = document.getElementById('coordinators');
+            if (coordSec) coordSec.style.display = 'block';
+            const actDash = document.getElementById('administrator-activity-dashboard');
+            if (actDash) actDash.style.display = 'none';
+
+            const heroTitle = document.getElementById('admin-hero-title');
+            if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
+            const heroDesc = document.getElementById('admin-hero-desc');
+            if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
+            const heroBadge = document.getElementById('admin-hero-badge');
+            if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
+
             const tbody = document.getElementById('teams-table-body');
             if (tbody) tbody.innerHTML = '';
             const userIn = document.getElementById('admin-user');
@@ -1797,14 +1963,222 @@
             document.getElementById('verify-modal').style.display = 'none';
         }
 
+        // ==========================================
+        // ADMINISTRATOR ACTIVITY LOG SYSTEM
+        // ==========================================
+        let rawActivityLogs = [];
+        let currentActivityLogFilter = 'ALL';
+
+        async function loadAdminActivityLogs() {
+            const stream = document.getElementById('admin-activity-log-stream');
+            const token = inMemoryAdminToken;
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.log) {
+                        const lines = data.log.split('\n').map(l => l.trim()).filter(Boolean);
+                        rawActivityLogs = lines;
+                        renderActivityLogFeed();
+                        return;
+                    }
+                } else if (res.status === 403) {
+                    if (stream) stream.innerHTML = `<div style="color:var(--deep-magenta); padding:30px; text-align:center; font-family:var(--font-mono);"><i class="fas fa-lock" style="font-size:1.8rem; margin-bottom:10px; display:block;"></i> ACCESS DENIED: High Command Administrator clearance required.</div>`;
+                    return;
+                }
+            } catch (e) {
+                console.warn('Error loading activity logs:', e);
+            }
+
+            if (rawActivityLogs.length === 0 && stream) {
+                const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+                rawActivityLogs = [`[${now} IST] ADMIN LOGIN: Operative "${inMemoryAdminUser || 'Administrator'}" logged into Admin Console`];
+                renderActivityLogFeed();
+            }
+        }
+
+        window.filterActivityLogs = function(category, btnEl) {
+            currentActivityLogFilter = category;
+            const buttons = document.querySelectorAll('#log-filter-all, #log-filter-login, #log-filter-modified, #log-filter-status, #log-filter-access, #log-filter-attendance, #log-filter-delete');
+            buttons.forEach(b => b.classList.remove('active', 'active-gold', 'active-cyan'));
+            if (btnEl) btnEl.classList.add('active');
+            renderActivityLogFeed();
+        };
+
+        function renderActivityLogFeed() {
+            const stream = document.getElementById('admin-activity-log-stream');
+            const counter = document.getElementById('admin-log-total-count');
+            const searchInput = document.getElementById('admin-log-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            if (!stream) return;
+
+            let filtered = [...rawActivityLogs];
+
+            // 1. Filter by category
+            if (currentActivityLogFilter === 'LOGIN') {
+                filtered = filtered.filter(l => l.includes('LOGIN'));
+            } else if (currentActivityLogFilter === 'MODIFIED') {
+                filtered = filtered.filter(l => l.includes('DATA MODIFIED') || l.includes('MODIFY TEAM'));
+            } else if (currentActivityLogFilter === 'STATUS') {
+                filtered = filtered.filter(l => l.includes('STATUS MODIFIED') || l.includes('PAYMENT VERIFIED') || l.includes('REJECT PAYMENT') || l.includes('RESTORE PAYMENT'));
+            } else if (currentActivityLogFilter === 'ACCESS') {
+                filtered = filtered.filter(l => l.includes('DATA ACCESS') || l.includes('DOWNLOAD OD PDF'));
+            } else if (currentActivityLogFilter === 'ATTENDANCE') {
+                filtered = filtered.filter(l => l.includes('ATTENDANCE'));
+            } else if (currentActivityLogFilter === 'DELETE') {
+                filtered = filtered.filter(l => l.includes('DATA DELETED') || l.includes('DELETE TEAM'));
+            }
+
+            // 2. Filter by search query
+            if (query) {
+                filtered = filtered.filter(l => l.toLowerCase().includes(query));
+            }
+
+            if (counter) counter.innerText = `TOTAL LOGS: ${filtered.length}`;
+
+            if (filtered.length === 0) {
+                stream.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                        <i class="fas fa-search-minus text-gold" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                        NO ACTIVITY LOGS MATCH CURRENT FILTER OR QUERY
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(line => {
+                // Parse: [Timestamp] Action: Details
+                const match = line.match(/^\[(.*?)\]\s*([^:]+):\s*(.*)$/);
+                let timeStr = '';
+                let action = 'LOG';
+                let details = line;
+
+                if (match) {
+                    timeStr = match[1];
+                    action = match[2].trim();
+                    details = match[3].trim();
+                }
+
+                // Determine badge style
+                let badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.1);';
+                let actionIcon = '<i class="fas fa-terminal"></i>';
+
+                if (action.includes('LOGIN')) {
+                    badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.15);';
+                    actionIcon = '<i class="fas fa-sign-in-alt"></i>';
+                } else if (action.includes('DATA MODIFIED') || action.includes('MODIFY')) {
+                    badgeStyle = 'border:1px solid #ffaa00; color:#ffaa00; background:rgba(255,170,0,0.18);';
+                    actionIcon = '<i class="fas fa-edit"></i>';
+                } else if (action.includes('STATUS')) {
+                    badgeStyle = 'border:1px solid #00ff66; color:#00ff66; background:rgba(0,255,102,0.15);';
+                    actionIcon = '<i class="fas fa-exchange-alt"></i>';
+                } else if (action.includes('ACCESS')) {
+                    badgeStyle = 'border:1px solid #ffd700; color:#ffd700; background:rgba(255,215,0,0.15);';
+                    actionIcon = '<i class="fas fa-eye"></i>';
+                } else if (action.includes('ATTENDANCE')) {
+                    badgeStyle = 'border:1px solid #b84dff; color:#b84dff; background:rgba(184,77,255,0.18);';
+                    actionIcon = '<i class="fas fa-clipboard-check"></i>';
+                } else if (action.includes('DELETE')) {
+                    badgeStyle = 'border:1px solid #ff0066; color:#ff0066; background:rgba(255,0,102,0.18);';
+                    actionIcon = '<i class="fas fa-trash-alt"></i>';
+                }
+
+                // Format details with highlights:
+                let safeDetails = details
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+
+                // Highlight operative
+                safeDetails = safeDetails.replace(/Operative &quot;([^&]+)&quot;/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
+                safeDetails = safeDetails.replace(/Operative "([^"]+)"/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
+
+                // Highlight Team ID [TM-...]
+                safeDetails = safeDetails.replace(/\[(TM-[^\]]+)\]/g, '<span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.1); padding:2px 6px; border-radius:3px;">[$1]</span>');
+
+                // Highlight Old ➔ New diff transitions
+                safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold;">"$2"</span>');
+                safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold;">"$2"</span>');
+
+                html += `
+                    <div style="display:flex; align-items:flex-start; gap:12px; padding:11px 15px; background:rgba(5,12,24,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,210,255,0.05)'" onmouseout="this.style.background='rgba(5,12,24,0.7)'">
+                        <div style="white-space:nowrap; color:var(--text-muted); font-size:0.8rem; padding-top:2px; min-width:165px;">
+                            <i class="far fa-clock"></i> ${timeStr || 'LIVE'}
+                        </div>
+                        <div style="white-space:nowrap;">
+                            <span style="display:inline-flex; align-items:center; gap:5px; font-size:0.75rem; font-weight:bold; padding:3px 9px; border-radius:4px; ${badgeStyle}">
+                                ${actionIcon} ${action}
+                            </span>
+                        </div>
+                        <div style="flex:1; color:#e2e8f0; word-break:break-word; font-size:0.88rem; line-height:1.5;">
+                            ${safeDetails}
+                        </div>
+                    </div>
+                `;
+            });
+
+            stream.innerHTML = html;
+        }
+
+        function exportActivityLogText() {
+            if (rawActivityLogs.length === 0) {
+                showCustomAlert("No logs available to export.");
+                return;
+            }
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const content = `==========================================================\n` +
+                            `XPLOITX 2.0 BETA - HIGH COMMAND AUDIT & ACTIVITY LOG\n` +
+                            `Export Date: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST\n` +
+                            `Total Entries: ${rawActivityLogs.length}\n` +
+                            `==========================================================\n\n` +
+                            rawActivityLogs.join('\n');
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `XploitX_HighCommand_ActivityLog_${dateStr}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function clearActivityLogs() {
+            showCustomConfirm("Are you sure you want to PERMANENTLY CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
+                const token = inMemoryAdminToken;
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        rawActivityLogs = [];
+                        await loadAdminActivityLogs();
+                        showCustomAlert("System activity logs have been permanently cleared.");
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        showCustomAlert("Failed to clear logs: " + (errData.error || "Server error"));
+                        await loadAdminActivityLogs();
+                    }
+                } catch (e) {
+                    showCustomAlert("Error: " + e.message);
+                }
+            }, "YES, CLEAR ALL");
+        }
+
         async function openLogModal() {
             const modal = document.getElementById('log-modal');
-            modal.style.display = 'flex';
+            if (modal) modal.style.display = 'flex';
             await fetchActivityLogs();
         }
 
         async function fetchActivityLogs() {
             const content = document.getElementById('log-content');
+            if (!content) return;
             content.innerText = "Connecting to server activity log stream...";
             const token = inMemoryAdminToken;
             const currentUser = inMemoryAdminUser || 'Administrator';
@@ -1826,34 +2200,9 @@
             content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
         }
 
-        async function clearActivityLogs() {
-            showCustomConfirm("Are you sure you want to CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
-                const content = document.getElementById('log-content');
-                content.innerText = "Clearing server activity logs...";
-                const token = inMemoryAdminToken;
-                try {
-                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    if (res.ok) {
-                        await fetchActivityLogs();
-                        showCustomAlert("System activity logs have been cleared.");
-                    } else {
-                        const errData = await res.json().catch(() => ({}));
-                        showCustomAlert("Failed to clear logs: " + (errData.error || "Server error"));
-                        await fetchActivityLogs();
-                    }
-                } catch (e) {
-                    showCustomAlert("Error: " + e.message);
-                }
-            });
-        }
-
         function closeLogModal() {
-            document.getElementById('log-modal').style.display = 'none';
+            const modal = document.getElementById('log-modal');
+            if (modal) modal.style.display = 'none';
         }
 
         function performVerification(teamId) {
