@@ -1,0 +1,4 @@
+[2026-09-08 12:23:11 IST] ADMIN LOGIN FAILED: Operative "administrator" failed login attempt
+[2026-09-08 12:24:21 IST] ADMIN LOGIN: Operative "Administrator" logged into Admin Console
+[2026-09-08 12:25:24 IST] ATTENDANCE LOGIN: Operative "Administrator" authenticated into Attendance Terminal
+[2026-09-08 12:25:31 IST] ADMIN LOGIN FAILED: Operative "administrator" failed login attempt

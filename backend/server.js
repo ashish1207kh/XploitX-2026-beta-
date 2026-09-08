@@ -1527,8 +1527,8 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 
         // Secure credential lookup with environment variable priority and default fallbacks
         const adminAccounts = {
-            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
-            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
+            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
             "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
@@ -2793,12 +2793,12 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
 
         // Authorized attendance accounts
         const adminAccounts = {
-            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
-            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026",
+            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
+            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
             "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
             "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
-            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || "Administrator@Beta2026"
+            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!"
         };
 
         const canonicalMap = {
