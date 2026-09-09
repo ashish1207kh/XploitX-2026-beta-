@@ -921,6 +921,8 @@
                         <div class="filter-pills" style="margin: 0; flex-wrap: wrap; gap: 6px;">
                             <button class="filter-btn active" id="log-filter-all" onclick="filterActivityLogs('ALL', this)">[ ALL LOGS ]</button>
                             <button class="filter-btn" id="log-filter-login" onclick="filterActivityLogs('LOGIN', this)">[ LOGINS ]</button>
+                            <button class="filter-btn" id="log-filter-otp" onclick="filterActivityLogs('OTP', this)">[ OTP &amp; EMAILS ]</button>
+                            <button class="filter-btn" id="log-filter-reg" onclick="filterActivityLogs('REGISTRATION', this)">[ REGISTRATIONS ]</button>
                             <button class="filter-btn" id="log-filter-modified" onclick="filterActivityLogs('MODIFIED', this)">[ DATA MODIFIED ]</button>
                             <button class="filter-btn" id="log-filter-status" onclick="filterActivityLogs('STATUS', this)">[ STATUS CHANGES ]</button>
                             <button class="filter-btn" id="log-filter-access" onclick="filterActivityLogs('ACCESS', this)">[ DATA ACCESS ]</button>
@@ -2018,7 +2020,7 @@
 
         window.filterActivityLogs = function(category, btnEl) {
             currentActivityLogFilter = category;
-            const buttons = document.querySelectorAll('#log-filter-all, #log-filter-login, #log-filter-modified, #log-filter-status, #log-filter-access, #log-filter-attendance, #log-filter-delete');
+            const buttons = document.querySelectorAll('.filter-pills .filter-btn');
             buttons.forEach(b => b.classList.remove('active', 'active-gold', 'active-cyan'));
             if (btnEl) btnEl.classList.add('active');
             renderActivityLogFeed();
@@ -2037,6 +2039,10 @@
             // 1. Filter by category
             if (currentActivityLogFilter === 'LOGIN') {
                 filtered = filtered.filter(l => l.includes('LOGIN') || l.includes('LOGOUT'));
+            } else if (currentActivityLogFilter === 'OTP') {
+                filtered = filtered.filter(l => l.includes('OTP') || l.includes('EMAIL') || l.includes('DISPATCH'));
+            } else if (currentActivityLogFilter === 'REGISTRATION') {
+                filtered = filtered.filter(l => l.includes('REGISTRATION'));
             } else if (currentActivityLogFilter === 'MODIFIED') {
                 filtered = filtered.filter(l => l.includes('DATA MODIFIED') || l.includes('MODIFY TEAM'));
             } else if (currentActivityLogFilter === 'STATUS') {
@@ -2086,19 +2092,33 @@
 
                 if (action.includes('ATTENDANCE')) {
                     badgeStyle = 'border:1px solid #b84dff; color:#b84dff; background:rgba(184,77,255,0.18);';
-                    if (action.includes('LOGOUT')) {
-                        actionIcon = '<i class="fas fa-sign-out-alt"></i>';
-                    } else if (action.includes('LOGIN')) {
-                        actionIcon = '<i class="fas fa-sign-in-alt"></i>';
-                    } else {
-                        actionIcon = '<i class="fas fa-clipboard-check"></i>';
-                    }
+                    if (action.includes('LOGOUT')) actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                    else if (action.includes('LOGIN')) actionIcon = '<i class="fas fa-sign-in-alt"></i>';
+                    else actionIcon = '<i class="fas fa-clipboard-check"></i>';
+                } else if (action.includes('OTP DISPATCHED') || action.includes('SEND OTP')) {
+                    badgeStyle = 'border:1px solid #00ff66; color:#00ff66; background:rgba(0,255,102,0.18); box-shadow:0 0 10px rgba(0,255,102,0.25);';
+                    actionIcon = '<i class="fas fa-paper-plane"></i>';
+                } else if (action.includes('OTP VERIFIED')) {
+                    badgeStyle = 'border:1px solid #00ffff; color:#00ffff; background:rgba(0,255,255,0.18); box-shadow:0 0 10px rgba(0,255,255,0.25);';
+                    actionIcon = '<i class="fas fa-check-circle"></i>';
+                } else if (action.includes('OTP FAILED') || action.includes('OTP DISPATCH FAILED')) {
+                    badgeStyle = 'border:1px solid #ff3366; color:#ff3366; background:rgba(255,51,102,0.18); box-shadow:0 0 10px rgba(255,51,102,0.25);';
+                    actionIcon = '<i class="fas fa-exclamation-triangle"></i>';
+                } else if (action.includes('EMAIL DISPATCHED') || action.includes('RESEND CONFIRMATION')) {
+                    badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.18);';
+                    actionIcon = '<i class="fas fa-envelope-open-text"></i>';
+                } else if (action.includes('REGISTRATION')) {
+                    badgeStyle = 'border:1px solid #ffd700; color:#ffd700; background:rgba(255,215,0,0.18); box-shadow:0 0 10px rgba(255,215,0,0.25);';
+                    actionIcon = '<i class="fas fa-id-card"></i>';
                 } else if (action.includes('LOGOUT')) {
                     badgeStyle = 'border:1px solid #ff9900; color:#ff9900; background:rgba(255,153,0,0.18);';
                     actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                } else if (action.includes('LOGIN FAILED')) {
+                    badgeStyle = 'border:1px solid #ff4757; color:#ff4757; background:rgba(255,71,87,0.18);';
+                    actionIcon = '<i class="fas fa-user-times"></i>';
                 } else if (action.includes('LOGIN')) {
                     badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.15);';
-                    actionIcon = '<i class="fas fa-sign-in-alt"></i>';
+                    actionIcon = '<i class="fas fa-user-shield"></i>';
                 } else if (action.includes('DATA MODIFIED') || action.includes('MODIFY')) {
                     badgeStyle = 'border:1px solid #ffaa00; color:#ffaa00; background:rgba(255,170,0,0.18);';
                     actionIcon = '<i class="fas fa-edit"></i>';
@@ -2119,6 +2139,9 @@
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;');
 
+                // Highlight email addresses
+                safeDetails = safeDetails.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<span style="color:#00e5ff; font-weight:bold; background:rgba(0,229,255,0.12); padding:2px 7px; border-radius:3px; border:1px solid rgba(0,229,255,0.25);"><i class="fas fa-envelope" style="font-size:0.75rem; margin-right:4px;"></i>$1</span>');
+
                 // Highlight operative
                 safeDetails = safeDetails.replace(/Operative &quot;([^&]+)&quot;/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
                 safeDetails = safeDetails.replace(/Operative "([^"]+)"/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
@@ -2134,6 +2157,11 @@
                 // Highlight Old ➔ New diff transitions (e.g. "Jesin" ➔ "Jesi")
                 safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
                 safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
+
+                // Highlight key phrases
+                safeDetails = safeDetails.replace(/dispatched and sent successfully/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>dispatched and sent successfully</span>');
+                safeDetails = safeDetails.replace(/successfully verified/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>successfully verified</span>');
+                safeDetails = safeDetails.replace(/logged into Admin Console/gi, '<span style="color:#00d2ff; font-weight:bold;"><i class="fas fa-shield-alt" style="font-size:0.75rem; margin-right:3px;"></i>logged into Admin Console</span>');
 
                 html += `
                     <div style="display:flex; align-items:flex-start; gap:12px; padding:11px 15px; background:rgba(5,12,24,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,210,255,0.05)'" onmouseout="this.style.background='rgba(5,12,24,0.7)'">
@@ -2565,23 +2593,25 @@
                 btn.disabled = true;
             }
 
-            const teamId = document.getElementById('edit-team-db-id').value;
-            const name = document.getElementById('edit-team-name').value;
-            const event = document.getElementById('edit-team-event').value;
+            const teamId = document.getElementById('edit-team-db-id').value.trim();
+            const name = document.getElementById('edit-team-name').value.trim();
+            const event = document.getElementById('edit-team-event').value.trim();
 
             const memberDivs = document.querySelectorAll('#edit-members-container > div');
             const members = [];
 
             try {
                 memberDivs.forEach(div => {
+                    const rawAge = (div.querySelector('.edit-m-age').value || '').trim();
+                    const parsedAge = rawAge && !isNaN(parseInt(rawAge, 10)) ? parseInt(rawAge, 10) : '';
                     members.push({
-                        name: div.querySelector('.edit-m-name').value,
-                        age: div.querySelector('.edit-m-age').value,
-                        email: div.querySelector('.edit-m-email').value,
-                        phone: div.querySelector('.edit-m-phone').value,
-                        whatsapp: div.querySelector('.edit-m-whatsapp').value,
-                        college: div.querySelector('.edit-m-college').value,
-                        district: div.querySelector('.edit-m-district').value,
+                        name: (div.querySelector('.edit-m-name').value || '').trim(),
+                        age: parsedAge,
+                        email: (div.querySelector('.edit-m-email').value || '').trim(),
+                        phone: (div.querySelector('.edit-m-phone').value || '').trim(),
+                        whatsapp: (div.querySelector('.edit-m-whatsapp').value || '').trim(),
+                        college: (div.querySelector('.edit-m-college').value || '').trim(),
+                        district: (div.querySelector('.edit-m-district').value || '').trim(),
                         role: div.querySelector('.edit-m-role').value
                     });
                 });

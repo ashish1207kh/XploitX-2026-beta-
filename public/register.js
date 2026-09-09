@@ -457,6 +457,49 @@ function createMemberCard(memberIndex) {
         });
     }
 
+    // Attach real-time uniqueness & database existence check for member email
+    const mEmailInput = memberCard.querySelector('.m-email');
+    if (mEmailInput) {
+        mEmailInput.addEventListener('blur', async function () {
+            const emailVal = this.value.trim().toLowerCase();
+            if (!emailVal || !emailVal.includes('@') || !validateEmail(emailVal)) return;
+
+            // 1. Check if same as Team Leader email
+            const leaderEmailVal = (document.getElementById('leaderEmail')?.value || '').trim().toLowerCase();
+            if (emailVal === leaderEmailVal) {
+                showCyberAlert(`Duplicate email address! Operative email cannot be the same as Team Leader email (${emailVal}).`, 'DUPLICATE EMAIL DETECTED');
+                markInputError(this, 'Cannot be same as Team Leader email');
+                this.value = '';
+                return;
+            }
+
+            // 2. Check if same as another squad member in this form
+            const allMemberInputs = Array.from(document.querySelectorAll('.m-email'));
+            const isDuplicateInForm = allMemberInputs.some(inp => inp !== this && inp.value.trim().toLowerCase() === emailVal);
+            if (isDuplicateInForm) {
+                showCyberAlert(`Duplicate email address! Another squad member has already entered "${emailVal}". Every participant must have a unique email address.`, 'DUPLICATE EMAIL DETECTED');
+                markInputError(this, 'Duplicate email in squad');
+                this.value = '';
+                return;
+            }
+
+            // 3. Check if already registered in database
+            try {
+                const resp = await fetch(`${API_BASE_URL}/api/auth/check-email?email=${encodeURIComponent(emailVal)}`);
+                if (resp.ok) {
+                    const checkData = await resp.json();
+                    if (checkData.exists) {
+                        showCyberAlert(checkData.message || `The email "${emailVal}" already exists. Please use another email ID for registration.`, 'EMAIL ALREADY REGISTERED');
+                        markInputError(this, 'Email already exists');
+                        this.value = '';
+                    }
+                }
+            } catch (e) {
+                console.warn('Background member email check error:', e);
+            }
+        });
+    }
+
     return memberCard;
 }
 
@@ -636,6 +679,11 @@ function initOtpFlow() {
                 }
                 setFeedback(`Error: ${errorMsg}`, false);
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
+
+                // Pop up dialog box if email already exists
+                if (errorMsg.toLowerCase().includes('already') || errorMsg.toLowerCase().includes('exist') || errorMsg.toLowerCase().includes('registered')) {
+                    showCyberAlert(errorMsg, 'EMAIL ALREADY REGISTERED');
+                }
             }
         } catch (err) {
             clearTimeout(timeoutId);
@@ -649,6 +697,39 @@ function initOtpFlow() {
             btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
         } finally {
             btnSendOtp.disabled = false;
+        }
+    });
+
+    // Real-time Leader Email Blur Check
+    emailInput.addEventListener('blur', async () => {
+        const email = emailInput.value.trim().toLowerCase();
+        if (!email || !email.includes('@') || !validateEmail(email)) return;
+
+        // Check if duplicate with any squad member email
+        const memberEmails = Array.from(document.querySelectorAll('.m-email'))
+            .map(inp => inp.value.trim().toLowerCase())
+            .filter(e => e.length > 0);
+
+        if (memberEmails.includes(email)) {
+            showCyberAlert(`Duplicate email address! Team Leader email cannot be the same as any squad member email.`, 'DUPLICATE EMAIL DETECTED');
+            markInputError(emailInput, 'Cannot be same as squad member email');
+            setFeedback('Cannot be same as squad member email', false);
+            return;
+        }
+
+        // Check database registration
+        try {
+            const resp = await fetch(`${API_BASE_URL}/api/auth/check-email?email=${encodeURIComponent(email)}`);
+            if (resp.ok) {
+                const checkData = await resp.json();
+                if (checkData.exists) {
+                    showCyberAlert(checkData.message || `The email "${email}" already exists. Please use another email ID for registration.`, 'EMAIL ALREADY REGISTERED');
+                    markInputError(emailInput, 'Email already exists');
+                    setFeedback('Email already exists. Please use another email ID.', false);
+                }
+            }
+        } catch (e) {
+            console.warn('Background check email error:', e);
         }
     });
 
@@ -1220,6 +1301,19 @@ function initFormSubmission() {
             });
         }
 
+        // Check for duplicate emails within the squad
+        const squadEmailsMap = {};
+        for (let idx = 0; idx < membersList.length; idx++) {
+            const m = membersList[idx];
+            const mEmail = (m.email || '').toLowerCase().trim();
+            const roleName = idx === 0 ? 'Team Leader' : `Operative 0${idx + 1}`;
+            if (squadEmailsMap[mEmail]) {
+                showCyberAlert(`Duplicate email "${m.email}" detected! Both ${squadEmailsMap[mEmail]} and ${roleName} share this email address. Every participant must have a unique email address.`, 'DUPLICATE EMAIL DETECTED');
+                return;
+            }
+            squadEmailsMap[mEmail] = roleName;
+        }
+
         if (membersList.length < MIN_MEMBERS || membersList.length > MAX_MEMBERS) {
             showCyberAlert(`Team size must be minimum ${MIN_MEMBERS} and maximum ${MAX_MEMBERS} members.`, 'INVALID SQUAD SIZE');
             isValid = false;
@@ -1299,11 +1393,18 @@ function initFormSubmission() {
             }
 
             if (!response.ok) {
-                showCyberAlert(`Registration Error: ${data.error || 'Failed to submit registration.'}`, 'REGISTRATION FAILED');
+                const errLower = (data.error || '').toLowerCase();
+                if (errLower.includes('already') || errLower.includes('exist')) {
+                    showCyberAlert(data.error || 'The email already exists. Please use another email ID for registration.', 'EMAIL ALREADY REGISTERED');
+                } else if (errLower.includes('duplicate')) {
+                    showCyberAlert(data.error || 'Duplicate email detected within squad members.', 'DUPLICATE EMAIL DETECTED');
+                } else {
+                    showCyberAlert(`Registration Error: ${data.error || 'Failed to submit registration.'}`, 'REGISTRATION FAILED');
+                }
                 return;
             }
 
-            const generatedTeamId = data.teamId || `XCTF-26-${Math.floor(1000 + Math.random() * 9000)}`;
+            const generatedTeamId = data.teamId || `XCTF-26-${String(Math.floor(1 + Math.random() * 9999)).padStart(4, '0')}`;
 
             // Populate and show HUD Confirmation Modal
             document.getElementById('modal-team-name').textContent = teamName;

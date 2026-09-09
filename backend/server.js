@@ -1119,23 +1119,41 @@ async function getTeamCount() {
 
 async function getNextTeamId() {
     let existingIds = new Set();
+    let maxIdNum = 0;
+
+    const extractNumber = (tid) => {
+        if (!tid || typeof tid !== 'string') return 0;
+        const match = tid.match(/^XCTF-26-(\d+)$/i);
+        return match ? parseInt(match[1], 10) : 0;
+    };
 
     if (isDbMongo()) {
         const teams = await Team.find({}, { team_id: 1 }).lean();
-        teams.forEach(t => { if (t.team_id) existingIds.add(t.team_id); });
+        teams.forEach(t => {
+            if (t.team_id) {
+                existingIds.add(t.team_id);
+                const num = extractNumber(t.team_id);
+                if (num > maxIdNum) maxIdNum = num;
+            }
+        });
     } else if (db) {
         const teams = await db.all('SELECT team_id FROM teams');
-        teams.forEach(t => { if (t.team_id) existingIds.add(t.team_id); });
+        teams.forEach(t => {
+            if (t.team_id) {
+                existingIds.add(t.team_id);
+                const num = extractNumber(t.team_id);
+                if (num > maxIdNum) maxIdNum = num;
+            }
+        });
     }
 
-    let i = 1;
+    let nextNum = maxIdNum + 1;
     while (true) {
-        const candidate = `XCTF-26-${String(i).padStart(4, '0')}`;
-        const oldCandidate = `XB2026-${String(i).padStart(4, '0')}`;
-        if (!existingIds.has(candidate) && !existingIds.has(oldCandidate)) {
+        const candidate = `XCTF-26-${String(nextNum).padStart(4, '0')}`;
+        if (!existingIds.has(candidate)) {
             return candidate;
         }
-        i++;
+        nextNum++;
     }
 }
 
@@ -1149,25 +1167,73 @@ async function findTeamByName(name) {
     return null;
 }
 
-async function findTeamByEmail(email) {
+async function findRegistrationByEmail(email) {
     const cleanEmail = (email || '').trim().toLowerCase();
     if (!cleanEmail) return null;
 
     if (isDbMongo()) {
         try {
-            return await Team.findOne({ email: cleanEmail }).lean();
+            // Check in Team collection (Team Leader email)
+            const team = await Team.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
+            if (team) {
+                return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
+            }
+            // Check in Member collection (any squad member email)
+            const member = await Member.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
+            if (member) {
+                const parentTeam = await Team.findOne({ team_id: member.team_id }).lean();
+                return {
+                    registered: true,
+                    teamId: member.team_id,
+                    teamName: parentTeam ? parentTeam.name : member.team_id,
+                    role: member.role || 'MEMBER',
+                    email: member.email
+                };
+            }
         } catch (e) {
-            console.error('Error checking MongoDB for existing team:', e.message);
+            console.error('Error checking MongoDB for email registration:', e.message);
         }
     }
     if (db) {
         try {
-            return await db.get('SELECT * FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
+            // Check in SQLite teams table (Team Leader email)
+            const team = await db.get('SELECT team_id, name, email FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
+            if (team) {
+                return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
+            }
+            // Check in SQLite members table (any squad member email)
+            const member = await db.get(`
+                SELECT m.email, m.role, t.team_id, t.name as team_name 
+                FROM members m 
+                LEFT JOIN teams t ON m.team_db_id = t.id 
+                WHERE LOWER(m.email) = ?
+            `, [cleanEmail]);
+            if (member) {
+                return {
+                    registered: true,
+                    teamId: member.team_id || 'UNKNOWN',
+                    teamName: member.team_name || 'Existing Team',
+                    role: member.role || 'MEMBER',
+                    email: member.email
+                };
+            }
         } catch (e) {
-            console.error('Error checking SQLite for existing team:', e.message);
+            console.error('Error checking SQLite for email registration:', e.message);
         }
     }
     return null;
+}
+
+async function findTeamByEmail(email) {
+    const reg = await findRegistrationByEmail(email);
+    if (!reg) return null;
+    if (isDbMongo()) {
+        return await Team.findOne({ team_id: reg.teamId }).lean();
+    }
+    if (db) {
+        return await db.get('SELECT * FROM teams WHERE team_id = ?', [reg.teamId]);
+    }
+    return reg;
 }
 
 async function findTeamById(teamId) {
@@ -1325,10 +1391,11 @@ async function updateTeamAndMembers(teamId, name, event, members) {
         for (let i = 0; i < members.length; i++) {
             const m = members[i];
             const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
+            const parsedAge = m.age !== undefined && m.age !== '' && !isNaN(parseInt(m.age, 10)) ? parseInt(m.age, 10) : undefined;
             await new Member({
                 team_id: teamId,
                 name: m.name,
-                age: m.age,
+                age: parsedAge,
                 email: m.email,
                 phone: m.phone,
                 whatsapp: m.whatsapp,
@@ -1347,9 +1414,10 @@ async function updateTeamAndMembers(teamId, name, event, members) {
                 for (let i = 0; i < members.length; i++) {
                     const m = members[i];
                     const role = m.role || (i === 0 ? 'LEADER' : 'MEMBER');
+                    const parsedAge = m.age !== undefined && m.age !== '' && !isNaN(parseInt(m.age, 10)) ? parseInt(m.age, 10) : null;
                     await db.run(
                         `INSERT INTO members (team_db_id, name, age, email, phone, whatsapp, college, district, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                        [team.id, m.name, m.age, m.email, m.phone, m.whatsapp, m.college, m.district, role]
+                        [team.id, m.name, parsedAge, m.email, m.phone, m.whatsapp, m.college, m.district, role]
                     );
                 }
             }
@@ -1514,7 +1582,7 @@ const otpVerifySchema = z.object({
 });
 
 // Admin Login Route (CRIT-02 & HIGH-02)
-app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
+app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
     try {
         const validation = adminLoginSchema.safeParse(req.body);
         if (!validation.success) {
@@ -1557,13 +1625,13 @@ app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
 
         if (isValid) {
             const canonicalUser = canonicalMap[cleanUsername] || username;
-            logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
+            await logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
             const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '2h', algorithm: 'HS256' });
             res.clearCookie('admin_token', { path: '/' });
             res.clearCookie('attendance_token', { path: '/' });
             res.json({ success: true, token: token, user: canonicalUser });
         } else {
-            logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
+            await logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
             res.status(401).json({ error: 'Invalid Credentials' });
         }
     } catch (err) {
@@ -1624,7 +1692,8 @@ function extractLogTimestamp(line) {
 // Admin Real-time System Audit Log Endpoint
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
-        if (!req.user || req.user.username !== 'Administrator') {
+        const currentUser = req.user ? req.user.username : '';
+        if (!currentUser || (currentUser !== 'Administrator' && currentUser !== 'Jesin Milesh' && req.user.role !== 'admin')) {
             return res.status(403).json({ error: 'Access Denied: High Command Administrator clearance required.' });
         }
         let logs = [];
@@ -1851,13 +1920,165 @@ async function validateEmailDomain(email) {
 
 const verificationOtps = {};
 
+// Responsive HTML Email Wrapper with viewport meta, resets, and mobile media queries
+function wrapEmailHtml(innerContent, subjectTitle = 'XploitX 2.0 Beta CTF') {
+    const cleanTitle = (subjectTitle || 'XploitX 2.0 Beta CTF').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+    <title>${cleanTitle}</title>
+    <style>
+        /* Baseline client resets */
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            background-color: #02040a;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            margin: 0 auto !important;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+        *[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        /* MOBILE VIEW ONLY STYLING (Screen <= 600px) */
+        @media only screen and (max-width: 600px) {
+            .email-outer-wrapper {
+                padding: 10px 4px !important;
+            }
+            .email-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 14px 10px !important;
+                box-sizing: border-box !important;
+                border-radius: 6px !important;
+            }
+            .email-content-card {
+                padding: 16px 12px !important;
+                box-sizing: border-box !important;
+                font-size: 13.5px !important;
+                line-height: 1.55 !important;
+            }
+            .email-detail-box {
+                padding: 12px 10px !important;
+                box-sizing: border-box !important;
+                margin: 14px 0 !important;
+            }
+            .email-detail-box h4 {
+                font-size: 13px !important;
+            }
+            .email-detail-box p {
+                font-size: 13px !important;
+                word-break: break-word !important;
+            }
+            .email-detail-box ol {
+                padding-left: 18px !important;
+                font-size: 13px !important;
+            }
+            .email-detail-box li {
+                margin-bottom: 6px !important;
+                word-break: break-word !important;
+            }
+            /* Switch headers: Hide desktop 3-col header on mobile */
+            .desktop-header {
+                display: none !important;
+                max-height: 0px !important;
+                overflow: hidden !important;
+                mso-hide: all !important;
+            }
+            /* Switch headers: Show mobile 2-row header on mobile */
+            .mobile-header {
+                display: table !important;
+                width: 100% !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            /* OTP Box responsive styling */
+            .otp-container {
+                margin: 18px 0 !important;
+            }
+            .otp-badge {
+                padding: 10px 18px !important;
+                font-size: 26px !important;
+                letter-spacing: 5px !important;
+            }
+            /* QR pass box */
+            .qr-pass-box {
+                padding: 14px 8px !important;
+                margin: 18px 0 !important;
+            }
+            .qr-pass-box h3 {
+                font-size: 14.5px !important;
+            }
+            .qr-img-wrapper {
+                padding: 6px !important;
+            }
+            .qr-img {
+                width: 170px !important;
+                height: 170px !important;
+                max-width: 100% !important;
+            }
+            .od-letter-box {
+                padding: 12px 10px !important;
+            }
+            .footer-heading {
+                font-size: 11px !important;
+                letter-spacing: 0.5px !important;
+            }
+            .footer-icon {
+                margin: 0 8px !important;
+            }
+            .footer-icon img {
+                width: 28px !important;
+                height: 28px !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #02040a; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-outer-wrapper" style="background-color: #02040a; padding: 20px 8px; width: 100%;">
+        <tr>
+            <td align="center" valign="top">
+                ${innerContent}
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+}
+
 function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY') {
     let deptText = 'DEPARTMENT OF CYBER SECURITY';
     if (subtitle && !subtitle.includes('PRATHYUSHA')) {
         deptText = subtitle;
     }
     return `
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+        <!-- DESKTOP HEADER (Preserved unchanged for laptop/desktop view) -->
+        <table role="presentation" class="desktop-header" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
             <tr>
                 <!-- PEC Logo on Left Side -->
                 <td align="left" valign="middle" style="width: 75px; min-width: 70px; padding-right: 8px;">
@@ -1876,13 +2097,38 @@ function getEmailHeaderHtml(subtitle = 'DEPARTMENT OF CYBER SECURITY') {
                 </td>
             </tr>
         </table>
-        <div style="height: 1px; background: linear-gradient(90deg, transparent, #00ff66, transparent); margin-bottom: 22px;"></div>
+
+        <!-- MOBILE HEADER (Dedicated 2-row layout: balanced logos on row 1, centered full-width text on row 2) -->
+        <!--[if !mso]><!-->
+        <table role="presentation" class="mobile-header" border="0" cellpadding="0" cellspacing="0" width="100%" style="display: none; max-height: 0px; overflow: hidden; mso-hide: all; border-collapse: collapse; width: 100%; margin-bottom: 16px;">
+            <!-- Row 1: College & Event Logos side-by-side with balanced alignment -->
+            <tr>
+                <td align="left" valign="middle" style="padding-bottom: 12px; width: 45%;">
+                    <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/PEC%20Logo.png" alt="Prathyusha Engineering College Logo" width="58" style="width: 58px; max-width: 58px; height: auto; display: block; border: 0; outline: none;" />
+                </td>
+                <td align="right" valign="middle" style="padding-bottom: 12px; width: 55%;">
+                    <img src="https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png" alt="XploitX 2.0 Beta Logo" width="112" style="width: 112px; max-width: 115px; height: auto; display: block; border: 0; outline: none;" />
+                </td>
+            </tr>
+            <!-- Row 2: College & Event Details centered across 100% width -->
+            <tr>
+                <td colspan="2" align="center" valign="middle" style="text-align: center; padding: 2px 0 0 0;">
+                    <div style="color: #ffffff; font-size: 13.5px; font-weight: bold; letter-spacing: 0.6px; line-height: 1.35; text-transform: uppercase; margin: 0;">PRATHYUSHA ENGINEERING COLLEGE</div>
+                    <div style="color: #ffffff; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; margin: 2px 0 3px 0; opacity: 0.85;">(AN AUTONOMOUS INSTITUTION)</div>
+                    <div style="color: #ffffff; font-size: 11.5px; font-weight: bold; letter-spacing: 0.6px; text-transform: uppercase; margin: 0 0 4px 0;">${deptText}</div>
+                    <div style="color: #00ff66; font-size: 16.5px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; margin: 3px 0 0 0;">XPLOITX 2.0 BETA</div>
+                </td>
+            </tr>
+        </table>
+        <!--<![endif]-->
+
+        <div style="height: 1px; background: linear-gradient(90deg, transparent, #00ff66, transparent); margin-bottom: 20px;"></div>
     `;
 }
 
 function getEmailFooterHtml(includeWhatsApp = true) {
     const whatsappIcon = includeWhatsApp ? `
-                <a href="https://chat.whatsapp.com/LDDhYBN90bJEJWyAxEBLFR" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
+                <a href="https://chat.whatsapp.com/LDDhYBN90bJEJWyAxEBLFR" target="_blank" class="footer-icon" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://img.icons8.com/color/96/whatsapp.png" alt="WhatsApp Group" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>` : '';
 
@@ -1890,12 +2136,12 @@ function getEmailFooterHtml(includeWhatsApp = true) {
 
     return `
         <div style="margin-top: 20px; text-align: center; padding-top: 15px;">
-            <p style="font-weight: bold; font-size: 12px; margin-bottom: 12px; color: #8b9bb4; letter-spacing: 1px;">CONNECT WITH US & FIND VENUE LOCATION</p>
+            <p class="footer-heading" style="font-weight: bold; font-size: 12px; margin-bottom: 12px; color: #8b9bb4; letter-spacing: 1px;">CONNECT WITH US & FIND VENUE LOCATION</p>
             <div style="text-align: center;">
-                <a href="https://instagram.com/xploitxctf.2k26" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
+                <a href="https://instagram.com/xploitxctf.2k26" target="_blank" class="footer-icon" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://img.icons8.com/color/96/instagram-new.png" alt="Instagram" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>${whatsappIcon}
-                <a href="https://maps.app.goo.gl/fEMAzGYaPhuvDfi86" target="_blank" style="text-decoration: none; margin: 0 12px; display: inline-block;">
+                <a href="https://maps.app.goo.gl/fEMAzGYaPhuvDfi86" target="_blank" class="footer-icon" style="text-decoration: none; margin: 0 12px; display: inline-block;">
                     <img src="https://img.icons8.com/color/96/google-maps.png" alt="Location Map" width="32" height="32" style="vertical-align: middle; border: 0; outline: none;">
                 </a>
             </div>
@@ -1996,6 +2242,27 @@ app.get('/api/qr', async (req, res) => {
 
 
 
+// Check Email Availability (Used for real-time validation across leaders and members)
+app.get('/api/auth/check-email', async (req, res) => {
+    try {
+        const email = (req.query.email || '').trim().toLowerCase();
+        if (!email || !email.includes('@')) {
+            return res.status(400).json({ error: 'Valid email address is required.' });
+        }
+        const existing = await findRegistrationByEmail(email);
+        if (existing) {
+            return res.json({
+                exists: true,
+                message: `The email "${email}" already exists. Please use another email ID for registration.`
+            });
+        }
+        return res.json({ exists: false });
+    } catch (e) {
+        console.error('Check email error:', e);
+        res.status(500).json({ error: 'Failed to verify email availability.' });
+    }
+});
+
 // Send OTP
 app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) => {
     try {
@@ -2010,9 +2277,11 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
             return res.status(400).json({ error: `Invalid email address format.` });
         }
 
-        const existingTeam = await findTeamByEmail(email);
-        if (existingTeam) {
-            return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
+        const existingReg = await findRegistrationByEmail(email);
+        if (existingReg) {
+            return res.status(400).json({
+                error: `The email "${email}" already exists. Please use another email ID for registration.`
+            });
         }
 
         const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
@@ -2022,17 +2291,17 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
         const subject = "Email Verification OTP - XPLOITX 2.0 BETA";
         const recipientName = name ? name.trim() : "Team Leader";
 
-        const html = `
-        <div style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; margin: 0 auto;">
+        const innerHtml = `
+        <div class="email-container" style="font-family: Arial, Helvetica, sans-serif; background-color: #050914; color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #00ff66; max-width: 580px; width: 100%; margin: 0 auto; box-sizing: border-box;">
             ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
             
-            <div style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px;">
+            <div class="email-content-card" style="background: rgba(2, 6, 18, 0.85); padding: 22px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 22px; box-sizing: border-box;">
                 <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Verification Code</h2>
                 <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Dear <b>${recipientName}</b>,</p>
                 <p style="color: #d1d5db; font-size: 14px; line-height: 1.5;">Your one-time verification code for registering in <b>XPLOITX 2.0 BETA</b> is:</p>
                 
-                <div style="text-align: center; margin: 26px 0;">
-                    <span style="display: inline-block; background: #02040a; color: #00ff66; border: 2px dashed #00ff66; padding: 14px 28px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 6px; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);">
+                <div class="otp-container" style="text-align: center; margin: 26px 0;">
+                    <span class="otp-badge" style="display: inline-block; background: #02040a; color: #00ff66; border: 2px dashed #00ff66; padding: 14px 28px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 6px; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);">
                         ${otp}
                     </span>
                 </div>
@@ -2043,6 +2312,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
             
             ${getEmailFooterHtml(false)}
         </div>`;
+        const html = wrapEmailHtml(innerHtml, subject);
 
         const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
 
@@ -2055,12 +2325,14 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
                 if (errorMsg.toLowerCase().includes('address not found') || errorMsg.toLowerCase().includes('enotfound') || errorMsg.toLowerCase().includes('rejected') || errorMsg.toLowerCase().includes('does not exist') || errorMsg.toLowerCase().includes('user unknown') || errorMsg.includes('550 5.1.1')) {
                     errorMsg = "Address not found";
                 }
+                await logActivity('OTP DISPATCH FAILED', `Failed to dispatch verification OTP to ${email}: ${errorMsg}`);
                 return res.status(500).json({ error: 'Unable to send verification email. Please try again.' });
             }
         } else {
             console.log(`[MOCK EMAIL] OTP for ${email} is ${otp}`);
         }
 
+        await logActivity('OTP DISPATCHED', `Verification OTP dispatched and sent successfully to ${email} (Recipient: "${recipientName}")`);
         res.json({ success: true, message: 'OTP sent' });
     } catch (err) {
         console.error('Error in /api/auth/send-verification-otp:', err);
@@ -2080,6 +2352,7 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
         if (verificationOtps[email] && verificationOtps[email] === otp) {
             delete verificationOtps[email];
             await deleteOtp(email, { isMongoConnected: isDbMongo(), OtpModel: Otp, db });
+            await logActivity('OTP VERIFIED', `Email address "${email}" successfully verified via OTP`);
             return res.json({ success: true });
         }
 
@@ -2087,8 +2360,10 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
         const result = await verifyOtp({ email, inputOtp: otp, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
         if (result.success) {
             delete verificationOtps[email];
+            await logActivity('OTP VERIFIED', `Email address "${email}" successfully verified via OTP`);
             return res.json({ success: true });
         } else {
+            await logActivity('OTP FAILED', `Failed OTP verification attempt for email "${email}": ${result.error || 'Invalid OTP code'}`);
             return res.status(400).json({ error: result.error || 'Invalid OTP code' });
         }
     } catch (err) {
@@ -2107,11 +2382,11 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
     const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
-    const htmlContent = `
-    <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
+    const innerHtml = `
+    <div class="email-container" style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box;">
         ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
 
-        <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
+        <div class="email-content-card" style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px; box-sizing: border-box;">
             <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${leader.name}</b>,</p>
 
             <p>Greetings from Team XploitX!</p>
@@ -2122,7 +2397,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
             <p>Our team will verify your payment and confirm your registration within 1–2 working days.</p>
 
-            <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+            <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                 <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
                 <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
                 <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
@@ -2142,7 +2417,10 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
         ${getEmailFooterHtml(false)}
     </div>`;
 
+    const htmlContent = wrapEmailHtml(innerHtml, subject);
+
     await sendEmail({ to: recipientEmail, subject, text: textContent, html: htmlContent });
+    await logActivity('EMAIL DISPATCHED', `Registration verification email dispatched to Leader "${leader.name}" (${recipientEmail}) for Team "${teamName}"`);
 }
 
 app.get('/api/admin/data', verifyAdmin, async (req, res) => {
@@ -2221,12 +2499,13 @@ app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
     try {
         const existing = await getTeamDataWithMembers(teamId);
         let diffs = [];
+        const norm = (v) => String(v ?? '').trim();
         if (existing && existing.team) {
-            if (name && existing.team.name !== name) {
-                diffs.push(`Team Name: "${existing.team.name}" ➔ "${name}"`);
+            if (name && norm(existing.team.name) !== norm(name)) {
+                diffs.push(`Team Name: "${norm(existing.team.name)}" ➔ "${norm(name)}"`);
             }
-            if (event && existing.team.event !== event) {
-                diffs.push(`Event: "${existing.team.event}" ➔ "${event}"`);
+            if (event && norm(existing.team.event) !== norm(event)) {
+                diffs.push(`Event: "${norm(existing.team.event)}" ➔ "${norm(event)}"`);
             }
             if (members && Array.isArray(members)) {
                 const oldMembers = existing.members || [];
@@ -2236,31 +2515,34 @@ app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
                     const newM = members[i];
                     if (oldM && newM) {
                         const mLabel = (oldM.role === 'LEADER' || i === 0) ? 'Leader' : `Member ${i + 1}`;
-                        if (oldM.name !== newM.name) {
-                            diffs.push(`${mLabel} Name: "${oldM.name || ''}" ➔ "${newM.name || ''}"`);
+                        const displayName = norm(newM.name) || norm(oldM.name);
+                        const labelWithName = displayName ? `${mLabel} (${displayName})` : mLabel;
+
+                        if (norm(oldM.name) !== norm(newM.name)) {
+                            diffs.push(`${mLabel} Name: "${norm(oldM.name)}" ➔ "${norm(newM.name)}"`);
                         }
-                        if (oldM.email !== newM.email) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Email: "${oldM.email || ''}" ➔ "${newM.email || ''}"`);
+                        if (norm(oldM.email) !== norm(newM.email)) {
+                            diffs.push(`${labelWithName} Email: "${norm(oldM.email)}" ➔ "${norm(newM.email)}"`);
                         }
-                        if (oldM.phone !== newM.phone) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Phone: "${oldM.phone || ''}" ➔ "${newM.phone || ''}"`);
+                        if (norm(oldM.phone) !== norm(newM.phone)) {
+                            diffs.push(`${labelWithName} Phone: "${norm(oldM.phone)}" ➔ "${norm(newM.phone)}"`);
                         }
-                        if (oldM.whatsapp !== newM.whatsapp) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) WhatsApp: "${oldM.whatsapp || ''}" ➔ "${newM.whatsapp || ''}"`);
+                        if (norm(oldM.whatsapp) !== norm(newM.whatsapp)) {
+                            diffs.push(`${labelWithName} WhatsApp: "${norm(oldM.whatsapp)}" ➔ "${norm(newM.whatsapp)}"`);
                         }
-                        if (oldM.college !== newM.college) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) College: "${oldM.college || ''}" ➔ "${newM.college || ''}"`);
+                        if (norm(oldM.college) !== norm(newM.college)) {
+                            diffs.push(`${labelWithName} College: "${norm(oldM.college)}" ➔ "${norm(newM.college)}"`);
                         }
-                        if (oldM.district !== newM.district) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) District: "${oldM.district || ''}" ➔ "${newM.district || ''}"`);
+                        if (norm(oldM.district) !== norm(newM.district)) {
+                            diffs.push(`${labelWithName} District: "${norm(oldM.district)}" ➔ "${norm(newM.district)}"`);
                         }
-                        if (oldM.age !== newM.age) {
-                            diffs.push(`${mLabel} (${newM.name || oldM.name}) Age: "${oldM.age || ''}" ➔ "${newM.age || ''}"`);
+                        if (norm(oldM.age) !== norm(newM.age)) {
+                            diffs.push(`${labelWithName} Age: "${norm(oldM.age)}" ➔ "${norm(newM.age)}"`);
                         }
                     } else if (!oldM && newM) {
-                        diffs.push(`Added Member ${i + 1}: "${newM.name}" (${newM.role || 'MEMBER'})`);
+                        diffs.push(`Added Member ${i + 1}: "${norm(newM.name)}" (${newM.role || 'MEMBER'})`);
                     } else if (oldM && !newM) {
-                        diffs.push(`Removed Member ${i + 1}: "${oldM.name}"`);
+                        diffs.push(`Removed Member ${i + 1}: "${norm(oldM.name)}"`);
                     }
                 }
             }
@@ -2282,6 +2564,7 @@ app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
         if (!team) return res.status(404).json({ error: 'Team not found' });
         const existing = await getTeamDataWithMembers(req.params.id);
         let diffs = [];
+        const norm = (v) => String(v ?? '').trim();
         if (existing && existing.members && Array.isArray(members)) {
             const oldMembers = existing.members || [];
             const maxLen = Math.max(oldMembers.length, members.length);
@@ -2290,31 +2573,34 @@ app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
                 const newM = members[i];
                 if (oldM && newM) {
                     const mLabel = (oldM.role === 'LEADER' || i === 0) ? 'Leader' : `Member ${i + 1}`;
-                    if (oldM.name !== newM.name) {
-                        diffs.push(`${mLabel} Name: "${oldM.name || ''}" ➔ "${newM.name || ''}"`);
+                    const displayName = norm(newM.name) || norm(oldM.name);
+                    const labelWithName = displayName ? `${mLabel} (${displayName})` : mLabel;
+
+                    if (norm(oldM.name) !== norm(newM.name)) {
+                        diffs.push(`${mLabel} Name: "${norm(oldM.name)}" ➔ "${norm(newM.name)}"`);
                     }
-                    if (oldM.email !== newM.email) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Email: "${oldM.email || ''}" ➔ "${newM.email || ''}"`);
+                    if (norm(oldM.email) !== norm(newM.email)) {
+                        diffs.push(`${labelWithName} Email: "${norm(oldM.email)}" ➔ "${norm(newM.email)}"`);
                     }
-                    if (oldM.phone !== newM.phone) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Phone: "${oldM.phone || ''}" ➔ "${newM.phone || ''}"`);
+                    if (norm(oldM.phone) !== norm(newM.phone)) {
+                        diffs.push(`${labelWithName} Phone: "${norm(oldM.phone)}" ➔ "${norm(newM.phone)}"`);
                     }
-                    if (oldM.whatsapp !== newM.whatsapp) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) WhatsApp: "${oldM.whatsapp || ''}" ➔ "${newM.whatsapp || ''}"`);
+                    if (norm(oldM.whatsapp) !== norm(newM.whatsapp)) {
+                        diffs.push(`${labelWithName} WhatsApp: "${norm(oldM.whatsapp)}" ➔ "${norm(newM.whatsapp)}"`);
                     }
-                    if (oldM.college !== newM.college) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) College: "${oldM.college || ''}" ➔ "${newM.college || ''}"`);
+                    if (norm(oldM.college) !== norm(newM.college)) {
+                        diffs.push(`${labelWithName} College: "${norm(oldM.college)}" ➔ "${norm(newM.college)}"`);
                     }
-                    if (oldM.district !== newM.district) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) District: "${oldM.district || ''}" ➔ "${newM.district || ''}"`);
+                    if (norm(oldM.district) !== norm(newM.district)) {
+                        diffs.push(`${labelWithName} District: "${norm(oldM.district)}" ➔ "${norm(newM.district)}"`);
                     }
-                    if (oldM.age !== newM.age) {
-                        diffs.push(`${mLabel} (${newM.name || oldM.name}) Age: "${oldM.age || ''}" ➔ "${newM.age || ''}"`);
+                    if (norm(oldM.age) !== norm(newM.age)) {
+                        diffs.push(`${labelWithName} Age: "${norm(oldM.age)}" ➔ "${norm(newM.age)}"`);
                     }
                 } else if (!oldM && newM) {
-                    diffs.push(`Added Member ${i + 1}: "${newM.name}"`);
+                    diffs.push(`Added Member ${i + 1}: "${norm(newM.name)}"`);
                 } else if (oldM && !newM) {
-                    diffs.push(`Removed Member ${i + 1}: "${oldM.name}"`);
+                    diffs.push(`Removed Member ${i + 1}: "${norm(oldM.name)}"`);
                 }
             }
         }
@@ -2345,9 +2631,32 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
         const existingTeamName = await findTeamByName(teamName);
         if (existingTeamName) return res.status(400).json({ error: 'Team Name taken.' });
 
-        const existingTeamEmail = await findTeamByEmail(email);
-        if (existingTeamEmail) {
-            return res.status(400).json({ error: 'This email is already registered as a Team Leader.' });
+        // 1. Check for duplicate emails within this squad submission
+        const squadEmails = new Set();
+        for (const m of members) {
+            const mEmail = (m.email || '').trim().toLowerCase();
+            if (!mEmail) continue;
+            if (squadEmails.has(mEmail)) {
+                return res.status(400).json({
+                    error: `Duplicate email "${m.email}" detected within your squad. Every squad member must have a unique email address.`
+                });
+            }
+            squadEmails.add(mEmail);
+        }
+
+        const primaryEmail = (email || '').trim().toLowerCase();
+        if (primaryEmail && !squadEmails.has(primaryEmail)) {
+            squadEmails.add(primaryEmail);
+        }
+
+        // 2. Check if any submitted email is already registered in ANY team in the database
+        for (const mEmail of squadEmails) {
+            const existingReg = await findRegistrationByEmail(mEmail);
+            if (existingReg) {
+                return res.status(400).json({
+                    error: `The email "${mEmail}" already exists. Please use another email ID for registration.`
+                });
+            }
         }
 
         if (utrNumber) {
@@ -2410,6 +2719,8 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
         // Send Initial Verification Email to Team Leader Only
         const leaderObj = members[0] || { name: teamName, email: email };
         await sendRegistrationVerificationEmail(leaderObj, teamName);
+
+        await logActivity('NEW REGISTRATION', `New strike team registered: Team "${teamName}" [${teamIdStr}] | Leader: ${email} | Members: ${members.length} | UTR: ${utrNumber || 'N/A'}`);
 
         res.json({ success: true, teamId: teamIdStr });
 
@@ -2518,11 +2829,11 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
 
             const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
-            const htmlContent = `
-                <div style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; margin: 0 auto;">
+            const innerHtml = `
+                <div class="email-container" style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box;">
                     ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
 
-                    <div style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px;">
+                    <div class="email-content-card" style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px; box-sizing: border-box;">
                         <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear Participants,</p>
 
                         <p>Greetings from Team XploitX!</p>
@@ -2531,7 +2842,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
 
                         <p style="color: #00ff66; font-weight: bold;">Your team’s registration is now officially confirmed for the event.</p>
 
-                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                        <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                             <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">TEAM & REGISTRATION DETAILS</h4>
                             <p style="margin: 3px 0;"><b>Team ID:</b> <span style="color: #00ff66; font-weight: bold;">${teamId}</span></p>
                             <p style="margin: 3px 0;"><b>Team Name:</b> ${teamData.name}</p>
@@ -2540,14 +2851,14 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                             <p style="margin: 3px 0;"><b>Registration Status:</b> <span style="color: #00ff66; font-weight: bold;">CONFIRMED</span></p>
                         </div>
 
-                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                        <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                             <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">TEAM MEMBERS</h4>
                             <ol style="margin: 5px 0; padding-left: 20px;">
                                 ${membersListHtml}
                             </ol>
                         </div>
 
-                        <div style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0;">
+                        <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                             <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
                             <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
                             <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
@@ -2556,11 +2867,11 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                             <p style="margin: 3px 0;"><b>Institution:</b> Prathyusha Engineering College</p>
                         </div>
 
-                        <div style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px;">
+                        <div class="qr-pass-box" style="text-align: center; margin: 24px 0; border: 2px dashed #00ff66; padding: 20px; background: #02040a; border-radius: 8px; box-sizing: border-box;">
                             <h3 style="color: #ffd700; margin-top: 0; font-size: 16px; letter-spacing: 1px;">YOUR OFFICIAL EVENT ENTRY PASS</h3>
                             <p style="color: #8b9bb4; font-size: 13px; margin-bottom: 14px;">Present this QR code at the venue check-in desk</p>
-                            <div style="display: inline-block; background-color: #ffffff; padding: 8px; border: 2px solid #00ff66; border-radius: 8px; line-height: 0;">
-                                <img src="${publicQrUrl}" width="200" height="200" style="width: 200px; height: 200px; display: block; margin: 0 auto; border: 0; outline: none;" alt="Entry QR Code - ${teamId}" />
+                            <div class="qr-img-wrapper" style="display: inline-block; background-color: #ffffff; padding: 8px; border: 2px solid #00ff66; border-radius: 8px; line-height: 0;">
+                                <img src="${publicQrUrl}" width="200" height="200" class="qr-img" style="width: 200px; height: 200px; display: block; margin: 0 auto; border: 0; outline: none;" alt="Entry QR Code - ${teamId}" />
                             </div>
                             <p style="color: #00ff66; font-weight: bold; font-size: 18px; margin: 12px 0 4px 0; letter-spacing: 1px;">${teamId}</p>
                             <p style="color: #8b9bb4; font-size: 12px; margin: 0 0 10px 0;">(High-resolution pass also attached: <b style="color: #ffffff;">${teamId}_Pass.png</b>)</p>
@@ -2569,7 +2880,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                             </div>
                         </div>
 
-                        <div style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                        <div class="od-letter-box" style="background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; border-radius: 6px; padding: 15px; margin-bottom: 20px; box-sizing: border-box;">
                             <h4 style="color: #00ff66; margin: 0 0 8px 0; font-size: 15px;">📄 ON-DUTY (OD) LETTER ATTACHED (PDF FORMAT)</h4>
                             <p style="color: #d1d5db; font-size: 13px; margin: 0;">Your official <b>On-Duty (OD) Permission Letter PDF</b> is attached to this email (<b>${teamId}_OD_Letter.pdf</b>).</p>
                         </div>
@@ -2589,15 +2900,17 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                     ${getEmailFooterHtml(true)}
                 </div>
             `;
+            const htmlContent = wrapEmailHtml(innerHtml, 'XploitX 2.0 Beta CTF - Payment Verified & Registration Confirmed');
 
             const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
             if (hasEmailProvider) {
                 for (const emailAddr of recipientEmails) {
                     await sendEmail({ to: emailAddr, subject: 'XploitX 2.0 Beta CTF - Payment Verified & Registration Confirmed', text: textContent, html: htmlContent, attachments });
                 }
+                await logActivity('EMAIL DISPATCHED', `Confirmation email with OD Letter PDF & Entry QR pass dispatched to ${recipientEmails.join(', ')} (Team [${teamId}])`);
             }
         }
-        logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "READY (CONFIRMED)" by Operative "${operative}"`);
+        await logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "READY (CONFIRMED)" by Operative "${operative}"`);
         res.json({ success: true, message: 'Registration confirmed and OD Letter PDF sent' });
     } catch (e) {
         console.error("Verify Payment Error:", e);
@@ -3185,4 +3498,6 @@ module.exports = app;
 module.exports.sendEmail = sendEmail;
 module.exports.getEmailHeaderHtml = getEmailHeaderHtml;
 module.exports.getEmailFooterHtml = getEmailFooterHtml;
+module.exports.wrapEmailHtml = wrapEmailHtml;
 module.exports.generateQrWithLogo = generateQrWithLogo;
+module.exports.generateODPdfInternal = generateODPdfInternal;

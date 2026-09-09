@@ -2,3 +2,10 @@
 [2026-09-08 12:24:21 IST] ADMIN LOGIN: Operative "Administrator" logged into Admin Console
 [2026-09-08 12:25:24 IST] ATTENDANCE LOGIN: Operative "Administrator" authenticated into Attendance Terminal
 [2026-09-08 12:25:31 IST] ADMIN LOGIN FAILED: Operative "administrator" failed login attempt
+[2026-09-09 10:45:12 IST] OTP DISPATCHED: Verification OTP dispatched and sent successfully to jesinmilesh@gmail.com (Recipient: "Team Leader")
+[2026-09-09 10:46:05 IST] OTP VERIFIED: Email address "jesinmilesh@gmail.com" successfully verified via OTP
+[2026-09-09 10:47:30 IST] NEW REGISTRATION: New strike team registered: Team "CYBER WOLVES" [XCTF-26-0001] | Leader: jesinmilesh@gmail.com | Members: 2 | UTR: 987654321012
+[2026-09-09 10:47:32 IST] EMAIL DISPATCHED: Registration verification email dispatched to Leader "Jesin Milesh" (jesinmilesh@gmail.com) for Team "CYBER WOLVES"
+[2026-09-09 11:07:38 IST] OTP DISPATCHED: Verification OTP dispatched and sent successfully to jesinmilesh@gmail.com (Recipient: "Jesin Milesh")
+[2026-09-09 11:07:42 IST] EMAIL DISPATCHED: Registration verification email dispatched to Leader "Jesin Milesh" (jesinmilesh@gmail.com) for Team "CYBER WOLVES"
+[2026-09-09 11:07:46 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jesinmilesh@gmail.com (Team [XCTF-26-0001])
