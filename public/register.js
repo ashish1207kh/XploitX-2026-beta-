@@ -1373,7 +1373,7 @@ function initFormSubmission() {
             formData.append('teamName', teamName);
             formData.append('email', leaderEmail);
             formData.append('event', 'XPLOITX 2.0 BETA - 24-Hour CTF');
-            formData.append('day', '09 OCTOBER 2026');
+            formData.append('day', '08 - 09 OCTOBER 2026');
             formData.append('utrNumber', utrNumber);
             formData.append('members', JSON.stringify(membersList));
             if (paymentProofFile) {

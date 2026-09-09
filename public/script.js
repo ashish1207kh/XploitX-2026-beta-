@@ -11,8 +11,8 @@ const EVENT_CONFIG = {
     eventName: "XPLOITX 2.0 BETA",
     eventEdition: "24-HOUR OFFLINE CTF",
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
-    // Configurable Target Date: 9 October 2026 00:00:00 IST
-    eventDate: "2026-10-09T00:00:00+05:30",
+    // Configurable Target Date: 8 October 2026 09:30:00 IST
+    eventDate: "2026-10-08T09:30:00+05:30",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
     teamSize: "2 - 4 Members",

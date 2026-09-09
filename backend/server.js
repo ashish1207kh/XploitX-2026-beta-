@@ -2380,7 +2380,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
 
     const subject = "XploitX 2.0 Beta CTF - Registration Under Verification";
 
-    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
+    const textContent = `Dear ${leader.name},\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your registration for XploitX 2.0 Beta CTF has been successfully received.\n\nWe have successfully received your registration and payment details. Your payment is currently under verification.\n\nOur team will verify your payment and confirm your registration within 1–2 working days.\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\n\nOnce your payment has been successfully verified, you will receive a separate confirmation email containing further event details and instructions.\n\nPlease do not make any duplicate payment while your payment is under verification.\n\nThank you for registering for XploitX 2.0 Beta CTF.\n\nWe look forward to seeing you at the event!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
     const innerHtml = `
     <div class="email-container" style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box;">
@@ -2400,7 +2400,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
             <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                 <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
                 <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
-                <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
+                <p style="margin: 3px 0;"><b>Date & Time:</b> 8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM</p>
                 <p style="margin: 3px 0;"><b>Venue:</b> Prathyusha Engineering College, Tiruvallur</p>
             </div>
 
@@ -2827,7 +2827,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
             const membersListText = members.map((m, i) => `${i + 1}. ${m.name} – ${m.college || leader.college || 'Prathyusha Engineering College'}`).join('\n');
             const membersListHtml = members.map(m => `<li><b>${m.name}</b> – ${m.college || leader.college || 'Prathyusha Engineering College'}</li>`).join('');
 
-            const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
+            const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
             const innerHtml = `
                 <div class="email-container" style="font-family: Arial, sans-serif; background-color: #050914; color: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #00ff66; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box;">
@@ -2861,7 +2861,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                         <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                             <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">EVENT DETAILS</h4>
                             <p style="margin: 3px 0;"><b>Event:</b> XploitX 2.0 Beta CTF</p>
-                            <p style="margin: 3px 0;"><b>Date & Time:</b> 9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM</p>
+                            <p style="margin: 3px 0;"><b>Date & Time:</b> 8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM</p>
                             <p style="margin: 3px 0;"><b>Venue:</b> Prathyusha Engineering College, Tiruvallur</p>
                             <p style="margin: 3px 0;"><b>Organized By:</b> Department of Cybersecurity</p>
                             <p style="margin: 3px 0;"><b>Institution:</b> Prathyusha Engineering College</p>
@@ -3040,7 +3040,7 @@ async function generateODPdfInternal(teamObj) {
             currentY += 26;
 
             doc.font('Times-Roman').text('The event is scheduled to be conducted from ', 35, currentY, { continued: true });
-            doc.font('Times-Bold').text('9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM', { continued: true });
+            doc.font('Times-Bold').text('8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM', { continued: true });
             doc.font('Times-Roman').text(' at ', { continued: true });
             doc.font('Times-Bold').text('Prathyusha Engineering College, Tiruvallur.');
             currentY += 26;
@@ -3125,7 +3125,7 @@ async function generateODPdfInternal(teamObj) {
             const evtDetails = [
                 { label: 'Event Name', val: 'XploitX 2.0 Beta CTF' },
                 { label: 'Organized By', val: 'Department of Cybersecurity, Prathyusha Engineering College' },
-                { label: 'Date & Time', val: '9th October 2026, 10:00 AM to 10th October 2026, 10:00 AM' },
+                { label: 'Date & Time', val: '8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM' },
                 { label: 'Venue', val: 'Prathyusha Engineering College, Tiruvallur' },
                 { label: 'Purpose', val: 'Participation in XploitX 2.0 Beta CTF' }
             ];
