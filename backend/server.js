@@ -2772,13 +2772,17 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
 
 app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
+    const operative = req.user ? req.user.username : 'Admin';
     try {
-        await updatePaymentStatus(teamId, 1);
         const data = await getTeamDataWithMembers(teamId);
-        if (!data) return res.json({ success: true, message: "Payment verified" });
+        if (!data || !data.team) return res.status(404).json({ error: "Team not found" });
 
         const teamData = data.team;
-        const members = data.members;
+        const members = data.members || [];
+        const prevStatus = teamData.payment_verified === 1 ? 'READY (CONFIRMED)' : (teamData.payment_verified === -1 ? 'WRONG DETAILS (REJECTED)' : 'STANDBY (REVIEW)');
+        const teamName = teamData.name || 'Unknown';
+
+        await updatePaymentStatus(teamId, 1);
         const leader = members.find(m => m.role === 'LEADER') || members[0];
 
         if (leader) {
@@ -2911,7 +2915,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
             }
         }
         await logActivity('STATUS MODIFIED', `Team [${teamId}] ("${teamName}") status changed from "${prevStatus}" ➔ "READY (CONFIRMED)" by Operative "${operative}"`);
-        res.json({ success: true, message: 'Registration confirmed and OD Letter PDF sent' });
+        res.json({ success: true, message: 'Team verified and OD letter sent successfully' });
     } catch (e) {
         console.error("Verify Payment Error:", e);
         res.status(500).json({ error: e.message });
