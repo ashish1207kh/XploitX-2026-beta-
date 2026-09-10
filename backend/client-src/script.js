@@ -7,7 +7,7 @@ const EVENT_CONFIG = {
     eventName: "XPLOITX 2.0 BETA",
     eventEdition: "24-HOUR OFFLINE CTF",
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
-
+    
     eventDate: "2026-10-08T09:30:00+05:30",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
@@ -31,16 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function initAccessLoader() {
     let loaderOverlay = document.getElementById('loader-overlay');
 
-
+    
     if (!loaderOverlay) return;
-
+    
     document.documentElement.classList.add('loader-locked');
     document.body.classList.add('loader-locked');
-
+    
     loaderOverlay.className = 'xploitx-access-loader';
     loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
 
-
+    
     loaderOverlay.innerHTML = `
         <div class="loader-bg-grid"></div>
         <div class="loader-scanline"></div>
@@ -77,7 +77,7 @@ function initAccessLoader() {
         </div>
     `;
 
-
+    
     document.documentElement.classList.add('loader-locked');
     document.body.classList.add('loader-locked');
 
@@ -107,12 +107,12 @@ function initAccessLoader() {
         }, 450);
     }
 
-
+    
     if (skipBtn) {
         skipBtn.addEventListener('click', dismissLoader);
     }
-
-
+    
+    
     function handleKeyDown(e) {
         if (e.key === 'Escape' || e.key === 'Enter') {
             dismissLoader();
@@ -121,7 +121,7 @@ function initAccessLoader() {
     }
     document.addEventListener('keydown', handleKeyDown);
 
-
+    
     if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
@@ -180,14 +180,14 @@ function initAccessLoader() {
         return;
     }
 
-
+    
     setProgress(20);
-
-    schedule(() => {
+    
+    schedule(() => { 
         if (stepLabel) stepLabel.textContent = "AUTHENTICATING";
         if (statusDetail) statusDetail.textContent = "OPERATIVE CREDENTIALS...";
         if (stateIcon) stateIcon.className = "fas fa-user-shield loader-state-icon";
-        setProgress(55);
+        setProgress(55); 
     }, 320);
 
     schedule(() => {
@@ -279,7 +279,7 @@ function initParticleSystem() {
     const canvas = document.getElementById('particles-bg');
     if (!canvas) return;
 
-
+    
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         canvas.style.display = 'none';
         return;
@@ -297,15 +297,15 @@ function initParticleSystem() {
     resize();
     window.addEventListener('resize', resize);
 
-
+    
     const isMobile = window.innerWidth < 768;
     const particleCount = isMobile ? 25 : 65;
 
     const colors = [
-        'rgba(0, 210, 255, ',
-        'rgba(157, 78, 221, ',
-        'rgba(247, 37, 133, ',
-        'rgba(255, 158, 0, '
+        'rgba(0, 210, 255, ',   
+        'rgba(157, 78, 221, ',  
+        'rgba(247, 37, 133, ',  
+        'rgba(255, 158, 0, '    
     ];
 
     class Particle {
@@ -331,13 +331,13 @@ function initParticleSystem() {
             this.x += this.vx;
             this.y += this.vy;
 
-
+            
             if (this.x < 0) this.x = width;
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
             if (this.y > height) this.y = 0;
 
-
+            
             if (!isMobile && mouse.x !== null) {
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
@@ -371,7 +371,7 @@ function initParticleSystem() {
     function animate() {
         ctx.clearRect(0, 0, width, height);
 
-
+        
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
                 let dx = particles[a].x - particles[b].x;
@@ -414,7 +414,7 @@ function initNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
 
-
+        
         let currentSection = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop - 120;
@@ -444,7 +444,7 @@ function initMobileNav() {
 
     if (!hamburger || !navMenu) return;
 
-
+    
     let backdrop = document.getElementById('mobile-nav-backdrop');
     if (!backdrop) {
         backdrop = document.createElement('div');
@@ -453,7 +453,7 @@ function initMobileNav() {
         document.body.appendChild(backdrop);
     }
 
-
+    
     let drawerHeader = navMenu.querySelector('.mobile-drawer-header');
     if (!drawerHeader) {
         drawerHeader = document.createElement('div');
@@ -470,7 +470,7 @@ function initMobileNav() {
         navMenu.insertBefore(drawerHeader, navMenu.firstChild);
     }
 
-
+    
     let drawerFooter = navMenu.querySelector('.mobile-drawer-footer');
     if (!drawerFooter) {
         drawerFooter = document.createElement('div');
@@ -526,7 +526,7 @@ function initMobileNav() {
         backdrop.addEventListener('click', closeMenu);
     }
 
-
+    
     const navLinks = navMenu.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -534,7 +534,7 @@ function initMobileNav() {
         });
     });
 
-
+    
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu.classList.contains('open')) {
             closeMenu();
@@ -554,7 +554,7 @@ function initAccordions() {
             const body = item.querySelector('.accordion-body');
             const isActive = item.classList.contains('active');
 
-
+            
             const group = item.closest('.accordion-group');
             if (group) {
                 group.querySelectorAll('.accordion-item').forEach(sibling => {
@@ -615,12 +615,12 @@ function showCyberAlert(msg, title = 'SYSTEM ALERT', callback = null) {
         `;
         document.body.appendChild(alertModal);
     }
-
+    
     const msgEl = alertModal.querySelector('#custom-alert-msg');
     const titleEl = alertModal.querySelector('#custom-alert-title');
     if (titleEl) titleEl.textContent = title;
     if (msgEl) msgEl.textContent = msg;
-
+    
     alertModal.classList.add('active');
 }
 
@@ -708,3 +708,5 @@ document.addEventListener('keydown', (e) => {
         try { console.clear(); } catch (e) { }
     }, 2500);
 })();
+
+
