@@ -732,6 +732,18 @@ app.get(['/attendance-login', '/attendance-login.html'], (req, res) => {
     res.redirect('/attendance.html');
 });
 
+app.get('/api/core/system.js', (req, res) => {
+    res.type('application/javascript');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.sendFile(path.join(__dirname, 'assets/script.js'));
+});
+
+app.get('/api/core/registration.js', (req, res) => {
+    res.type('application/javascript');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.sendFile(path.join(__dirname, 'assets/register.js'));
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 
