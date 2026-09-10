@@ -40,7 +40,7 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const { z } = require('zod');
 
-// --- PRODUCTION CHANGE & DESTRUCTIVE OPERATION PROTECTION GUARD ---
+
 function checkProductionSafety(operationName, isDestructive = false) {
     if (process.env.NODE_ENV === 'production' && isDestructive) {
         if (process.env.ALLOW_DESTRUCTIVE_PRODUCTION_OPERATIONS !== 'CONFIRMED_AND_APPROVED') {
@@ -51,7 +51,7 @@ function checkProductionSafety(operationName, isDestructive = false) {
     }
 }
 
-// --- REAL-TIME AUDIT LOGGING SYSTEM (KOLKATA TIMEZONE: Asia/Kolkata IST) ---
+
 if (!global.activityLogs) {
     global.activityLogs = [];
 }
@@ -134,7 +134,7 @@ async function logActivity(action, details = '') {
     }
 }
 
-// --- OTP MANAGEMENT HELPERS ---
+
 const inMemoryOtps = new Map();
 
 function generateSecureOtp() {
@@ -302,12 +302,12 @@ async function deleteOtp(email, { isMongoConnected, OtpModel, db }) {
     inMemoryOtps.delete(email);
 }
 
-// --- UNIVERSAL EMAIL DELIVERY FUNCTION (HTTPS API & SMTP Fallback) ---
+
 async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
     const recipient = Array.isArray(to) ? to.join(',') : to;
     console.log(`[Email] Dispatching email to: ${recipient.split('@')[1] || 'recipient'}`);
 
-    // Prevent Gmail content trimming by injecting a unique anti-collapse nonce
+    
     if (html && typeof html === 'string') {
         const antiTrimNonce = `<span style="display:none !important; opacity:0; color:transparent; font-size:1px; line-height:1px; max-height:0px; max-width:0px; overflow:hidden; mso-hide:all;">[ID:${Date.now()}-${Math.floor(Math.random() * 10000)}]</span>`;
         if (html.includes('</div>')) {
@@ -325,7 +325,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
     const senderName = (process.env.BREVO_SENDER_NAME || 'XploitX 2.0 BETA').trim();
     const fromAddress = senderEmail.includes('<') ? senderEmail : `"${senderName}" <${senderEmail}>`;
 
-    // 1. BREVO HTTPS REST API (Vercel Serverless Ready over Port 443)
+    
     if (brevoApiKey) {
         console.log('[EmailService] Using Brevo HTTPS Email API (Vercel Serverless Ready)');
         try {
@@ -380,7 +380,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    // 2. Resend HTTPS API (Vercel Serverless Ready)
+    
     if (resendApiKey) {
         console.log('[EmailService] Using Resend HTTPS Email API');
         try {
@@ -422,7 +422,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    // 3. SendGrid HTTPS API
+    
     if (sendgridApiKey) {
         console.log('[EmailService] Using SendGrid HTTPS Email API');
         try {
@@ -457,7 +457,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    // 4. Nodemailer SMTP Fallback
+    
     console.log('[EmailService] Using Nodemailer SMTP Transport');
     const smtpConfig = process.env.SMTP_HOST ? {
         host: process.env.SMTP_HOST,
@@ -523,7 +523,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Security Headers (Helmet)
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -540,7 +540,7 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 
-// Restrict CORS Origins (MED-01)
+
 const allowedOrigins = [
     'https://xploitxctf.me',
     'https://www.xploitxctf.me',
@@ -567,7 +567,7 @@ app.use(cors({
 
 app.use(bodyParser.json({ limit: '5mb' }));
 
-// NoSQL Injection Sanitization (HIGH-01)
+
 app.use((req, res, next) => {
     if (req.body && typeof req.body === 'object') {
         mongoSanitize.sanitize(req.body, { replaceWith: '_' });
@@ -578,7 +578,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Rate Limiters (HIGH-02)
+
 const adminLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 30,
@@ -627,11 +627,11 @@ const uploadLimiter = rateLimit({
     legacyHeaders: false
 });
 
-// --- SENSITIVE FILE PROTECTION & UPLOADS SECURITY GUARD ---
+
 app.use((req, res, next) => {
     const reqPath = (req.path || '').toLowerCase();
 
-    // 1. Strictly block any request targeting .env files, dotfiles, database files, logs, or sensitive configs
+    
     if (
         reqPath.includes('.env') ||
         reqPath.includes('.git') ||
@@ -647,7 +647,7 @@ app.use((req, res, next) => {
         return res.status(403).json({ error: '403 Forbidden: Access to sensitive system file is strictly prohibited.' });
     }
 
-    // 2. Prevent directory listing / browsing on /uploads or /uploads/
+    
     if (reqPath === '/uploads' || reqPath === '/uploads/' || reqPath === '/backend' || reqPath === '/backend/') {
         return res.status(403).json({ error: '403 Forbidden: Directory browsing is prohibited.' });
     }
@@ -655,7 +655,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- JWT & SESSION AUTHENTICATION CORE HELPERS ---
+
 const getJwtSecret = () => {
     const secret = process.env.JWT_SECRET;
     if (secret && secret.trim().length > 0) {
@@ -670,7 +670,7 @@ const getJwtSecret = () => {
 
 const JWT_SECRET = getJwtSecret();
 
-// Parse cookies safely from incoming request headers
+
 const parseCookies = (req) => {
     const list = {};
     const rc = req && req.headers && req.headers.cookie;
@@ -685,7 +685,7 @@ const parseCookies = (req) => {
     return list;
 };
 
-// Check if request has a valid authenticated attendance session (Bearer token only, no cookies)
+
 const isAttendanceAuthenticated = (req) => {
     try {
         const authHeader = req.headers && req.headers['authorization'];
@@ -702,7 +702,7 @@ const isAttendanceAuthenticated = (req) => {
     }
 };
 
-// Strict Attendance Authorization Middleware for Backend APIs
+
 const verifyAttendanceAuth = (req, res, next) => {
     const authHeader = req.headers && req.headers['authorization'];
     const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
@@ -722,8 +722,8 @@ const verifyAttendanceAuth = (req, res, next) => {
     }
 };
 
-// --- ATTENDANCE SERVER-SIDE ROUTE GUARDS ---
-// Direct page serving - authentication guard is enforced client-side via strict token validation
+
+
 app.get(['/attendance', '/attendance.html'], (req, res) => {
     res.sendFile(path.join(__dirname, '../public/attendance.html'));
 });
@@ -734,7 +734,7 @@ app.get(['/attendance-login', '/attendance-login.html'], (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Ensure local uploads directory exists
+
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     try {
@@ -744,7 +744,7 @@ if (!fs.existsSync(uploadsDir)) {
     }
 }
 
-// Secure static uploads serving with strict non-executable headers
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     dotfiles: 'ignore',
     index: false,
@@ -763,12 +763,12 @@ app.use('/uploads', express.static(path.join(os.tmpdir(), 'uploads'), {
     }
 }));
 
-// Explicit file serving route fallback for uploads (with DB Base64 backup for Vercel/serverless/restart persistence)
+
 app.get('/uploads/:filename', async (req, res) => {
     const filename = path.basename(req.params.filename);
     const ext = path.extname(filename).toLowerCase();
 
-    // Block non-image / executable extensions inside uploads
+    
     const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.pdf'];
     if (!allowedExtensions.includes(ext)) {
         return res.status(403).json({ error: '403 Forbidden: File type execution or access prohibited.' });
@@ -786,7 +786,7 @@ app.get('/uploads/:filename', async (req, res) => {
         return res.sendFile(tmpPath);
     }
 
-    // Fallback: DB lookup if static file doesn't exist on disk
+    
     try {
         const teamIdMatch = path.basename(filename).split('.')[0].replace(/[^a-zA-Z0-9_-]/g, '');
         const escapedFilename = filename.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -828,7 +828,7 @@ app.get('/uploads/:filename', async (req, res) => {
     return res.status(404).send('File not found');
 });
 
-// Database Connection Middleware for Serverless/Express Environment
+
 app.use(async (req, res, next) => {
     try {
         if (!isDbMongo() && !db) {
@@ -845,7 +845,7 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Multer Storage - Serverless Safe (Vercel / Local)
+
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -901,7 +901,7 @@ const upload = multer({
     limits: { fileSize: 1 * 1024 * 1024 }
 });
 
-// --- MONGOOSE SCHEMAS & MODELS FOR MONGODB ATLAS ---
+
 const teamSchema = new mongoose.Schema({
     team_id: { type: String, unique: true, required: true },
     name: { type: String, required: true },
@@ -1104,7 +1104,7 @@ async function initDb() {
     console.log('SQLite Database initialized.');
 }
 
-// --- UNIFIED DATA ACCESS LAYER (MONGO ATLAS + SQLITE FALLBACK) ---
+
 
 async function getTeamCount() {
     if (isDbMongo()) {
@@ -1173,12 +1173,12 @@ async function findRegistrationByEmail(email) {
 
     if (isDbMongo()) {
         try {
-            // Check in Team collection (Team Leader email)
+            
             const team = await Team.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
             if (team) {
                 return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
             }
-            // Check in Member collection (any squad member email)
+            
             const member = await Member.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
             if (member) {
                 const parentTeam = await Team.findOne({ team_id: member.team_id }).lean();
@@ -1196,12 +1196,12 @@ async function findRegistrationByEmail(email) {
     }
     if (db) {
         try {
-            // Check in SQLite teams table (Team Leader email)
+            
             const team = await db.get('SELECT team_id, name, email FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
             if (team) {
                 return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
             }
-            // Check in SQLite members table (any squad member email)
+            
             const member = await db.get(`
                 SELECT m.email, m.role, t.team_id, t.name as team_name 
                 FROM members m 
@@ -1460,7 +1460,7 @@ async function addAttendanceRecord(teamId, teamName, leaderName, leaderPhone) {
     exportDatabaseBackup().catch(() => { });
 }
 
-// --- AUTOMATED DATABASE BACKUP SYSTEM ---
+
 const BACKUP_JSON_PATH = path.join(process.env.VERCEL ? os.tmpdir() : __dirname, 'database_backup.json');
 const BACKUP_DB_PATH = path.join(process.env.VERCEL ? os.tmpdir() : __dirname, 'hackathon_backup.db');
 
@@ -1529,15 +1529,15 @@ if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FU
     });
 }
 
-// --- EMAIL CONFIGURATION ---
-// NOTE: The primary sendEmail function using the Brevo HTTPS REST API is defined
-// at the top of this file (search for 'UNIVERSAL EMAIL DELIVERY FUNCTION').
-// It supports Brevo, Resend, SendGrid, and Nodemailer SMTP as fallback.
-// No duplicate definition is needed here.
 
-// API Routes
 
-// --- JWT & ADMIN SECURITY LAYER ---
+
+
+
+
+
+
+
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
@@ -1546,7 +1546,7 @@ const verifyAdmin = (req, res, next) => {
         return res.status(401).json({ error: 'Unauthorized: Admin authentication token required.' });
     }
 
-    // Explicitly enforce allowed algorithms to block algorithm confusion attacks (e.g. alg: none)
+    
     jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
         if (err || !user || !user.username || user.role !== 'admin') {
             return res.status(403).json({ error: 'Forbidden: Valid admin authorization required.' });
@@ -1565,7 +1565,7 @@ function logAdminActivity(action, details = '') {
     });
 }
 
-// Zod Input Schemas (HIGH-01)
+
 const adminLoginSchema = z.object({
     username: z.string().min(1, 'Username required').max(50).trim(),
     password: z.string().min(1, 'Password required').max(100).trim()
@@ -1581,7 +1581,7 @@ const otpVerifySchema = z.object({
     otp: z.string().length(6, 'OTP must be 6 digits').regex(/^\d+$/, 'OTP must be numeric')
 });
 
-// Admin Login Route (CRIT-02 & HIGH-02)
+
 app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
     try {
         const validation = adminLoginSchema.safeParse(req.body);
@@ -1590,24 +1590,22 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         }
         const { username, password } = validation.data;
 
-        const cleanUsername = username.toLowerCase().trim();
+        const cleanUsername = username.trim();
         const cleanPassword = password.trim();
 
-        // Secure credential lookup with environment variable priority and default fallbacks
+        
         const adminAccounts = {
-            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026"
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "Ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
+            "Madhu": process.env.ADMIN_PASS_MADHU || "Madhu@Beta2026"
         };
 
         const canonicalMap = {
-            "administrator": "Administrator",
-            "admin": "Administrator",
-            "jesin milesh": "Jesin Milesh",
-            "jesin": "Jesin Milesh",
-            "ashish": "Ashish"
+            "Administrator": "Administrator",
+            "Jesin Milesh": "Jesin Milesh",
+            "Ashish": "Ashish",
+            "Madhu": "Madhu"
         };
 
         let isValid = false;
@@ -1640,7 +1638,7 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
     }
 });
 
-// Admin Logout Route
+
 app.post('/api/admin/logout', async (req, res) => {
     let user = 'Admin';
     const authHeader = req.headers && req.headers['authorization'];
@@ -1659,17 +1657,17 @@ app.post('/api/admin/logout', async (req, res) => {
     res.json({ success: true });
 });
 
-// Helper: Extract numeric millisecond timestamp from any log line format for exact sorting
+
 function extractLogTimestamp(line) {
     if (!line) return 0;
-    // Format 1: [YYYY-MM-DD HH:mm:ss] or [YYYY-MM-DD HH:mm:ss IST]
+    
     const m1 = String(line).match(/^\[(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})/);
     if (m1) {
         const pad = (n) => String(n).padStart(2, '0');
         const d = new Date(`${m1[1]}-${m1[2]}-${m1[3]}T${pad(m1[4])}:${m1[5]}:${m1[6]}+05:30`);
         return d.getTime() || 0;
     }
-    // Format 2: [DD/MM/YYYY, HH:mm:ss am/pm] or [DD/MM/YYYY, HH:mm:ss]
+    
     const m2 = String(line).match(/^\[(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2}):(\d{2})\s*(am|pm)?/i);
     if (m2) {
         let hr = parseInt(m2[4], 10);
@@ -1680,7 +1678,7 @@ function extractLogTimestamp(line) {
         const d = new Date(`${m2[3]}-${pad(m2[2])}-${pad(m2[1])}T${pad(hr)}:${m2[5]}:${m2[6]}+05:30`);
         return d.getTime() || 0;
     }
-    // Format 3: ISO [YYYY-MM-DDTHH:mm:ss...]
+    
     const m3 = String(line).match(/^\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
     if (m3) {
         const d = new Date(m3[1]);
@@ -1689,7 +1687,7 @@ function extractLogTimestamp(line) {
     return 0;
 }
 
-// Admin Real-time System Audit Log Endpoint
+
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
         const currentUser = req.user ? req.user.username : '';
@@ -1698,7 +1696,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         }
         let logs = [];
 
-        // 1. Load historical logs from database_backup.json (check multiple possible root/backend locations)
+        
         const backupPaths = [
             path.join(__dirname, 'database_backup.json'),
             path.join(__dirname, '../database_backup.json'),
@@ -1722,7 +1720,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             }
         }
 
-        // 2. Load directly from MongoDB Atlas if MONGODB_URI is available
+        
         try {
             const mongoUri = (process.env.MONGODB_URI || "").trim();
             if (mongoUri) {
@@ -1746,7 +1744,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             console.warn('MongoDB Atlas activity log query warning:', err.message);
         }
 
-        // 3. Load from SQLite database if active
+        
         if (typeof db !== 'undefined' && db && db.all) {
             try {
                 const dbLogs = await db.all('SELECT formatted, timestamp, action, details FROM activity_logs ORDER BY id ASC LIMIT 500');
@@ -1761,7 +1759,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             } catch (err) { }
         }
 
-        // 4. Load from disk log files
+        
         const adminLogPaths = [
             process.env.VERCEL ? path.join(os.tmpdir(), 'admin_activity.log') : path.join(__dirname, 'admin_activity.log'),
             path.join(process.cwd(), 'admin_activity.log'),
@@ -1802,7 +1800,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             }
         }
 
-        // 5. Load in-memory activity logs
+        
         if (global.activityLogs && global.activityLogs.length > 0) {
             global.activityLogs.forEach(line => {
                 if (line && !logs.includes(line)) {
@@ -1811,13 +1809,13 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             });
         }
 
-        // Strip "from IP: ..." suffix from all log lines per user preference
+        
         logs = logs.map(line => String(line).replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim()).filter(Boolean);
 
-        // Deduplicate
+        
         logs = Array.from(new Set(logs));
 
-        // Sort chronologically descending (newest timestamp first)
+        
         logs.sort((a, b) => {
             const timeA = extractLogTimestamp(a);
             const timeB = extractLogTimestamp(b);
@@ -1839,7 +1837,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     }
 });
 
-// Static endpoint to download/view raw admin_activity.log (Restricted to authenticated admin)
+
 app.get('/admin_activity.log', verifyAdmin, (req, res) => {
     if (!req.user || req.user.username !== 'Administrator') {
         return res.status(403).send('Access Denied: High Command Administrator clearance required.');
@@ -1857,49 +1855,12 @@ app.get('/admin_activity.log', verifyAdmin, (req, res) => {
     }
 });
 
-// Admin Clear Activity Log Endpoint
-app.post('/api/admin/clear-activity-log', verifyAdmin, async (req, res) => {
-    try {
-        if (!req.user || req.user.username !== 'Administrator') {
-            return res.status(403).json({ error: 'Access Denied: High Command Administrator clearance required.' });
-        }
-        checkProductionSafety('CLEAR_ACTIVITY_LOG', true);
-        await initialiseDBAndServer();
 
-        global.activityLogs = [];
-
-        if (isDbMongo() && mongoose.models.ActivityLog) {
-            try {
-                await mongoose.models.ActivityLog.deleteMany({});
-            } catch (err) {
-                console.error('Error clearing MongoDB logs:', err.message);
-            }
-        }
-
-        if (db) {
-            try {
-                await db.run('DELETE FROM activity_logs');
-            } catch (err) { }
-        }
-
-        const logFilePath = process.env.VERCEL ? path.join(os.tmpdir(), 'activity_log.txt') : path.join(__dirname, 'activity_log.txt');
-        try {
-            if (fs.existsSync(logFilePath)) {
-                fs.writeFileSync(logFilePath, '', 'utf8');
-            }
-        } catch (e) { }
-
-        await logActivity('LOGS CLEARED', `Activity audit logs manually cleared by admin`);
-
-        res.json({ message: 'Activity logs cleared successfully' });
-    } catch (err) {
-        console.error('Error clearing activity logs:', err);
-        const safeErr = process.env.NODE_ENV === 'production' ? 'Failed to clear activity log' : ('Failed to clear activity log: ' + err.message);
-        res.status(500).json({ error: safeErr });
-    }
+app.post('/api/admin/clear-activity-log', verifyAdmin, (req, res) => {
+    return res.status(403).json({ error: 'Access Denied: Clear log feature has been permanently disabled.' });
 });
 
-// Admin Route: Retrieve Instant Secondary Database Backup
+
 app.get('/api/admin/backup-db', verifyAdmin, async (req, res) => {
     try {
         const backup = await exportDatabaseBackup();
@@ -1911,7 +1872,7 @@ app.get('/api/admin/backup-db', verifyAdmin, async (req, res) => {
     }
 });
 
-// Helper: Validate Email Domain via Regex
+
 async function validateEmailDomain(email) {
     const domain = email.split('@')[1];
     if (!domain) return false;
@@ -1920,7 +1881,7 @@ async function validateEmailDomain(email) {
 
 const verificationOtps = {};
 
-// Responsive HTML Email Wrapper with viewport meta, resets, and mobile media queries
+
 function wrapEmailHtml(innerContent, subjectTitle = 'XploitX 2.0 Beta CTF') {
     const cleanTitle = (subjectTitle || 'XploitX 2.0 Beta CTF').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return `<!DOCTYPE html>
@@ -2150,7 +2111,7 @@ function getEmailFooterHtml(includeWhatsApp = true) {
     `;
 }
 
-// Generate Scannable High-Redundancy QR Code with XploitX Logo in the Middle
+
 async function generateQrWithLogo(qrData) {
     const QRCode = require('qrcode');
     const { PNG } = require('pngjs');
@@ -2174,15 +2135,15 @@ async function generateQrWithLogo(qrData) {
             const logoBuffer = fs.readFileSync(logoPath);
             const logoPng = PNG.sync.read(logoBuffer);
 
-            // Perfectly proportioned logo for guaranteed instant optical scanning
+            
             const targetW = 110;
-            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); // 40px
+            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); 
             const pad = 3;
 
             const startX = Math.round((qrPng.width - targetW) / 2);
             const startY = Math.round((qrPng.height - targetH) / 2);
 
-            // Seamless white background (NO dark box, NO border - blends into QR background)
+            
             for (let y = -pad; y < targetH + pad; y++) {
                 for (let x = -pad; x < targetW + pad; x++) {
                     const px = startX + x;
@@ -2197,7 +2158,7 @@ async function generateQrWithLogo(qrData) {
                 }
             }
 
-            // Draw enlarged logo
+            
             for (let y = 0; y < targetH; y++) {
                 for (let x = 0; x < targetW; x++) {
                     const srcX = Math.floor((x / targetW) * logoPng.width);
@@ -2226,7 +2187,7 @@ async function generateQrWithLogo(qrData) {
     return 'data:image/png;base64,' + finalBuffer.toString('base64');
 }
 
-// Public API endpoint to render QR Code with XploitX Logo
+
 app.get('/api/qr', async (req, res) => {
     try {
         const text = req.query.data || req.query.text || 'XPLOITX 2.0 BETA';
@@ -2242,7 +2203,7 @@ app.get('/api/qr', async (req, res) => {
 
 
 
-// Check Email Availability (Used for real-time validation across leaders and members)
+
 app.get('/api/auth/check-email', async (req, res) => {
     try {
         const email = (req.query.email || '').trim().toLowerCase();
@@ -2263,7 +2224,7 @@ app.get('/api/auth/check-email', async (req, res) => {
     }
 });
 
-// Send OTP
+
 app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) => {
     try {
         const validation = otpRequestSchema.safeParse(req.body);
@@ -2284,7 +2245,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
             });
         }
 
-        const otp = generateSecureOtp(); // cryptographically secure via crypto.randomInt
+        const otp = generateSecureOtp(); 
         verificationOtps[email] = otp;
         await saveOtp({ email, otp, durationMinutes: 10, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
 
@@ -2316,7 +2277,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
 
         const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
 
-        // Use BREVO_API_KEY as primary guard — this is the production email provider
+        
         const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
         if (hasEmailProvider) {
             const result = await sendEmail({ to: email, subject, text, html });
@@ -2348,7 +2309,7 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
         }
         const { email, otp } = validation.data;
 
-        // 1. Direct in-memory check fallback
+        
         if (verificationOtps[email] && verificationOtps[email] === otp) {
             delete verificationOtps[email];
             await deleteOtp(email, { isMongoConnected: isDbMongo(), OtpModel: Otp, db });
@@ -2356,7 +2317,7 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
             return res.json({ success: true });
         }
 
-        // 2. Persistent storage check (MongoDB Atlas, SQLite, & global inMemoryOtps)
+        
         const result = await verifyOtp({ email, inputOtp: otp, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
         if (result.success) {
             delete verificationOtps[email];
@@ -2464,7 +2425,7 @@ app.get('/api/team/:id', async (req, res) => {
             }
             return res.json(data);
         } else {
-            // Return sanitized non-PII team view for unauthenticated requests (CRIT-03)
+            
             const sanitizedData = {
                 team_id: data.team_id,
                 name: data.name,
@@ -2482,7 +2443,7 @@ app.get('/api/team/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ error: 'Failed to retrieve team details' }); }
 });
 
-// Total Registration Count
+
 app.get('/api/registration/count', async (req, res) => {
     try {
         const count = await getTeamCount();
@@ -2492,7 +2453,7 @@ app.get('/api/registration/count', async (req, res) => {
     }
 });
 
-// Admin Update Team
+
 app.post('/api/admin/update_team', verifyAdmin, async (req, res) => {
     const { teamId, name, event, members } = req.body;
     const operative = req.user ? req.user.username : 'Admin';
@@ -2631,7 +2592,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
         const existingTeamName = await findTeamByName(teamName);
         if (existingTeamName) return res.status(400).json({ error: 'Team Name taken.' });
 
-        // 1. Check for duplicate emails within this squad submission
+        
         const squadEmails = new Set();
         for (const m of members) {
             const mEmail = (m.email || '').trim().toLowerCase();
@@ -2649,7 +2610,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             squadEmails.add(primaryEmail);
         }
 
-        // 2. Check if any submitted email is already registered in ANY team in the database
+        
         for (const mEmail of squadEmails) {
             const existingReg = await findRegistrationByEmail(mEmail);
             if (existingReg) {
@@ -2693,7 +2654,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
 
         const teamIdStr = record.teamId;
 
-        // Rename Payment Proof File if uploaded & sync Base64 data
+        
         if (file) {
             let newDbPath = initialFilePath;
             if (file.path && fs.existsSync(file.path)) {
@@ -2716,7 +2677,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             await updatePaymentProof(teamIdStr, newDbPath, utrNumber, proofBase64);
         }
 
-        // Send Initial Verification Email to Team Leader Only
+        
         const leaderObj = members[0] || { name: teamName, email: email };
         await sendRegistrationVerificationEmail(leaderObj, teamName);
 
@@ -2788,14 +2749,14 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
         if (leader) {
             await addAttendanceRecord(teamId, teamData.name, leader.name, leader.phone);
 
-            // QR Code Generation:
-            // 1. Generate local PNG for attachment pass
+            
+            
             const qrData = JSON.stringify({ teamId, teamName: teamData.name, leaderName: leader.name });
             const qrImage = await generateQrWithLogo(qrData);
 
-            // 2. High-availability public HTTPS QR URL for email clients (Gmail, Outlook, Apple Mail)
-            // Major email clients (especially Gmail) block or strip inline data:image/png base64 URIs.
-            // Using a public HTTPS URL guarantees the QR code loads instantly and displays every time the email is opened.
+            
+            
+            
             const logoUrl = 'https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png';
             let publicQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&centerImageUrl=${encodeURIComponent(logoUrl)}&ecLevel=H&size=350&centerImageSizeRatio=0.32`;
             const hostUrl = process.env.APP_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null);
@@ -2803,7 +2764,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 publicQrUrl = `${hostUrl}/api/qr?data=${encodeURIComponent(qrData)}`;
             }
 
-            // PDF Generation for OD Letter
+            
             let odPdfBuffer = null;
             try {
                 odPdfBuffer = await generateODPdfInternal(teamData);
@@ -3007,7 +2968,7 @@ async function generateODPdfInternal(teamObj) {
             const pecLogoPath = path.join(publicDir, 'PEC Logo.png');
             const sealImgPath = path.join(publicDir, 'Seal.jpeg');
 
-            // --- HEADER ---
+            
             let headerY = 32;
             if (fs.existsSync(pecLogoPath)) {
                 doc.image(pecLogoPath, 42, headerY - 5, { width: 62, height: 62 });
@@ -3028,13 +2989,13 @@ async function generateODPdfInternal(teamObj) {
 
             doc.font('Times-Roman').fontSize(9.5).text('Date: __________________', 390, 109, { width: 170, align: 'right' });
 
-            // --- TITLE & SUBTITLE ---
+            
             let currentY = 126;
             doc.font('Times-Bold').fontSize(12).text('ON-DUTY (OD) LETTER', 35, currentY, { align: 'center', underline: true });
             currentY += 20;
             doc.font('Times-Bold').fontSize(10).text('TO WHOMSOEVER IT MAY CONCERN', 35, currentY, { align: 'center' });
 
-            // --- BODY PARAGRAPHS WITH GAP IN BETWEEN ---
+            
             currentY += 24;
             doc.font('Times-Roman').fontSize(9.5).fillColor('#000000');
 
@@ -3056,14 +3017,14 @@ async function generateODPdfInternal(teamObj) {
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
             currentY += 30;
 
-            // --- TEAM DETAILS ---
+            
             doc.font('Times-Bold').fontSize(10).text('TEAM DETAILS', 35, currentY, { align: 'center' });
             currentY += 16;
 
             doc.font('Times-Bold').fontSize(9.5).text(`Team ID: ${teamObj.team_id || teamObj.id}`, 35, currentY);
             currentY += 16;
 
-            // --- TABLE DRAWING ---
+            
             const colWidths = [30, 70, 115, 75, 115, 65, 55];
             const headers = ['S. No.', 'Role', 'Name of the Participant', 'Register /\nID No.', 'College /\nInstitution', 'Department', 'Year'];
             const startX = 35;
@@ -3093,7 +3054,7 @@ async function generateODPdfInternal(teamObj) {
                 doc.rect(startX, currentY, 525, rowHeight).stroke();
                 let xPos = startX;
 
-                // Register No, Department, and Year are left blank per user request
+                
                 const rowData = [
                     (idx + 1).toString(),
                     idx === 0 ? 'Team Leader' : 'Team Member',
@@ -3122,7 +3083,7 @@ async function generateODPdfInternal(teamObj) {
 
             currentY += 22;
 
-            // --- EVENT DETAILS SECTION ---
+            
             doc.font('Times-Bold').fontSize(10).text('EVENT DETAILS', 35, currentY, { align: 'center' });
             currentY += 18;
 
@@ -3147,11 +3108,11 @@ async function generateODPdfInternal(teamObj) {
 
             currentY += 16;
 
-            // --- CLOSING REMARK ---
+            
             doc.font('Times-Roman').fontSize(9.5).text('This letter is issued for the purpose of granting On-Duty permission to the above-mentioned participants for attending and participating in the ', 35, currentY, { continued: true });
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
 
-            // --- SIGNATURE FOOTER (NO SEAL IMAGE) ---
+            
             const sigY = 715;
 
             doc.moveTo(55, sigY).lineTo(165, sigY).lineWidth(0.8).strokeColor('#000000').stroke();
@@ -3173,7 +3134,7 @@ async function generateODPdfInternal(teamObj) {
     });
 }
 
-// Admin Delete Team
+
 app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     const { teamId } = req.body;
     const operative = req.user ? req.user.username : 'Admin';
@@ -3189,15 +3150,15 @@ app.post('/api/admin/delete_team', verifyAdmin, async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- ATTENDANCE SYSTEM AUTH & OPERATIONAL ROUTES ---
 
-// Attendance Login Input Schema
+
+
 const attendanceLoginSchema = z.object({
     username: z.string().min(1, 'Username is required').max(50).trim(),
     password: z.string().min(1, 'Security key is required').max(100).trim()
 });
 
-// Dedicated Attendance Login Route
+
 app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
     try {
         const validation = attendanceLoginSchema.safeParse(req.body);
@@ -3205,29 +3166,27 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             return res.status(400).json({ error: validation.error.issues[0].message });
         }
         const { username, password } = validation.data;
-        const cleanUsername = username.toLowerCase().trim();
+        const cleanUsername = username.trim();
         const cleanPassword = password.trim();
 
-        // Authorized attendance accounts
+        
         const adminAccounts = {
-            "administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "admin": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "jesin milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "jesin": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
+            "Ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
+            "Madhu": process.env.ADMIN_PASS_MADHU || "Madhu@Beta2026",
             "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!"
         };
 
         const canonicalMap = {
-            "administrator": "Administrator",
-            "admin": "Administrator",
-            "jesin milesh": "Jesin Milesh",
-            "jesin": "Jesin Milesh",
-            "ashish": "Ashish",
+            "Administrator": "Administrator",
+            "Jesin Milesh": "Jesin Milesh",
+            "Ashish": "Ashish",
+            "Madhu": "Madhu",
             "attendance": "Attendance Officer"
         };
 
-        // Support operational security key from environment if specified
+        
         const operationalKey = process.env.ATTENDANCE_SECURITY_KEY || process.env.ATTENDANCE_KEY;
         if (operationalKey && cleanUsername === 'attendance') {
             adminAccounts['attendance'] = operationalKey;
@@ -3254,7 +3213,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
                 { expiresIn: '2h', algorithm: 'HS256' }
             );
 
-            // Do not store persistent cookie per requirements; ensure any previous cookie is cleared
+            
             res.clearCookie('attendance_token', { path: '/' });
 
             return res.json({
@@ -3275,7 +3234,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
     }
 });
 
-// Session Verification Endpoint for Attendance Terminal
+
 app.get('/api/attendance/verify-session', (req, res) => {
     const session = isAttendanceAuthenticated(req);
     if (!session) {
@@ -3287,7 +3246,7 @@ app.get('/api/attendance/verify-session', (req, res) => {
     });
 });
 
-// Dedicated Logout Endpoint for Attendance Terminal
+
 app.post('/api/attendance/logout', async (req, res) => {
     let user = 'Operative';
     const session = isAttendanceAuthenticated(req);
@@ -3306,7 +3265,7 @@ app.post('/api/attendance/logout', async (req, res) => {
     return res.json({ success: true, message: 'Session terminated' });
 });
 
-// Protected Attendance QR Scan Info
+
 app.get('/api/attendance/scan_info/:teamId', verifyAttendanceAuth, async (req, res) => {
     const { teamId } = req.params;
     try {
@@ -3334,7 +3293,7 @@ app.get('/api/attendance/scan_info/:teamId', verifyAttendanceAuth, async (req, r
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Protected Attendance Submission
+
 app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) => {
     const { teamId, memberStatuses } = req.body;
     try {
@@ -3348,10 +3307,10 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             const isPresent = item.status === 'PRESENT';
             if (isPresent) anyPresent = true;
 
-            // 1. Update MongoDB Atlas Member Collection
+            
             if (isDbMongo()) {
                 let updated = false;
-                // Attempt 1: Match by ObjectId (_id)
+                
                 if (item.id && typeof item.id === 'string' && item.id.length === 24 && /^[0-9a-fA-F]{24}$/.test(item.id)) {
                     const resMongo = await Member.updateOne(
                         { _id: item.id },
@@ -3365,7 +3324,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
                     if (resMongo.matchedCount > 0) updated = true;
                 }
 
-                // Attempt 2: Fallback match by team_id and member name
+                
                 if (!updated && (item.name || item.id)) {
                     await Member.updateOne(
                         { team_id: teamId, name: item.name || item.id },
@@ -3379,7 +3338,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
                 }
             }
 
-            // 2. Update SQLite Database Members Table
+            
             if (db) {
                 try {
                     if (item.id && !isNaN(parseInt(item.id))) {
@@ -3399,7 +3358,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             }
         }
 
-        // 3. Update Overall Team Attendance Record in both MongoDB and SQLite
+        
         const overallStatus = anyPresent ? 'PRESENT' : 'ABSENT';
         if (isDbMongo()) {
             await Attendance.updateOne(
@@ -3450,7 +3409,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
     }
 });
 
-// Protected Attendance Database View
+
 app.get('/api/attendance/all', verifyAttendanceAuth, async (req, res) => {
     try {
         if (isDbMongo()) {

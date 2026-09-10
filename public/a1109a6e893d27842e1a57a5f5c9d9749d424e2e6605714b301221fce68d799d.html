@@ -8,7 +8,7 @@
     <meta name="description"
         content="Administrative Command Console & Verification Overwatch for XPLOITX 2.0 BETA 24-Hour Cybersecurity CTF at Prathyusha Engineering College.">
 
-    <!-- Google Fonts & Font Awesome -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,14 +16,12 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Core Design System -->
+    
     <link rel="stylesheet" href="styles.css?v=3.0">
     <link rel="icon" type="image/png" href="logo_favicon.png">
 
     <style>
-        /* ========================================================
-           ADMIN COMMAND CONSOLE SPECIFIC HUD STYLING
-           ======================================================== */
+        
         body {
             padding: 0;
             background-color: var(--bg-deep);
@@ -38,7 +36,6 @@
             z-index: 10;
         }
 
-        /* --- STAT METRIC CARDS --- */
         .admin-stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -105,7 +102,6 @@
             text-transform: uppercase;
         }
 
-        /* --- CONTROL BAR & FILTER PANELS --- */
         .admin-controls-panel {
             background: var(--bg-glass);
             border: 1px solid var(--border-hud);
@@ -208,7 +204,6 @@
             box-shadow: 0 0 15px var(--magenta-glow);
         }
 
-        /* Search Box Input */
         .search-box-wrapper {
             position: relative;
             min-width: 280px;
@@ -249,7 +244,6 @@
             pointer-events: none;
         }
 
-        /* Action Buttons */
         .action-btns-group {
             display: flex;
             gap: 10px;
@@ -316,7 +310,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- TABLE DESIGN --- */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -360,7 +353,6 @@
             background: rgba(0, 255, 102, 0.04);
         }
 
-        /* Member Card formatting */
         .member-row-card {
             border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
             margin-bottom: 8px;
@@ -407,7 +399,6 @@
             text-shadow: 0 0 8px rgba(37, 211, 102, 0.6);
         }
 
-        /* --- LOGIN OVERLAY AESTHETICS --- */
         #login-overlay {
             background: rgba(3, 4, 10, 0.95);
             backdrop-filter: blur(16px);
@@ -533,7 +524,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- MODALS GENERAL STYLING --- */
         .modal-overlay-hud {
             display: none;
             position: fixed;
@@ -626,7 +616,6 @@
             box-shadow: 0 0 10px var(--doom-green-glow);
         }
 
-        /* --- PRINT STYLING OVERRIDES --- */
         @media print {
 
             button,
@@ -707,14 +696,12 @@
 <body>
 
 
-    <!-- Background Layers: Matrix Canvas & Cyber Grid Overlay -->
+    
     <canvas id="matrix-bg"
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
     <div class="cyber-grid-overlay"></div>
 
-    <!-- ==========================================
-         TOP ROW: COLLEGE DETAILS (LOGO ON LEFT)
-         ========================================== -->
+    
     <header class="college-header-wrapper">
         <div class="college-info-block">
             <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
@@ -728,7 +715,7 @@
             </div>
         </div>
 
-        <!-- Accreditations & Recognitions Marquee Banner -->
+        
         <div class="logo-marquee-container">
             <div class="logo-marquee-content">
                 <img src="tag.png" alt="Accreditation Logos">
@@ -738,7 +725,7 @@
             </div>
         </div>
 
-        <!-- Live News Marquee -->
+        
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
@@ -749,9 +736,7 @@
         </div>
     </header>
 
-    <!-- ==========================================
-         NAVIGATION BAR
-         ========================================== -->
+    
     <nav class="navbar" id="navbar">
         <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center;">
             <ul class="nav-links" id="nav-links-menu">
@@ -773,11 +758,9 @@
         </div>
     </nav>
 
-    <!-- ==========================================
-         MAIN ADMIN COMMAND CONSOLE
-         ========================================== -->
+    
     <main class="admin-container">
-        <!-- Hero Title Banner -->
+        
         <div class="hero-content" style="text-align: center; margin-bottom: 30px;">
             <div class="status-indicator-badge" id="admin-hero-badge">
                 <span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]
@@ -788,7 +771,7 @@
             </p>
         </div>
 
-        <!-- Metric Stat Cards Bar -->
+        
         <div class="admin-stats-grid" id="admin-stats-container">
             <div class="stat-card">
                 <div class="stat-value text-green" id="stat-total">0</div>
@@ -808,9 +791,9 @@
             </div>
         </div>
 
-        <!-- Controls & Filter Toolbar -->
+        
         <div class="admin-controls-panel hud-panel" id="admin-controls-container">
-            <!-- Row 1: Event Filter -->
+            
             <div class="control-row">
                 <div class="filter-section-title"><i class="fas fa-filter text-green"></i> EVENT ARENA:</div>
                 <div class="filter-pills">
@@ -819,7 +802,7 @@
                 </div>
             </div>
 
-            <!-- Row 2: Status Filter -->
+            
             <div class="control-row">
                 <div class="filter-section-title"><i class="fas fa-shield-alt text-gold"></i> STATUS TRACK:</div>
                 <div class="filter-pills">
@@ -831,7 +814,7 @@
                 </div>
             </div>
 
-            <!-- Row 3: Search Box & Actions Bar -->
+            
             <div class="control-row" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
                 <div class="search-box-wrapper">
                     <i class="fas fa-search search-icon-inside"></i>
@@ -856,7 +839,7 @@
             </div>
         </div>
 
-        <!-- Table Display Container -->
+        
         <div class="table-responsive" id="admin-table-container">
             <table id="teams-table">
                 <thead>
@@ -884,13 +867,10 @@
             </table>
         </div>
 
-        <!-- ==========================================
-             ADMINISTRATOR EXCLUSIVE: ACTIVITY AUDIT CONSOLE
-             (Shown ONLY for the 'Administrator' username login)
-             ========================================== -->
+        
         <div id="administrator-activity-dashboard" style="display: none; margin-top: 10px;">
             <div class="hud-panel" style="padding: 24px; border: 1.5px solid var(--neon-cyan); background: rgba(3, 7, 18, 0.95); box-shadow: 0 0 25px rgba(0, 210, 255, 0.15); border-radius: 8px;">
-                <!-- Status bar & Log Metrics -->
+                
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 16px; margin-bottom: 20px;">
                     <div>
                         <div style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-brand); font-size: 1.25rem; color: #fff; letter-spacing: 1px;">
@@ -911,9 +891,9 @@
                     </div>
                 </div>
 
-                <!-- Action Filters & Search Bar -->
+                
                 <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
-                    <!-- Filter categories -->
+                    
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                         <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
                             <i class="fas fa-filter text-green"></i> FILTER:
@@ -931,7 +911,7 @@
                         </div>
                     </div>
 
-                    <!-- Search & Action Toolbar -->
+                    
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <div class="search-box-wrapper" style="flex: 1; min-width: 260px;">
                             <i class="fas fa-search search-icon-inside"></i>
@@ -946,14 +926,11 @@
                             <button onclick="exportActivityLogText()" class="action-btn-hud action-btn-green" style="padding: 8px 14px; font-size: 0.82rem;">
                                 <i class="fas fa-file-download"></i> EXPORT TXT
                             </button>
-                            <button onclick="clearActivityLogs()" class="action-btn-hud action-btn-magenta" style="padding: 8px 14px; font-size: 0.82rem;">
-                                <i class="fas fa-trash-alt"></i> CLEAR LOGS
-                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Feed Terminal Container -->
+                
                 <div id="admin-activity-log-stream" style="background: rgba(1, 4, 9, 0.95); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; max-height: 65vh; overflow-y: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
                     <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
                         <i class="fas fa-circle-notch fa-spin text-cyan" style="font-size: 1.8rem; margin-bottom: 12px; display: block;"></i>
@@ -964,11 +941,9 @@
         </div>
     </main>
 
-    <!-- ==========================================
-         MODALS SYSTEM
-         ========================================== -->
+    
 
-    <!-- CSV SELECTION MODAL -->
+    
     <div id="csv-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
@@ -983,7 +958,7 @@
         </div>
     </div>
 
-    <!-- PRINT SELECTION MODAL -->
+    
     <div id="print-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
@@ -998,7 +973,7 @@
         </div>
     </div>
 
-    <!-- FORMAT REPORT SELECTION MODAL -->
+    
     <div id="format-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
@@ -1013,7 +988,7 @@
         </div>
     </div>
 
-    <!-- VERIFY PAYMENT MODAL -->
+    
     <div id="verify-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 600px; text-align: center;">
             <div class="modal-header-hud">
@@ -1029,7 +1004,7 @@
             </div>
 
             <div id="verify-img-container" style="margin-bottom: 25px; min-height: 200px; background: rgba(0,0,0,0.6); border: 1px dashed var(--border-subtle); border-radius: 6px; display:flex; align-items:center; justify-content:center; padding: 10px;">
-                <!-- Image output -->
+                
             </div>
 
             <div style="display:flex; justify-content:center; gap:12px; flex-wrap: wrap;">
@@ -1040,7 +1015,7 @@
         </div>
     </div>
 
-    <!-- EDIT TEAM DATA MODAL -->
+    
     <div id="edit-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 850px;">
             <div class="modal-header-hud">
@@ -1066,7 +1041,7 @@
                 &gt;_ MEMBERS ROSTER
             </h3>
             <div id="edit-members-container" style="max-height: 420px; overflow-y: auto; padding-right: 5px;">
-                <!-- Dynamically injected member inputs -->
+                
             </div>
 
             <div style="margin-top:25px; border-top: 1px solid var(--border-subtle); padding-top: 20px; display:flex; justify-content:flex-end; gap:12px;">
@@ -1077,7 +1052,7 @@
         </div>
     </div>
 
-    <!-- ACTIVITY LOG MODAL -->
+    
     <div id="log-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 850px; height: 80vh; display: flex; flex-direction: column;">
             <div class="modal-header-hud" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -1090,7 +1065,7 @@
         </div>
     </div>
 
-    <!-- LOGIN OVERLAY MODAL -->
+    
     <div id="login-overlay">
         <div class="login-card-hud">
             <div class="login-icon-badge">
@@ -1117,9 +1092,7 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         ORGANIZING NODES & FOOTER
-         ========================================== -->
+    
     <section class="organizing-nodes-section" id="coordinators">
         <div class="container">
             <div class="section-header">
@@ -1128,14 +1101,14 @@
                 <p class="section-subtitle">Connect directly with student command leads and faculty coordinators.</p>
             </div>
 
-            <!-- TWO-COLUMN ORGANIZERS TABLE GRID -->
+            
             <div class="organizers-table-grid">
-                <!-- STAFF COORDINATORS BLOCK -->
+                
                 <div class="organizer-section-block">
                     <h3 class="organizer-category-title"><i class="fas fa-id-card-alt"></i> STAFF COORDINATORS</h3>
 
                     <div class="organizer-vertical-list">
-                        <!-- Mrs. Anithalakshmi -->
+                        
                         <div class="organizer-person-box hod-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1148,7 +1121,7 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. Devi -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1164,7 +1137,7 @@
                             </a>
                         </div>
 
-                        <!-- Mrs. Ramya -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1177,7 +1150,7 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. Rama Mathrasi -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1190,7 +1163,7 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. Aswini -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1203,7 +1176,7 @@
                             </div>
                         </div>
 
-                        <!-- Mr. Kalaimani -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1216,7 +1189,7 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. Keerthana -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1231,12 +1204,12 @@
                     </div>
                 </div>
 
-                <!-- STUDENT COORDINATORS BLOCK -->
+                
                 <div class="organizer-section-block">
                     <h3 class="organizer-category-title"><i class="fas fa-user-shield"></i> STUDENT COORDINATORS</h3>
 
                     <div class="organizer-vertical-list">
-                        <!-- N Ashish -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1252,7 +1225,7 @@
                             </a>
                         </div>
 
-                        <!-- Madhumitha Narayanan -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1268,7 +1241,7 @@
                             </a>
                         </div>
 
-                        <!-- Amuthini K -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1284,7 +1257,7 @@
                             </a>
                         </div>
 
-                        <!-- Niranjan M -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1300,7 +1273,7 @@
                             </a>
                         </div>
 
-                        <!-- M Jesin Milesh -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1316,7 +1289,7 @@
                             </a>
                         </div>
 
-                        <!-- Libinesh R U -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1332,7 +1305,7 @@
                             </a>
                         </div>
 
-                        <!-- Jeshwanth V -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1353,7 +1326,7 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -1395,11 +1368,9 @@
         </div>
     </footer>
 
-    <!-- ==========================================
-         ADMINISTRATIVE JAVASCRIPT LOGIC
-         ========================================== -->
+    
     <script>
-        // API Base URL Resolution
+        
         let API_BASE_URL = '';
         const hostname = window.location.hostname;
         const protocol = window.location.protocol;
@@ -1414,15 +1385,15 @@
         }
         console.log("Admin Panel API_BASE_URL:", API_BASE_URL);
 
-        // Active State Tracking
+        
         window.currentStatusFilter = 'ALL_STATUS';
         window.currentEventFilter = 'ALL';
 
-        // In-Memory Admin Session State (Pure In-Memory: No Cookies, No LocalStorage, No SessionStorage)
+        
         let inMemoryAdminToken = null;
         let inMemoryAdminUser = null;
 
-        // JWT Token Injection
+        
         const originalFetch = window.fetch;
         window.fetch = async function () {
             let [resource, config] = arguments;
@@ -1444,7 +1415,7 @@
             return res;
         };
 
-        // Custom Alerts System
+        
         window.currentAlertCallback = null;
         window.closeCustomAlert = function () {
             const overlay = document.getElementById('custom-alert-overlay');
@@ -1510,7 +1481,7 @@
             overlay.style.display = 'flex';
         };
 
-        // Authentication & Login
+        
         async function checkAdmin() {
             const userEl = document.getElementById('admin-user');
             const passEl = document.getElementById('admin-pass');
@@ -1562,7 +1533,7 @@
             }
 
             if (success) {
-                // Store strictly in runtime memory (no cookies, no localStorage, no sessionStorage)
+                
                 inMemoryAdminToken = sessionToken;
                 inMemoryAdminUser = authenticatedUser;
                 if (passEl) passEl.value = '';
@@ -1573,10 +1544,10 @@
                 }
 
                 if (authenticatedUser === 'Administrator') {
-                    // =========================================================================
-                    // FOR ONLY THE ADMINISTRATOR USERNAME LOGIN:
-                    // Remove/hide all standard options: metric cards, filters, and teams roster table
-                    // =========================================================================
+                    
+                    
+                    
+                    
                     const statsCont = document.getElementById('admin-stats-container');
                     if (statsCont) statsCont.style.display = 'none';
                     const ctrlCont = document.getElementById('admin-controls-container');
@@ -1586,7 +1557,7 @@
                     const coordSec = document.getElementById('coordinators');
                     if (coordSec) coordSec.style.display = 'none';
 
-                    // Update Hero Header specifically for Administrator
+                    
                     const heroTitle = document.getElementById('admin-hero-title');
                     if (heroTitle) heroTitle.innerText = '>_ HIGH COMMAND AUDIT & SURVEILLANCE CONSOLE';
                     const heroDesc = document.getElementById('admin-hero-desc');
@@ -1594,25 +1565,25 @@
                     const heroBadge = document.getElementById('admin-hero-badge');
                     if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ HIGH COMMAND EXCLUSIVE • AUDIT LOG SYSTEM ]';
 
-                    // Display exclusive Administrator Activity & Audit Feed
+                    
                     const actDash = document.getElementById('administrator-activity-dashboard');
                     if (actDash) actDash.style.display = 'block';
 
-                    // Stop team data polling if any
+                    
                     if (window.adminDataInterval) {
                         clearInterval(window.adminDataInterval);
                         window.adminDataInterval = null;
                     }
 
-                    // Start live audit log streaming (polls every 3s)
+                    
                     loadAdminActivityLogs();
                     if (window.adminActivityInterval) clearInterval(window.adminActivityInterval);
                     window.adminActivityInterval = setInterval(loadAdminActivityLogs, 3000);
                 } else {
-                    // =========================================================================
-                    // FOR OTHER ALL USERS (e.g. Ashish, Jesin Milesh, and other admin users):
-                    // KEEP THE FEATURES WHAT IS THERE BEFORE AND DO NOT CHANGE ANYTHING!
-                    // =========================================================================
+                    
+                    
+                    
+                    
                     const statsCont = document.getElementById('admin-stats-container');
                     if (statsCont) statsCont.style.display = 'grid';
                     const ctrlCont = document.getElementById('admin-controls-container');
@@ -1629,7 +1600,7 @@
                     const heroBadge = document.getElementById('admin-hero-badge');
                     if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
 
-                    // Hide Administrator exclusive activity dashboard
+                    
                     const actDash = document.getElementById('administrator-activity-dashboard');
                     if (actDash) actDash.style.display = 'none';
 
@@ -1669,7 +1640,7 @@
         }
 
         function logoutAdmin() {
-            // Notify backend of admin logout
+            
             const tokenToLogout = inMemoryAdminToken;
             const userToLogout = inMemoryAdminUser;
             if (tokenToLogout || userToLogout) {
@@ -1684,7 +1655,7 @@
                 }).catch(() => {});
             }
 
-            // Flush in-memory authentication state completely
+            
             inMemoryAdminToken = null;
             inMemoryAdminUser = null;
             if (window.adminDataInterval) {
@@ -1696,7 +1667,7 @@
                 window.adminActivityInterval = null;
             }
 
-            // Restore all standard controls to default visibility for clean next login
+            
             const statsCont = document.getElementById('admin-stats-container');
             if (statsCont) statsCont.style.display = 'grid';
             const ctrlCont = document.getElementById('admin-controls-container');
@@ -1728,12 +1699,12 @@
             showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
         }
 
-        // Render Table & Metrics Dashboard
+        
         function renderTable(data) {
             const tbody = document.querySelector('#teams-table tbody');
             tbody.innerHTML = '';
 
-            // Update Header & Metric Cards
+            
             if (window.teamsData) {
                 const total = window.teamsData.length;
                 const verified = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === 1).length;
@@ -1797,7 +1768,7 @@
                         </div>`;
                 });
 
-                // Status Button Logic
+                
                 const verifiedStatus = parseInt(t.payment_verified, 10);
                 let checkBtnHtml = '';
                 if (!isNaN(verifiedStatus) && verifiedStatus === 1) {
@@ -1813,7 +1784,7 @@
                     checkBtnHtml = `<button onclick="openVerifyModal('${t.team_id}')" class="action-btn-hud action-btn-green" style="padding: 6px 12px; font-size: 0.8rem;">VERIFY</button>`;
                 }
 
-                // Event Badge Color
+                
                 const evStr = t.event || 'N/A';
 
                 const tr = document.createElement('tr');
@@ -1837,12 +1808,12 @@
             });
         }
 
-        // Filtering Pipeline
+        
         function applyFilters() {
             if (!window.teamsData) return;
             let filtered = [...window.teamsData];
 
-            // 1. Apply Status Filter
+            
             if (window.currentStatusFilter === 'READY') {
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === 1);
             } else if (window.currentStatusFilter === 'STANDBY') {
@@ -1853,7 +1824,7 @@
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === -1);
             }
 
-            // 2. Apply Event Filter
+            
             if (window.currentEventFilter !== 'ALL') {
                 const evKey = window.currentEventFilter.toLowerCase();
                 if (evKey === 'ctf') {
@@ -1875,7 +1846,7 @@
                 }
             }
 
-            // 3. Apply Search Query
+            
             const query = document.getElementById('admin-search-input').value.toLowerCase().trim();
             if (query) {
                 filtered = filtered.filter(t => {
@@ -1928,7 +1899,7 @@
             applyFilters();
         }
 
-        // Verify Modal Logic
+        
         function openVerifyModal(teamId) {
             const team = window.teamsData.find(t => t.team_id === teamId);
             if (!team) return;
@@ -1980,9 +1951,9 @@
             document.getElementById('verify-modal').style.display = 'none';
         }
 
-        // ==========================================
-        // ADMINISTRATOR ACTIVITY LOG SYSTEM
-        // ==========================================
+        
+        
+        
         let rawActivityLogs = [];
         let currentActivityLogFilter = 'ALL';
 
@@ -2036,7 +2007,7 @@
 
             let filtered = [...rawActivityLogs];
 
-            // 1. Filter by category
+            
             if (currentActivityLogFilter === 'LOGIN') {
                 filtered = filtered.filter(l => l.includes('LOGIN') || l.includes('LOGOUT'));
             } else if (currentActivityLogFilter === 'OTP') {
@@ -2055,7 +2026,7 @@
                 filtered = filtered.filter(l => l.includes('DATA DELETED') || l.includes('DELETE TEAM') || l.includes('DELETE'));
             }
 
-            // 2. Filter by search query
+            
             if (query) {
                 filtered = filtered.filter(l => l.toLowerCase().includes(query));
             }
@@ -2074,7 +2045,7 @@
 
             let html = '';
             filtered.forEach(line => {
-                // Parse: [Timestamp] Action: Details
+                
                 const match = line.match(/^\[(.*?)\]\s*([^:]+):\s*(.*)$/);
                 let timeStr = '';
                 let action = 'LOG';
@@ -2086,7 +2057,7 @@
                     details = match[3].trim();
                 }
 
-                // Determine badge style
+                
                 let badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.1);';
                 let actionIcon = '<i class="fas fa-terminal"></i>';
 
@@ -2133,32 +2104,32 @@
                     actionIcon = '<i class="fas fa-trash-alt"></i>';
                 }
 
-                // Format details with highlights:
+                
                 let safeDetails = details
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;');
 
-                // Highlight email addresses
+                
                 safeDetails = safeDetails.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<span style="color:#00e5ff; font-weight:bold; background:rgba(0,229,255,0.12); padding:2px 7px; border-radius:3px; border:1px solid rgba(0,229,255,0.25);"><i class="fas fa-envelope" style="font-size:0.75rem; margin-right:4px;"></i>$1</span>');
 
-                // Highlight operative
+                
                 safeDetails = safeDetails.replace(/Operative &quot;([^&]+)&quot;/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
                 safeDetails = safeDetails.replace(/Operative "([^"]+)"/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
                 safeDetails = safeDetails.replace(/\bby ([A-Za-z0-9\s]+?)(?=(\s*\(|$))/g, 'by <span style="color:var(--doom-gold); font-weight:bold;">$1</span>');
 
-                // Highlight Team ID
+                
                 safeDetails = safeDetails.replace(/Team ID:\s*([A-Za-z0-9-]+)/g, 'Team ID: <span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">$1</span>');
                 safeDetails = safeDetails.replace(/\[([A-Za-z0-9-]+)\]/g, '<span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">[$1]</span>');
 
-                // Highlight Leader Name: (Leader: ...)
+                
                 safeDetails = safeDetails.replace(/\(Leader:\s*([^)]+)\)/g, '(<span style="color:var(--doom-gold); font-weight:bold;">Leader: $1</span>)');
 
-                // Highlight Old ➔ New diff transitions (e.g. "Jesin" ➔ "Jesi")
+                
                 safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
                 safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
 
-                // Highlight key phrases
+                
                 safeDetails = safeDetails.replace(/dispatched and sent successfully/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>dispatched and sent successfully</span>');
                 safeDetails = safeDetails.replace(/successfully verified/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>successfully verified</span>');
                 safeDetails = safeDetails.replace(/logged into Admin Console/gi, '<span style="color:#00d2ff; font-weight:bold;"><i class="fas fa-shield-alt" style="font-size:0.75rem; margin-right:3px;"></i>logged into Admin Console</span>');
@@ -2204,28 +2175,7 @@
             URL.revokeObjectURL(url);
         }
 
-        async function clearActivityLogs() {
-            showCustomConfirm("Are you sure you want to PERMANENTLY CLEAR all server activity logs?\nThis action cannot be undone.", async () => {
-                const token = inMemoryAdminToken;
-                try {
-                    const res = await fetch(`${API_BASE_URL}/api/admin/clear-activity-log`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (res.ok) {
-                        rawActivityLogs = [];
-                        await loadAdminActivityLogs();
-                        showCustomAlert("System activity logs have been permanently cleared.");
-                    } else {
-                        const errData = await res.json().catch(() => ({}));
-                        showCustomAlert("Failed to clear logs: " + (errData.error || "Server error"));
-                        await loadAdminActivityLogs();
-                    }
-                } catch (e) {
-                    showCustomAlert("Error: " + e.message);
-                }
-            }, "YES, CLEAR ALL");
-        }
+
 
         async function openLogModal() {
             const modal = document.getElementById('log-modal');
@@ -2411,7 +2361,7 @@
             }, "YES, RESTORE");
         }
 
-        // Edit Modal Operations
+        
         function checkEmailChange(input) {
             const parent = input.parentElement;
             const btn = parent.querySelector('.resend-mail-btn');
@@ -2652,7 +2602,7 @@
             }
         }
 
-        // Modals Open/Close Functions
+        
         function openCSVModal() { document.getElementById('csv-modal').style.display = 'flex'; }
         function closeCSVModal() { document.getElementById('csv-modal').style.display = 'none'; }
         function executeCSVDownload(category) { downloadCSV(category); closeCSVModal(); }
@@ -2786,7 +2736,7 @@
             printWindow.document.close();
         }
 
-        // CSV Exporter
+        
         function downloadCSV(eventType = 'ALL') {
             if (!window.teamsData || window.teamsData.length === 0) return;
 
@@ -2862,7 +2812,7 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Global Key Listener for ESC Modal Closing
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeVerifyModal();
@@ -2876,7 +2826,7 @@
             }
         });
 
-        // Matrix Background Animation
+        
         const canvas = document.getElementById('matrix-bg');
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -2918,7 +2868,7 @@
             });
         }
 
-        // Strictly require admin credentials on every page load / refresh / tab reopening (Pure in-memory state)
+        
         document.addEventListener('DOMContentLoaded', () => {
             const userEl = document.getElementById('admin-user');
             const passEl = document.getElementById('admin-pass');

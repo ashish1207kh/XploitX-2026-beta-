@@ -1,12 +1,8 @@
-/**
- * XPLOITX 2.0 BETA - Comprehensive Registration Engine
- * 24-Hour Cybersecurity Capture The Flag
- * Department of Cyber Security | Prathyusha Engineering College
- */
 
-// ==========================================
-// 0. GLOBAL CYBER HUD ALERT DIALOG ENGINE
-// ==========================================
+
+
+
+
 function showCyberAlert(msg, title = 'SYSTEM ALERT') {
     let alertModal = document.getElementById('custom-alert-modal');
     if (!alertModal) {
@@ -49,9 +45,9 @@ window.alert = function (msg) {
     showCyberAlert(msg);
 };
 
-// ==========================================
-// API BASE URL RESOLUTION
-// ==========================================
+
+
+
 let API_BASE_URL = '';
 const currentHostname = window.location.hostname;
 const currentProtocol = window.location.protocol;
@@ -67,7 +63,7 @@ if (currentProtocol === 'file:') {
     API_BASE_URL = '';
 }
 
-let memberCount = 1; // Leader is Slot 1
+let memberCount = 1; 
 const MIN_MEMBERS = 2;
 const MAX_MEMBERS = 4;
 let PER_HEAD_FEE = 250;
@@ -88,9 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.updateSubmitButtonState) window.updateSubmitButtonState();
 });
 
-// ==========================================
-// 1. CYBER BACKGROUND PARTICLES & CIRCUIT NODES
-// ==========================================
+
+
+
 function initCyberBackground() {
     const canvas = document.getElementById('cyber-canvas');
     if (!canvas) return;
@@ -159,9 +155,9 @@ function initCyberBackground() {
     animate();
 }
 
-// ==========================================
-// 2. 3D WIREFRAME CYBER GLOBE VISUALIZER
-// ==========================================
+
+
+
 function initWireframeGlobe() {
     const canvas = document.getElementById('globe-wireframe-canvas');
     if (!canvas) return;
@@ -215,9 +211,9 @@ function initWireframeGlobe() {
     renderGlobe();
 }
 
-// ==========================================
-// 3. AUDIO FREQUENCY OSCILLOSCOPE WAVEFORM
-// ==========================================
+
+
+
 function initWaveformVisualizer() {
     const canvas = document.getElementById('waveform-canvas');
     if (!canvas) return;
@@ -255,11 +251,11 @@ function initWaveformVisualizer() {
     renderWaveform();
 }
 
-// ==========================================
-// REAL-TIME INPUT SANITIZATION & KEYSTROKE RESTRICTIONS
-// ==========================================
+
+
+
 function initRealtimeInputSanitizers() {
-    // 1. Phone & WhatsApp & OTP fields (Strict Digits Only, Max 10 digits for phone)
+    
     document.querySelectorAll('#leaderPhone, #leaderWhatsapp, .m-phone, #otpCode').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -279,7 +275,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 2. Age fields (Strict Digits Only, Max 2 Digits)
+    
     document.querySelectorAll('#leaderAge, .m-age').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -294,7 +290,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 3. Full Name fields (Strict Letters, Spaces, Dots, Hyphens - NO Digits)
+    
     document.querySelectorAll('#leaderName, .m-name').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -309,7 +305,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 4. Email fields (No Whitespaces Allowed)
+    
     document.querySelectorAll('#leaderEmail, .m-email').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -319,7 +315,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 5. UTR Number field (Numbers only, Max 30 digits)
+    
     document.querySelectorAll('#utrNumber').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -329,7 +325,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // 6. College & District fields (Letters, spaces, dots, hyphens, slashes, ampersands - NO Digits)
+    
     document.querySelectorAll('#leaderCollege, #leaderDistrict, .m-college, .m-district').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -344,7 +340,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // Sync Leader College & District changes to members who checked "Same as Team Leader"
+    
     ['leaderCollege', 'leaderDistrict'].forEach(id => {
         const leaderInput = document.getElementById(id);
         if (leaderInput && !leaderInput.dataset.syncAttached) {
@@ -365,9 +361,9 @@ function initRealtimeInputSanitizers() {
     });
 }
 
-// ==========================================
-// 4. DYNAMIC MEMBER ROSTER (1 TO 4 MEMBERS)
-// ==========================================
+
+
+
 function createMemberCard(memberIndex) {
     const memberCard = document.createElement('div');
     memberCard.className = 'member-card-hud';
@@ -408,7 +404,7 @@ function createMemberCard(memberIndex) {
                 </div>
             </div>
         </div>
-        <!-- SAME AS TEAM LEADER CHECKBOX -->
+        
         <div class="same-as-leader-row" style="margin-top: 4px; margin-bottom: 12px; padding: 8px 12px; background: rgba(0, 255, 102, 0.04); border: 1px dashed rgba(0, 255, 102, 0.25); border-radius: 4px;">
             <label style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; color: var(--neon-gold); cursor: pointer; user-select: none; width: 100%;">
                 <input type="checkbox" class="m-same-as-leader" style="width: 16px; height: 16px; accent-color: var(--neon-green); cursor: pointer;">
@@ -431,7 +427,7 @@ function createMemberCard(memberIndex) {
         </div>
     `;
 
-    // Attach same as leader checkbox event listener
+    
     const checkbox = memberCard.querySelector('.m-same-as-leader');
     const collegeInput = memberCard.querySelector('.m-college');
     const districtInput = memberCard.querySelector('.m-district');
@@ -457,14 +453,14 @@ function createMemberCard(memberIndex) {
         });
     }
 
-    // Attach real-time uniqueness & database existence check for member email
+    
     const mEmailInput = memberCard.querySelector('.m-email');
     if (mEmailInput) {
         mEmailInput.addEventListener('blur', async function () {
             const emailVal = this.value.trim().toLowerCase();
             if (!emailVal || !emailVal.includes('@') || !validateEmail(emailVal)) return;
 
-            // 1. Check if same as Team Leader email
+            
             const leaderEmailVal = (document.getElementById('leaderEmail')?.value || '').trim().toLowerCase();
             if (emailVal === leaderEmailVal) {
                 showCyberAlert(`Duplicate email address! Operative email cannot be the same as Team Leader email (${emailVal}).`, 'DUPLICATE EMAIL DETECTED');
@@ -473,7 +469,7 @@ function createMemberCard(memberIndex) {
                 return;
             }
 
-            // 2. Check if same as another squad member in this form
+            
             const allMemberInputs = Array.from(document.querySelectorAll('.m-email'));
             const isDuplicateInForm = allMemberInputs.some(inp => inp !== this && inp.value.trim().toLowerCase() === emailVal);
             if (isDuplicateInForm) {
@@ -483,7 +479,7 @@ function createMemberCard(memberIndex) {
                 return;
             }
 
-            // 3. Check if already registered in database
+            
             try {
                 const resp = await fetch(`${API_BASE_URL}/api/auth/check-email?email=${encodeURIComponent(emailVal)}`);
                 if (resp.ok) {
@@ -528,7 +524,7 @@ function initMemberManagement() {
 
     btnAdd.addEventListener('click', addMemberSlot);
 
-    // Auto-populate Operative 02 on load to enforce minimum 2 members
+    
     if (container.children.length === 0) {
         addMemberSlot();
     }
@@ -549,13 +545,13 @@ function removeMember(index) {
 }
 window.removeMember = removeMember;
 
-// ==========================================
-// 5. DYNAMIC FEE & QR CALCULATIONS
-// ==========================================
+
+
+
 function updateFeeCalculations() {
     const totalFee = memberCount * PER_HEAD_FEE;
     
-    // Update displays
+    
     const summaryCount = document.getElementById('summary-member-count');
     const summaryFee = document.getElementById('summary-total-fee');
     const paymentAmount = document.getElementById('payment-amount-display');
@@ -566,7 +562,7 @@ function updateFeeCalculations() {
     if (paymentAmount) paymentAmount.textContent = `₹${totalFee}`;
     if (slotCount) slotCount.textContent = memberCount;
 
-    // Dynamic UPI Deep Link URI & Scannable QR Generation
+    
     const upiId = "8122079494@pthdfc";
     const payeeName = "XploitX 2.0 CTF Registration";
     const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
@@ -588,9 +584,9 @@ function updateFeeCalculations() {
     }
 }
 
-// ==========================================
-// 6. EMAIL OTP VERIFICATION FLOW
-// ==========================================
+
+
+
 function initOtpFlow() {
     const btnSendOtp = document.getElementById('btn-send-otp');
     const btnVerifyOtp = document.getElementById('btn-verify-otp');
@@ -680,7 +676,7 @@ function initOtpFlow() {
                 setFeedback(`Error: ${errorMsg}`, false);
                 btnSendOtp.innerHTML = '<i class="fas fa-paper-plane"></i> SEND OTP';
 
-                // Pop up dialog box if email already exists
+                
                 if (errorMsg.toLowerCase().includes('already') || errorMsg.toLowerCase().includes('exist') || errorMsg.toLowerCase().includes('registered')) {
                     showCyberAlert(errorMsg, 'EMAIL ALREADY REGISTERED');
                 }
@@ -700,12 +696,12 @@ function initOtpFlow() {
         }
     });
 
-    // Real-time Leader Email Blur Check
+    
     emailInput.addEventListener('blur', async () => {
         const email = emailInput.value.trim().toLowerCase();
         if (!email || !email.includes('@') || !validateEmail(email)) return;
 
-        // Check if duplicate with any squad member email
+        
         const memberEmails = Array.from(document.querySelectorAll('.m-email'))
             .map(inp => inp.value.trim().toLowerCase())
             .filter(e => e.length > 0);
@@ -717,7 +713,7 @@ function initOtpFlow() {
             return;
         }
 
-        // Check database registration
+        
         try {
             const resp = await fetch(`${API_BASE_URL}/api/auth/check-email?email=${encodeURIComponent(email)}`);
             if (resp.ok) {
@@ -789,9 +785,9 @@ function initOtpFlow() {
     });
 }
 
-// ==========================================
-// 7. FILE UPLOAD PREVIEW
-// ==========================================
+
+
+
 function initFileUploadPreview() {
     const fileInput = document.getElementById('paymentProof');
     const labelText = document.getElementById('file-chosen-text');
@@ -809,9 +805,9 @@ function initFileUploadPreview() {
     });
 }
 
-// ==========================================
-// 7. CAPTCHA GENERATOR & FORM COMPLETION VALIDATION
-// ==========================================
+
+
+
 function generateCaptchaCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = '';
@@ -822,35 +818,35 @@ function generateCaptchaCode() {
 }
 
 function isFormDetailsComplete() {
-    // 1. Team Name
+    
     const teamNameInput = document.getElementById('teamName');
     if (!teamNameInput || teamNameInput.value.trim().length < 2) return false;
 
-    // 2. Leader Name
+    
     const leaderNameInput = document.getElementById('leaderName');
     if (!leaderNameInput || !validateName(leaderNameInput.value.trim())) return false;
 
-    // 3. Leader Age
+    
     const leaderAgeInput = document.getElementById('leaderAge');
     if (!leaderAgeInput || !validateAge(leaderAgeInput.value.trim())) return false;
 
-    // 4. Leader Email (must be valid + verified via OTP)
+    
     const leaderEmailInput = document.getElementById('leaderEmail');
     if (!leaderEmailInput || !validateEmail(leaderEmailInput.value.trim()) || !isEmailVerified) return false;
 
-    // 5. Leader Phone
+    
     const leaderPhoneInput = document.getElementById('leaderPhone');
     if (!leaderPhoneInput || !validatePhone(leaderPhoneInput.value.trim())) return false;
 
-    // 6. Leader College
+    
     const leaderCollegeInput = document.getElementById('leaderCollege');
     if (!leaderCollegeInput || !validateNoDigits(leaderCollegeInput.value.trim()) || leaderCollegeInput.value.trim().length < 3) return false;
 
-    // 7. Leader District
+    
     const leaderDistrictInput = document.getElementById('leaderDistrict');
     if (!leaderDistrictInput || !validateNoDigits(leaderDistrictInput.value.trim()) || leaderDistrictInput.value.trim().length < 2) return false;
 
-    // 8. Additional Squad Members
+    
     const extraCards = document.querySelectorAll('.member-card-hud');
     for (let i = 0; i < extraCards.length; i++) {
         const card = extraCards[i];
@@ -869,11 +865,11 @@ function isFormDetailsComplete() {
         if (!mDistrict || !validateNoDigits(mDistrict)) return false;
     }
 
-    // 9. UTR Number
+    
     const utrInput = document.getElementById('utrNumber');
     if (!utrInput || !validateUTR(utrInput.value.trim())) return false;
 
-    // 10. Payment Screenshot File
+    
     const paymentProofInput = document.getElementById('paymentProof');
     if (!paymentProofInput || !paymentProofInput.files || paymentProofInput.files.length === 0) return false;
     const file = paymentProofInput.files[0];
@@ -897,7 +893,7 @@ function updateSubmitButtonState() {
     const detailsComplete = isFormDetailsComplete();
 
     if (!detailsComplete) {
-        // Form details incomplete -> Hide entire CAPTCHA VERIFICATION section!
+        
         if (captchaSection) captchaSection.style.display = 'none';
 
         submitBtn.disabled = true;
@@ -907,11 +903,11 @@ function updateSubmitButtonState() {
         return;
     }
 
-    // Form details ARE complete & payment screenshot IS uploaded!
-    // Smoothly reveal the CAPTCHA VERIFICATION section!
+    
+    
     if (captchaSection) captchaSection.style.display = 'block';
 
-    // Verify Captcha Code
+    
     const captchaVal = (captchaInput?.value || '').trim().toUpperCase();
     isCaptchaVerified = (captchaVal.length === 6 && captchaVal === currentCaptchaCode);
 
@@ -978,9 +974,9 @@ function initCaptchaLogic() {
     });
 }
 
-// ==========================================
-// 8. COMPREHENSIVE FIELD VALIDATION & FORM SUBMISSION
-// ==========================================
+
+
+
 function validateNoDigits(text) {
     return !/\d/.test(text) && text.trim().length >= 2;
 }
@@ -1033,7 +1029,7 @@ function initFormSubmission() {
     const form = document.getElementById('ctf-registration-form');
     if (!form) return;
 
-    // Clear input errors dynamically on input change and update submit button state
+    
     form.addEventListener('input', (e) => {
         if (e.target && e.target.tagName === 'INPUT') {
             clearInputError(e.target);
@@ -1073,7 +1069,7 @@ function initFormSubmission() {
 
         const allowedExtensions = ['jpg', 'jpeg', 'png'];
         const fileExt = file.name.split('.').pop().toLowerCase();
-        const maxSize = 1 * 1024 * 1024; // 1 MB
+        const maxSize = 1 * 1024 * 1024; 
 
         if (!allowedExtensions.includes(fileExt)) {
             showCyberAlert('Invalid file format! Only JPG, JPEG, and PNG images are allowed.', 'INVALID FILE FORMAT');
@@ -1098,14 +1094,14 @@ function initFormSubmission() {
             dropzoneEl.classList.add('has-file');
         }
 
-        // Display File Details
+        
         if (previewFilename) previewFilename.textContent = file.name;
         if (previewFilesize) {
             const kbSize = (file.size / 1024).toFixed(1);
             previewFilesize.textContent = `${kbSize} KB / 1.00 MB`;
         }
 
-        // Generate Image Preview Thumbnail
+        
         const reader = new FileReader();
         reader.onload = (e) => {
             if (previewImg) previewImg.src = e.target.result;
@@ -1162,7 +1158,7 @@ function initFormSubmission() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Clear existing errors
+        
         form.querySelectorAll('.input-error-msg').forEach(el => el.remove());
         form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
 
@@ -1186,55 +1182,55 @@ function initFormSubmission() {
             if (!firstErrorInput) firstErrorInput = inputEl;
         }
 
-        // 1. Team Name Validation
+        
         const teamName = teamNameInput.value.trim();
         if (!teamName || teamName.length < 2) {
             setError(teamNameInput, 'Team Name must be at least 2 characters.');
         }
 
-        // 2. Leader Name Validation
+        
         const leaderName = leaderNameInput.value.trim();
         if (!leaderName || !validateName(leaderName)) {
             setError(leaderNameInput, 'Please enter a valid full name (letters only, min 2 chars).');
         }
 
-        // 3. Leader Age Validation
+        
         const leaderAge = leaderAgeInput.value.trim();
         if (!leaderAge || !validateAge(leaderAge)) {
             setError(leaderAgeInput, 'Leader age must be between 15 and 40.');
         }
 
-        // 4. Leader Email Validation
+        
         const leaderEmail = leaderEmailInput.value.trim();
         if (!leaderEmail || !validateEmail(leaderEmail)) {
             setError(leaderEmailInput, 'Please enter a valid email address.');
         }
 
-        // 5. Leader Phone Validation
+        
         const leaderPhone = leaderPhoneInput.value.trim();
         if (!leaderPhone || !validatePhone(leaderPhone)) {
             setError(leaderPhoneInput, 'Enter a valid 10-digit mobile number starting with 6-9.');
         }
 
-        // 6. Leader WhatsApp Validation (Optional, but if filled must be valid 10-digit)
+        
         const leaderWhatsapp = leaderWhatsappInput.value.trim();
         if (leaderWhatsapp && !validatePhone(leaderWhatsapp)) {
             setError(leaderWhatsappInput, 'Enter a valid 10-digit WhatsApp number.');
         }
 
-        // 7. Leader College Validation
+        
         const leaderCollege = leaderCollegeInput.value.trim();
         if (!leaderCollege || leaderCollege.length < 3 || !validateNoDigits(leaderCollege)) {
             setError(leaderCollegeInput, 'College / Institution name must be at least 3 characters (letters only).');
         }
 
-        // 8. Leader District Validation
+        
         const leaderDistrict = leaderDistrictInput.value.trim();
         if (!leaderDistrict || leaderDistrict.length < 2 || !validateNoDigits(leaderDistrict)) {
             setError(leaderDistrictInput, 'District / Department must be at least 2 characters (letters only).');
         }
 
-        // 9. Additional Squad Members Validation
+        
         const membersList = [
             {
                 name: leaderName,
@@ -1301,7 +1297,7 @@ function initFormSubmission() {
             });
         }
 
-        // Check for duplicate emails within the squad
+        
         const squadEmailsMap = {};
         for (let idx = 0; idx < membersList.length; idx++) {
             const m = membersList[idx];
@@ -1319,13 +1315,13 @@ function initFormSubmission() {
             isValid = false;
         }
 
-        // 10. UTR Number Validation
+        
         const utrNumber = utrNumberInput.value.trim();
         if (!utrNumber || !validateUTR(utrNumber)) {
             setError(utrNumberInput, 'Please enter a valid numeric UTR ID.');
         }
 
-        // 11. Payment Screenshot File Validation (< 1 MB & JPG/JPEG/PNG)
+        
         const paymentProofInput = document.getElementById('paymentProof');
         const paymentProofFile = paymentProofInput ? paymentProofInput.files[0] : null;
 
@@ -1334,7 +1330,7 @@ function initFormSubmission() {
         } else {
             const allowedExtensions = ['jpg', 'jpeg', 'png'];
             const fileExt = paymentProofFile.name.split('.').pop().toLowerCase();
-            const maxSize = 1 * 1024 * 1024; // 1 MB
+            const maxSize = 1 * 1024 * 1024; 
 
             if (!allowedExtensions.includes(fileExt)) {
                 setError(paymentProofInput, 'Invalid file format! Only JPG, JPEG, and PNG images are allowed.');
@@ -1343,7 +1339,7 @@ function initFormSubmission() {
             }
         }
 
-        // 12. Security Captcha Validation
+        
         if (!isCaptchaVerified) {
             showCyberAlert('Please complete all form details, verify "I AM NOT A ROBOT", and enter the correct Captcha code.', 'CAPTCHA VERIFICATION REQUIRED');
             const captchaInput = document.getElementById('captchaInput');
@@ -1354,7 +1350,7 @@ function initFormSubmission() {
             return;
         }
 
-        // Focus & scroll to first invalid field if form is incomplete
+        
         if (!isValid) {
             if (firstErrorInput) {
                 firstErrorInput.focus();
@@ -1406,7 +1402,7 @@ function initFormSubmission() {
 
             const generatedTeamId = data.teamId || `XCTF-26-${String(Math.floor(1 + Math.random() * 9999)).padStart(4, '0')}`;
 
-            // Populate and show HUD Confirmation Modal
+            
             document.getElementById('modal-team-name').textContent = teamName;
             document.getElementById('modal-team-id').textContent = generatedTeamId;
             document.getElementById('modal-leader-name').textContent = leaderName;

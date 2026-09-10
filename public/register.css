@@ -22,8 +22,7 @@
     --border-green: rgba(0, 255, 102, 0.35);
     --border-green-hover: rgba(0, 255, 102, 0.65);
     --border-subtle: rgba(255, 255, 255, 0.08);
-    
-    /* Global Normal Typography */
+
     --font-marvel: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-brand: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -52,7 +51,7 @@ body {
     width: 100% !important;
     max-width: 100vw !important;
     background-color: var(--bg-void);
-    /* Avengers Doomsday Cathedral Backdrop */
+    
     background-image: 
         radial-gradient(ellipse at 50% 15%, rgba(0, 255, 102, 0.08) 0%, transparent 65%),
         linear-gradient(rgba(2, 4, 10, 0.84), rgba(2, 4, 10, 0.92)),
@@ -67,7 +66,6 @@ body {
     line-height: 1.5;
 }
 
-/* Background Matrix Canvas */
 #cyber-canvas {
     position: fixed;
     top: 0;
@@ -78,7 +76,6 @@ body {
     pointer-events: none;
 }
 
-/* Cyber Scanlines & Circuit Traces */
 .cyber-scanline-overlay {
     position: fixed;
     inset: 0;
@@ -100,7 +97,6 @@ body {
     z-index: -1;
 }
 
-/* Main Layout Wrapper - Precision Fluid Autofit */
 .registration-wrapper {
     width: 100%;
     max-width: min(1420px, 100vw);
@@ -112,10 +108,6 @@ body {
     box-sizing: border-box;
     overflow-x: hidden;
 }
-
-/* ========================================================
-   1. TOP HEADER (AVENGERS HUD)
-   ======================================================== */
 
 .hud-top-header {
     display: flex;
@@ -215,10 +207,6 @@ body {
     color: var(--neon-green);
 }
 
-/* ========================================================
-   2. HERO BRAND LOGO
-   ======================================================== */
-
 .hud-hero-brand {
     text-align: center;
     padding: clamp(15px, 3vw, 25px) 0 clamp(10px, 2vw, 15px) 0;
@@ -254,10 +242,6 @@ body {
     text-transform: uppercase;
 }
 
-/* ========================================================
-   3. HUD 3-COLUMN GRID (FLUID AUTO-FIT)
-   ======================================================== */
-
 .hud-main-grid {
     display: grid;
     grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(260px, 300px);
@@ -277,7 +261,6 @@ body {
     margin: 0 !important;
 }
 
-/* HUD Common Card Styling with Corner Brackets */
 .hud-card {
     position: relative;
     background: var(--bg-card);
@@ -295,7 +278,6 @@ body {
     box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 22px rgba(0, 255, 102, 0.2);
 }
 
-/* Corner L-Brackets */
 .hud-card-corner {
     position: absolute;
     width: 10px;
@@ -331,10 +313,6 @@ body {
     border-bottom: 2px solid var(--neon-green);
     border-right: 2px solid var(--neon-green);
 }
-
-/* ========================================================
-   LEFT COLUMN CARDS
-   ======================================================== */
 
 .hud-card-title {
     font-family: var(--font-brand);
@@ -396,7 +374,6 @@ body {
     box-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
 }
 
-/* Globe Telemetry Card */
 .globe-telemetry-card {
     text-align: center;
     padding: 18px 15px;
@@ -433,7 +410,6 @@ body {
     animation: livePulse 1.5s infinite;
 }
 
-/* Fee Summary Card */
 .fee-row {
     display: flex;
     justify-content: space-between;
@@ -456,10 +432,6 @@ body {
     color: #ffffff;
 }
 
-/* ========================================================
-   CENTER COLUMN - REGISTRATION FORM SECTIONS
-   ======================================================== */
-
 .registration-form-card {
     padding: 22px 32px 30px 32px;
     border: 1.5px solid var(--border-green);
@@ -479,7 +451,6 @@ body {
     text-transform: uppercase;
 }
 
-/* Step Tracker Bar */
 .form-step-tracker {
     display: flex;
     align-items: center;
@@ -684,7 +655,6 @@ body {
     box-shadow: 0 0 12px var(--neon-green-glow);
 }
 
-/* OTP Verification UI */
 .input-otp-group {
     display: flex;
     gap: 10px;
@@ -750,7 +720,6 @@ body {
     font-weight: 700;
 }
 
-/* Dynamic Member Card */
 .member-card-hud {
     background: rgba(4, 9, 24, 0.8);
     border: 1px solid rgba(0, 255, 102, 0.25);
@@ -796,10 +765,6 @@ body {
     color: #ffffff;
     box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
 }
-
-/* ========================================================
-   SECTION 4: PAYMENT GRID & UPLOADER
-   ======================================================== */
 
 .payment-section-block {
     border-color: rgba(255, 215, 0, 0.3);
@@ -929,7 +894,6 @@ body {
     color: var(--text-muted);
 }
 
-/* Submit Action Button */
 .form-action-hud {
     margin-top: 30px;
     text-align: center;
@@ -991,10 +955,6 @@ body {
     opacity: 0.9;
 }
 
-/* ========================================================
-   RIGHT COLUMN CARDS
-   ======================================================== */
-
 .event-meta-row {
     display: flex;
     align-items: center;
@@ -1038,7 +998,6 @@ body {
     color: #ffffff;
 }
 
-/* Secure Channel Card */
 .secure-channel-header {
     display: flex;
     align-items: center;
@@ -1080,10 +1039,6 @@ body {
     height: 45px;
 }
 
-/* ========================================================
-   4. BOTTOM FOOTER
-   ======================================================== */
-
 .hud-bottom-footer {
     margin-top: 35px;
     padding-top: 20px;
@@ -1109,10 +1064,6 @@ body {
     font-size: 1.2rem;
     text-shadow: 0 0 8px var(--neon-green);
 }
-
-/* ========================================================
-   MODAL CONFIRMATION
-   ======================================================== */
 
 .hud-modal-overlay {
     position: fixed;
@@ -1226,14 +1177,6 @@ body {
     color: #ffffff;
 }
 
-/* ========================================================
-   RESPONSIVE DESIGN (320px TO 1200px)
-   ======================================================== */
-
-/* ========================================================
-   RESPONSIVE DESIGN (320px TO 1180px)
-   ======================================================== */
-
 @media (max-width: 1180px) {
     .registration-wrapper {
         padding: 16px 14px 35px 14px;
@@ -1247,7 +1190,6 @@ body {
         width: 100%;
     }
 
-    /* Prioritize Registration Form at the top on mobile/tablets */
     .hud-col-center {
         order: 1;
         width: 100%;
@@ -1357,7 +1299,6 @@ body {
         margin-bottom: 16px;
     }
 
-    /* Step Tracker Bar Mobile Fitting Safeguard */
     .form-step-tracker {
         padding: 8px 6px;
         gap: 3px;
@@ -1412,7 +1353,6 @@ body {
         flex-wrap: wrap;
     }
 
-    /* 16px font-size prevents iOS Safari auto-zoom when typing */
     .input-wrapper-hud input {
         font-size: 16px;
         padding: 12px 14px;
@@ -1554,10 +1494,6 @@ body {
     }
 }
 
-/* ========================================================
-   XPLOITX 2.0 BETA - PREMIUM ACCESS GRANTED LOADER
-   ======================================================== */
-
 html.loader-locked,
 body.loader-locked {
     overflow: hidden !important;
@@ -1591,7 +1527,6 @@ body.loader-locked {
     pointer-events: none;
 }
 
-/* Loader Background Grid & Glows */
 .loader-bg-grid {
     position: absolute;
     inset: 0;
@@ -1627,7 +1562,6 @@ body.loader-locked {
     z-index: 1;
 }
 
-/* Loader Content Box - Pinned Dead Center in Viewport */
 .loader-content-box {
     position: absolute;
     top: 50%;
@@ -1645,7 +1579,6 @@ body.loader-locked {
     margin: 0;
 }
 
-/* Central Graphic Emblem */
 .loader-cyber-emblem {
     position: relative;
     width: 130px;
@@ -1713,7 +1646,6 @@ body.loader-locked {
     transform: scale(1.1);
 }
 
-/* Status Text Hierarchy */
 .loader-status-wrapper {
     margin-bottom: 15px;
     min-height: 48px;
@@ -1747,7 +1679,6 @@ body.loader-locked {
     text-shadow: 0 0 14px rgba(0, 255, 65, 0.9);
 }
 
-/* Thin Progress Indicator */
 .loader-progress-bar-container {
     width: 240px;
     max-width: 80vw;
@@ -1769,7 +1700,6 @@ body.loader-locked {
     transition: width 0.25s linear;
 }
 
-/* Access Granted & Reveal Banner */
 .loader-granted-reveal-box {
     position: relative;
     display: flex;
@@ -1832,7 +1762,6 @@ body.loader-locked {
     text-shadow: 0 0 30px rgba(0, 255, 102, 0.9);
 }
 
-/* Loader Logo Revealed Upon Access Granted (Above Text) */
 .loader-logo-img {
     width: 480px;
     max-width: 85vw;
@@ -1855,7 +1784,6 @@ body.loader-locked {
     }
 }
 
-/* Reduced Motion Override for Loader */
 @media (prefers-reduced-motion: reduce) {
     #loader-overlay.xploitx-access-loader {
         transition: opacity 0.2s linear;
@@ -1877,7 +1805,6 @@ body.loader-locked {
     }
 }
 
-/* Mobile Adjustments for Loader */
 @media (max-width: 480px) {
     .loader-cyber-emblem {
         width: 100px;
@@ -1900,7 +1827,6 @@ body.loader-locked {
     }
 }
 
-/* Custom Cyber HUD File Upload Dropzone */
 .hud-file-dropzone {
     display: block;
     position: relative;
@@ -1939,7 +1865,6 @@ body.loader-locked {
     box-shadow: 0 0 20px rgba(255, 71, 87, 0.3) !important;
 }
 
-/* Corner Accents */
 .dropzone-corners .corner {
     position: absolute;
     width: 8px;
@@ -2014,7 +1939,6 @@ body.loader-locked {
     box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
 }
 
-/* Preview Layout */
 .dropzone-preview-content {
     display: flex;
     align-items: center;
@@ -2103,5 +2027,4 @@ body.loader-locked {
     color: #ffffff;
     box-shadow: 0 0 12px rgba(255, 71, 87, 0.5);
 }
-
 

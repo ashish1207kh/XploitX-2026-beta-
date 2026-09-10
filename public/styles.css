@@ -1,13 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-    /* Avengers Doomsday Palette */
+    
     --bg-deep: #03040a;
     --bg-dark: #070a14;
     --bg-card: rgba(10, 15, 30, 0.75);
     --bg-glass: rgba(12, 18, 38, 0.65);
 
-    /* Doctor Doom Emerald Energy & Latverian Gold */
     --doom-green: #00ff66;
     --doom-green-glow: rgba(0, 255, 102, 0.35);
     --doom-gold: #ffd700;
@@ -30,7 +29,6 @@
     --border-purple: rgba(157, 78, 221, 0.3);
     --border-gold: rgba(255, 215, 0, 0.25);
 
-    /* Avengers Doomsday Typography - Standard Normal Font Stack */
     --font-marvel: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-brand: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -38,10 +36,6 @@
     --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-mono: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
-
-/* ========================================================
-   GLOBAL RESETS & MULTI-LAYERED BACKGROUND
-   ======================================================== */
 
 *,
 *::before,
@@ -82,7 +76,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Dark Vignette & Atmospheric Glow Overlays */
 body::before {
     content: "";
     position: fixed;
@@ -106,7 +99,6 @@ body::after {
     z-index: -2;
 }
 
-/* Layer 4: Interactive Starfield Canvas */
 #particles-bg {
     position: fixed;
     top: 0;
@@ -117,7 +109,6 @@ body::after {
     pointer-events: none;
 }
 
-/* Subtle Cyber HUD Grid Overlay */
 .cyber-grid-overlay {
     position: fixed;
     inset: 0;
@@ -129,10 +120,6 @@ body::after {
     z-index: -1;
     opacity: 0.7;
 }
-
-/* ========================================================
-   FLOATING REGISTRATION BUTTON (WITH TACTILE PRESS TRANSITIONS)
-   ======================================================== */
 
 .register-floating-btn {
     position: fixed;
@@ -160,7 +147,6 @@ body::after {
     outline: none;
 }
 
-/* Hover State */
 .register-floating-btn:hover {
     transform: translateY(-4px) scale(1.03);
     border-color: var(--doom-gold);
@@ -168,7 +154,6 @@ body::after {
     background: linear-gradient(135deg, rgba(6, 18, 40, 0.98) 0%, rgba(12, 32, 70, 0.98) 100%);
 }
 
-/* Active Pressing State - Tactile Push Feedback */
 .register-floating-btn:active {
     transform: translateY(2px) scale(0.94);
     border-color: #ffffff;
@@ -247,7 +232,6 @@ body::after {
     transform: scale(0.96);
 }
 
-/* Layout Container - Fluid Autofit */
 .container {
     width: 100%;
     max-width: min(1320px, 94vw);
@@ -256,7 +240,6 @@ body::after {
     box-sizing: border-box;
 }
 
-/* Typography Utilities */
 .text-cyan {
     color: var(--electric-blue);
     text-shadow: 0 0 10px var(--electric-blue-glow);
@@ -293,7 +276,6 @@ body::after {
     -webkit-text-fill-color: transparent;
 }
 
-/* Section Common Styling */
 section {
     position: relative;
     padding: 90px 0;
@@ -340,7 +322,6 @@ section {
     letter-spacing: 0.5px;
 }
 
-/* HUD Corner Brackets for Glass Panels */
 .hud-panel {
     position: relative;
     background: var(--bg-glass);
@@ -380,10 +361,6 @@ section {
     height: 18px;
     border-color: var(--doom-gold);
 }
-
-/* ========================================================
-   COLLEGE HEADER & ACCREDITATION MARQUEE
-   ======================================================== */
 
 .college-header-wrapper {
     width: 100%;
@@ -453,7 +430,6 @@ section {
     line-height: 1.5;
 }
 
-/* Attached Event Tag in Transparent Header */
 .header-event-badge {
     margin-top: 14px;
     display: inline-flex;
@@ -481,7 +457,6 @@ section {
     text-shadow: 0 0 12px var(--doom-green-glow);
 }
 
-/* Tag Marquee (Dim Off-White / Platinum Frosted Background for Low Glare Clarity) */
 .logo-marquee-container {
     width: 100%;
     overflow: hidden;
@@ -508,7 +483,6 @@ section {
     filter: none !important;
 }
 
-/* News Marquee (With Emerald-Purple-Gold Accent Gradient) */
 .news-marquee-container {
     width: 100%;
     overflow: hidden;
@@ -549,10 +523,6 @@ section {
         transform: translateX(-50%);
     }
 }
-
-/* ========================================================
-   NAVIGATION BAR (CLEAN MINIMALIST TRANSPARENT)
-   ======================================================== */
 
 .navbar {
     position: sticky;
@@ -596,7 +566,6 @@ section {
     padding: 0;
 }
 
-/* Mobile Drawer Header & Footer - Hidden on desktop view */
 .mobile-drawer-header,
 .mobile-drawer-footer {
     display: none !important;
@@ -703,10 +672,6 @@ section {
     cursor: pointer;
 }
 
-/* ========================================================
-   HERO SECTION (COMPACT SCALED LOGO DESIGN)
-   ======================================================== */
-
 .hero-section {
     min-height: calc(100vh - 200px);
     display: flex;
@@ -763,7 +728,6 @@ section {
     }
 }
 
-/* Restored Official Hero Logo */
 .hero-logo-wrapper {
     margin: 10px auto 25px auto;
     max-width: 560px;
@@ -873,10 +837,6 @@ section {
     gap: 20px;
 }
 
-/* ========================================================
-   COUNTDOWN TIMER (GLASS HUD PANELS)
-   ======================================================== */
-
 .countdown-section {
     padding: 30px 0 70px 0;
 }
@@ -960,10 +920,6 @@ section {
     text-shadow: 0 0 10px var(--doom-gold-glow);
 }
 
-/* ========================================================
-   THE BETA MISSION (EVENT INTRODUCTION)
-   ======================================================== */
-
 .mission-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1031,10 +987,6 @@ section {
     color: var(--text-muted);
 }
 
-/* ========================================================
-   HOW THE CTF WORKS (TIMELINE)
-   ======================================================== */
-
 .timeline-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -1086,10 +1038,6 @@ section {
     color: var(--text-muted);
     line-height: 1.5;
 }
-
-/* ========================================================
-   BATTLEGROUND PRIZES & BOUNTIES
-   ======================================================== */
 
 .prizes-section {
     padding: 90px 0;
@@ -1203,10 +1151,6 @@ section {
     text-align: center;
     margin-top: 45px;
 }
-
-/* ========================================================
-   MoU PARTNERS & COLLABORATIONS (TRANSPARENT BACKGROUNDS)
-   ======================================================== */
 
 .mou-section {
     padding: 80px 0;
@@ -1339,10 +1283,6 @@ section {
     transform: scale(1.04);
 }
 
-/* ========================================================
-   CTF RULEBOOK & FAQ ACCORDIONS
-   ======================================================== */
-
 .accordion-group {
     max-width: 900px;
     margin: 0 auto;
@@ -1431,10 +1371,6 @@ section {
     left: 0;
     color: var(--doom-green);
 }
-
-/* ========================================================
-   ORGANIZING NODES (VERTICAL INDIVIDUAL BOXES)
-   ======================================================== */
 
 .organizing-nodes-section {
     padding: 90px 0;
@@ -1618,10 +1554,6 @@ section {
     }
 }
 
-/* ========================================================
-   ORGANIZER PORTRAIT CARDS & GRID (ABOUT PAGE ENHANCEMENT)
-   ======================================================== */
-
 .organizer-portrait-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1757,10 +1689,6 @@ section {
     box-shadow: 0 0 12px var(--doom-green-glow);
 }
 
-/* ========================================================
-   FINAL REGISTRATION CTA SECTION
-   ======================================================== */
-
 .registration-cta-section {
     padding: 100px 0;
     text-align: center;
@@ -1829,10 +1757,6 @@ section {
     margin-top: 25px;
     letter-spacing: 2px;
 }
-
-/* ========================================================
-   FOOTER
-   ======================================================== */
 
 .footer {
     background: rgba(2, 3, 8, 0.98);
@@ -1934,10 +1858,6 @@ section {
     color: var(--text-dim);
 }
 
-/* ========================================================
-   RESPONSIVE DESIGN (360px TO 3840px 4K)
-   ======================================================== */
-
 @media (max-width: 1024px) {
     .timeline-container {
         grid-template-columns: repeat(3, 1fr);
@@ -2029,7 +1949,6 @@ section {
         letter-spacing: 1.5px;
     }
 
-    /* Mobile Nav Backdrop */
     .mobile-nav-backdrop {
         position: fixed;
         inset: 0;
@@ -2062,7 +1981,6 @@ section {
         position: relative;
     }
 
-    /* 100% FULL VIEWPORT DRAWER - NO SIDE STRIPS VISIBLE */
     .nav-links {
         position: fixed;
         top: 0;
@@ -2087,7 +2005,6 @@ section {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
 
-        /* Smooth Entrance Fade & Scale/Slide */
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
@@ -2104,7 +2021,6 @@ section {
         pointer-events: auto;
     }
 
-    /* Mobile Drawer Header with Close Button */
     .mobile-drawer-header {
         display: flex !important;
         align-items: center;
@@ -2226,7 +2142,6 @@ section {
         color: var(--doom-gold, #ffd700);
     }
 
-    /* Highlight Register CTA inside drawer */
     .nav-links li:last-child .nav-link,
     .nav-link[href="register.html"] {
         background: linear-gradient(135deg, rgba(0, 255, 102, 0.16) 0%, rgba(0, 240, 255, 0.18) 100%);
@@ -2245,7 +2160,6 @@ section {
         box-shadow: 0 0 22px rgba(0, 255, 102, 0.45);
     }
 
-    /* Drawer Footer */
     .mobile-drawer-footer {
         display: block !important;
         width: 100%;
@@ -2568,7 +2482,6 @@ section {
         letter-spacing: 1.5px !important;
     }
 
-    /* Global Glass Panel & Paragraph Mobile Font Scaling */
     .hud-panel {
         padding: 20px 14px !important;
     }
@@ -2676,7 +2589,6 @@ section {
     }
 }
 
-/* Background Canvas & Overlay Safeguards */
 #matrix-bg,
 .matrix-overlay {
     position: fixed;
@@ -2703,7 +2615,6 @@ section {
     }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -2717,10 +2628,6 @@ section {
     }
 }
 
-/* ========================================================
-   XPLOITX 2.0 BETA - PREMIUM ACCESS GRANTED LOADER
-   ======================================================== */
-
 html.mobile-nav-active,
 body.mobile-nav-active,
 html.loader-locked,
@@ -2730,7 +2637,6 @@ body.loader-locked {
     touch-action: none !important;
 }
 
-/* Hide main site navbar and floating elements while initial loader is active */
 html.loader-locked .navbar,
 body.loader-locked .navbar,
 html.loader-locked .register-floating-btn,
@@ -2766,7 +2672,6 @@ body.loader-locked .register-floating-btn {
     pointer-events: none;
 }
 
-/* Loader Background Grid & Glows */
 .loader-bg-grid {
     position: absolute;
     inset: 0;
@@ -2793,7 +2698,6 @@ body.loader-locked .register-floating-btn {
     opacity: 0.6;
 }
 
-/* Loader Skip Button */
 .loader-skip-btn {
     position: absolute;
     top: 24px;
@@ -2831,7 +2735,6 @@ body.loader-locked .register-floating-btn {
     z-index: 1;
 }
 
-/* Loader Content Box - Pinned Dead Center in Viewport */
 .loader-content-box {
     position: absolute;
     top: 50%;
@@ -2849,7 +2752,6 @@ body.loader-locked .register-floating-btn {
     margin: 0;
 }
 
-/* Central Graphic Emblem */
 .loader-cyber-emblem {
     position: relative;
     width: 130px;
@@ -2917,7 +2819,6 @@ body.loader-locked .register-floating-btn {
     transform: scale(1.1);
 }
 
-/* Status Text Hierarchy */
 .loader-status-wrapper {
     margin-bottom: 15px;
     min-height: 48px;
@@ -2951,7 +2852,6 @@ body.loader-locked .register-floating-btn {
     text-shadow: 0 0 16px rgba(0, 255, 102, 0.95);
 }
 
-/* Thin Progress Indicator */
 .loader-progress-bar-container {
     width: 240px;
     max-width: 80vw;
@@ -2973,7 +2873,6 @@ body.loader-locked .register-floating-btn {
     transition: width 0.25s linear;
 }
 
-/* Access Granted & Reveal Banner */
 .loader-granted-reveal-box {
     position: relative;
     display: flex;
@@ -3046,7 +2945,6 @@ body.loader-locked .register-floating-btn {
     text-shadow: 0 0 30px rgba(0, 255, 102, 0.95);
 }
 
-/* Loader Logo Revealed Upon Access Granted (Above Text) */
 .loader-logo-img {
     width: 480px;
     max-width: 85vw;
@@ -3070,7 +2968,6 @@ body.loader-locked .register-floating-btn {
     }
 }
 
-/* Reduced Motion Override for Loader */
 @media (prefers-reduced-motion: reduce) {
     #loader-overlay.xploitx-access-loader {
         transition: opacity 0.2s linear;
@@ -3092,7 +2989,6 @@ body.loader-locked .register-floating-btn {
     }
 }
 
-/* Mobile Adjustments for Loader */
 @media (max-width: 480px) {
     .loader-cyber-emblem {
         width: 100px;

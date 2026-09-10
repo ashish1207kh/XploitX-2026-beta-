@@ -8,16 +8,16 @@
     <meta name="description"
         content="Official QR Code Scanning & Attendance Registry Terminal for XPLOITX 2.0 BETA.">
 
-    <!-- Fonts -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;600;700&display=swap"
         rel="stylesheet">
-    <!-- FontAwesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- HTML5-QRCode Scanner Library & jsPDF -->
+    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -58,7 +58,6 @@
             background-size: 40px 40px;
         }
 
-        /* Scanline Overlay Effect */
         body::before {
             content: " ";
             display: block;
@@ -75,7 +74,6 @@
             opacity: 0.6;
         }
 
-        /* HUD Navbar */
         .hud-nav {
             background: rgba(4, 8, 18, 0.95);
             border-bottom: 2px solid var(--border-glow);
@@ -163,7 +161,6 @@
             color: #fff;
         }
 
-        /* Container & Panels */
         .container {
             max-width: 1240px;
             margin: 25px auto;
@@ -172,7 +169,6 @@
             width: 100%;
         }
 
-        /* Tab Controls */
         .tab-controls {
             display: flex;
             gap: 12px;
@@ -211,7 +207,6 @@
             box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
         }
 
-        /* HUD Panels */
         .hud-panel {
             background: var(--card-bg);
             border: 1.5px solid var(--border-glow);
@@ -235,7 +230,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Camera Scanner Section */
         #scanner-wrapper {
             position: relative;
             max-width: 520px;
@@ -261,7 +255,6 @@
             border-radius: 6px;
         }
 
-        /* Result Panel */
         #result {
             display: none;
             margin-top: 24px;
@@ -295,7 +288,6 @@
             border-color: rgba(0, 255, 102, 0.3);
         }
 
-        /* Attendance Table & Metrics */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -456,7 +448,6 @@
             background: rgba(255, 215, 0, 0.2);
         }
 
-        /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
             .hud-nav {
                 flex-direction: column;
@@ -470,9 +461,6 @@
             }
         }
 
-        /* ========================================================
-           CYBER DOOMSDAY HUD LOGIN OVERLAY & AUTHENTICATION
-           ======================================================== */
         #login-overlay {
             position: fixed;
             top: 0;
@@ -650,7 +638,6 @@
             transform: none !important;
         }
 
-        /* Modal HUD Dialog */
         .modal-overlay-hud {
             display: none;
             position: fixed;
@@ -696,7 +683,7 @@
 
 <body>
 
-    <!-- IN-PAGE SECURE LOGIN OVERLAY (FULL SCREEN DOOMSDAY TERMINAL HUD) -->
+    
     <div id="login-overlay">
         <div class="login-card-hud">
 
@@ -709,7 +696,7 @@
 
             <form id="attendance-login-form" action="javascript:void(0);" onsubmit="checkAttendanceLogin(); return false;" autocomplete="off">
 
-                <!-- USERNAME FIELD -->
+                
                 <div class="login-field-group">
                     <i class="fas fa-user-astronaut login-field-icon"></i>
                     <input type="text" id="attendance-user" class="login-input-field" placeholder="Enter Operative Name (e.g. admin)"
@@ -717,7 +704,7 @@
                         onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
                 </div>
 
-                <!-- PASSWORD / SECURITY KEY FIELD -->
+                
                 <div class="login-field-group" style="position: relative;">
                     <i class="fas fa-lock login-field-icon"></i>
                     <input type="password" id="attendance-pass" class="login-input-field"
@@ -730,7 +717,7 @@
                     </button>
                 </div>
 
-                <!-- UNLOCK BUTTON -->
+                
                 <button type="button" onclick="checkAttendanceLogin();" class="login-submit-btn" id="login-btn">
                     <i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE
                 </button>
@@ -747,7 +734,7 @@
         </div>
     </div>
 
-    <!-- HUD Navbar -->
+    
     <nav class="hud-nav">
         <div class="hud-brand">
             <i class="fas fa-qrcode text-green" style="font-size: 1.4rem;"></i>
@@ -769,10 +756,10 @@
         </div>
     </nav>
 
-    <!-- Main Content Container (Hidden until authenticated) -->
+    
     <div class="container" id="terminal-content" style="display: none;">
 
-        <!-- Mode Toggle Tabs -->
+        
         <div class="tab-controls">
             <button id="btn-scan" class="tab-btn active" onclick="switchTab('scan')">
                 <i class="fas fa-camera"></i> SCAN PASS QR
@@ -782,7 +769,7 @@
             </button>
         </div>
 
-        <!-- TAB 1: QR CODE SCANNER -->
+        
         <div id="scan-section" class="hud-panel">
             <div class="hud-panel-title">
                 <span>&gt;_ SCAN_ENTRY_PASS</span>
@@ -801,7 +788,7 @@
                 style="display: none; color: var(--deep-magenta); margin-top: 15px; font-family: var(--font-mono); text-align: center;">
             </div>
 
-            <!-- Scanned Team Confirmation & Verification Card -->
+            
             <div id="result">
                 <div id="scan-feedback"></div>
                 <div id="team-details"></div>
@@ -813,14 +800,14 @@
             </div>
         </div>
 
-        <!-- TAB 2: LIVE ATTENDANCE DATABASE -->
+        
         <div id="details-section" class="hud-panel" style="display: none;">
             <div class="hud-panel-title">
                 <span>&gt;_ ATTENDANCE_REGISTRY</span>
                 <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--doom-green);">ENCRYPTED ARCHIVE</span>
             </div>
 
-            <!-- Stats Bar -->
+            
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value" id="stat-total">0</div>
@@ -840,7 +827,7 @@
                 </div>
             </div>
 
-            <!-- Action & Search Bar -->
+            
             <div class="controls-bar">
                 <input type="text" id="attendance-search" class="search-input-hud"
                     placeholder="🔍 Search Team ID, Name, College..." onkeyup="filterAttendanceTable()">
@@ -851,7 +838,7 @@
                 </div>
             </div>
 
-            <!-- Database Table -->
+            
             <div class="table-wrapper">
                 <table class="hud-table">
                     <thead>
@@ -878,15 +865,13 @@
 
     </div>
 
-    <!-- Script Logic -->
+    
     <script>
-        // @ts-nocheck
         let html5QrCode = null;
         let isScanning = false;
         let attendanceRawData = [];
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-        // Helper to format ISO or SQLite timestamp safely
         function formatEntryTime(entryTime) {
             if (!entryTime) return '-';
             try {
@@ -921,7 +906,6 @@
             }
         }
 
-        // API Base URL Resolution (Robust for localhost:3000, Live Server :5500, LAN IP, file://, and production)
         let API_BASE_URL = '';
         const currentHostname = window.location.hostname;
         const currentProtocol = window.location.protocol;
@@ -937,11 +921,9 @@
             API_BASE_URL = '';
         }
 
-        // Pure In-Memory Attendance Authentication: No Cookies, No LocalStorage, No SessionStorage
         let inMemoryAttendanceToken = null;
         let inMemoryAttendanceUser = null;
 
-        // Custom Modal Alert (Exact Admin Page Implementation with Callback support)
         window.alertCallback = null;
         window.showCustomAlert = function (message, callback) {
             window.alertCallback = typeof callback === 'function' ? callback : null;
@@ -979,7 +961,6 @@
             }
         };
 
-        // Keyboard handler to acknowledge modal on Enter or Escape
         window.addEventListener('keydown', function (e) {
             const overlay = document.getElementById('custom-alert-overlay');
             if (overlay && overlay.style.display === 'flex') {
@@ -990,7 +971,6 @@
             }
         });
 
-        // Password Show/Hide Toggle Setup
         function setupPasswordToggle() {
             const toggleBtn = document.getElementById('toggle-pwd-btn');
             const passInput = document.getElementById('attendance-pass');
@@ -1004,7 +984,6 @@
             }
         }
 
-        // Reset Login Form to Fresh State (clears inputs, restores button, hides feedback)
         function resetAttendanceLoginForm() {
             const userEl = document.getElementById('attendance-user');
             const passEl = document.getElementById('attendance-pass');
@@ -1035,7 +1014,6 @@
             }
         }
 
-        // Attendance Terminal Login (Strictly In-Memory)
         async function checkAttendanceLogin() {
             const userEl = document.getElementById('attendance-user');
             const passEl = document.getElementById('attendance-pass');
@@ -1096,7 +1074,6 @@
                         feedbackEl.innerText = `✓ ACCESS GRANTED: OPERATIVE ${(data.user || 'OPERATIVE').toUpperCase()}`;
                     }
 
-                    // Unlock terminal and camera cleanly, then wipe login credentials & feedback
                     setTimeout(() => {
                         unlockTerminal(data.user);
                     }, 400);
@@ -1141,7 +1118,6 @@
             }, 1800);
         }
 
-        // Dedicated Unlock Terminal Handler
         function unlockTerminal(user) {
             const overlay = document.getElementById('login-overlay');
             if (overlay) {
@@ -1163,14 +1139,12 @@
                 opEl.innerText = user.toUpperCase();
             }
 
-            // Immediately reset login modal inputs and buttons so nothing lingers in the DOM
             resetAttendanceLoginForm();
 
             initScannerLib();
             switchTab('scan');
         }
 
-        // Handle Session Expiration / Manual Lock
         function handleAuthExpired(isManualLogout = false) {
             inMemoryAttendanceToken = null;
             inMemoryAttendanceUser = null;
@@ -1180,7 +1154,6 @@
             } catch (e) { }
             stopScanner();
 
-            // Hide terminal content & status badge
             const termContent = document.getElementById('terminal-content');
             if (termContent) termContent.style.display = 'none';
 
@@ -1202,7 +1175,6 @@
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.style.setProperty('display', 'flex', 'important');
 
-            // CRITICAL FIX: Completely reset the login form, clear username & password, restore button, and hide access granted feedback
             resetAttendanceLoginForm();
 
             const userEl = document.getElementById('attendance-user');
@@ -1215,7 +1187,6 @@
             }
         }
 
-        // Dedicated Logout Function
         async function logoutAttendance() {
             const userToLogout = inMemoryAttendanceUser || sessionStorage.getItem('xploitx_active_user') || 'Operative';
             const tokenToLogout = inMemoryAttendanceToken || sessionStorage.getItem('xploitx_active_session');
@@ -1241,7 +1212,6 @@
             handleAuthExpired(true);
         }
 
-        // Memory-Based Auth Headers
         function getAuthHeaders(extraHeaders = {}) {
             const headers = { ...extraHeaders };
             if (inMemoryAttendanceToken) {
@@ -1263,7 +1233,6 @@
             }
         }
 
-        // Tab Switching
         function switchTab(tab) {
             const btnScan = document.getElementById('btn-scan');
             const btnDetails = document.getElementById('btn-details');
@@ -1288,7 +1257,6 @@
             }
         }
 
-        // Camera Control
         async function startScanner() {
             try {
                 if (html5QrCode && html5QrCode.isScanning) return;
@@ -1344,7 +1312,6 @@
 
         function onScanFailure(error) { }
 
-        // Process Scan Data
         async function processAttendance(teamId) {
             const feedbackEl = document.getElementById('scan-feedback');
             const detailsEl = document.getElementById('team-details');
@@ -1412,7 +1379,6 @@
             }
         }
 
-        // Submit Attendance
         async function submitMemberAttendance(teamId) {
             const checkboxes = document.querySelectorAll('.attendance-checkbox');
             const memberStatuses = Array.from(checkboxes).map(cb => ({
@@ -1456,7 +1422,6 @@
             if (html5QrCode) html5QrCode.resume();
         }
 
-        // Download Attendance PDF Report
         async function downloadPDF() {
             try {
                 if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -1536,7 +1501,6 @@
             }
         }
 
-        // Load Database
         async function loadAttendance() {
             const tbody = document.getElementById('attendance-body');
             if (!tbody) return;
@@ -1565,7 +1529,6 @@
             }
         }
 
-        // Render Table & Metrics
         function renderAttendanceTable(data) {
             const tbody = document.getElementById('attendance-body');
             if (!tbody) return;
@@ -1618,7 +1581,6 @@
             }).join('');
         }
 
-        // Search Filter
         function filterAttendanceTable() {
             const query = document.getElementById('attendance-search').value.toLowerCase().trim();
             if (!query) {
@@ -1636,11 +1598,9 @@
             renderAttendanceTable(filtered);
         }
 
-        // Page Load Initialization: Securely Locked, Scanner Stays OFF until login
         window.onload = () => {
             setupPasswordToggle();
 
-            // Check if active authenticated session exists in sessionStorage
             let savedToken = null;
             let savedUser = null;
             try {
@@ -1653,7 +1613,6 @@
                 inMemoryAttendanceUser = savedUser || 'OPERATIVE';
                 unlockTerminal(inMemoryAttendanceUser);
             } else {
-                // Secure terminal lock: Ensure terminal content & scanner stay OFF on load
                 const termContent = document.getElementById('terminal-content');
                 if (termContent) termContent.style.display = 'none';
 

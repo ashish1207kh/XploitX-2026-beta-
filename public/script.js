@@ -1,17 +1,13 @@
-/**
- * XPLOITX 2.0 BETA - Core Application Script
- * 24-Hour Cybersecurity Capture The Flag Competition
- * Department of Cyber Security | Prathyusha Engineering College
- */
 
-// ==========================================
-// 1. EVENT CONFIGURATION (EASILY CUSTOMIZABLE)
-// ==========================================
+
+
+
+
 const EVENT_CONFIG = {
     eventName: "XPLOITX 2.0 BETA",
     eventEdition: "24-HOUR OFFLINE CTF",
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
-    // Configurable Target Date: 8 October 2026 09:30:00 IST
+    
     eventDate: "2026-10-08T09:30:00+05:30",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
@@ -29,13 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initAccordions();
 });
 
-// ==========================================
-// 1B. XPLOITX "ACCESS GRANTED" LOADER ENGINE
-// ==========================================
+
+
+
 function initAccessLoader() {
     let loaderOverlay = document.getElementById('loader-overlay');
 
-    // The loader is ONLY for index.html. If no loader-overlay element exists, exit immediately.
+    
     if (!loaderOverlay) return;
     
     document.documentElement.classList.add('loader-locked');
@@ -44,7 +40,7 @@ function initAccessLoader() {
     loaderOverlay.className = 'xploitx-access-loader';
     loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
 
-    // Build Loader Content
+    
     loaderOverlay.innerHTML = `
         <div class="loader-bg-grid"></div>
         <div class="loader-scanline"></div>
@@ -81,7 +77,7 @@ function initAccessLoader() {
         </div>
     `;
 
-    // Lock body scroll
+    
     document.documentElement.classList.add('loader-locked');
     document.body.classList.add('loader-locked');
 
@@ -111,12 +107,12 @@ function initAccessLoader() {
         }, 450);
     }
 
-    // Skip Button Event Listeners
+    
     if (skipBtn) {
         skipBtn.addEventListener('click', dismissLoader);
     }
     
-    // Key Listener for Escape Key or Skip
+    
     function handleKeyDown(e) {
         if (e.key === 'Escape' || e.key === 'Enter') {
             dismissLoader();
@@ -125,7 +121,7 @@ function initAccessLoader() {
     }
     document.addEventListener('keydown', handleKeyDown);
 
-    // Cyan/Green Particle Background
+    
     if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
@@ -184,7 +180,7 @@ function initAccessLoader() {
         return;
     }
 
-    // Crisp Fast Sequence (~2.0s total)
+    
     setProgress(20);
     
     schedule(() => { 
@@ -236,9 +232,9 @@ function initAccessLoader() {
 }
 
 
-// ==========================================
-// 2. COUNTDOWN TIMER ENGINE
-// ==========================================
+
+
+
 function initCountdown() {
     const daysEl = document.getElementById('cd-days');
     const hoursEl = document.getElementById('cd-hours');
@@ -276,14 +272,14 @@ function initCountdown() {
     setInterval(updateTimer, 1000);
 }
 
-// ==========================================
-// 3. LIGHTWEIGHT STAR & NODE PARTICLE SYSTEM
-// ==========================================
+
+
+
 function initParticleSystem() {
     const canvas = document.getElementById('particles-bg');
     if (!canvas) return;
 
-    // Check for reduced motion preference
+    
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         canvas.style.display = 'none';
         return;
@@ -301,15 +297,15 @@ function initParticleSystem() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Limit particle count based on screen size for performance
+    
     const isMobile = window.innerWidth < 768;
     const particleCount = isMobile ? 25 : 65;
 
     const colors = [
-        'rgba(0, 210, 255, ',   // Electric Blue
-        'rgba(157, 78, 221, ',  // Neon Purple
-        'rgba(247, 37, 133, ',  // Deep Magenta
-        'rgba(255, 158, 0, '    // Cosmic Orange
+        'rgba(0, 210, 255, ',   
+        'rgba(157, 78, 221, ',  
+        'rgba(247, 37, 133, ',  
+        'rgba(255, 158, 0, '    
     ];
 
     class Particle {
@@ -335,13 +331,13 @@ function initParticleSystem() {
             this.x += this.vx;
             this.y += this.vy;
 
-            // Wrap around edges
+            
             if (this.x < 0) this.x = width;
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
             if (this.y > height) this.y = 0;
 
-            // Mouse interaction on desktop
+            
             if (!isMobile && mouse.x !== null) {
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
@@ -375,7 +371,7 @@ function initParticleSystem() {
     function animate() {
         ctx.clearRect(0, 0, width, height);
 
-        // Draw connections between nearby particles
+        
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
                 let dx = particles[a].x - particles[b].x;
@@ -403,9 +399,9 @@ function initParticleSystem() {
     animate();
 }
 
-// ==========================================
-// 4. NAVBAR SCROLL & ACTIVE STATE
-// ==========================================
+
+
+
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -418,7 +414,7 @@ function initNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
 
-        // Active link scroll spy
+        
         let currentSection = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop - 120;
@@ -436,19 +432,19 @@ function initNavbarScroll() {
     });
 }
 
-// ==========================================
-// 5. MOBILE NAVIGATION TOGGLE
-// ==========================================
-// ==========================================
-// 5. REDESIGNED FULL-VIEWPORT MOBILE NAVIGATION SYSTEM
-// ==========================================
+
+
+
+
+
+
 function initMobileNav() {
     const hamburger = document.getElementById('hamburger-btn') || document.getElementById('mobile-menu-open') || document.querySelector('.hamburger-btn');
     const navMenu = document.getElementById('nav-links-menu') || document.getElementById('mobile-nav') || document.querySelector('.nav-links');
 
     if (!hamburger || !navMenu) return;
 
-    // 1. Ensure Backdrop Element Exists
+    
     let backdrop = document.getElementById('mobile-nav-backdrop');
     if (!backdrop) {
         backdrop = document.createElement('div');
@@ -457,7 +453,7 @@ function initMobileNav() {
         document.body.appendChild(backdrop);
     }
 
-    // 2. Ensure Menu Header with Dedicated Close Button Exists inside navMenu
+    
     let drawerHeader = navMenu.querySelector('.mobile-drawer-header');
     if (!drawerHeader) {
         drawerHeader = document.createElement('div');
@@ -474,7 +470,7 @@ function initMobileNav() {
         navMenu.insertBefore(drawerHeader, navMenu.firstChild);
     }
 
-    // 3. Ensure Dedicated Menu Footer Exists inside navMenu
+    
     let drawerFooter = navMenu.querySelector('.mobile-drawer-footer');
     if (!drawerFooter) {
         drawerFooter = document.createElement('div');
@@ -530,7 +526,7 @@ function initMobileNav() {
         backdrop.addEventListener('click', closeMenu);
     }
 
-    // Automatically close menu when any navigation link is tapped
+    
     const navLinks = navMenu.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -538,7 +534,7 @@ function initMobileNav() {
         });
     });
 
-    // Escape Key Handler
+    
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu.classList.contains('open')) {
             closeMenu();
@@ -546,9 +542,9 @@ function initMobileNav() {
     });
 }
 
-// ==========================================
-// 6. ACCORDION COMPONENT (RULES & FAQ)
-// ==========================================
+
+
+
 function initAccordions() {
     const accordionHeaders = document.querySelectorAll('.accordion-header');
 
@@ -558,7 +554,7 @@ function initAccordions() {
             const body = item.querySelector('.accordion-body');
             const isActive = item.classList.contains('active');
 
-            // Close siblings in same accordion group
+            
             const group = item.closest('.accordion-group');
             if (group) {
                 group.querySelectorAll('.accordion-item').forEach(sibling => {
@@ -580,9 +576,9 @@ function initAccordions() {
     });
 }
 
-// ==========================================
-// 8. GLOBAL CYBER HUD ALERT DIALOG SYSTEM
-// ==========================================
+
+
+
 window.currentAlertCallback = null;
 
 function showCyberAlert(msg, title = 'SYSTEM ALERT', callback = null) {
@@ -652,7 +648,7 @@ if (!window.showCustomAlert) {
     window.showCustomAlert = showCyberAlert;
 }
 
-// Override native browser alert globally to use HUD dialog
+
 window.alert = function (msg, title = 'SYSTEM ALERT') {
     showCyberAlert(msg, title);
 };
