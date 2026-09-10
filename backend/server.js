@@ -1607,10 +1607,10 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
 
         
         const adminAccounts = {
-            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "Ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
-            "Madhu": process.env.ADMIN_PASS_MADHU || "Madhu@Beta2026"
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
+            "Ashish": process.env.ADMIN_PASS_ASHISH,
+            "Madhu": process.env.ADMIN_PASS_MADHU
         };
 
         const canonicalMap = {
@@ -1621,13 +1621,16 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         };
 
         let isValid = false;
-        const expectedPass = adminAccounts[cleanUsername];
+        let expectedPass = adminAccounts[cleanUsername];
 
-        if (expectedPass) {
-            if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
-                isValid = bcrypt.compareSync(cleanPassword, expectedPass);
-            } else {
-                isValid = (cleanPassword === expectedPass);
+        if (expectedPass && typeof expectedPass === 'string') {
+            expectedPass = expectedPass.replace(/^["']|["']$/g, '').trim();
+            if (expectedPass.length > 0) {
+                if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
+                    isValid = bcrypt.compareSync(cleanPassword, expectedPass);
+                } else {
+                    isValid = (cleanPassword === expectedPass);
+                }
             }
         }
 
@@ -3183,11 +3186,11 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
 
         
         const adminAccounts = {
-            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!",
-            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || "Jesin@Beta2026",
-            "Ashish": process.env.ADMIN_PASS_ASHISH || "Ashish@Beta2026",
-            "Madhu": process.env.ADMIN_PASS_MADHU || "Madhu@Beta2026",
-            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || "Beta@Admln#2.0!"
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
+            "Ashish": process.env.ADMIN_PASS_ASHISH,
+            "Madhu": process.env.ADMIN_PASS_MADHU,
+            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR
         };
 
         const canonicalMap = {
@@ -3206,13 +3209,16 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
         }
 
         let isValid = false;
-        const expectedPass = adminAccounts[cleanUsername];
+        let expectedPass = adminAccounts[cleanUsername];
 
-        if (expectedPass) {
-            if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
-                isValid = bcrypt.compareSync(cleanPassword, expectedPass);
-            } else {
-                isValid = (cleanPassword === expectedPass);
+        if (expectedPass && typeof expectedPass === 'string') {
+            expectedPass = expectedPass.replace(/^["']|["']$/g, '').trim();
+            if (expectedPass.length > 0) {
+                if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
+                    isValid = bcrypt.compareSync(cleanPassword, expectedPass);
+                } else {
+                    isValid = (cleanPassword === expectedPass);
+                }
             }
         }
 

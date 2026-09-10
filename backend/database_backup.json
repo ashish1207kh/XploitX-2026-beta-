@@ -1,743 +1,3481 @@
 {
-  "export_timestamp": "2026-09-10 11:27:50 IST",
+  "export_timestamp": "2026-09-10 11:49:21 IST",
   "summary": {
     "total_teams": 0,
     "total_members": 0,
     "total_attendance_records": 0,
-    "total_activity_logs": 91
+    "total_activity_logs": 383
   },
   "teams": [],
   "members": [],
   "attendance": [],
-  "otps": [],
+  "otps": [
+    {
+      "_id": "6a9c59bf22fb9f40767a9937",
+      "email": "testctf2026@gmail.com",
+      "otp": "290904",
+      "expires_at": "2026-09-05T18:14:47.328Z",
+      "attempts": 0,
+      "created_at": "2026-09-05T18:04:47.328Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e852eb64a1ee241c1db57",
+      "email": "libineshr7@gmail.com",
+      "otp": "304883",
+      "expires_at": "2026-09-07T09:44:36.621Z",
+      "attempts": 0,
+      "created_at": "2026-09-07T09:34:36.621Z",
+      "__v": 0
+    }
+  ],
   "activityLogs": [
     {
-      "id": 1,
-      "timestamp": "2026-09-04 21:00:11 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 21:00:11 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 15:30:11"
-    },
-    {
-      "id": 2,
-      "timestamp": "2026-09-04 21:00:11 IST",
+      "_id": "6a9a700dda07d49cd5542a1d",
+      "timestamp": "2026-09-04 12:45:25 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:00:11 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 15:30:11"
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 12:45:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T07:15:25.737Z",
+      "__v": 0
     },
     {
-      "id": 3,
-      "timestamp": "2026-09-04 21:18:42 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 21:18:42 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 15:48:42"
-    },
-    {
-      "id": 4,
-      "timestamp": "2026-09-04 21:18:42 IST",
+      "_id": "6a9a7a913b75c7233dbccc22",
+      "timestamp": "2026-09-04 13:30:17 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:18:42 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 15:48:42"
+      "details": "Operative \"Jesin Milesh\" logged in successfully",
+      "formatted": "[2026-09-04 13:30:17 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged in successfully",
+      "created_at": "2026-09-04T08:00:17.976Z",
+      "__v": 0
     },
     {
-      "id": 5,
-      "timestamp": "2026-09-04 21:23:40 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 21:23:40 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 15:53:40"
-    },
-    {
-      "id": 6,
-      "timestamp": "2026-09-04 21:23:40 IST",
+      "_id": "6a9a7ac03b75c7233dbccc23",
+      "timestamp": "2026-09-04 13:31:04 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:23:40 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 15:53:41"
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 13:31:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T08:01:04.009Z",
+      "__v": 0
     },
     {
-      "id": 7,
-      "timestamp": "2026-09-04 21:26:32 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 21:26:32 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 15:56:32"
+      "_id": "6a9a7ffb89347c18b7dce953",
+      "timestamp": "2026-09-04 13:53:23 IST",
+      "action": "SEND OTP",
+      "details": "Verification OTP generated & dispatched to jesinmilesh@gmail.com",
+      "formatted": "[2026-09-04 13:53:23 IST] SEND OTP: Verification OTP generated & dispatched to jesinmilesh@gmail.com",
+      "created_at": "2026-09-04T08:23:23.328Z",
+      "__v": 0
     },
     {
-      "id": 8,
-      "timestamp": "2026-09-04 21:26:32 IST",
+      "_id": "6a9a801189347c18b7dce954",
+      "timestamp": "2026-09-04 13:53:45 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address jesinmilesh@gmail.com successfully verified",
+      "formatted": "[2026-09-04 13:53:45 IST] OTP VERIFIED: Email address jesinmilesh@gmail.com successfully verified",
+      "created_at": "2026-09-04T08:23:45.710Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8d7e102d3c00fe95b88f",
+      "timestamp": "2026-09-04 14:51:02 IST",
+      "action": "SEND OTP",
+      "details": "Verification OTP generated & dispatched to libineshr7@gmail.com",
+      "formatted": "[2026-09-04 14:51:02 IST] SEND OTP: Verification OTP generated & dispatched to libineshr7@gmail.com",
+      "created_at": "2026-09-04T09:21:02.597Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8e96102d3c00fe95b890",
+      "timestamp": "2026-09-04 14:55:42 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address libineshr7@gmail.com successfully verified",
+      "formatted": "[2026-09-04 14:55:42 IST] OTP VERIFIED: Email address libineshr7@gmail.com successfully verified",
+      "created_at": "2026-09-04T09:25:42.136Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a8f22102d3c00fe95b894",
+      "timestamp": "2026-09-04 14:58:02 IST",
+      "action": "NEW REGISTRATION",
+      "details": "Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
+      "formatted": "[2026-09-04 14:58:02 IST] NEW REGISTRATION: Team ID: XB2026-0001 | Team Name: \"Team Safe\" | Leader: Libinesh R U (libineshr7@gmail.com) | Members: 2 | UTR: 66663232323232323223",
+      "created_at": "2026-09-04T09:28:02.349Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a912fa30dd7cbd91f30ed",
+      "timestamp": "2026-09-04 15:06:47 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:26:32 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 15:56:32"
+      "details": "Operative \"Administrator\" logged in successfully",
+      "formatted": "[2026-09-04 15:06:47 IST] ADMIN LOGIN: Operative \"Administrator\" logged in successfully",
+      "created_at": "2026-09-04T09:36:47.478Z",
+      "__v": 0
     },
     {
-      "id": 9,
-      "timestamp": "2026-09-04 21:28:41 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 21:28:41 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 15:58:41"
-    },
-    {
-      "id": 10,
-      "timestamp": "2026-09-04 21:28:41 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 21:28:41 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 15:58:41"
-    },
-    {
-      "id": 11,
-      "timestamp": "2026-09-04 23:10:22 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 23:10:22 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 17:40:22"
-    },
-    {
-      "id": 12,
-      "timestamp": "2026-09-04 23:10:22 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 23:10:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 17:40:22"
-    },
-    {
-      "id": 13,
-      "timestamp": "2026-09-04 23:17:12 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:17:12 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:47:12"
-    },
-    {
-      "id": 14,
-      "timestamp": "2026-09-04 23:17:12 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 23:17:12 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 17:47:12"
-    },
-    {
-      "id": 15,
-      "timestamp": "2026-09-04 23:17:12 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 23:17:12 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 17:47:12"
-    },
-    {
-      "id": 16,
-      "timestamp": "2026-09-04 23:17:12 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:17:12 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:47:12"
-    },
-    {
-      "id": 17,
-      "timestamp": "2026-09-04 23:17:35 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:17:35 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:47:35"
-    },
-    {
-      "id": 18,
-      "timestamp": "2026-09-04 23:17:35 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 23:17:35 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 17:47:35"
-    },
-    {
-      "id": 19,
-      "timestamp": "2026-09-04 23:17:35 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 23:17:35 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 17:47:35"
-    },
-    {
-      "id": 20,
-      "timestamp": "2026-09-04 23:17:35 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:17:35 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:47:35"
-    },
-    {
-      "id": 21,
-      "timestamp": "2026-09-04 23:24:26 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:24:26 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:54:26"
-    },
-    {
-      "id": 22,
-      "timestamp": "2026-09-04 23:24:26 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 23:24:26 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 17:54:26"
-    },
-    {
-      "id": 23,
-      "timestamp": "2026-09-04 23:24:26 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 23:24:26 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 17:54:26"
-    },
-    {
-      "id": 24,
-      "timestamp": "2026-09-04 23:24:26 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:24:26 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:54:26"
-    },
-    {
-      "id": 25,
-      "timestamp": "2026-09-04 23:26:38 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:26:38 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:56:38"
-    },
-    {
-      "id": 26,
-      "timestamp": "2026-09-04 23:26:38 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt",
-      "formatted": "[2026-09-04 23:26:38 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
-      "created_at": "2026-09-04 17:56:38"
-    },
-    {
-      "id": 27,
-      "timestamp": "2026-09-04 23:26:38 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-04 23:26:38 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-04 17:56:38"
-    },
-    {
-      "id": 28,
-      "timestamp": "2026-09-04 23:26:38 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:26:38 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:56:38"
-    },
-    {
-      "id": 29,
-      "timestamp": "2026-09-04 23:28:04 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:28:04 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:58:04"
-    },
-    {
-      "id": 30,
-      "timestamp": "2026-09-04 23:28:04 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:28:04 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "created_at": "2026-09-04 17:58:04"
-    },
-    {
-      "id": 31,
-      "timestamp": "2026-09-04 23:28:04 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:28:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "created_at": "2026-09-04 17:58:04"
-    },
-    {
-      "id": 32,
-      "timestamp": "2026-09-04 23:28:04 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:28:04 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 17:58:04"
-    },
-    {
-      "id": 33,
-      "timestamp": "2026-09-04 23:33:10 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:33:10 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 18:03:10"
-    },
-    {
-      "id": 34,
-      "timestamp": "2026-09-04 23:33:10 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:33:10 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "created_at": "2026-09-04 18:03:10"
-    },
-    {
-      "id": 35,
-      "timestamp": "2026-09-04 23:33:10 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:33:10 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "created_at": "2026-09-04 18:03:10"
-    },
-    {
-      "id": 36,
-      "timestamp": "2026-09-04 23:33:10 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:33:10 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 18:03:10"
-    },
-    {
-      "id": 37,
-      "timestamp": "2026-09-04 23:36:52 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:36:52 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 18:06:53"
-    },
-    {
-      "id": 38,
-      "timestamp": "2026-09-04 23:36:53 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:36:53 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt from IP: 127.0.0.1",
-      "created_at": "2026-09-04 18:06:53"
-    },
-    {
-      "id": 39,
-      "timestamp": "2026-09-04 23:36:53 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "formatted": "[2026-09-04 23:36:53 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console from IP: 127.0.0.1",
-      "created_at": "2026-09-04 18:06:53"
-    },
-    {
-      "id": 40,
-      "timestamp": "2026-09-04 23:36:53 IST",
-      "action": "ADMIN AUTH FAILURE",
-      "details": "Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "formatted": "[2026-09-04 23:36:53 IST] ADMIN AUTH FAILURE: Invalid or rejected token attempt from IP: ::ffff:127.0.0.1",
-      "created_at": "2026-09-04 18:06:53"
-    },
-    {
-      "id": 41,
-      "timestamp": "2026-09-05 22:03:49 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:03:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 16:33:49"
-    },
-    {
-      "id": 42,
-      "timestamp": "2026-09-05 22:03:49 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:03:49 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 16:33:49"
-    },
-    {
-      "id": 43,
-      "timestamp": "2026-09-05 22:04:04 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:04:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 16:34:04"
-    },
-    {
-      "id": 44,
-      "timestamp": "2026-09-05 22:04:04 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:04:04 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 16:34:04"
-    },
-    {
-      "id": 45,
-      "timestamp": "2026-09-05 22:13:19 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:13:19 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 16:43:19"
-    },
-    {
-      "id": 46,
-      "timestamp": "2026-09-05 22:13:19 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:13:19 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 16:43:19"
-    },
-    {
-      "id": 47,
-      "timestamp": "2026-09-05 22:14:35 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:14:35 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 16:44:35"
-    },
-    {
-      "id": 48,
-      "timestamp": "2026-09-05 22:14:35 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:14:35 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 16:44:35"
-    },
-    {
-      "id": 49,
-      "timestamp": "2026-09-05 22:18:55 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:18:55 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 16:48:55"
-    },
-    {
-      "id": 50,
-      "timestamp": "2026-09-05 22:18:55 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:18:55 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 16:48:55"
-    },
-    {
-      "id": 51,
-      "timestamp": "2026-09-05 22:34:29 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:34:29 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 17:04:29"
-    },
-    {
-      "id": 52,
-      "timestamp": "2026-09-05 22:34:29 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:34:29 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 17:04:29"
-    },
-    {
-      "id": 53,
-      "timestamp": "2026-09-05 22:36:42 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:36:42 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 17:06:42"
-    },
-    {
-      "id": 54,
-      "timestamp": "2026-09-05 22:36:42 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:36:42 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 17:06:42"
-    },
-    {
-      "id": 55,
-      "timestamp": "2026-09-05 22:46:45 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:46:45 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 17:16:45"
-    },
-    {
-      "id": 56,
-      "timestamp": "2026-09-05 22:46:45 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:46:45 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 17:16:45"
-    },
-    {
-      "id": 57,
-      "timestamp": "2026-09-05 22:51:01 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-05 22:51:01 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-05 17:21:01"
-    },
-    {
-      "id": 58,
-      "timestamp": "2026-09-05 22:51:01 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-05 22:51:01 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-05 17:21:01"
-    },
-    {
-      "id": 59,
-      "timestamp": "2026-09-07 13:21:36 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:21:36 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07 07:51:36"
-    },
-    {
-      "id": 60,
-      "timestamp": "2026-09-07 13:21:36 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 13:21:36 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07 07:51:36"
-    },
-    {
-      "id": 61,
-      "timestamp": "2026-09-07 13:22:01 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-07 13:22:01 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-07 07:52:01"
-    },
-    {
-      "id": 62,
-      "timestamp": "2026-09-07 13:22:01 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-07 13:22:01 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-07 07:52:01"
-    },
-    {
-      "id": 63,
-      "timestamp": "2026-09-07 13:22:03 IST",
-      "action": "ATTENDANCE MARKED",
-      "details": "Attendance status updated for Team ID: XCTF-26-0001 (Status: PRESENT) by Administrator",
-      "formatted": "[2026-09-07 13:22:03 IST] ATTENDANCE MARKED: Attendance status updated for Team ID: XCTF-26-0001 (Status: PRESENT) by Administrator",
-      "created_at": "2026-09-07 07:52:03"
-    },
-    {
-      "id": 64,
-      "timestamp": "2026-09-07 13:22:04 IST",
-      "action": "DOWNLOAD OD PDF",
-      "details": "OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Administrator",
-      "formatted": "[2026-09-07 13:22:04 IST] DOWNLOAD OD PDF: OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Administrator",
-      "created_at": "2026-09-07 07:52:04"
-    },
-    {
-      "id": 65,
-      "timestamp": "2026-09-07 13:22:09 IST",
-      "action": "PAYMENT VERIFIED",
-      "details": "Registration confirmed & OD Letter PDF sent for Team ID: XCTF-26-0001 by Administrator",
-      "formatted": "[2026-09-07 13:22:09 IST] PAYMENT VERIFIED: Registration confirmed & OD Letter PDF sent for Team ID: XCTF-26-0001 by Administrator",
-      "created_at": "2026-09-07 07:52:09"
-    },
-    {
-      "id": 66,
-      "timestamp": "2026-09-07 13:22:09 IST",
+      "_id": "6a9a97a5574576be23504b11",
+      "timestamp": "2026-09-04 15:34:21 IST",
       "action": "DELETE TEAM",
-      "details": "Deleted record for Team ID: XCTF-26-0001 by Administrator",
-      "formatted": "[2026-09-07 13:22:09 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Administrator",
-      "created_at": "2026-09-07 07:52:09"
+      "details": "Deleted record for Team ID: XB2026-0001 by Ashish",
+      "formatted": "[2026-09-04 15:34:21 IST] DELETE TEAM: Deleted record for Team ID: XB2026-0001 by Ashish",
+      "created_at": "2026-09-04T10:04:21.557Z",
+      "__v": 0
     },
     {
-      "id": 67,
-      "timestamp": "2026-09-08 12:24:21 IST",
+      "_id": "6a9a9957574576be23504b12",
+      "timestamp": "2026-09-04 15:41:35 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged in successfully",
+      "formatted": "[2026-09-04 15:41:35 IST] ADMIN LOGIN: Operative \"Ashish\" logged in successfully",
+      "created_at": "2026-09-04T10:11:35.678Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9babe6ee07e2740517ca",
+      "timestamp": "2026-09-04 15:51:31 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 15:51:31 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:21:31.412Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9bbae6ee07e2740517cb",
+      "timestamp": "2026-09-04 15:51:46 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 15:51:46 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:21:46.824Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c2de6ee07e2740517d1",
+      "timestamp": "2026-09-04 15:53:41 IST",
+      "action": "MODIFY TEAM",
+      "details": "Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "formatted": "[2026-09-04 15:53:41 IST] MODIFY TEAM: Modified record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "created_at": "2026-09-04T10:23:41.115Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c42e6ee07e2740517d2",
+      "timestamp": "2026-09-04 15:54:02 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "formatted": "[2026-09-04 15:54:02 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "created_at": "2026-09-04T10:24:02.441Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9a9c9be6ee07e2740517d3",
+      "timestamp": "2026-09-04 15:55:31 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-08 12:24:21 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-08 06:54:21"
+      "formatted": "[2026-09-04 15:55:31 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T10:25:31.128Z",
+      "__v": 0
     },
     {
-      "id": 68,
-      "timestamp": "2026-09-08 12:25:24 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-08 12:25:24 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-08 06:55:24"
-    },
-    {
-      "id": 69,
-      "timestamp": "2026-09-08 12:25:31 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-08 12:25:31 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-08 06:55:31"
-    },
-    {
-      "id": 70,
-      "timestamp": "2026-09-10 10:30:43 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Madhu\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:30:43 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
-      "created_at": "2026-09-10 05:00:43"
-    },
-    {
-      "id": 71,
-      "timestamp": "2026-09-10 10:30:43 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Madhu\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:30:43 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
-      "created_at": "2026-09-10 05:00:43"
-    },
-    {
-      "id": 72,
-      "timestamp": "2026-09-10 10:30:43 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"Madhu\" failed login attempt",
-      "formatted": "[2026-09-10 10:30:43 IST] ADMIN LOGIN FAILED: Operative \"Madhu\" failed login attempt",
-      "created_at": "2026-09-10 05:00:43"
-    },
-    {
-      "id": 73,
-      "timestamp": "2026-09-10 10:30:43 IST",
-      "action": "ATTENDANCE LOGIN",
-      "details": "Operative \"Madhu\" authenticated into Attendance Terminal",
-      "formatted": "[2026-09-10 10:30:43 IST] ATTENDANCE LOGIN: Operative \"Madhu\" authenticated into Attendance Terminal",
-      "created_at": "2026-09-10 05:00:43"
-    },
-    {
-      "id": 74,
-      "timestamp": "2026-09-10 10:30:43 IST",
-      "action": "DATA ACCESS",
-      "details": "Operative \"Madhu\" viewed full teams roster",
-      "formatted": "[2026-09-10 10:30:43 IST] DATA ACCESS: Operative \"Madhu\" viewed full teams roster",
-      "created_at": "2026-09-10 05:00:43"
-    },
-    {
-      "id": 75,
-      "timestamp": "2026-09-10 10:30:43 IST",
+      "_id": "6a9a9dc0f3762adb1257d79e",
+      "timestamp": "2026-09-04 16:00:24 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:30:43 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-10 05:00:43"
+      "formatted": "[2026-09-04 16:00:24 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T10:30:24.855Z",
+      "__v": 0
     },
     {
-      "id": 76,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9a9dd0f3762adb1257d79f",
+      "timestamp": "2026-09-04 16:00:40 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Madhu\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
-      "created_at": "2026-09-10 05:08:25"
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 16:00:40 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T10:30:40.654Z",
+      "__v": 0
     },
     {
-      "id": 77,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9ab94556826a32dc7448b9",
+      "timestamp": "2026-09-04 17:57:49 IST",
       "action": "ADMIN LOGIN",
-      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
-      "created_at": "2026-09-10 05:08:25"
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 17:57:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T12:27:49.033Z",
+      "__v": 0
     },
     {
-      "id": 78,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9ace571354b5632528197d",
+      "timestamp": "2026-09-04 19:27:43 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "formatted": "[2026-09-04 19:27:43 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "created_at": "2026-09-04T13:57:43.760Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace591354b5632528197e",
+      "timestamp": "2026-09-04 19:27:45 IST",
+      "action": "DELETE TEAM",
+      "details": "Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "formatted": "[2026-09-04 19:27:45 IST] DELETE TEAM: Deleted record for Team ID: XCTF-26-0001 by Ashish",
+      "created_at": "2026-09-04T13:57:45.698Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace5f1354b5632528197f",
+      "timestamp": "2026-09-04 19:27:51 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Ashish\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
-      "created_at": "2026-09-10 05:08:25"
+      "formatted": "[2026-09-04 19:27:51 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T13:57:51.494Z",
+      "__v": 0
     },
     {
-      "id": 79,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9ace6d1354b56325281980",
+      "timestamp": "2026-09-04 19:28:05 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:28:05 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-04T13:58:05.454Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ace9b1354b56325281981",
+      "timestamp": "2026-09-04 19:28:51 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Administrator\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
-      "created_at": "2026-09-10 05:08:25"
+      "formatted": "[2026-09-04 19:28:51 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T13:58:51.092Z",
+      "__v": 0
     },
     {
-      "id": 80,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"madhu\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"madhu\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9acec61354b56325281982",
+      "timestamp": "2026-09-04 19:29:34 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:29:34 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T13:59:34.141Z",
+      "__v": 0
     },
     {
-      "id": 81,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"MAdhu\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"MAdhu\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9ad5dc94f66ac995bb8fad",
+      "timestamp": "2026-09-04 19:59:48 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-04 19:59:48 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T14:29:48.110Z",
+      "__v": 0
     },
     {
-      "id": 82,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"MADHU\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"MADHU\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9ae6f23f0a21d84b72a989",
+      "timestamp": "2026-09-04 21:12:42 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-04 21:12:42 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-04T15:42:42.109Z",
+      "__v": 0
     },
     {
-      "id": 83,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"jesin milesh\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"jesin milesh\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9aebb8dee9174ede434a29",
+      "timestamp": "2026-09-04 21:33:04 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-04 21:33:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-04T16:03:04.322Z",
+      "__v": 0
     },
     {
-      "id": 84,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"jesin\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"jesin\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9c4a5601ea38b0cb20e042",
+      "timestamp": "2026-09-05 22:29:02 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:29:02 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T16:59:02.668Z",
+      "__v": 0
     },
     {
-      "id": 85,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"ashish\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"ashish\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9c4a5d01ea38b0cb20e043",
+      "timestamp": "2026-09-05 22:29:09 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:29:09 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T16:59:09.615Z",
+      "__v": 0
     },
     {
-      "id": 86,
-      "timestamp": "2026-09-10 10:38:25 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"administrator\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "_id": "6a9c4a6701ea38b0cb20e044",
+      "timestamp": "2026-09-05 22:29:19 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:29:19 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T16:59:19.957Z",
+      "__v": 0
     },
     {
-      "id": 87,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9c4a6f01ea38b0cb20e045",
+      "timestamp": "2026-09-05 22:29:27 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:29:27 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T16:59:27.318Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e046",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.108Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e047",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.130Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e048",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.147Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e04b",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.187Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e049",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.160Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4b0501ea38b0cb20e04a",
+      "timestamp": "2026-09-05 22:31:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:31:57 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-05T17:01:57.174Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f998826",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.006Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f998828",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.031Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f998827",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.027Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f99882b",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.039Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f99882d",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.046Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f99882c",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.043Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f99882e",
+      "timestamp": "2026-09-05 22:36:50 IST",
       "action": "ADMIN LOGIN FAILED",
       "details": "Operative \"admin\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"admin\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN FAILED: Operative \"admin\" failed login attempt",
+      "created_at": "2026-09-05T17:06:50.049Z",
+      "__v": 0
     },
     {
-      "id": 88,
-      "timestamp": "2026-09-10 10:38:25 IST",
+      "_id": "6a9c4c2a07b2c9999f99882f",
+      "timestamp": "2026-09-05 22:36:50 IST",
       "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"madhumitha\" failed login attempt",
-      "formatted": "[2026-09-10 10:38:25 IST] ADMIN LOGIN FAILED: Operative \"madhumitha\" failed login attempt",
-      "created_at": "2026-09-10 05:08:25"
+      "details": "Operative \"unknown_user\" failed login attempt",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN FAILED: Operative \"unknown_user\" failed login attempt",
+      "created_at": "2026-09-05T17:06:50.052Z",
+      "__v": 0
     },
     {
-      "id": 89,
-      "timestamp": "2026-09-10 10:56:51 IST",
+      "_id": "6a9c4c2a07b2c9999f998829",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.033Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c2a07b2c9999f99882a",
+      "timestamp": "2026-09-05 22:36:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:50.037Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4c3007b2c9999f998830",
+      "timestamp": "2026-09-05 22:36:56 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:36:56 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:06:56.664Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa24",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.208Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa25",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.233Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa26",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.238Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa29",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.267Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa28",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.261Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9c4e66d3142e6360f5fa27",
+      "timestamp": "2026-09-05 22:46:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-05 22:46:22 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-05T17:16:22.248Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce0ffbe1f4135bcdec91d",
+      "timestamp": "2026-09-06 09:11:51 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:41:51.854Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce0ffbe1f4135bcdec91c",
+      "timestamp": "2026-09-06 09:11:51 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:11:51 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:41:51.838Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce100be1f4135bcdec91e",
+      "timestamp": "2026-09-06 09:11:52 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:11:52 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:41:52.017Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec91f",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:42:23.400Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec920",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:42:23.404Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce11fbe1f4135bcdec921",
+      "timestamp": "2026-09-06 09:12:23 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:12:23 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:42:23.552Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce1bbbe1f4135bcdec922",
+      "timestamp": "2026-09-06 09:14:59 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:14:59 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:44:59.001Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce204be1f4135bcdec923",
+      "timestamp": "2026-09-06 09:16:12 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:16:12 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:46:12.566Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce23bbe1f4135bcdec924",
+      "timestamp": "2026-09-06 09:17:07 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:17:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:47:07.176Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce25ebe1f4135bcdec925",
+      "timestamp": "2026-09-06 09:17:42 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:17:42 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:47:42.348Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4963",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:50:38.851Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4962",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"administrator\"",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"administrator\"",
+      "created_at": "2026-09-06T03:50:38.840Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce30eb273361a580e4964",
+      "timestamp": "2026-09-06 09:20:38 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-06 09:20:38 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-06T03:50:38.967Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce32cb273361a580e4965",
+      "timestamp": "2026-09-06 09:21:08 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:21:08 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:51:08.345Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce3df049b0e1c29b789b2",
+      "timestamp": "2026-09-06 09:24:07 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:07 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:07.487Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce400049b0e1c29b789b3",
+      "timestamp": "2026-09-06 09:24:40 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:40 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:40.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce410049b0e1c29b789b4",
+      "timestamp": "2026-09-06 09:24:56 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:24:56 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:54:56.493Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce4df049b0e1c29b789b5",
+      "timestamp": "2026-09-06 09:28:23 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"Jesin Milesh\"",
+      "formatted": "[2026-09-06 09:28:23 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"Jesin Milesh\"",
+      "created_at": "2026-09-06T03:58:23.863Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce4f7049b0e1c29b789b6",
+      "timestamp": "2026-09-06 09:28:47 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:28:47 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T03:58:47.374Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce657049b0e1c29b789b7",
+      "timestamp": "2026-09-06 09:34:39 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:34:39 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:04:39.562Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ce8b90922aa3c5e8f3be6",
+      "timestamp": "2026-09-06 09:44:49 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:44:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:14:49.139Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea140922aa3c5e8f3be7",
+      "timestamp": "2026-09-06 09:50:36 IST",
+      "action": "ATTENDANCE LOGIN FAILED",
+      "details": "Failed login attempt for operative \"coordinator\"",
+      "formatted": "[2026-09-06 09:50:36 IST] ATTENDANCE LOGIN FAILED: Failed login attempt for operative \"coordinator\"",
+      "created_at": "2026-09-06T04:20:36.315Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea140922aa3c5e8f3be8",
+      "timestamp": "2026-09-06 09:50:36 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:50:36 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:20:36.316Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea43e5ea2b9c7908be15",
+      "timestamp": "2026-09-06 09:51:23 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:51:23 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:21:23.654Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea43e5ea2b9c7908be16",
+      "timestamp": "2026-09-06 09:51:23 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:51:23 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:21:23.699Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea5ee5ea2b9c7908be17",
+      "timestamp": "2026-09-06 09:51:50 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:51:50 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:21:50.372Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9cea5ee5ea2b9c7908be18",
+      "timestamp": "2026-09-06 09:51:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:51:50 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:21:50.411Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ceaf9e5ea2b9c7908be19",
+      "timestamp": "2026-09-06 09:54:25 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-06 09:54:25 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-06T04:24:25.210Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ceaf9e5ea2b9c7908be1a",
+      "timestamp": "2026-09-06 09:54:25 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-06 09:54:25 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-06T04:24:25.367Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4abe",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.329Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4abf",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.337Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac0",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.339Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac3",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Attendance Officer\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Attendance Officer\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.346Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac1",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.342Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73cd1fa9636be91e4ac2",
+      "timestamp": "2026-09-07 13:50:29 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Ashish\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:29 IST] ATTENDANCE LOGIN: Operative \"Ashish\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:29.344Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73d11fa9636be91e4ac4",
+      "timestamp": "2026-09-07 13:50:33 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:50:33 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:20:33.909Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e73d11fa9636be91e4ac5",
+      "timestamp": "2026-09-07 13:50:33 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 13:50:33 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T08:20:33.954Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e75011fa9636be91e4ac6",
+      "timestamp": "2026-09-07 13:55:37 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 13:55:37 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T08:25:37.061Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e75011fa9636be91e4ac7",
+      "timestamp": "2026-09-07 13:55:37 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 13:55:37 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T08:25:37.124Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e7f621fa9636be91e4ac8",
+      "timestamp": "2026-09-07 14:39:54 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:39:54 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:09:54.895Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e7f621fa9636be91e4ac9",
+      "timestamp": "2026-09-07 14:39:54 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 14:39:54 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T09:09:54.957Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e81491fa9636be91e4aca",
+      "timestamp": "2026-09-07 14:48:01 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:48:01 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:18:01.870Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e815a1fa9636be91e4acb",
+      "timestamp": "2026-09-07 14:48:18 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:48:18 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:18:18.397Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e82021fa9636be91e4acc",
+      "timestamp": "2026-09-07 14:51:06 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:51:06 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:21:06.333Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e832b1fa9636be91e4acd",
+      "timestamp": "2026-09-07 14:56:03 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:56:03 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:26:03.594Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e83681fa9636be91e4ace",
+      "timestamp": "2026-09-07 14:57:04 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:57:04 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:27:04.561Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e83681fa9636be91e4acf",
+      "timestamp": "2026-09-07 14:57:04 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-07 14:57:04 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-07T09:27:04.801Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9e83b01fa9636be91e4ad0",
+      "timestamp": "2026-09-07 14:58:16 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-07 14:58:16 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-07T09:28:16.969Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ec3b01b3876f92c6c97b0",
+      "timestamp": "2026-09-07 19:31:20 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-07 19:31:20 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-07T14:01:20.741Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9ee126cefc2a04b93c9d76",
+      "timestamp": "2026-09-07 21:37:02 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-07 21:37:02 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-07T16:07:02.082Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9f97b5a293349e31a4bbe9",
+      "timestamp": "2026-09-08 10:35:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 10:35:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T05:05:57.400Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9f98f9a293349e31a4bbea",
+      "timestamp": "2026-09-08 10:41:21 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-08 10:41:21 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-08T05:11:21.559Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9f9ce958a45d57fb7c03ac",
+      "timestamp": "2026-09-08 10:58:09 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-08 10:58:09 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-08T05:28:09.434Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa712c895feca58d5e1db",
+      "timestamp": "2026-09-08 11:41:30 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-08 11:41:30 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-08T06:11:30.208Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa713c895feca58d5e1dc",
+      "timestamp": "2026-09-08 11:41:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-08 11:41:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-08T06:11:31.137Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa728bd50729cfd306bed",
+      "timestamp": "2026-09-08 11:41:51 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 11:41:51 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:11:52.024Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa7c45b655e95fb373de7",
+      "timestamp": "2026-09-08 11:44:28 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 11:44:28 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T06:14:28.858Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa7dd5b655e95fb373de8",
+      "timestamp": "2026-09-08 11:44:53 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 11:44:53 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:14:53.452Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa7f85b655e95fb373de9",
+      "timestamp": "2026-09-08 11:45:20 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 11:45:20 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:15:20.364Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa88c5b655e95fb373dea",
+      "timestamp": "2026-09-08 11:47:48 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 11:47:48 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T06:17:48.445Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fa8a35b655e95fb373deb",
+      "timestamp": "2026-09-08 11:48:11 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 11:48:11 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:18:11.025Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fadb20e1a77aa80e967ac",
+      "timestamp": "2026-09-08 12:09:46 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Ashish\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 12:09:46 IST] ATTENDANCE LOGIN: Operative \"Ashish\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T06:39:46.184Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fadb20e1a77aa80e967ad",
+      "timestamp": "2026-09-08 12:09:46 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Ashish\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 12:09:46 IST] ATTENDANCE LOGOUT: Operative \"Ashish\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T06:39:46.207Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fadb20e1a77aa80e967af",
+      "timestamp": "2026-09-08 12:09:46 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-08T06:39:46.272Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fadb20e1a77aa80e967ae",
+      "timestamp": "2026-09-08 12:09:46 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:39:46.268Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fadb20e1a77aa80e967b0",
+      "timestamp": "2026-09-08 12:09:46 IST",
+      "action": "ADMIN LOGOUT",
+      "details": "Operative \"Ashish\" logged out of Admin Console",
+      "formatted": "[2026-09-08 12:09:46 IST] ADMIN LOGOUT: Operative \"Ashish\" logged out of Admin Console",
+      "created_at": "2026-09-08T06:39:46.276Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9faee98cf244065d5c4285",
+      "timestamp": "2026-09-08 12:14:57 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:14:57 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:44:57.350Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb0d736aa1ba9f5759a9f",
+      "timestamp": "2026-09-08 12:23:11 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"administrator\" failed login attempt",
+      "formatted": "[2026-09-08 12:23:11 IST] ADMIN LOGIN FAILED: Operative \"administrator\" failed login attempt",
+      "created_at": "2026-09-08T06:53:11.369Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb1c737ede3d5b2c0bf66",
+      "timestamp": "2026-09-08 12:27:11 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-08 12:27:11 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-08T06:57:11.427Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb1db37ede3d5b2c0bf67",
+      "timestamp": "2026-09-08 12:27:31 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:27:31 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T06:57:31.130Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb1bf37ede3d5b2c0bf65",
+      "timestamp": "2026-09-08 12:27:03 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Administrator\" failed login attempt",
+      "formatted": "[2026-09-08 12:27:03 IST] ADMIN LOGIN FAILED: Operative \"Administrator\" failed login attempt",
+      "created_at": "2026-09-08T06:57:03.038Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb22337ede3d5b2c0bf68",
+      "timestamp": "2026-09-08 12:28:43 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Administrator\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 12:28:43 IST] ATTENDANCE LOGIN: Operative \"Administrator\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T06:58:43.797Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb22d37ede3d5b2c0bf69",
+      "timestamp": "2026-09-08 12:28:53 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Administrator\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 12:28:53 IST] ATTENDANCE LOGOUT: Operative \"Administrator\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T06:58:53.455Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb23337ede3d5b2c0bf6a",
+      "timestamp": "2026-09-08 12:28:59 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 12:28:59 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T06:58:59.411Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb23637ede3d5b2c0bf6b",
+      "timestamp": "2026-09-08 12:29:02 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 12:29:02 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T06:59:02.138Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb32c37ede3d5b2c0bf6c",
+      "timestamp": "2026-09-08 12:33:08 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 12:33:08 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T07:03:08.248Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb32e37ede3d5b2c0bf6d",
+      "timestamp": "2026-09-08 12:33:10 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 12:33:10 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T07:03:10.814Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fb3cd37ede3d5b2c0bf6e",
+      "timestamp": "2026-09-08 12:35:49 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 12:35:49 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T07:05:49.455Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fcfe9d0570f151a7e85f2",
+      "timestamp": "2026-09-08 14:35:45 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-08 14:35:45 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-08T09:05:45.971Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fd1e7d0570f151a7e85f3",
+      "timestamp": "2026-09-08 14:44:15 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 14:44:15 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T09:14:15.783Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fd203d0570f151a7e85f4",
+      "timestamp": "2026-09-08 14:44:43 IST",
+      "action": "ATTENDANCE LOGOUT",
+      "details": "Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "formatted": "[2026-09-08 14:44:43 IST] ATTENDANCE LOGOUT: Operative \"Jesin Milesh\" logged out of Attendance Terminal",
+      "created_at": "2026-09-08T09:14:43.975Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fd3b2d0570f151a7e85f5",
+      "timestamp": "2026-09-08 14:51:54 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"' OR '1'='1\" failed login attempt",
+      "formatted": "[2026-09-08 14:51:54 IST] ADMIN LOGIN FAILED: Operative \"' OR '1'='1\" failed login attempt",
+      "created_at": "2026-09-08T09:21:54.904Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fdc173a3a3735b306027f",
+      "timestamp": "2026-09-08 15:27:43 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Ashish\" failed login attempt",
+      "formatted": "[2026-09-08 15:27:43 IST] ADMIN LOGIN FAILED: Operative \"Ashish\" failed login attempt",
+      "created_at": "2026-09-08T09:57:43.527Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fdc4e3a3a3735b3060280",
+      "timestamp": "2026-09-08 15:28:38 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-08 15:28:38 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-08T09:58:38.283Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fdccc3a3a3735b3060281",
+      "timestamp": "2026-09-08 15:30:44 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Ashish\" failed login attempt",
+      "formatted": "[2026-09-08 15:30:44 IST] ADMIN LOGIN FAILED: Operative \"Ashish\" failed login attempt",
+      "created_at": "2026-09-08T10:00:44.712Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a9fdd7a3a3a3735b3060282",
+      "timestamp": "2026-09-08 15:33:38 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Ashish\" failed login attempt",
+      "formatted": "[2026-09-08 15:33:38 IST] ADMIN LOGIN FAILED: Operative \"Ashish\" failed login attempt",
+      "created_at": "2026-09-08T10:03:38.090Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa01398e237418a2fd28531",
+      "timestamp": "2026-09-08 19:24:32 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"' OR 1=1 --\" failed login attempt",
+      "formatted": "[2026-09-08 19:24:32 IST] ADMIN LOGIN FAILED: Operative \"' OR 1=1 --\" failed login attempt",
+      "created_at": "2026-09-08T13:54:32.415Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa013d2e237418a2fd28532",
+      "timestamp": "2026-09-08 19:25:30 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"admin' #\" failed login attempt",
+      "formatted": "[2026-09-08 19:25:30 IST] ADMIN LOGIN FAILED: Operative \"admin' #\" failed login attempt",
+      "created_at": "2026-09-08T13:55:30.394Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa013f1e237418a2fd28533",
+      "timestamp": "2026-09-08 19:26:01 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"') OR ('1'='1\" failed login attempt",
+      "formatted": "[2026-09-08 19:26:01 IST] ADMIN LOGIN FAILED: Operative \"') OR ('1'='1\" failed login attempt",
+      "created_at": "2026-09-08T13:56:01.638Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0142be237418a2fd28534",
+      "timestamp": "2026-09-08 19:26:59 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"ashish\" failed login attempt",
+      "formatted": "[2026-09-08 19:26:59 IST] ADMIN LOGIN FAILED: Operative \"ashish\" failed login attempt",
+      "created_at": "2026-09-08T13:56:59.658Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa01431e237418a2fd28535",
+      "timestamp": "2026-09-08 19:27:05 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"Ashish\" failed login attempt",
+      "formatted": "[2026-09-08 19:27:05 IST] ADMIN LOGIN FAILED: Operative \"Ashish\" failed login attempt",
+      "created_at": "2026-09-08T13:57:05.730Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0147ee237418a2fd28536",
+      "timestamp": "2026-09-08 19:28:22 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"'\" failed login attempt",
+      "formatted": "[2026-09-08 19:28:22 IST] ADMIN LOGIN FAILED: Operative \"'\" failed login attempt",
+      "created_at": "2026-09-08T13:58:22.069Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa01484e237418a2fd28537",
+      "timestamp": "2026-09-08 19:28:28 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"'\" failed login attempt",
+      "formatted": "[2026-09-08 19:28:28 IST] ADMIN LOGIN FAILED: Operative \"'\" failed login attempt",
+      "created_at": "2026-09-08T13:58:28.316Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa014d1e237418a2fd28538",
+      "timestamp": "2026-09-08 19:29:45 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"admin'\" failed login attempt",
+      "formatted": "[2026-09-08 19:29:45 IST] ADMIN LOGIN FAILED: Operative \"admin'\" failed login attempt",
+      "created_at": "2026-09-08T13:59:45.986Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0340ea1b1daa1b9503e23",
+      "timestamp": "2026-09-08 21:43:02 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-08 21:43:02 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-08T16:13:02.085Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0df5993edc673a0eb7687",
+      "timestamp": "2026-09-09 09:53:53 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 09:53:53 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T04:23:53.765Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0df5a93edc673a0eb7688",
+      "timestamp": "2026-09-09 09:53:54 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 09:53:54 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:23:54.135Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e1ad93edc673a0eb768a",
+      "timestamp": "2026-09-09 10:03:49 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 10:03:49 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T04:33:49.707Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e1b293edc673a0eb768b",
+      "timestamp": "2026-09-09 10:03:54 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:03:54 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:33:54.237Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e1d44191803574cf2675",
+      "timestamp": "2026-09-09 10:04:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:04:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:34:28.059Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e20e4191803574cf2676",
+      "timestamp": "2026-09-09 10:05:26 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-09 10:05:26 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-09T04:35:26.957Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e2104191803574cf2677",
+      "timestamp": "2026-09-09 10:05:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:05:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:35:28.442Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e24a4191803574cf267a",
+      "timestamp": "2026-09-09 10:06:26 IST",
+      "action": "DATA MODIFIED",
+      "details": "Team [XCTF-26-0001] modified by Operative \"Jesin Milesh\": [Leader (jeshwanth v) Phone: \"7200355299\" ➔ \"7200355298\", Leader (jeshwanth v) WhatsApp: \"7200355299\" ➔ \"7200355298\", Leader (jeshwanth v) Age: \"19\" ➔ \"19\", Member 2 (libinesh) Age: \"19\" ➔ \"19\"]",
+      "formatted": "[2026-09-09 10:06:26 IST] DATA MODIFIED: Team [XCTF-26-0001] modified by Operative \"Jesin Milesh\": [Leader (jeshwanth v) Phone: \"7200355299\" ➔ \"7200355298\", Leader (jeshwanth v) WhatsApp: \"7200355299\" ➔ \"7200355298\", Leader (jeshwanth v) Age: \"19\" ➔ \"19\", Member 2 (libinesh) Age: \"19\" ➔ \"19\"]",
+      "created_at": "2026-09-09T04:36:26.558Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e2504191803574cf267b",
+      "timestamp": "2026-09-09 10:06:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:06:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:36:32.146Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e28d4191803574cf267c",
+      "timestamp": "2026-09-09 10:07:33 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:07:33 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:37:33.127Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e2cf4191803574cf267d",
+      "timestamp": "2026-09-09 10:08:39 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:08:39 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:38:39.224Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e33d4191803574cf267e",
+      "timestamp": "2026-09-09 10:10:29 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:10:29 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:40:29.242Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e37f4191803574cf267f",
+      "timestamp": "2026-09-09 10:11:35 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:11:35 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:41:35.556Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e3ba93edc673a0eb768f",
+      "timestamp": "2026-09-09 10:12:34 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:12:34 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:42:34.608Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e3fa4191803574cf2680",
+      "timestamp": "2026-09-09 10:13:38 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:13:38 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:43:38.358Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e43093edc673a0eb7690",
+      "timestamp": "2026-09-09 10:14:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:14:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:44:32.597Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e4a64191803574cf2681",
+      "timestamp": "2026-09-09 10:16:30 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:16:30 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:46:30.438Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e4e293edc673a0eb7691",
+      "timestamp": "2026-09-09 10:17:30 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:17:30 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:47:30.573Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e4ee4191803574cf2682",
+      "timestamp": "2026-09-09 10:17:42 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:17:42 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:47:42.472Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e52193edc673a0eb7692",
+      "timestamp": "2026-09-09 10:18:33 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:18:33 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:48:33.433Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e5934191803574cf2683",
+      "timestamp": "2026-09-09 10:20:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:20:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:50:27.667Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e5d24191803574cf2684",
+      "timestamp": "2026-09-09 10:21:30 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:21:30 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:51:30.720Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e6154191803574cf2685",
+      "timestamp": "2026-09-09 10:22:37 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:22:37 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:52:37.223Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e69393edc673a0eb7693",
+      "timestamp": "2026-09-09 10:24:43 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:24:43 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:54:43.767Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e6c34191803574cf2686",
+      "timestamp": "2026-09-09 10:25:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:25:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:55:31.113Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e6fd93edc673a0eb7694",
+      "timestamp": "2026-09-09 10:26:29 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:26:29 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:56:29.305Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e7424191803574cf2687",
+      "timestamp": "2026-09-09 10:27:38 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:27:38 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:57:38.893Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e79093edc673a0eb7695",
+      "timestamp": "2026-09-09 10:28:56 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:28:56 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T04:58:56.958Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e8094191803574cf2688",
+      "timestamp": "2026-09-09 10:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:00:57.258Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e8674191803574cf2689",
+      "timestamp": "2026-09-09 10:32:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:32:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:02:31.852Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e8b14191803574cf268a",
+      "timestamp": "2026-09-09 10:33:45 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:33:45 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:03:45.059Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e91793edc673a0eb7696",
+      "timestamp": "2026-09-09 10:35:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:35:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:05:27.727Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e98f93edc673a0eb7697",
+      "timestamp": "2026-09-09 10:37:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:37:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:07:27.668Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0e9ca4191803574cf268b",
+      "timestamp": "2026-09-09 10:38:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:38:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:08:26.272Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ea0c4191803574cf268c",
+      "timestamp": "2026-09-09 10:39:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:39:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:09:32.105Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ea7f4191803574cf268d",
+      "timestamp": "2026-09-09 10:41:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:41:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:11:27.687Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0eabb93edc673a0eb7698",
+      "timestamp": "2026-09-09 10:42:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:42:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:12:27.652Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0eafc4191803574cf268e",
+      "timestamp": "2026-09-09 10:43:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:43:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:13:32.295Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0eb6e93edc673a0eb7699",
+      "timestamp": "2026-09-09 10:45:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:45:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:15:26.095Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ebaa4191803574cf268f",
+      "timestamp": "2026-09-09 10:46:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:46:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:16:26.093Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ebbc93edc673a0eb769a",
+      "timestamp": "2026-09-09 10:46:44 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:46:44 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:16:44.754Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ebec4191803574cf2690",
+      "timestamp": "2026-09-09 10:47:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:47:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:17:32.088Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ec2393edc673a0eb769b",
+      "timestamp": "2026-09-09 10:48:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:48:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:18:27.666Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ec9b93edc673a0eb769c",
+      "timestamp": "2026-09-09 10:50:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:50:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:20:27.665Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ed1393edc673a0eb769d",
+      "timestamp": "2026-09-09 10:52:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:52:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:22:27.662Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ed8a4191803574cf2691",
+      "timestamp": "2026-09-09 10:54:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:54:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:24:26.103Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0edc74191803574cf2692",
+      "timestamp": "2026-09-09 10:55:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:55:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:25:27.697Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ee0893edc673a0eb769e",
+      "timestamp": "2026-09-09 10:56:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:56:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:26:32.080Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ee3f4191803574cf2693",
+      "timestamp": "2026-09-09 10:57:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:57:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:27:27.705Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0eeb74191803574cf2694",
+      "timestamp": "2026-09-09 10:59:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 10:59:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:29:27.729Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ef2f4191803574cf2695",
+      "timestamp": "2026-09-09 11:01:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:01:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:31:27.672Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0ef6a93edc673a0eb769f",
+      "timestamp": "2026-09-09 11:02:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:02:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:32:26.252Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0efa74191803574cf2696",
+      "timestamp": "2026-09-09 11:03:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:03:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:33:27.673Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f0144191803574cf2697",
+      "timestamp": "2026-09-09 11:05:16 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:05:16 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:35:16.844Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f0544191803574cf2698",
+      "timestamp": "2026-09-09 11:06:20 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:06:20 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:36:20.098Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f05a93edc673a0eb76a0",
+      "timestamp": "2026-09-09 11:06:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:06:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:36:26.283Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f0974191803574cf2699",
+      "timestamp": "2026-09-09 11:07:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:07:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:37:27.708Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f10f4191803574cf269a",
+      "timestamp": "2026-09-09 11:09:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:09:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:39:27.936Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f23f953608c7e10cf0dd",
+      "timestamp": "2026-09-09 11:14:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:14:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:44:31.966Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f255b08a5e16b9057d3a",
+      "timestamp": "2026-09-09 11:14:53 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:14:53 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:44:53.383Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f29fb08a5e16b9057d3b",
+      "timestamp": "2026-09-09 11:16:07 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:07 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:07.928Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2a19cd5e6f573058b50",
+      "timestamp": "2026-09-09 11:16:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:09.432Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2a188bef588e2a14046",
+      "timestamp": "2026-09-09 11:16:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:09.305Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2a1ec3ca170148851a8",
+      "timestamp": "2026-09-09 11:16:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:09.348Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2a1eb63aa12693b5784",
+      "timestamp": "2026-09-09 11:16:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:09.432Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2a13dce6f7d005b3ace",
+      "timestamp": "2026-09-09 11:16:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:16:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:46:09.446Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f2ef3dce6f7d005b3acf",
+      "timestamp": "2026-09-09 11:17:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:17:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:47:27.773Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f38bb08a5e16b9057d3c",
+      "timestamp": "2026-09-09 11:20:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:03.497Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f38b9cd5e6f573058b51",
+      "timestamp": "2026-09-09 11:20:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:03.511Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f38bec3ca170148851a9",
+      "timestamp": "2026-09-09 11:20:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:03.550Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f38bc570913d2b07eff6",
+      "timestamp": "2026-09-09 11:20:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:03.568Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f38b2fe7306e440a8f29",
+      "timestamp": "2026-09-09 11:20:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:03.592Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3998be9291bde10e7f3",
+      "timestamp": "2026-09-09 11:20:17 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 11:20:17 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T05:50:17.729Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f39a8be9291bde10e7f4",
+      "timestamp": "2026-09-09 11:20:18 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:20:18 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:50:18.212Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3ad8be9291bde10e7f5",
+      "timestamp": "2026-09-09 11:20:37 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-09 11:20:37 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-09T05:50:37.552Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3bc8be9291bde10e7f6",
+      "timestamp": "2026-09-09 11:20:52 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "formatted": "[2026-09-09 11:20:52 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "created_at": "2026-09-09T05:50:52.148Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3ca8be9291bde10e7f7",
+      "timestamp": "2026-09-09 11:21:06 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "formatted": "[2026-09-09 11:21:06 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "created_at": "2026-09-09T05:51:06.383Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3d68be9291bde10e7f8",
+      "timestamp": "2026-09-09 11:21:18 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:21:18 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:51:18.214Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f3f28be9291bde10e7f9",
+      "timestamp": "2026-09-09 11:21:46 IST",
+      "action": "ATTENDANCE LOGIN",
+      "details": "Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "formatted": "[2026-09-09 11:21:46 IST] ATTENDANCE LOGIN: Operative \"Jesin Milesh\" authenticated into Attendance Terminal",
+      "created_at": "2026-09-09T05:51:46.059Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f4128be9291bde10e7fa",
+      "timestamp": "2026-09-09 11:22:18 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:22:18 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:52:18.240Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f4cd8be9291bde10e7fb",
+      "timestamp": "2026-09-09 11:25:25 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:25:25 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:55:25.715Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f4e28be9291bde10e7fe",
+      "timestamp": "2026-09-09 11:25:46 IST",
+      "action": "DATA MODIFIED",
+      "details": "Team [XCTF-26-0001] modified by Operative \"Jesin Milesh\": [Leader (jeshwanth v) WhatsApp: \"7200355298\" ➔ \"7200355299\"]",
+      "formatted": "[2026-09-09 11:25:46 IST] DATA MODIFIED: Team [XCTF-26-0001] modified by Operative \"Jesin Milesh\": [Leader (jeshwanth v) WhatsApp: \"7200355298\" ➔ \"7200355299\"]",
+      "created_at": "2026-09-09T05:55:46.518Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa0f50a8be9291bde10e7ff",
+      "timestamp": "2026-09-09 11:26:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 11:26:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T05:56:26.145Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa102e7e03da21283987022",
+      "timestamp": "2026-09-09 12:25:35 IST",
+      "action": "ADMIN LOGIN FAILED",
+      "details": "Operative \"admin\" failed login attempt",
+      "formatted": "[2026-09-09 12:25:35 IST] ADMIN LOGIN FAILED: Operative \"admin\" failed login attempt",
+      "created_at": "2026-09-09T06:55:35.535Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a4d61932e35cfbe74e1",
+      "timestamp": "2026-09-09 14:05:25 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:05:25 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T08:35:25.115Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a4e61932e35cfbe74e2",
+      "timestamp": "2026-09-09 14:05:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:05:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:35:26.276Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a5b61932e35cfbe74e3",
+      "timestamp": "2026-09-09 14:05:39 IST",
+      "action": "DOWNLOAD OD PDF",
+      "details": "OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "formatted": "[2026-09-09 14:05:39 IST] DOWNLOAD OD PDF: OD Letter PDF downloaded for Team ID: XCTF-26-0001 by Jesin Milesh",
+      "created_at": "2026-09-09T08:35:39.338Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a5d39e0138883657ef7",
+      "timestamp": "2026-09-09 14:05:41 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:05:41 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:35:41.301Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a6339e0138883657ef8",
+      "timestamp": "2026-09-09 14:05:47 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "formatted": "[2026-09-09 14:05:47 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com (Team [XCTF-26-0001])",
+      "created_at": "2026-09-09T08:35:47.103Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a6f39e0138883657ef9",
+      "timestamp": "2026-09-09 14:05:59 IST",
+      "action": "DATA DELETED",
+      "details": "Deleted record for Team ID: XCTF-26-0001 (Leader: jeshwanth v) by Jesin Milesh",
+      "formatted": "[2026-09-09 14:05:59 IST] DATA DELETED: Deleted record for Team ID: XCTF-26-0001 (Leader: jeshwanth v) by Jesin Milesh",
+      "created_at": "2026-09-09T08:35:59.589Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a7a39e0138883657efa",
+      "timestamp": "2026-09-09 14:06:10 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:06:10 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-09T08:36:10.649Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11a9c39e0138883657efb",
+      "timestamp": "2026-09-09 14:06:44 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:06:44 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:36:44.878Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11ade39e0138883657efc",
+      "timestamp": "2026-09-09 14:07:50 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:07:50 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:37:50.281Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11b1a39e0138883657efd",
+      "timestamp": "2026-09-09 14:08:50 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:08:50 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:38:50.301Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11b3639e0138883657eff",
+      "timestamp": "2026-09-09 14:09:18 IST",
+      "action": "OTP DISPATCHED",
+      "details": "Verification OTP dispatched and sent successfully to jeshu1161@gmail.com (Recipient: \"rahul.j\")",
+      "formatted": "[2026-09-09 14:09:18 IST] OTP DISPATCHED: Verification OTP dispatched and sent successfully to jeshu1161@gmail.com (Recipient: \"rahul.j\")",
+      "created_at": "2026-09-09T08:39:18.608Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11b5639e0138883657f00",
+      "timestamp": "2026-09-09 14:09:50 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:09:50 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:39:50.328Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11b6939e0138883657f01",
+      "timestamp": "2026-09-09 14:10:09 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address \"jeshu1161@gmail.com\" successfully verified via OTP",
+      "formatted": "[2026-09-09 14:10:09 IST] OTP VERIFIED: Email address \"jeshu1161@gmail.com\" successfully verified via OTP",
+      "created_at": "2026-09-09T08:40:09.789Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11b9839e0138883657f02",
+      "timestamp": "2026-09-09 14:10:56 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:10:56 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:40:56.891Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11dd61b097a2dcbeda6f3",
+      "timestamp": "2026-09-09 14:20:30 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:20:30 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:50:30.507Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11def1b097a2dcbeda6f4",
+      "timestamp": "2026-09-09 14:20:55 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:20:55 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T08:50:55.021Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e251b097a2dcbeda6f8",
+      "timestamp": "2026-09-09 14:21:49 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Registration verification email dispatched to Leader \"rahul.j\" (jeshu1161@gmail.com) for Team \"ashishpasangada\"",
+      "formatted": "[2026-09-09 14:21:49 IST] EMAIL DISPATCHED: Registration verification email dispatched to Leader \"rahul.j\" (jeshu1161@gmail.com) for Team \"ashishpasangada\"",
+      "created_at": "2026-09-09T08:51:49.189Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e251b097a2dcbeda6f9",
+      "timestamp": "2026-09-09 14:21:49 IST",
+      "action": "NEW REGISTRATION",
+      "details": "New strike team registered: Team \"ashishpasangada\" [XCTF-26-0001] | Leader: jeshu1161@gmail.com | Members: 2 | UTR: 12345678912",
+      "formatted": "[2026-09-09 14:21:49 IST] NEW REGISTRATION: New strike team registered: Team \"ashishpasangada\" [XCTF-26-0001] | Leader: jeshu1161@gmail.com | Members: 2 | UTR: 12345678912",
+      "created_at": "2026-09-09T08:51:49.397Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e261b097a2dcbeda6fa",
+      "timestamp": "2026-09-09 14:21:50 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:21:50 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T08:51:50.244Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e271b097a2dcbeda6fb",
+      "timestamp": "2026-09-09 14:21:51 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:21:51 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:51:51.566Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e4839e0138883657f03",
+      "timestamp": "2026-09-09 14:22:24 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:24 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:24.852Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e641b097a2dcbeda6fc",
+      "timestamp": "2026-09-09 14:22:52 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:52 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:52.829Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e6785d60b297c1d69ba",
+      "timestamp": "2026-09-09 14:22:55 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:55 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:55.256Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e6713f10c33ff87b409",
+      "timestamp": "2026-09-09 14:22:55 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:55 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:55.651Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e6719976d797f7189d8",
+      "timestamp": "2026-09-09 14:22:55 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:55 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:55.776Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e67b21bc4f15176ff3f",
+      "timestamp": "2026-09-09 14:22:55 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:55 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:55.685Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e68780c712669f8032e",
+      "timestamp": "2026-09-09 14:22:56 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:22:56 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:52:56.220Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e7766adeb7a38b04418",
+      "timestamp": "2026-09-09 14:23:11 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:23:11 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:53:11.214Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11e7715bf7a353228814f",
+      "timestamp": "2026-09-09 14:23:11 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:23:11 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:53:11.209Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11eab780c712669f8032f",
+      "timestamp": "2026-09-09 14:24:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:24:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:54:03.586Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11ee666adeb7a38b04419",
+      "timestamp": "2026-09-09 14:25:02 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:25:02 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:55:02.105Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11eed097004abf437e78f",
+      "timestamp": "2026-09-09 14:25:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:25:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:55:09.367Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11eedb138d7683f2b8dd8",
+      "timestamp": "2026-09-09 14:25:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:25:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:55:09.369Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11eedd97427ebfd5b69c8",
+      "timestamp": "2026-09-09 14:25:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:25:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:55:09.387Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11f9fd215c8ebcf0e88a6",
+      "timestamp": "2026-09-09 14:28:07 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:28:07 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T08:58:07.029Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11fa0d215c8ebcf0e88a7",
+      "timestamp": "2026-09-09 14:28:08 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:28:08 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:58:08.244Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa11fddd215c8ebcf0e88a8",
+      "timestamp": "2026-09-09 14:29:09 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:29:09 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T08:59:09.867Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1201ad215c8ebcf0e88a9",
+      "timestamp": "2026-09-09 14:30:10 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:10 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:10.794Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12049dc4996a2f897a63c",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.964Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120492af8ab3cedffdd0d",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.970Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120498c0851240c447541",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.995Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204a944a43979e1ab532",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:58.001Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204919976d797f7189d9",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.908Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12049b21bc4f15176ff40",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.917Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12049291ca288150fad3b",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.948Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204913f10c33ff87b40a",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.912Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12049780c712669f80330",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.963Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120491b097a2dcbeda6fd",
+      "timestamp": "2026-09-09 14:30:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:57.913Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204bbb5f4af0ede67b18",
+      "timestamp": "2026-09-09 14:30:59 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:59 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:59.568Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204b15bf7a3532288150",
+      "timestamp": "2026-09-09 14:30:59 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:59 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:59.612Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1204bf41830aabecd1292",
+      "timestamp": "2026-09-09 14:30:59 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:30:59 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:00:59.616Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12053f41830aabecd1293",
+      "timestamp": "2026-09-09 14:31:07 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com, jeshwanth72@gmail.com (Team [XCTF-26-0001])",
+      "formatted": "[2026-09-09 14:31:07 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com, jeshwanth72@gmail.com (Team [XCTF-26-0001])",
+      "created_at": "2026-09-09T09:01:07.544Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1208bf41830aabecd1294",
+      "timestamp": "2026-09-09 14:32:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:03.591Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120abbb5f4af0ede67b19",
+      "timestamp": "2026-09-09 14:32:35 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:35 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:35.105Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ab15bf7a3532288151",
+      "timestamp": "2026-09-09 14:32:35 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:35 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:35.102Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120abd215c8ebcf0e88aa",
+      "timestamp": "2026-09-09 14:32:35 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:35 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:35.109Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120acb21bc4f15176ff41",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.669Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac66adeb7a38b0441a",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.699Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac19976d797f7189da",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.750Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac1b097a2dcbeda6fe",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.670Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120acdc4996a2f897a63d",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.766Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac2af8ab3cedffdd0e",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.771Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120acdef45b83af859e61",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.770Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac8c0851240c447542",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.779Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac291ca288150fad3c",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.771Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120acd142d8241d34d8e0",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.771Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac944a43979e1ab533",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.761Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120ac780c712669f80331",
+      "timestamp": "2026-09-09 14:32:36 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:36 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:36.752Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120b213f10c33ff87b40b",
+      "timestamp": "2026-09-09 14:32:42 IST",
+      "action": "EMAIL DISPATCHED",
+      "details": "Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com, jeshwanth72@gmail.com (Team [XCTF-26-0001])",
+      "formatted": "[2026-09-09 14:32:42 IST] EMAIL DISPATCHED: Confirmation email with OD Letter PDF & Entry QR pass dispatched to jeshu1161@gmail.com, jeshwanth72@gmail.com (Team [XCTF-26-0001])",
+      "created_at": "2026-09-09T09:02:42.987Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120b513f10c33ff87b40c",
+      "timestamp": "2026-09-09 14:32:45 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:32:45 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:02:45.825Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa120f613f10c33ff87b40d",
+      "timestamp": "2026-09-09 14:33:50 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:33:50 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:03:50.529Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c291ca288150fad3d",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.458Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c19976d797f7189db",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.461Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211cdef45b83af859e62",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.462Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211cd142d8241d34d8e1",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.465Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c8c0851240c447543",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.465Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c66adeb7a38b0441b",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.477Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c1b097a2dcbeda6ff",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.465Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c780c712669f80332",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211cdc4996a2f897a63e",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.472Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1211c944a43979e1ab534",
+      "timestamp": "2026-09-09 14:34:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:34:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:04:28.501Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1212813f10c33ff87b40e",
+      "timestamp": "2026-09-09 14:34:40 IST",
+      "action": "DATA DELETED",
+      "details": "Deleted record for Team ID: XCTF-26-0001 (Leader: rahul.j) by Jesin Milesh",
+      "formatted": "[2026-09-09 14:34:40 IST] DATA DELETED: Deleted record for Team ID: XCTF-26-0001 (Leader: rahul.j) by Jesin Milesh",
+      "created_at": "2026-09-09T09:04:40.690Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1215b8c0851240c447544",
+      "timestamp": "2026-09-09 14:35:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:35:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:05:31.886Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa121ca13f10c33ff87b40f",
+      "timestamp": "2026-09-09 14:37:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:37:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:07:22.904Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12247944a43979e1ab535",
+      "timestamp": "2026-09-09 14:39:27 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:39:27 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:09:27.443Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa122bd944a43979e1ab536",
+      "timestamp": "2026-09-09 14:41:25 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:41:25 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:11:25.537Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa122fe944a43979e1ab537",
+      "timestamp": "2026-09-09 14:42:30 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:42:30 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:12:30.497Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12642f1562bf12599a98f",
+      "timestamp": "2026-09-09 14:56:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:56:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:26:26.731Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12663314c2b35e3b85284",
+      "timestamp": "2026-09-09 14:56:59 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:56:59 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:26:59.780Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1266c314c2b35e3b85285",
+      "timestamp": "2026-09-09 14:57:08 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-09 14:57:08 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-09T09:27:08.071Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa1268af1562bf12599a990",
+      "timestamp": "2026-09-09 14:57:38 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:57:38 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:27:38.871Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa126a8314c2b35e3b85286",
+      "timestamp": "2026-09-09 14:58:08 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 14:58:08 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:28:08.885Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa12718314c2b35e3b85287",
+      "timestamp": "2026-09-09 15:00:00 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-09 15:00:00 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-09T09:30:00.665Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa17792b67e71b3418a428e",
+      "timestamp": "2026-09-09 20:43:22 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Ashish\" logged into Admin Console",
+      "formatted": "[2026-09-09 20:43:22 IST] ADMIN LOGIN: Operative \"Ashish\" logged into Admin Console",
+      "created_at": "2026-09-09T15:13:22.846Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa237c45cd1989d62f23eeb",
+      "timestamp": "2026-09-10 10:23:24 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Jesin Milesh\" logged into Admin Console",
+      "formatted": "[2026-09-10 10:23:24 IST] ADMIN LOGIN: Operative \"Jesin Milesh\" logged into Admin Console",
+      "created_at": "2026-09-10T04:53:24.436Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa237c65cd1989d62f23eec",
+      "timestamp": "2026-09-10 10:23:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:23:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T04:53:26.189Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa238075cd1989d62f23eed",
+      "timestamp": "2026-09-10 10:24:31 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:24:31 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T04:54:31.028Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa238735cd1989d62f23eee",
+      "timestamp": "2026-09-10 10:26:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:26:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T04:56:19.874Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2392d5cd1989d62f23ef0",
+      "timestamp": "2026-09-10 10:29:25 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:29:25 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T04:59:25.765Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa239a25cd1989d62f23ef1",
+      "timestamp": "2026-09-10 10:31:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:31:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:01:22.197Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23a8f5cd1989d62f23ef3",
+      "timestamp": "2026-09-10 10:35:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:35:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:05:19.814Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23a195cd1989d62f23ef2",
+      "timestamp": "2026-09-10 10:33:21 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:33:21 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:03:21.380Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23ab45cd1989d62f23ef4",
+      "timestamp": "2026-09-10 10:35:56 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-10 10:35:56 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-10T05:05:56.287Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23ad15cd1989d62f23ef5",
+      "timestamp": "2026-09-10 10:36:25 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:36:25 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:06:25.787Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23b435cd1989d62f23ef6",
+      "timestamp": "2026-09-10 10:38:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:38:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:08:19.701Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23b8d5cd1989d62f23ef7",
+      "timestamp": "2026-09-10 10:39:33 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:39:33 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:09:33.053Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23b8ec62f43fab4577762",
+      "timestamp": "2026-09-10 10:39:34 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:39:34 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:09:34.762Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23c36c62f43fab4577763",
+      "timestamp": "2026-09-10 10:42:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:42:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:12:22.010Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23c59add9e3d4f03f7710",
+      "timestamp": "2026-09-10 10:42:57 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:42:57 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:12:57.817Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23bf9add9e3d4f03f770f",
+      "timestamp": "2026-09-10 10:41:21 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:41:21 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:11:21.525Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23ce7c62f43fab4577764",
+      "timestamp": "2026-09-10 10:45:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:45:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:15:19.720Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23d23c62f43fab4577765",
+      "timestamp": "2026-09-10 10:46:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:46:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:16:19.741Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23d5fc62f43fab4577766",
+      "timestamp": "2026-09-10 10:47:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:47:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:17:19.929Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23caeadd9e3d4f03f7711",
+      "timestamp": "2026-09-10 10:44:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:44:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:14:22.707Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23d8aadd9e3d4f03f7712",
+      "timestamp": "2026-09-10 10:48:02 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:48:02 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:18:02.061Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23ddbc62f43fab4577767",
+      "timestamp": "2026-09-10 10:49:23 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:49:23 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:19:23.908Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e1cadd9e3d4f03f7713",
+      "timestamp": "2026-09-10 10:50:28 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:50:28 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:20:28.405Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e5ec62f43fab4577768",
+      "timestamp": "2026-09-10 10:51:34 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:51:34 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:21:34.378Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23ec8c62f43fab4577769",
+      "timestamp": "2026-09-10 10:53:20 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:53:20 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:23:20.364Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23e8badd9e3d4f03f7714",
+      "timestamp": "2026-09-10 10:52:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:52:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:22:19.993Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23f06add9e3d4f03f7715",
+      "timestamp": "2026-09-10 10:54:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:54:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:24:22.469Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23f88c62f43fab457776a",
+      "timestamp": "2026-09-10 10:56:32 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:56:32 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:26:32.402Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa23fbdadd9e3d4f03f7716",
+      "timestamp": "2026-09-10 10:57:25 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:57:25 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:27:25.109Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2402fc62f43fab457776b",
+      "timestamp": "2026-09-10 10:59:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 10:59:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:29:19.790Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24123a7322c90e1131c16",
+      "timestamp": "2026-09-10 11:03:23 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:03:23 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:33:23.175Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2415efd7a171a021d4381",
+      "timestamp": "2026-09-10 11:04:22 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:04:22 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:34:22.655Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa241972d66458196031f50",
+      "timestamp": "2026-09-10 11:05:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:05:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:35:19.771Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa241d5fd7a171a021d4382",
+      "timestamp": "2026-09-10 11:06:21 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:06:21 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:36:21.372Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa242872d66458196031f51",
+      "timestamp": "2026-09-10 11:09:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:09:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:39:19.759Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2424dfd7a171a021d4383",
+      "timestamp": "2026-09-10 11:08:21 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:08:21 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:38:21.391Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa242d32d66458196031f52",
+      "timestamp": "2026-09-10 11:10:35 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:10:35 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:40:35.966Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa243402d66458196031f53",
+      "timestamp": "2026-09-10 11:12:24 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:12:24 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:42:24.649Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa242effd7a171a021d4384",
+      "timestamp": "2026-09-10 11:11:03 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:11:03 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:41:03.321Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24377fd7a171a021d4385",
+      "timestamp": "2026-09-10 11:13:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:13:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:43:19.716Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa243f0fd7a171a021d4386",
+      "timestamp": "2026-09-10 11:15:20 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:15:20 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:45:20.030Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa243b32d66458196031f54",
+      "timestamp": "2026-09-10 11:14:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:14:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:44:19.759Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2447a2d66458196031f55",
+      "timestamp": "2026-09-10 11:17:38 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:17:38 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:47:38.444Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2442ffd7a171a021d4387",
+      "timestamp": "2026-09-10 11:16:23 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:16:23 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:46:23.240Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2455efd7a171a021d4388",
+      "timestamp": "2026-09-10 11:21:26 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:21:26 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:51:26.377Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24597cb4d10442e0a18c0",
+      "timestamp": "2026-09-10 11:22:23 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:22:23 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:52:23.800Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa245cf877eed57c7504c53",
+      "timestamp": "2026-09-10 11:23:19 IST",
+      "action": "OTP DISPATCHED",
+      "details": "Verification OTP dispatched and sent successfully to jesinmilesh@gmail.com (Recipient: \"Jesin Milesh\")",
+      "formatted": "[2026-09-10 11:23:19 IST] OTP DISPATCHED: Verification OTP dispatched and sent successfully to jesinmilesh@gmail.com (Recipient: \"Jesin Milesh\")",
+      "created_at": "2026-09-10T05:53:19.069Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa245cf877eed57c7504c54",
+      "timestamp": "2026-09-10 11:23:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:23:19 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:53:19.756Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa245eb877eed57c7504c55",
+      "timestamp": "2026-09-10 11:23:47 IST",
+      "action": "OTP VERIFIED",
+      "details": "Email address \"jesinmilesh@gmail.com\" successfully verified via OTP",
+      "formatted": "[2026-09-10 11:23:47 IST] OTP VERIFIED: Email address \"jesinmilesh@gmail.com\" successfully verified via OTP",
+      "created_at": "2026-09-10T05:53:47.207Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa2460d21d8d26aeb8eb45b",
+      "timestamp": "2026-09-10 11:24:21 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:24:21 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:54:21.496Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24633877eed57c7504c56",
+      "timestamp": "2026-09-10 11:24:59 IST",
+      "action": "ADMIN LOGIN",
+      "details": "Operative \"Administrator\" logged into Admin Console",
+      "formatted": "[2026-09-10 11:24:59 IST] ADMIN LOGIN: Operative \"Administrator\" logged into Admin Console",
+      "created_at": "2026-09-10T05:54:59.978Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24635877eed57c7504c57",
+      "timestamp": "2026-09-10 11:25:01 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Jesin Milesh\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:25:01 IST] DATA ACCESS: Operative \"Jesin Milesh\" viewed full teams roster",
+      "created_at": "2026-09-10T05:55:01.586Z",
+      "__v": 0
+    },
+    {
+      "_id": "6aa24647877eed57c7504c58",
+      "timestamp": "2026-09-10 11:25:19 IST",
       "action": "ADMIN LOGIN",
       "details": "Operative \"Madhu\" logged into Admin Console",
-      "formatted": "[2026-09-10 10:56:51 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
-      "created_at": "2026-09-10 05:26:51"
+      "formatted": "[2026-09-10 11:25:19 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
+      "created_at": "2026-09-10T05:55:19.273Z",
+      "__v": 0
     },
     {
-      "id": 90,
-      "timestamp": "2026-09-10 10:56:51 IST",
-      "action": "ADMIN LOGIN FAILED",
-      "details": "Operative \"madhu\" failed login attempt",
-      "formatted": "[2026-09-10 10:56:51 IST] ADMIN LOGIN FAILED: Operative \"madhu\" failed login attempt",
-      "created_at": "2026-09-10 05:26:51"
+      "_id": "6aa24647877eed57c7504c59",
+      "timestamp": "2026-09-10 11:25:19 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Madhu\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:25:19 IST] DATA ACCESS: Operative \"Madhu\" viewed full teams roster",
+      "created_at": "2026-09-10T05:55:19.963Z",
+      "__v": 0
     },
     {
-      "id": 91,
-      "timestamp": "2026-09-10 11:14:54 IST",
-      "action": "ADMIN LOGIN",
-      "details": "Operative \"Madhu\" logged into Admin Console",
-      "formatted": "[2026-09-10 11:14:54 IST] ADMIN LOGIN: Operative \"Madhu\" logged into Admin Console",
-      "created_at": "2026-09-10 05:44:54"
+      "_id": "6aa2465121d8d26aeb8eb45c",
+      "timestamp": "2026-09-10 11:25:29 IST",
+      "action": "DATA ACCESS",
+      "details": "Operative \"Madhu\" viewed full teams roster",
+      "formatted": "[2026-09-10 11:25:29 IST] DATA ACCESS: Operative \"Madhu\" viewed full teams roster",
+      "created_at": "2026-09-10T05:55:29.617Z",
+      "__v": 0
     }
   ]
 }

@@ -673,40 +673,6 @@ document.addEventListener('keydown', (e) => {
             }
         }
     }, true);
-
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-    }, { capture: true });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.keyCode === 123 || e.key === 'F12') {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67 || e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-        if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-    }, { capture: true });
-
-    function _0xdbg() {
-        try {
-            (function () { }).constructor('debugger')();
-        } catch (e) { }
-    }
-    setInterval(_0xdbg, 600);
-
-    setInterval(() => {
-        try { console.clear(); } catch (e) { }
-    }, 2500);
 })();
 
 
