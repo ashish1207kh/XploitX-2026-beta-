@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavbarScroll();
     initMobileNav();
     initAccordions();
+    initLegacyGalleryModal();
 });
 
 
@@ -674,5 +675,65 @@ document.addEventListener('keydown', (e) => {
         }
     }, true);
 })();
+
+function initLegacyGalleryModal() {
+    const cards = document.querySelectorAll('.legacy-card');
+    if (!cards.length) return;
+
+    let lightbox = document.getElementById('legacy-lightbox-modal');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'legacy-lightbox-modal';
+        lightbox.className = 'legacy-lightbox';
+        lightbox.innerHTML = `
+            <div class="legacy-lightbox-content">
+                <img src="" alt="Enlarged Legacy Photo" class="legacy-lightbox-img" id="legacy-lightbox-img">
+                <div class="legacy-lightbox-bar">
+                    <div class="legacy-lightbox-title" id="legacy-lightbox-title">A Glimpse into Our Legacy</div>
+                    <button class="legacy-lightbox-close" id="legacy-lightbox-close" aria-label="Close Preview">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const closeBtn = lightbox.querySelector('#legacy-lightbox-close');
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+        };
+
+        if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    const lightImg = document.getElementById('legacy-lightbox-img');
+    const lightTitle = document.getElementById('legacy-lightbox-title');
+
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const img = card.querySelector('img');
+            const caption = card.querySelector('.legacy-caption');
+            if (img && lightImg) {
+                lightImg.src = img.src;
+                lightImg.alt = img.alt || 'Legacy Archive Preview';
+            }
+            if (caption && lightTitle) {
+                lightTitle.textContent = caption.textContent;
+            }
+            if (lightbox) {
+                lightbox.classList.add('active');
+            }
+        });
+    });
+}
+
 
 
