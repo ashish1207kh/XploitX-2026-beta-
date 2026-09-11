@@ -138,8 +138,8 @@
 
                     <h4 class="hud-card-title" style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-calculator"></i> TICKET SUMMARY</h4>
                     <div class="fee-row">
-                        <span>EARLY BIRD FEE:</span>
-                        <strong class="text-green">₹250 <span style="font-size: 0.72rem; color: var(--doom-gold); font-weight: normal;">(INCLUDES LUNCH)</span></strong>
+                        <span id="summary-fee-label">EARLY BIRD FEE:</span>
+                        <strong class="text-green"><span id="summary-per-head-fee">₹250</span> <span id="summary-fee-note" style="font-size: 0.72rem; color: var(--doom-gold); font-weight: normal;">(INCLUDES LUNCH)</span></strong>
                     </div>
                     <div class="fee-row">
                         <span>ACTIVE MEMBERS:</span>
@@ -342,7 +342,7 @@
                         
                         <div class="form-section-block payment-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (EARLY BIRD: ₹250 / HEAD - INCLUDES LUNCH)
+                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (<span id="payment-fee-badge">EARLY BIRD: ₹250 / HEAD</span> - INCLUDES LUNCH)
                             </div>
 
                             <div class="payment-grid-hud">
@@ -358,6 +358,9 @@
                                     </a>
                                     <div class="amount-payable-badge">
                                         AMOUNT: <strong id="payment-amount-display" class="text-gold">₹500</strong>
+                                    </div>
+                                    <div id="pec-discount-notice" style="display: none; font-family: var(--font-mono); font-size: 0.75rem; color: var(--doom-green); margin-top: 5px; text-align: center;">
+                                        <i class="fas fa-check-circle"></i> PEC SPECIAL: ₹150 / HEAD
                                     </div>
                                     <a id="btn-pay-upi" href="upi://pay?pa=8122079494@pthdfc&pn=XploitX%202.0%20CTF%20Registration&am=500&cu=INR" class="btn-pay-upi-hud" style="margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 10px; background: linear-gradient(135deg, rgba(0,255,102,0.2), rgba(0,180,216,0.2)); border: 1px solid var(--border-green); color: #00ff66; font-family: var(--font-mono); font-size: 0.78rem; font-weight: bold; border-radius: 4px; text-decoration: none; transition: all 0.25s ease;">
                                         <i class="fas fa-mobile-alt"></i> PAY VIA UPI APP

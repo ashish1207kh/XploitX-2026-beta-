@@ -355,6 +355,7 @@ function initRealtimeInputSanitizers() {
                         if (districtInput) districtInput.value = document.getElementById('leaderDistrict')?.value || '';
                     }
                 });
+                updateFeeCalculations();
                 if (window.updateSubmitButtonState) window.updateSubmitButtonState();
             });
         }
@@ -413,15 +414,15 @@ function createMemberCard(memberIndex) {
         </div>
         <div class="form-row-2col">
             <div class="form-group-hud">
-                <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE <span class="req">*</span></label>
+                <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE / INSTITUTION <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-college" placeholder="College name" required autocomplete="off">
+                    <input type="text" class="m-college" placeholder="Your college name" required autocomplete="off">
                 </div>
             </div>
             <div class="form-group-hud">
-                <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPT <span class="req">*</span></label>
+                <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPARTMENT <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-district" placeholder="District or Dept" required autocomplete="off">
+                    <input type="text" class="m-district" placeholder="e.g. Chennai / Cyber Security" required autocomplete="off">
                 </div>
             </div>
         </div>
@@ -449,6 +450,12 @@ function createMemberCard(memberIndex) {
                 collegeInput.classList.remove('readonly-input');
                 districtInput.classList.remove('readonly-input');
             }
+            updateFeeCalculations();
+            if (window.updateSubmitButtonState) window.updateSubmitButtonState();
+        });
+
+        collegeInput.addEventListener('input', function () {
+            updateFeeCalculations();
             if (window.updateSubmitButtonState) window.updateSubmitButtonState();
         });
     }
@@ -548,21 +555,72 @@ window.removeMember = removeMember;
 
 
 
+function isPrathyushaCollege(collegeStr) {
+    if (!collegeStr || typeof collegeStr !== 'string') return false;
+    const s = collegeStr.trim().toLowerCase();
+    if (!s) return false;
+    if (/prath[yu]+/i.test(s) || s.includes('prathyusha') || s.includes('prathusha') || s.includes('prathyusa')) return true;
+    if (/\bpec\b/i.test(s) || /\bp\.?e\.?c\.?\b/i.test(s)) return true;
+    return false;
+}
+
+function areAllFromPEC() {
+    const leaderCollege = (document.getElementById('leaderCollege')?.value || '').trim();
+    if (!isPrathyushaCollege(leaderCollege)) {
+        return false;
+    }
+
+    const memberCards = document.querySelectorAll('.member-card-hud');
+    if (memberCards.length === 0) {
+        return false;
+    }
+
+    for (const card of memberCards) {
+        const mCollege = (card.querySelector('.m-college')?.value || '').trim();
+        if (!isPrathyushaCollege(mCollege)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function updateFeeCalculations() {
+    const isAllPEC = areAllFromPEC();
+    PER_HEAD_FEE = isAllPEC ? 150 : 250;
     const totalFee = memberCount * PER_HEAD_FEE;
-    
     
     const summaryCount = document.getElementById('summary-member-count');
     const summaryFee = document.getElementById('summary-total-fee');
+    const summaryFeeLabel = document.getElementById('summary-fee-label');
+    const summaryPerHead = document.getElementById('summary-per-head-fee');
+    const summaryFeeNote = document.getElementById('summary-fee-note');
     const paymentAmount = document.getElementById('payment-amount-display');
     const slotCount = document.getElementById('member-slot-count');
+    const paymentBadge = document.getElementById('payment-fee-badge');
+    const pecNotice = document.getElementById('pec-discount-notice');
 
     if (summaryCount) summaryCount.textContent = memberCount;
     if (summaryFee) summaryFee.textContent = `₹${totalFee}`;
     if (paymentAmount) paymentAmount.textContent = `₹${totalFee}`;
     if (slotCount) slotCount.textContent = memberCount;
 
-    
+    if (summaryFeeLabel) {
+        summaryFeeLabel.textContent = isAllPEC ? 'PEC SPECIAL FEE:' : 'EARLY BIRD FEE:';
+    }
+    if (summaryPerHead) {
+        summaryPerHead.textContent = `₹${PER_HEAD_FEE}`;
+    }
+    if (summaryFeeNote) {
+        summaryFeeNote.textContent = isAllPEC ? '(PEC SPECIAL - INCLUDES LUNCH)' : '(INCLUDES LUNCH)';
+    }
+    if (paymentBadge) {
+        paymentBadge.textContent = isAllPEC ? 'PEC SPECIAL: ₹150 / HEAD' : 'EARLY BIRD: ₹250 / HEAD';
+    }
+    if (pecNotice) {
+        pecNotice.style.display = isAllPEC ? 'block' : 'none';
+    }
+
     const upiId = "8122079494@pthdfc";
     const payeeName = "XploitX 2.0 CTF Registration";
     const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
