@@ -12,7 +12,7 @@ const EVENT_CONFIG = {
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
     teamSize: "2 - 4 Members",
-    prizePool: "[TBA - Awaiting Official Release]",
+    prizePool: "Worth up to ₹1,00,000",
     registrationFee: "₹250 per head (Early Bird Offer - Includes Lunch)"
 };
 
