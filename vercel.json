@@ -34,6 +34,14 @@
       "destination": "/public/prizes.html"
     },
     {
+      "source": "/White-hub.jpeg",
+      "destination": "/public/White-Hub.jpeg"
+    },
+    {
+      "source": "/white-hub.jpeg",
+      "destination": "/public/White-Hub.jpeg"
+    },
+    {
       "source": "/(.*)",
       "destination": "/public/$1"
     }
