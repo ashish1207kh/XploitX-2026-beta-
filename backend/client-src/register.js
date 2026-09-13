@@ -256,16 +256,23 @@ function initWaveformVisualizer() {
 
 function initRealtimeInputSanitizers() {
     
+    // Mobile / WhatsApp Numbers (Handles +91 or leading 0 if pasted)
     document.querySelectorAll('#leaderPhone, #leaderWhatsapp, .m-phone, #otpCode').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/[^0-9]/g, '');
-                if (this.id === 'otpCode' && this.value.length > 6) {
-                    this.value = this.value.slice(0, 6);
-                } else if (this.value.length > 10 && this.id !== 'otpCode') {
-                    this.value = this.value.slice(0, 10);
+                let val = this.value.replace(/[^0-9]/g, '');
+                if (this.id !== 'otpCode') {
+                    if (val.length === 12 && val.startsWith('91')) {
+                        val = val.slice(2);
+                    } else if (val.length === 11 && val.startsWith('0')) {
+                        val = val.slice(1);
+                    }
+                    if (val.length > 10) val = val.slice(0, 10);
+                } else if (val.length > 6) {
+                    val = val.slice(0, 6);
                 }
+                this.value = val;
             });
             input.addEventListener('keydown', function (e) {
                 if (e.key && e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
@@ -275,7 +282,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    
+    // Age Sanitizer (2 digits, numeric)
     document.querySelectorAll('#leaderAge, .m-age').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -290,7 +297,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    
+    // Full Name Sanitizer (letters, spaces, dots, apostrophes, hyphens)
     document.querySelectorAll('#leaderName, .m-name').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -305,7 +312,7 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    
+    // Email Sanitizer (no spaces)
     document.querySelectorAll('#leaderEmail, .m-email').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
@@ -315,27 +322,22 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    
+    // UTR / Transaction ID (alphanumeric, hyphens, underscores up to 30 chars)
     document.querySelectorAll('#utrNumber').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/\D/g, '').slice(0, 30);
+                this.value = this.value.replace(/[^a-zA-Z0-9\-_]/g, '').slice(0, 30);
             });
         }
     });
 
-    
+    // College & District Sanitizer (alphanumeric, spaces, punctuation allowed)
     document.querySelectorAll('#leaderCollege, #leaderDistrict, .m-college, .m-district').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/[^a-zA-Z\s.'&\/-]/g, '');
-            });
-            input.addEventListener('keydown', function (e) {
-                if (e.key && /[0-9]/.test(e.key)) {
-                    e.preventDefault();
-                }
+                this.value = this.value.replace(/[^a-zA-Z0-9\s.'&\/(),-]/g, '');
             });
         }
     });
@@ -355,6 +357,7 @@ function initRealtimeInputSanitizers() {
                         if (districtInput) districtInput.value = document.getElementById('leaderDistrict')?.value || '';
                     }
                 });
+                updateFeeCalculations();
                 if (window.updateSubmitButtonState) window.updateSubmitButtonState();
             });
         }
@@ -413,15 +416,15 @@ function createMemberCard(memberIndex) {
         </div>
         <div class="form-row-2col">
             <div class="form-group-hud">
-                <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE <span class="req">*</span></label>
+                <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE / INSTITUTION <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-college" placeholder="College name" required autocomplete="off">
+                    <input type="text" class="m-college" placeholder="Your college name" required autocomplete="off">
                 </div>
             </div>
             <div class="form-group-hud">
-                <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPT <span class="req">*</span></label>
+                <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPARTMENT <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-district" placeholder="District or Dept" required autocomplete="off">
+                    <input type="text" class="m-district" placeholder="e.g. Chennai / Cyber Security" required autocomplete="off">
                 </div>
             </div>
         </div>
@@ -449,6 +452,12 @@ function createMemberCard(memberIndex) {
                 collegeInput.classList.remove('readonly-input');
                 districtInput.classList.remove('readonly-input');
             }
+            updateFeeCalculations();
+            if (window.updateSubmitButtonState) window.updateSubmitButtonState();
+        });
+
+        collegeInput.addEventListener('input', function () {
+            updateFeeCalculations();
             if (window.updateSubmitButtonState) window.updateSubmitButtonState();
         });
     }
@@ -545,24 +554,37 @@ function removeMember(index) {
 }
 window.removeMember = removeMember;
 
-
-
-
 function updateFeeCalculations() {
+    PER_HEAD_FEE = 150;
     const totalFee = memberCount * PER_HEAD_FEE;
-    
     
     const summaryCount = document.getElementById('summary-member-count');
     const summaryFee = document.getElementById('summary-total-fee');
+    const summaryFeeLabel = document.getElementById('summary-fee-label');
+    const summaryPerHead = document.getElementById('summary-per-head-fee');
+    const summaryFeeNote = document.getElementById('summary-fee-note');
     const paymentAmount = document.getElementById('payment-amount-display');
     const slotCount = document.getElementById('member-slot-count');
+    const paymentBadge = document.getElementById('payment-fee-badge');
 
     if (summaryCount) summaryCount.textContent = memberCount;
     if (summaryFee) summaryFee.textContent = `₹${totalFee}`;
     if (paymentAmount) paymentAmount.textContent = `₹${totalFee}`;
     if (slotCount) slotCount.textContent = memberCount;
 
-    
+    if (summaryFeeLabel) {
+        summaryFeeLabel.textContent = 'EARLY BIRD FEE:';
+    }
+    if (summaryPerHead) {
+        summaryPerHead.textContent = `₹${PER_HEAD_FEE}`;
+    }
+    if (summaryFeeNote) {
+        summaryFeeNote.textContent = '';
+    }
+    if (paymentBadge) {
+        paymentBadge.textContent = 'EARLY BIRD: ₹150 / HEAD';
+    }
+
     const upiId = "8122079494@pthdfc";
     const payeeName = "XploitX 2.0 CTF Registration";
     const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${totalFee}&cu=INR`;
@@ -609,6 +631,31 @@ function initOtpFlow() {
             feedback.textContent = msg;
         }
     }
+
+    // Restore verified state if email was already verified in this session
+    try {
+        const savedVerifiedEmail = sessionStorage.getItem('xploitx_verified_email');
+        if (savedVerifiedEmail && emailInput.value.trim().toLowerCase() === savedVerifiedEmail.toLowerCase()) {
+            isEmailVerified = true;
+            emailInput.readOnly = true;
+            btnSendOtp.style.display = 'none';
+            if (otpBox) otpBox.style.display = 'none';
+            setFeedback('✓ Email verified successfully!', true);
+
+            if (!emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge')) {
+                const verifiedBadge = document.createElement('span');
+                verifiedBadge.className = 'btn-otp-action btn-otp-verified-badge';
+                verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
+                verifiedBadge.style.borderColor = '#00ff66';
+                verifiedBadge.style.color = '#00ff66';
+                verifiedBadge.style.display = 'inline-flex';
+                verifiedBadge.style.alignItems = 'center';
+                verifiedBadge.style.gap = '6px';
+                verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
+                emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+            }
+        }
+    } catch (_) {}
 
     btnSendOtp.addEventListener('click', async () => {
         const email = emailInput.value.trim().toLowerCase();
@@ -756,22 +803,28 @@ function initOtpFlow() {
 
             if (res.ok && data.success) {
                 isEmailVerified = true;
-                if (window.updateSubmitButtonState) window.updateSubmitButtonState();
+                try {
+                    sessionStorage.setItem('xploitx_verified_email', email);
+                } catch (_) {}
                 emailInput.readOnly = true;
                 btnSendOtp.style.display = 'none';
                 otpBox.style.display = 'none';
                 setFeedback('✓ Email verified successfully!', true);
 
-                const verifiedBadge = document.createElement('span');
-                verifiedBadge.className = 'btn-otp-action';
-                verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
-                verifiedBadge.style.borderColor = '#00ff66';
-                verifiedBadge.style.color = '#00ff66';
-                verifiedBadge.style.display = 'inline-flex';
-                verifiedBadge.style.alignItems = 'center';
-                verifiedBadge.style.gap = '6px';
-                verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
-                emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+                if (!emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge')) {
+                    const verifiedBadge = document.createElement('span');
+                    verifiedBadge.className = 'btn-otp-action btn-otp-verified-badge';
+                    verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
+                    verifiedBadge.style.borderColor = '#00ff66';
+                    verifiedBadge.style.color = '#00ff66';
+                    verifiedBadge.style.display = 'inline-flex';
+                    verifiedBadge.style.alignItems = 'center';
+                    verifiedBadge.style.gap = '6px';
+                    verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
+                    emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+                }
+
+                if (window.updateSubmitButtonState) window.updateSubmitButtonState();
             } else {
                 setFeedback(data.error || 'Invalid OTP code! Please check and enter the correct code.', false);
             }
@@ -818,64 +871,70 @@ function generateCaptchaCode() {
 }
 
 function isFormDetailsComplete() {
-    
+    // 1. Team Name
     const teamNameInput = document.getElementById('teamName');
     if (!teamNameInput || teamNameInput.value.trim().length < 2) return false;
 
-    
+    // 2. Leader Name
     const leaderNameInput = document.getElementById('leaderName');
     if (!leaderNameInput || !validateName(leaderNameInput.value.trim())) return false;
 
-    
+    // 3. Leader Age
     const leaderAgeInput = document.getElementById('leaderAge');
     if (!leaderAgeInput || !validateAge(leaderAgeInput.value.trim())) return false;
 
-    
+    // 4. Leader Email & OTP Verification
     const leaderEmailInput = document.getElementById('leaderEmail');
     if (!leaderEmailInput || !validateEmail(leaderEmailInput.value.trim()) || !isEmailVerified) return false;
 
-    
+    // 5. Leader Phone
     const leaderPhoneInput = document.getElementById('leaderPhone');
     if (!leaderPhoneInput || !validatePhone(leaderPhoneInput.value.trim())) return false;
 
-    
+    // 6. Leader College
     const leaderCollegeInput = document.getElementById('leaderCollege');
-    if (!leaderCollegeInput || !validateNoDigits(leaderCollegeInput.value.trim()) || leaderCollegeInput.value.trim().length < 3) return false;
+    if (!leaderCollegeInput || !validateTextLength(leaderCollegeInput.value.trim(), 2)) return false;
 
-    
+    // 7. Leader District
     const leaderDistrictInput = document.getElementById('leaderDistrict');
-    if (!leaderDistrictInput || !validateNoDigits(leaderDistrictInput.value.trim()) || leaderDistrictInput.value.trim().length < 2) return false;
+    if (!leaderDistrictInput || !validateTextLength(leaderDistrictInput.value.trim(), 2)) return false;
 
-    
+    // 8. Squad Members
     const extraCards = document.querySelectorAll('.member-card-hud');
     for (let i = 0; i < extraCards.length; i++) {
         const card = extraCards[i];
+        const isSameAsLeader = card.querySelector('.m-same-as-leader')?.checked;
         const mName = card.querySelector('.m-name')?.value.trim() || '';
         const mAge = card.querySelector('.m-age')?.value.trim() || '';
         const mEmail = card.querySelector('.m-email')?.value.trim() || '';
         const mPhone = card.querySelector('.m-phone')?.value.trim() || '';
-        const mCollege = card.querySelector('.m-college')?.value.trim() || '';
-        const mDistrict = card.querySelector('.m-district')?.value.trim() || '';
+        let mCollege = card.querySelector('.m-college')?.value.trim() || '';
+        let mDistrict = card.querySelector('.m-district')?.value.trim() || '';
+
+        if (isSameAsLeader) {
+            if (!mCollege) mCollege = leaderCollegeInput.value.trim();
+            if (!mDistrict) mDistrict = leaderDistrictInput.value.trim();
+        }
 
         if (!mName || !validateName(mName)) return false;
-        if (!mAge || !validateAge(mAge)) return false;
+        if (mAge && !validateAge(mAge)) return false;
         if (!mEmail || !validateEmail(mEmail)) return false;
         if (!mPhone || !validatePhone(mPhone)) return false;
-        if (!mCollege || !validateNoDigits(mCollege)) return false;
-        if (!mDistrict || !validateNoDigits(mDistrict)) return false;
+        if (!mCollege || !validateTextLength(mCollege, 2)) return false;
+        if (!mDistrict || !validateTextLength(mDistrict, 2)) return false;
     }
 
-    
+    // 9. UTR Number
     const utrInput = document.getElementById('utrNumber');
     if (!utrInput || !validateUTR(utrInput.value.trim())) return false;
 
-    
+    // 10. Payment Proof
     const paymentProofInput = document.getElementById('paymentProof');
     if (!paymentProofInput || !paymentProofInput.files || paymentProofInput.files.length === 0) return false;
     const file = paymentProofInput.files[0];
     const allowedExtensions = ['jpg', 'jpeg', 'png'];
     const fileExt = file.name.split('.').pop().toLowerCase();
-    if (!allowedExtensions.includes(fileExt) || file.size > 1 * 1024 * 1024) return false;
+    if (!allowedExtensions.includes(fileExt) || file.size > 3 * 1024 * 1024) return false;
 
     return true;
 }
@@ -893,29 +952,46 @@ function updateSubmitButtonState() {
     const detailsComplete = isFormDetailsComplete();
 
     if (!detailsComplete) {
-        
         if (captchaSection) captchaSection.style.display = 'none';
 
         submitBtn.disabled = true;
         submitBtn.style.opacity = '0.4';
         submitBtn.style.cursor = 'not-allowed';
         submitBtn.style.filter = 'grayscale(0.8)';
+        isCaptchaVerified = false;
         return;
     }
 
-    
-    
-    if (captchaSection) captchaSection.style.display = 'block';
+    // Details are complete! Reveal CAPTCHA section
+    const wasHidden = captchaSection && (captchaSection.style.display === 'none' || getComputedStyle(captchaSection).display === 'none');
+    if (captchaSection) {
+        captchaSection.style.display = 'block';
+    }
 
-    
+    // Ensure CAPTCHA code is generated and displayed
+    const displayEl = document.getElementById('captchaCodeDisplay');
+    if (!currentCaptchaCode || currentCaptchaCode === 'XXXXXX') {
+        currentCaptchaCode = generateCaptchaCode();
+        if (displayEl) displayEl.textContent = currentCaptchaCode;
+    }
+
+    // Smooth scroll to captcha if it just appeared
+    if (wasHidden && captchaSection) {
+        try {
+            captchaSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (_) {}
+    }
+
+    // Check CAPTCHA code verification
     const captchaVal = (captchaInput?.value || '').trim().toUpperCase();
-    isCaptchaVerified = (captchaVal.length === 6 && captchaVal === currentCaptchaCode);
+    isCaptchaVerified = (captchaVal.length === 6 && captchaVal === currentCaptchaCode.toUpperCase());
 
     if (isCaptchaVerified) {
         submitBtn.disabled = false;
         submitBtn.style.opacity = '1';
         submitBtn.style.cursor = 'pointer';
         submitBtn.style.filter = 'none';
+        submitBtn.style.boxShadow = '0 0 25px rgba(0, 255, 102, 0.4)';
 
         if (statusMsg) {
             statusMsg.style.color = '#00ff66';
@@ -927,6 +1003,7 @@ function updateSubmitButtonState() {
         submitBtn.style.opacity = '0.4';
         submitBtn.style.cursor = 'not-allowed';
         submitBtn.style.filter = 'grayscale(0.8)';
+        submitBtn.style.boxShadow = 'none';
 
         if (statusMsg) {
             statusMsg.style.color = '#ff4757';
@@ -959,11 +1036,13 @@ function initCaptchaLogic() {
         updateSubmitButtonState();
     };
 
-    window.refreshCaptcha();
+    currentCaptchaCode = generateCaptchaCode();
+    displayEl.textContent = currentCaptchaCode;
 
     if (btnRefresh) {
         btnRefresh.addEventListener('click', () => {
             window.refreshCaptcha();
+            inputEl.focus();
         });
     }
 
@@ -974,11 +1053,8 @@ function initCaptchaLogic() {
     });
 }
 
-
-
-
-function validateNoDigits(text) {
-    return !/\d/.test(text) && text.trim().length >= 2;
+function validateTextLength(text, minLen = 2) {
+    return typeof text === 'string' && text.trim().length >= minLen;
 }
 
 function validateEmail(email) {
@@ -986,7 +1062,8 @@ function validateEmail(email) {
 }
 
 function validatePhone(phone) {
-    return /^[6-9]\d{9}$/.test(phone);
+    const cleaned = (phone || '').replace(/[\s\-()]/g, '');
+    return /^[6-9]\d{9}$/.test(cleaned);
 }
 
 function validateName(name) {
@@ -999,7 +1076,8 @@ function validateAge(ageStr) {
 }
 
 function validateUTR(utr) {
-    return /^\d{6,30}$/.test(utr);
+    const cleaned = (utr || '').trim();
+    return /^[a-zA-Z0-9\s\-_]{6,30}$/.test(cleaned);
 }
 
 function markInputError(inputEl, msg) {
@@ -1069,7 +1147,7 @@ function initFormSubmission() {
 
         const allowedExtensions = ['jpg', 'jpeg', 'png'];
         const fileExt = file.name.split('.').pop().toLowerCase();
-        const maxSize = 1 * 1024 * 1024; 
+        const maxSize = 3 * 1024 * 1024; 
 
         if (!allowedExtensions.includes(fileExt)) {
             showCyberAlert('Invalid file format! Only JPG, JPEG, and PNG images are allowed.', 'INVALID FILE FORMAT');
@@ -1081,10 +1159,10 @@ function initFormSubmission() {
 
         if (file.size > maxSize) {
             const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-            showCyberAlert(`File size is ${sizeMB} MB. Please upload a screenshot smaller than 1 MB.`, 'FILE SIZE EXCEEDED');
+            showCyberAlert(`File size is ${sizeMB} MB. Please upload a screenshot smaller than 3 MB.`, 'FILE SIZE EXCEEDED');
             resetDropzoneUI();
             if (dropzoneEl) dropzoneEl.classList.add('has-error');
-            markInputError(paymentProofInputEl, 'File size must be less than 1 MB.');
+            markInputError(paymentProofInputEl, 'File size must be less than 3 MB.');
             return;
         }
 
@@ -1094,11 +1172,10 @@ function initFormSubmission() {
             dropzoneEl.classList.add('has-file');
         }
 
-        
         if (previewFilename) previewFilename.textContent = file.name;
         if (previewFilesize) {
             const kbSize = (file.size / 1024).toFixed(1);
-            previewFilesize.textContent = `${kbSize} KB / 1.00 MB`;
+            previewFilesize.textContent = `${kbSize} KB / 3.00 MB`;
         }
 
         
@@ -1220,17 +1297,15 @@ function initFormSubmission() {
 
         
         const leaderCollege = leaderCollegeInput.value.trim();
-        if (!leaderCollege || leaderCollege.length < 3 || !validateNoDigits(leaderCollege)) {
-            setError(leaderCollegeInput, 'College / Institution name must be at least 3 characters (letters only).');
+        if (!leaderCollege || leaderCollege.length < 2) {
+            setError(leaderCollegeInput, 'College / Institution name must be at least 2 characters.');
         }
 
-        
         const leaderDistrict = leaderDistrictInput.value.trim();
-        if (!leaderDistrict || leaderDistrict.length < 2 || !validateNoDigits(leaderDistrict)) {
-            setError(leaderDistrictInput, 'District / Department must be at least 2 characters (letters only).');
+        if (!leaderDistrict || leaderDistrict.length < 2) {
+            setError(leaderDistrictInput, 'District / Department must be at least 2 characters.');
         }
 
-        
         const membersList = [
             {
                 name: leaderName,
@@ -1247,6 +1322,7 @@ function initFormSubmission() {
         const extraCards = document.querySelectorAll('.member-card-hud');
         for (let i = 0; i < extraCards.length; i++) {
             const card = extraCards[i];
+            const isSameAsLeader = card.querySelector('.m-same-as-leader')?.checked;
             const mNameInput = card.querySelector('.m-name');
             const mAgeInput = card.querySelector('.m-age');
             const mEmailInput = card.querySelector('.m-email');
@@ -1258,8 +1334,13 @@ function initFormSubmission() {
             const mAge = mAgeInput ? mAgeInput.value.trim() : '';
             const mEmail = mEmailInput ? mEmailInput.value.trim() : '';
             const mPhone = mPhoneInput ? mPhoneInput.value.trim() : '';
-            const mCollege = mCollegeInput ? mCollegeInput.value.trim() : '';
-            const mDistrict = mDistrictInput ? mDistrictInput.value.trim() : '';
+            let mCollege = mCollegeInput ? mCollegeInput.value.trim() : '';
+            let mDistrict = mDistrictInput ? mDistrictInput.value.trim() : '';
+
+            if (isSameAsLeader) {
+                if (!mCollege) mCollege = leaderCollege;
+                if (!mDistrict) mDistrict = leaderDistrict;
+            }
 
             if (!mName || !validateName(mName)) {
                 setError(mNameInput, `Operative 0${i + 2}: Enter full name (letters only).`);
@@ -1277,12 +1358,12 @@ function initFormSubmission() {
                 setError(mAgeInput, `Operative 0${i + 2}: Age must be between 15 and 40.`);
             }
 
-            if (!mCollege || !validateNoDigits(mCollege)) {
-                setError(mCollegeInput, `Operative 0${i + 2}: Enter College name (letters only).`);
+            if (!mCollege || mCollege.length < 2) {
+                setError(mCollegeInput, `Operative 0${i + 2}: Enter College name.`);
             }
 
-            if (!mDistrict || !validateNoDigits(mDistrict)) {
-                setError(mDistrictInput, `Operative 0${i + 2}: Enter District / Department (letters only).`);
+            if (!mDistrict || mDistrict.length < 2) {
+                setError(mDistrictInput, `Operative 0${i + 2}: Enter District / Department.`);
             }
 
             membersList.push({
@@ -1297,7 +1378,6 @@ function initFormSubmission() {
             });
         }
 
-        
         const squadEmailsMap = {};
         for (let idx = 0; idx < membersList.length; idx++) {
             const m = membersList[idx];
@@ -1315,33 +1395,30 @@ function initFormSubmission() {
             isValid = false;
         }
 
-        
         const utrNumber = utrNumberInput.value.trim();
         if (!utrNumber || !validateUTR(utrNumber)) {
-            setError(utrNumberInput, 'Please enter a valid numeric UTR ID.');
+            setError(utrNumberInput, 'Please enter a valid UTR ID (min 6 alphanumeric characters).');
         }
 
-        
         const paymentProofInput = document.getElementById('paymentProof');
         const paymentProofFile = paymentProofInput ? paymentProofInput.files[0] : null;
 
         if (!paymentProofFile) {
-            setError(paymentProofInput, 'Please upload your payment screenshot (< 1 MB, JPG/JPEG/PNG).');
+            setError(paymentProofInput, 'Please upload your payment screenshot (< 3 MB, JPG/JPEG/PNG).');
         } else {
             const allowedExtensions = ['jpg', 'jpeg', 'png'];
             const fileExt = paymentProofFile.name.split('.').pop().toLowerCase();
-            const maxSize = 1 * 1024 * 1024; 
+            const maxSize = 3 * 1024 * 1024; 
 
             if (!allowedExtensions.includes(fileExt)) {
                 setError(paymentProofInput, 'Invalid file format! Only JPG, JPEG, and PNG images are allowed.');
             } else if (paymentProofFile.size > maxSize) {
-                setError(paymentProofInput, 'File size exceeds 1 MB limit! Please upload a screenshot smaller than 1 MB.');
+                setError(paymentProofInput, 'File size exceeds 3 MB limit! Please upload a screenshot smaller than 3 MB.');
             }
         }
 
-        
         if (!isCaptchaVerified) {
-            showCyberAlert('Please complete all form details, verify "I AM NOT A ROBOT", and enter the correct Captcha code.', 'CAPTCHA VERIFICATION REQUIRED');
+            showCyberAlert('Please verify the CAPTCHA code shown to unlock and submit your registration.', 'CAPTCHA VERIFICATION REQUIRED');
             const captchaInput = document.getElementById('captchaInput');
             if (captchaInput) {
                 captchaInput.focus();
@@ -1350,7 +1427,6 @@ function initFormSubmission() {
             return;
         }
 
-        
         if (!isValid) {
             if (firstErrorInput) {
                 firstErrorInput.focus();
