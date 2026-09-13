@@ -13,7 +13,7 @@ const EVENT_CONFIG = {
     registrationLink: "register.html",
     teamSize: "2 - 4 Members",
     prizePool: "[TBA - Awaiting Official Release]",
-    registrationFee: "₹250 per head (Early Bird Offer - Includes Lunch)"
+    registrationFee: "₹150 per head (Early Bird Offer)"
 };
 
 document.addEventListener('DOMContentLoaded', () => {

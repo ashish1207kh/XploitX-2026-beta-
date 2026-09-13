@@ -66,7 +66,7 @@ if (currentProtocol === 'file:') {
 let memberCount = 1; 
 const MIN_MEMBERS = 2;
 const MAX_MEMBERS = 4;
-let PER_HEAD_FEE = 250;
+let PER_HEAD_FEE = 150;
 let isEmailVerified = false;
 let currentCaptchaCode = '';
 let isCaptchaVerified = false;
@@ -555,39 +555,8 @@ window.removeMember = removeMember;
 
 
 
-function isPrathyushaCollege(collegeStr) {
-    if (!collegeStr || typeof collegeStr !== 'string') return false;
-    const s = collegeStr.trim().toLowerCase();
-    if (!s) return false;
-    if (/prath[yu]+/i.test(s) || s.includes('prathyusha') || s.includes('prathusha') || s.includes('prathyusa')) return true;
-    if (/\bpec\b/i.test(s) || /\bp\.?e\.?c\.?\b/i.test(s)) return true;
-    return false;
-}
-
-function areAllFromPEC() {
-    const leaderCollege = (document.getElementById('leaderCollege')?.value || '').trim();
-    if (!isPrathyushaCollege(leaderCollege)) {
-        return false;
-    }
-
-    const memberCards = document.querySelectorAll('.member-card-hud');
-    if (memberCards.length === 0) {
-        return false;
-    }
-
-    for (const card of memberCards) {
-        const mCollege = (card.querySelector('.m-college')?.value || '').trim();
-        if (!isPrathyushaCollege(mCollege)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function updateFeeCalculations() {
-    const isAllPEC = areAllFromPEC();
-    PER_HEAD_FEE = isAllPEC ? 150 : 250;
+    PER_HEAD_FEE = 150;
     const totalFee = memberCount * PER_HEAD_FEE;
     
     const summaryCount = document.getElementById('summary-member-count');
@@ -598,7 +567,6 @@ function updateFeeCalculations() {
     const paymentAmount = document.getElementById('payment-amount-display');
     const slotCount = document.getElementById('member-slot-count');
     const paymentBadge = document.getElementById('payment-fee-badge');
-    const pecNotice = document.getElementById('pec-discount-notice');
 
     if (summaryCount) summaryCount.textContent = memberCount;
     if (summaryFee) summaryFee.textContent = `₹${totalFee}`;
@@ -606,19 +574,16 @@ function updateFeeCalculations() {
     if (slotCount) slotCount.textContent = memberCount;
 
     if (summaryFeeLabel) {
-        summaryFeeLabel.textContent = isAllPEC ? 'PEC SPECIAL FEE:' : 'EARLY BIRD FEE:';
+        summaryFeeLabel.textContent = 'EARLY BIRD FEE:';
     }
     if (summaryPerHead) {
         summaryPerHead.textContent = `₹${PER_HEAD_FEE}`;
     }
     if (summaryFeeNote) {
-        summaryFeeNote.textContent = isAllPEC ? '(PEC SPECIAL - INCLUDES LUNCH)' : '(INCLUDES LUNCH)';
+        summaryFeeNote.textContent = '';
     }
     if (paymentBadge) {
-        paymentBadge.textContent = isAllPEC ? 'PEC SPECIAL: ₹150 / HEAD' : 'EARLY BIRD: ₹250 / HEAD';
-    }
-    if (pecNotice) {
-        pecNotice.style.display = isAllPEC ? 'block' : 'none';
+        paymentBadge.textContent = 'EARLY BIRD: ₹150 / HEAD';
     }
 
     const upiId = "8122079494@pthdfc";

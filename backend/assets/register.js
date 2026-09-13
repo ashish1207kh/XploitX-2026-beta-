@@ -66,7 +66,7 @@ if (currentProtocol === 'file:') {
 let memberCount = 1; 
 const MIN_MEMBERS = 2;
 const MAX_MEMBERS = 4;
-let PER_HEAD_FEE = 250;
+let PER_HEAD_FEE = 150;
 let isEmailVerified = false;
 let currentCaptchaCode = '';
 let isCaptchaVerified = false;
