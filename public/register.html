@@ -438,7 +438,23 @@
                             </div>
                         </div>
 
-                        
+                        <!-- MISSION READINESS & CAPTCHA UNLOCK STATUS -->
+                        <div class="form-section-block" id="mission-readiness-block" style="background: rgba(4, 12, 28, 0.7); border: 1px dashed rgba(255, 215, 0, 0.4); padding: 14px 18px; border-radius: 6px; margin-bottom: 20px; transition: all 0.3s ease;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+                                <div style="font-family: var(--font-mono); font-size: 0.86rem; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-tasks text-gold"></i>
+                                    <span id="readiness-title">REGISTRATION CHECKLIST (COMPLETE TO UNLOCK CAPTCHA)</span>
+                                </div>
+                                <div id="readiness-badge" style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 3px; background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;">
+                                    PENDING REQUIREMENTS
+                                </div>
+                            </div>
+                            <div id="readiness-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; font-family: var(--font-mono); font-size: 0.78rem;">
+                                <!-- Items rendered dynamically by register.js -->
+                            </div>
+                        </div>
+
+                        <!-- CAPTCHA VERIFICATION BLOCK (Revealed when all details are complete) -->
                         <div class="form-section-block captcha-section-block" id="captcha-section-block" style="display: none; animation: fadeIn 0.4s ease;">
                             <div class="section-badge-title">
                                 <i class="fas fa-shield-alt"></i> CAPTCHA VERIFICATION <span class="req">*</span>
@@ -628,7 +644,7 @@
 
     
     <script src="script.js"></script>
-    <script src="register.js?v=2.6"></script>
+    <script src="register.js?v=2.7"></script>
 </body>
 
 </html>

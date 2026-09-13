@@ -70,6 +70,23 @@ let PER_HEAD_FEE = 150;
 let isEmailVerified = false;
 let currentCaptchaCode = '';
 let isCaptchaVerified = false;
+let uploadedPaymentProofFile = null;
+
+function checkIsEmailVerified() {
+    if (isEmailVerified) return true;
+    const leaderEmailInput = document.getElementById('leaderEmail');
+    const email = (leaderEmailInput?.value || '').trim().toLowerCase();
+    try {
+        const saved = (sessionStorage.getItem('xploitx_verified_email') || '').trim().toLowerCase();
+        if (saved && email && saved === email) {
+            isEmailVerified = true;
+            window.isEmailVerified = true;
+            return true;
+        }
+    } catch (_) {}
+    return false;
+}
+window.checkIsEmailVerified = checkIsEmailVerified;
 
 document.addEventListener('DOMContentLoaded', () => {
     initCyberBackground();
@@ -297,17 +314,12 @@ function initRealtimeInputSanitizers() {
         }
     });
 
-    // Full Name Sanitizer (letters, spaces, dots, apostrophes, hyphens)
+    // Full Name Sanitizer (letters, numbers, spaces, dots, apostrophes, hyphens)
     document.querySelectorAll('#leaderName, .m-name').forEach(input => {
         if (!input.dataset.sanitizerAttached) {
             input.dataset.sanitizerAttached = 'true';
             input.addEventListener('input', function () {
-                this.value = this.value.replace(/[^a-zA-Z\s.'-]/g, '');
-            });
-            input.addEventListener('keydown', function (e) {
-                if (e.key && /[0-9]/.test(e.key)) {
-                    e.preventDefault();
-                }
+                this.value = this.value.replace(/[^a-zA-Z0-9\s.'-]/g, '');
             });
         }
     });
@@ -410,7 +422,7 @@ function createMemberCard(memberIndex) {
         
         <div class="same-as-leader-row" style="margin-top: 4px; margin-bottom: 12px; padding: 8px 12px; background: rgba(0, 255, 102, 0.04); border: 1px dashed rgba(0, 255, 102, 0.25); border-radius: 4px;">
             <label style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; color: var(--neon-gold); cursor: pointer; user-select: none; width: 100%;">
-                <input type="checkbox" class="m-same-as-leader" style="width: 16px; height: 16px; accent-color: var(--neon-green); cursor: pointer;">
+                <input type="checkbox" class="m-same-as-leader" checked style="width: 16px; height: 16px; accent-color: var(--neon-green); cursor: pointer;">
                 <span><i class="fas fa-copy" style="color: var(--neon-green);"></i> SAME AS TEAM LEADER (COLLEGE &amp; DISTRICT)</span>
             </label>
         </div>
@@ -418,13 +430,13 @@ function createMemberCard(memberIndex) {
             <div class="form-group-hud">
                 <label class="form-label-hud"><i class="fas fa-university form-icon-hud"></i> COLLEGE / INSTITUTION <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-college" placeholder="Your college name" required autocomplete="off">
+                    <input type="text" class="m-college readonly-input" placeholder="Your college name" readonly required autocomplete="off">
                 </div>
             </div>
             <div class="form-group-hud">
                 <label class="form-label-hud"><i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPARTMENT <span class="req">*</span></label>
                 <div class="input-wrapper-hud">
-                    <input type="text" class="m-district" placeholder="e.g. Chennai / Cyber Security" required autocomplete="off">
+                    <input type="text" class="m-district readonly-input" placeholder="e.g. Chennai / Cyber Security" readonly required autocomplete="off">
                 </div>
             </div>
         </div>
@@ -436,8 +448,8 @@ function createMemberCard(memberIndex) {
     const districtInput = memberCard.querySelector('.m-district');
 
     if (checkbox && collegeInput && districtInput) {
-        checkbox.addEventListener('change', function () {
-            if (this.checked) {
+        const syncLeaderData = () => {
+            if (checkbox.checked) {
                 const leaderCollege = document.getElementById('leaderCollege')?.value || '';
                 const leaderDistrict = document.getElementById('leaderDistrict')?.value || '';
                 collegeInput.value = leaderCollege;
@@ -454,7 +466,12 @@ function createMemberCard(memberIndex) {
             }
             updateFeeCalculations();
             if (window.updateSubmitButtonState) window.updateSubmitButtonState();
-        });
+        };
+
+        // Sync right away if leader info is already present
+        syncLeaderData();
+
+        checkbox.addEventListener('change', syncLeaderData);
 
         collegeInput.addEventListener('input', function () {
             updateFeeCalculations();
@@ -632,30 +649,75 @@ function initOtpFlow() {
         }
     }
 
-    // Restore verified state if email was already verified in this session
+    function markEmailAsVerifiedInUI() {
+        isEmailVerified = true;
+        emailInput.readOnly = true;
+        btnSendOtp.style.display = 'none';
+        if (otpBox) otpBox.style.display = 'none';
+        setFeedback('✓ Email verified successfully!', true);
+
+        if (!emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge')) {
+            const verifiedBadge = document.createElement('span');
+            verifiedBadge.className = 'btn-otp-action btn-otp-verified-badge';
+            verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
+            verifiedBadge.style.borderColor = '#00ff66';
+            verifiedBadge.style.color = '#00ff66';
+            verifiedBadge.style.display = 'inline-flex';
+            verifiedBadge.style.alignItems = 'center';
+            verifiedBadge.style.gap = '6px';
+            verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
+            emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+        }
+    }
+
+    function checkIsEmailVerified() {
+        if (isEmailVerified) return true;
+        const currentEmail = (emailInput?.value || '').trim().toLowerCase();
+        try {
+            const savedVerifiedEmail = (sessionStorage.getItem('xploitx_verified_email') || '').trim().toLowerCase();
+            if (savedVerifiedEmail && currentEmail && currentEmail === savedVerifiedEmail) {
+                markEmailAsVerifiedInUI();
+                return true;
+            }
+        } catch (_) {}
+        return false;
+    }
+    window.checkIsEmailVerified = checkIsEmailVerified;
+
+    // Restore verified state on page load if email was already verified in this session
     try {
         const savedVerifiedEmail = sessionStorage.getItem('xploitx_verified_email');
-        if (savedVerifiedEmail && emailInput.value.trim().toLowerCase() === savedVerifiedEmail.toLowerCase()) {
-            isEmailVerified = true;
-            emailInput.readOnly = true;
-            btnSendOtp.style.display = 'none';
-            if (otpBox) otpBox.style.display = 'none';
-            setFeedback('✓ Email verified successfully!', true);
-
-            if (!emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge')) {
-                const verifiedBadge = document.createElement('span');
-                verifiedBadge.className = 'btn-otp-action btn-otp-verified-badge';
-                verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
-                verifiedBadge.style.borderColor = '#00ff66';
-                verifiedBadge.style.color = '#00ff66';
-                verifiedBadge.style.display = 'inline-flex';
-                verifiedBadge.style.alignItems = 'center';
-                verifiedBadge.style.gap = '6px';
-                verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
-                emailInput.parentElement.parentElement.appendChild(verifiedBadge);
+        if (savedVerifiedEmail) {
+            if (!emailInput.value) {
+                emailInput.value = savedVerifiedEmail;
+            }
+            if (emailInput.value.trim().toLowerCase() === savedVerifiedEmail.toLowerCase()) {
+                markEmailAsVerifiedInUI();
             }
         }
     } catch (_) {}
+
+    // Auto-recognize verified email when typed/pasted/autofilled
+    const onEmailInputChange = () => {
+        try {
+            const savedVerifiedEmail = (sessionStorage.getItem('xploitx_verified_email') || '').trim().toLowerCase();
+            const currentEmail = emailInput.value.trim().toLowerCase();
+            if (savedVerifiedEmail && currentEmail === savedVerifiedEmail) {
+                markEmailAsVerifiedInUI();
+            } else if (isEmailVerified && savedVerifiedEmail && currentEmail !== savedVerifiedEmail) {
+                isEmailVerified = false;
+                emailInput.readOnly = false;
+                const badge = emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge');
+                if (badge) badge.remove();
+                btnSendOtp.style.display = 'inline-flex';
+                setFeedback('Email modified. Please verify this email via OTP.', false);
+            }
+        } catch (_) {}
+        if (window.updateSubmitButtonState) window.updateSubmitButtonState();
+    };
+
+    emailInput.addEventListener('input', onEmailInputChange);
+    emailInput.addEventListener('change', onEmailInputChange);
 
     btnSendOtp.addEventListener('click', async () => {
         const email = emailInput.value.trim().toLowerCase();
@@ -802,28 +864,10 @@ function initOtpFlow() {
             }
 
             if (res.ok && data.success) {
-                isEmailVerified = true;
                 try {
                     sessionStorage.setItem('xploitx_verified_email', email);
                 } catch (_) {}
-                emailInput.readOnly = true;
-                btnSendOtp.style.display = 'none';
-                otpBox.style.display = 'none';
-                setFeedback('✓ Email verified successfully!', true);
-
-                if (!emailInput.parentElement.parentElement.querySelector('.btn-otp-verified-badge')) {
-                    const verifiedBadge = document.createElement('span');
-                    verifiedBadge.className = 'btn-otp-action btn-otp-verified-badge';
-                    verifiedBadge.style.background = 'rgba(0, 255, 102, 0.2)';
-                    verifiedBadge.style.borderColor = '#00ff66';
-                    verifiedBadge.style.color = '#00ff66';
-                    verifiedBadge.style.display = 'inline-flex';
-                    verifiedBadge.style.alignItems = 'center';
-                    verifiedBadge.style.gap = '6px';
-                    verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> VERIFIED ✓';
-                    emailInput.parentElement.parentElement.appendChild(verifiedBadge);
-                }
-
+                markEmailAsVerifiedInUI();
                 if (window.updateSubmitButtonState) window.updateSubmitButtonState();
             } else {
                 setFeedback(data.error || 'Invalid OTP code! Please check and enter the correct code.', false);
@@ -837,8 +881,6 @@ function initOtpFlow() {
         }
     });
 }
-
-
 
 
 function initFileUploadPreview() {
@@ -870,37 +912,109 @@ function generateCaptchaCode() {
     return code;
 }
 
-function isFormDetailsComplete() {
+function cleanPhoneNumber(phone) {
+    let cleaned = (phone || '').replace(/[\s\-()+]/g, '');
+    if (cleaned.startsWith('91') && cleaned.length === 12) {
+        cleaned = cleaned.slice(2);
+    } else if (cleaned.startsWith('0') && cleaned.length === 11) {
+        cleaned = cleaned.slice(1);
+    }
+    return cleaned;
+}
+
+function validateTextLength(text, minLen = 2) {
+    return typeof text === 'string' && text.trim().length >= minLen;
+}
+
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validatePhone(phone) {
+    const cleaned = cleanPhoneNumber(phone);
+    return /^\d{10}$/.test(cleaned);
+}
+
+function validateName(name) {
+    return typeof name === 'string' && name.trim().length >= 2 && /^[a-zA-Z0-9\s.'-]+$/.test(name.trim());
+}
+
+function validateAge(ageStr) {
+    const age = parseInt(ageStr, 10);
+    return !isNaN(age) && age >= 15 && age <= 40;
+}
+
+function validateUTR(utr) {
+    const cleaned = (utr || '').trim();
+    return /^[a-zA-Z0-9\s\-_]{6,30}$/.test(cleaned);
+}
+
+function getPendingRequirements() {
+    const pending = [];
+
     // 1. Team Name
     const teamNameInput = document.getElementById('teamName');
-    if (!teamNameInput || teamNameInput.value.trim().length < 2) return false;
+    const teamName = teamNameInput ? teamNameInput.value.trim() : '';
+    if (teamName.length < 2) {
+        pending.push({ id: 'teamName', label: 'Team Name (min 2 chars)', done: false });
+    } else {
+        pending.push({ id: 'teamName', label: 'Team Name', done: true });
+    }
 
     // 2. Leader Name
     const leaderNameInput = document.getElementById('leaderName');
-    if (!leaderNameInput || !validateName(leaderNameInput.value.trim())) return false;
+    const leaderName = leaderNameInput ? leaderNameInput.value.trim() : '';
+    if (!validateName(leaderName)) {
+        pending.push({ id: 'leaderName', label: 'Team Leader Full Name', done: false });
+    } else {
+        pending.push({ id: 'leaderName', label: 'Team Leader Name', done: true });
+    }
 
     // 3. Leader Age
     const leaderAgeInput = document.getElementById('leaderAge');
-    if (!leaderAgeInput || !validateAge(leaderAgeInput.value.trim())) return false;
+    const leaderAge = leaderAgeInput ? leaderAgeInput.value.trim() : '';
+    if (!validateAge(leaderAge)) {
+        pending.push({ id: 'leaderAge', label: 'Leader Age (15-40)', done: false });
+    } else {
+        pending.push({ id: 'leaderAge', label: 'Leader Age', done: true });
+    }
 
-    // 4. Leader Email & OTP Verification
+    // 4. Leader Email & OTP
     const leaderEmailInput = document.getElementById('leaderEmail');
-    if (!leaderEmailInput || !validateEmail(leaderEmailInput.value.trim()) || !isEmailVerified) return false;
+    const leaderEmail = leaderEmailInput ? leaderEmailInput.value.trim().toLowerCase() : '';
+    const emailVerified = typeof checkIsEmailVerified === 'function' ? checkIsEmailVerified() : isEmailVerified;
+    if (!validateEmail(leaderEmail)) {
+        pending.push({ id: 'leaderEmail', label: 'Valid Leader Email', done: false });
+    } else if (!emailVerified) {
+        pending.push({ id: 'leaderEmail', label: 'Verify Leader Email via OTP', done: false });
+    } else {
+        pending.push({ id: 'leaderEmail', label: 'Leader Email Verified', done: true });
+    }
 
     // 5. Leader Phone
     const leaderPhoneInput = document.getElementById('leaderPhone');
-    if (!leaderPhoneInput || !validatePhone(leaderPhoneInput.value.trim())) return false;
+    const leaderPhone = leaderPhoneInput ? leaderPhoneInput.value.trim() : '';
+    if (!validatePhone(leaderPhone)) {
+        pending.push({ id: 'leaderPhone', label: 'Leader 10-digit Mobile', done: false });
+    } else {
+        pending.push({ id: 'leaderPhone', label: 'Leader Mobile', done: true });
+    }
 
-    // 6. Leader College
+    // 6. Leader College & District
     const leaderCollegeInput = document.getElementById('leaderCollege');
-    if (!leaderCollegeInput || !validateTextLength(leaderCollegeInput.value.trim(), 2)) return false;
-
-    // 7. Leader District
     const leaderDistrictInput = document.getElementById('leaderDistrict');
-    if (!leaderDistrictInput || !validateTextLength(leaderDistrictInput.value.trim(), 2)) return false;
+    const leaderCollege = leaderCollegeInput ? leaderCollegeInput.value.trim() : '';
+    const leaderDistrict = leaderDistrictInput ? leaderDistrictInput.value.trim() : '';
+    if (leaderCollege.length < 2 || leaderDistrict.length < 2) {
+        pending.push({ id: 'leaderCollegeDistrict', label: 'Leader College & District', done: false });
+    } else {
+        pending.push({ id: 'leaderCollegeDistrict', label: 'Leader College & District', done: true });
+    }
 
-    // 8. Squad Members
+    // 7. Squad Members (Operative 02, etc.)
     const extraCards = document.querySelectorAll('.member-card-hud');
+    let membersDone = true;
+    let memberDetail = '';
     for (let i = 0; i < extraCards.length; i++) {
         const card = extraCards[i];
         const isSameAsLeader = card.querySelector('.m-same-as-leader')?.checked;
@@ -912,31 +1026,125 @@ function isFormDetailsComplete() {
         let mDistrict = card.querySelector('.m-district')?.value.trim() || '';
 
         if (isSameAsLeader) {
-            if (!mCollege) mCollege = leaderCollegeInput.value.trim();
-            if (!mDistrict) mDistrict = leaderDistrictInput.value.trim();
+            if (!mCollege) mCollege = leaderCollege;
+            if (!mDistrict) mDistrict = leaderDistrict;
         }
 
-        if (!mName || !validateName(mName)) return false;
-        if (mAge && !validateAge(mAge)) return false;
-        if (!mEmail || !validateEmail(mEmail)) return false;
-        if (!mPhone || !validatePhone(mPhone)) return false;
-        if (!mCollege || !validateTextLength(mCollege, 2)) return false;
-        if (!mDistrict || !validateTextLength(mDistrict, 2)) return false;
+        const role = `Operative 0${i + 2}`;
+        if (!validateName(mName)) {
+            membersDone = false;
+            memberDetail = `${role}: Full Name`;
+            break;
+        }
+        if (mAge && !validateAge(mAge)) {
+            membersDone = false;
+            memberDetail = `${role}: Age (15-40)`;
+            break;
+        }
+        if (!validateEmail(mEmail)) {
+            membersDone = false;
+            memberDetail = `${role}: Valid Email`;
+            break;
+        }
+        if (!validatePhone(mPhone)) {
+            membersDone = false;
+            memberDetail = `${role}: 10-digit Mobile`;
+            break;
+        }
+        if (!validateTextLength(mCollege, 2) || !validateTextLength(mDistrict, 2)) {
+            membersDone = false;
+            memberDetail = `${role}: College & District`;
+            break;
+        }
+    }
+    if (!membersDone) {
+        pending.push({ id: 'squadMembers', label: memberDetail || 'Squad Members Complete', done: false });
+    } else {
+        pending.push({ id: 'squadMembers', label: 'Squad Members Complete', done: true });
     }
 
-    // 9. UTR Number
+    // 8. UTR ID
     const utrInput = document.getElementById('utrNumber');
-    if (!utrInput || !validateUTR(utrInput.value.trim())) return false;
+    const utr = utrInput ? utrInput.value.trim() : '';
+    if (!validateUTR(utr)) {
+        pending.push({ id: 'utrNumber', label: 'UTR ID (min 6 chars)', done: false });
+    } else {
+        pending.push({ id: 'utrNumber', label: 'UTR Transaction ID', done: true });
+    }
 
-    // 10. Payment Proof
+    // 9. Payment Screenshot
     const paymentProofInput = document.getElementById('paymentProof');
-    if (!paymentProofInput || !paymentProofInput.files || paymentProofInput.files.length === 0) return false;
-    const file = paymentProofInput.files[0];
-    const allowedExtensions = ['jpg', 'jpeg', 'png'];
-    const fileExt = file.name.split('.').pop().toLowerCase();
-    if (!allowedExtensions.includes(fileExt) || file.size > 3 * 1024 * 1024) return false;
+    const file = uploadedPaymentProofFile || (typeof window !== 'undefined' && window.uploadedPaymentProofFile) || (paymentProofInput && paymentProofInput.files && paymentProofInput.files[0]);
+    if (!file) {
+        pending.push({ id: 'paymentProof', label: 'Upload Screenshot (< 3 MB, JPG/PNG)', done: false });
+    } else {
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        const fileExt = (file.name || '').split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExt)) {
+            pending.push({ id: 'paymentProof', label: 'Screenshot: JPG, JPEG, PNG only', done: false });
+        } else if (file.size > 3 * 1024 * 1024) {
+            pending.push({ id: 'paymentProof', label: 'Screenshot exceeds 3 MB', done: false });
+        } else {
+            pending.push({ id: 'paymentProof', label: 'Payment Screenshot Attached', done: true });
+        }
+    }
 
-    return true;
+    return pending;
+}
+
+function updateReadinessUI(requirements, allDone) {
+    const container = document.getElementById('mission-readiness-block');
+    const titleEl = document.getElementById('readiness-title');
+    const badgeEl = document.getElementById('readiness-badge');
+    const listEl = document.getElementById('readiness-list');
+
+    if (!container || !listEl) return;
+
+    if (allDone) {
+        container.style.borderColor = '#00ff66';
+        container.style.background = 'rgba(0, 255, 102, 0.06)';
+        container.style.boxShadow = '0 0 15px rgba(0, 255, 102, 0.15)';
+        if (badgeEl) {
+            badgeEl.textContent = 'ALL REQUIREMENTS MET ✓';
+            badgeEl.style.color = '#00ff66';
+            badgeEl.style.borderColor = '#00ff66';
+            badgeEl.style.background = 'rgba(0, 255, 102, 0.15)';
+        }
+        if (titleEl) {
+            titleEl.innerHTML = '<i class="fas fa-check-circle" style="color: #00ff66;"></i> MISSION READINESS: VERIFIED • CAPTCHA UNLOCKED BELOW';
+        }
+        listEl.innerHTML = `
+            <div style="grid-column: 1 / -1; color: #00ff66; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.84rem;">
+                <i class="fas fa-unlock-alt"></i> All details &amp; payment screenshot verified! Please enter the 6-character CAPTCHA below to unlock the submit button.
+            </div>
+        `;
+    } else {
+        container.style.borderColor = 'rgba(255, 215, 0, 0.4)';
+        container.style.background = 'rgba(4, 12, 28, 0.7)';
+        container.style.boxShadow = 'none';
+        const pendingCount = requirements.filter(r => !r.done).length;
+        if (badgeEl) {
+            badgeEl.textContent = `${pendingCount} ACTION${pendingCount > 1 ? 'S' : ''} PENDING`;
+            badgeEl.style.color = '#ff4757';
+            badgeEl.style.borderColor = '#ff4757';
+            badgeEl.style.background = 'rgba(255, 71, 87, 0.15)';
+        }
+        if (titleEl) {
+            titleEl.innerHTML = '<i class="fas fa-tasks text-gold"></i> REGISTRATION CHECKLIST (COMPLETE TO UNLOCK CAPTCHA)';
+        }
+        listEl.innerHTML = requirements.map(r => {
+            if (r.done) {
+                return `<div style="color: #00ff66; display: flex; align-items: center; gap: 6px;"><i class="fas fa-check-circle" style="font-size: 0.75rem;"></i> <span style="text-decoration: line-through; opacity: 0.75;">${r.label}</span></div>`;
+            } else {
+                return `<div style="color: #ffd700; display: flex; align-items: center; gap: 6px; font-weight: 700;"><i class="fas fa-exclamation-circle" style="font-size: 0.75rem; color: #ff4757;"></i> <span style="color: #ffffff;">${r.label}</span></div>`;
+            }
+        }).join('');
+    }
+}
+
+function isFormDetailsComplete() {
+    const requirements = getPendingRequirements();
+    return requirements.every(r => r.done === true);
 }
 
 function updateSubmitButtonState() {
@@ -949,7 +1157,10 @@ function updateSubmitButtonState() {
 
     if (!submitBtn) return;
 
-    const detailsComplete = isFormDetailsComplete();
+    const requirements = getPendingRequirements();
+    const detailsComplete = requirements.every(r => r.done === true);
+
+    updateReadinessUI(requirements, detailsComplete);
 
     if (!detailsComplete) {
         if (captchaSection) captchaSection.style.display = 'none';
@@ -958,6 +1169,7 @@ function updateSubmitButtonState() {
         submitBtn.style.opacity = '0.4';
         submitBtn.style.cursor = 'not-allowed';
         submitBtn.style.filter = 'grayscale(0.8)';
+        submitBtn.style.boxShadow = 'none';
         isCaptchaVerified = false;
         return;
     }
@@ -1053,32 +1265,6 @@ function initCaptchaLogic() {
     });
 }
 
-function validateTextLength(text, minLen = 2) {
-    return typeof text === 'string' && text.trim().length >= minLen;
-}
-
-function validateEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function validatePhone(phone) {
-    const cleaned = (phone || '').replace(/[\s\-()]/g, '');
-    return /^[6-9]\d{9}$/.test(cleaned);
-}
-
-function validateName(name) {
-    return /^[a-zA-Z\s.'-]+$/.test(name) && name.trim().length >= 2;
-}
-
-function validateAge(ageStr) {
-    const age = parseInt(ageStr, 10);
-    return !isNaN(age) && age >= 15 && age <= 40;
-}
-
-function validateUTR(utr) {
-    const cleaned = (utr || '').trim();
-    return /^[a-zA-Z0-9\s\-_]{6,30}$/.test(cleaned);
-}
 
 function markInputError(inputEl, msg) {
     if (!inputEl) return;
@@ -1129,6 +1315,8 @@ function initFormSubmission() {
     const btnRemoveFile = document.getElementById('btn-remove-file');
 
     function resetDropzoneUI() {
+        uploadedPaymentProofFile = null;
+        window.uploadedPaymentProofFile = null;
         if (paymentProofInputEl) paymentProofInputEl.value = '';
         if (dropzoneEl) {
             dropzoneEl.classList.remove('has-file', 'has-error', 'dragover');
@@ -1146,11 +1334,11 @@ function initFormSubmission() {
         }
 
         const allowedExtensions = ['jpg', 'jpeg', 'png'];
-        const fileExt = file.name.split('.').pop().toLowerCase();
-        const maxSize = 3 * 1024 * 1024; 
+        const fileExt = (file.name || '').split('.').pop().toLowerCase();
+        const maxSize = 3 * 1024 * 1024; // Strictly 3 MB
 
         if (!allowedExtensions.includes(fileExt)) {
-            showCyberAlert('Invalid file format! Only JPG, JPEG, and PNG images are allowed.', 'INVALID FILE FORMAT');
+            showCyberAlert('Invalid file format! Only JPG, JPEG, and PNG images are allowed. (WebP is not permitted).', 'INVALID FILE FORMAT');
             resetDropzoneUI();
             if (dropzoneEl) dropzoneEl.classList.add('has-error');
             markInputError(paymentProofInputEl, 'Only JPG, JPEG, and PNG images allowed.');
@@ -1166,6 +1354,8 @@ function initFormSubmission() {
             return;
         }
 
+        uploadedPaymentProofFile = file;
+        window.uploadedPaymentProofFile = file;
         clearInputError(paymentProofInputEl);
         if (dropzoneEl) {
             dropzoneEl.classList.remove('has-error', 'dragover');
@@ -1178,7 +1368,9 @@ function initFormSubmission() {
             previewFilesize.textContent = `${kbSize} KB / 3.00 MB`;
         }
 
-        
+        // Immediately update submit button and CAPTCHA state!
+        if (window.updateSubmitButtonState) window.updateSubmitButtonState();
+
         const reader = new FileReader();
         reader.onload = (e) => {
             if (previewImg) previewImg.src = e.target.result;
@@ -1191,7 +1383,9 @@ function initFormSubmission() {
 
     if (paymentProofInputEl) {
         paymentProofInputEl.addEventListener('change', () => {
-            processSelectedFile(paymentProofInputEl.files[0]);
+            if (paymentProofInputEl.files && paymentProofInputEl.files[0]) {
+                processSelectedFile(paymentProofInputEl.files[0]);
+            }
         });
     }
 
@@ -1222,11 +1416,13 @@ function initFormSubmission() {
 
         dropzoneEl.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
-            const files = dt.files;
+            const files = dt && dt.files;
             if (files && files.length > 0) {
-                if (paymentProofInputEl) {
-                    paymentProofInputEl.files = files;
-                }
+                try {
+                    if (paymentProofInputEl) {
+                        paymentProofInputEl.files = files;
+                    }
+                } catch (_) {}
                 processSelectedFile(files[0]);
             }
         });
@@ -1268,7 +1464,7 @@ function initFormSubmission() {
         
         const leaderName = leaderNameInput.value.trim();
         if (!leaderName || !validateName(leaderName)) {
-            setError(leaderNameInput, 'Please enter a valid full name (letters only, min 2 chars).');
+            setError(leaderNameInput, 'Please enter a valid full name (min 2 characters).');
         }
 
         
@@ -1286,7 +1482,7 @@ function initFormSubmission() {
         
         const leaderPhone = leaderPhoneInput.value.trim();
         if (!leaderPhone || !validatePhone(leaderPhone)) {
-            setError(leaderPhoneInput, 'Enter a valid 10-digit mobile number starting with 6-9.');
+            setError(leaderPhoneInput, 'Enter a valid 10-digit mobile number.');
         }
 
         
@@ -1401,7 +1597,7 @@ function initFormSubmission() {
         }
 
         const paymentProofInput = document.getElementById('paymentProof');
-        const paymentProofFile = paymentProofInput ? paymentProofInput.files[0] : null;
+        const paymentProofFile = uploadedPaymentProofFile || (paymentProofInput && paymentProofInput.files ? paymentProofInput.files[0] : null);
 
         if (!paymentProofFile) {
             setError(paymentProofInput, 'Please upload your payment screenshot (< 3 MB, JPG/JPEG/PNG).');
@@ -1492,9 +1688,30 @@ function initFormSubmission() {
             showCyberAlert('Unable to connect to server. Please check your network connection and try again.', 'CONNECTION ERROR');
         } finally {
             submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            submitBtn.disabled = !isCaptchaVerified;
         }
     });
+
+    const formActionHud = document.querySelector('.form-action-hud');
+    if (formActionHud) {
+        formActionHud.addEventListener('click', () => {
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn && submitBtn.disabled) {
+                const reqs = getPendingRequirements();
+                const pending = reqs.filter(r => !r.done).map(r => r.label);
+                if (pending.length > 0) {
+                    showCyberAlert(`Please complete the following requirement(s) to unlock the CAPTCHA and submit:\n\n• ${pending.join('\n• ')}`, 'PENDING REQUIREMENTS');
+                } else if (!isCaptchaVerified) {
+                    showCyberAlert('Please enter the 6-character CAPTCHA code shown in the CAPTCHA section to unlock the submit button.', 'CAPTCHA CODE REQUIRED');
+                    const captchaInp = document.getElementById('captchaInput');
+                    if (captchaInp) {
+                        captchaInp.focus();
+                        captchaInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+        });
+    }
 }
 
 function closeModal() {
