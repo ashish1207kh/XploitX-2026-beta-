@@ -97,6 +97,134 @@ body {
     z-index: -1;
 }
 
+/* ==========================================================================
+   DEPARTMENT OF CYBER SECURITY BANNER (AFTER NAVBAR)
+   ========================================================================== */
+.department-bar {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(3, 5, 14, 0.95) 0%, rgba(6, 12, 28, 0.88) 100%);
+    border-bottom: 1px solid rgba(0, 255, 102, 0.22);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 10px 0;
+    position: relative;
+    z-index: 99;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.department-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(12px, 2vw, 24px);
+}
+
+.dept-accent-line {
+    flex: 1;
+    max-width: 150px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 102, 0.5));
+}
+
+.dept-accent-line.right {
+    background: linear-gradient(90deg, rgba(0, 255, 102, 0.5), transparent);
+}
+
+.department-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 6px 24px;
+    background: rgba(0, 255, 102, 0.05);
+    border: 1px solid rgba(0, 255, 102, 0.28);
+    border-radius: 24px;
+    box-shadow: 0 0 15px rgba(0, 255, 102, 0.1), inset 0 0 10px rgba(0, 255, 102, 0.03);
+    transition: all 0.3s ease;
+}
+
+.department-badge:hover {
+    border-color: rgba(0, 255, 102, 0.55);
+    background: rgba(0, 255, 102, 0.1);
+    box-shadow: 0 0 25px rgba(0, 255, 102, 0.25), inset 0 0 12px rgba(0, 255, 102, 0.08);
+}
+
+.dept-shield-icon {
+    color: var(--neon-green, #00ff66);
+    font-size: 1.05rem;
+    filter: drop-shadow(0 0 8px var(--neon-green, #00ff66));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: deptPulse 2.8s infinite ease-in-out;
+}
+
+.dept-title {
+    font-family: 'Orbitron', var(--font-brand);
+    font-size: clamp(0.85rem, 1.8vw, 1.12rem);
+    font-weight: 800;
+    letter-spacing: clamp(2px, 0.5vw, 3.5px);
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(0, 255, 102, 0.35), 0 0 22px rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+@keyframes deptPulse {
+    0%, 100% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 14px var(--neon-green, #00ff66));
+    }
+}
+
+@media (max-width: 768px) {
+    .department-bar {
+        padding: 8px 0;
+    }
+    .department-bar-inner {
+        gap: 12px;
+    }
+    .dept-accent-line {
+        max-width: 50px;
+    }
+    .department-badge {
+        gap: 9px;
+        padding: 4px 16px;
+    }
+    .dept-title {
+        font-size: 0.8rem;
+        letter-spacing: 1.8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .department-bar {
+        padding: 7px 0;
+    }
+    .dept-accent-line {
+        display: none;
+    }
+    .department-badge {
+        gap: 7px;
+        padding: 4px 12px;
+        border-radius: 18px;
+    }
+    .dept-shield-icon {
+        font-size: 0.9rem;
+    }
+    .dept-title {
+        font-size: 0.72rem;
+        letter-spacing: 1.2px;
+    }
+}
+
 .registration-wrapper {
     width: 100%;
     max-width: min(1420px, 100vw);
