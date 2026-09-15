@@ -133,7 +133,8 @@ For detailed disaster recovery policies and production safety rules, refer to [D
 
 ### Student Lead Coordinators
 - **Ashish N**, **Madhumitha Narayanan** — Overall Coordinators
-- **Amuthini K**, **Niranjan M** — CTF Heads
+- **Amuthini K** — Overall CTF Tech Head
+- **Niranjan M** — CTF Head
 - **Jesin Milesh S** — Registration & Technical Head
 - **Libinesh R U**, **Jeshwanth V** — Marketing Heads
 
