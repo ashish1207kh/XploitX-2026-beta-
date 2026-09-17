@@ -2469,7 +2469,7 @@ app.get('/api/team/:id', verifyAdmin, async (req, res) => {
 });
 
 
-app.get('/api/registration/count', async (req, res) => {
+app.get('/api/registration/count', verifyAdmin, async (req, res) => {
     try {
         const count = await getTeamCount();
         res.json({ count });

@@ -9,6 +9,7 @@ const EVENT_CONFIG = {
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
     
     eventDate: "2026-10-08T09:30:00+05:30",
+    registrationDeadline: "September 30, 2026",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
     teamSize: "2 - 4 Members",
