@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAccordions();
     initLegacyGalleryModal();
-    initDeadlinePopup();
+    initEventModals();
 });
 
 
@@ -107,6 +107,7 @@ function initAccessLoader() {
             if (loaderOverlay && loaderOverlay.parentNode) {
                 loaderOverlay.style.display = 'none';
             }
+            window.dispatchEvent(new CustomEvent('xploitx:entered_index'));
         }, 450);
     }
 
@@ -739,61 +740,170 @@ function initLegacyGalleryModal() {
 
 /**
  * ========================================================
- * DEADLINE URGENCY POPUP (SEPTEMBER 30, 2026)
- * Triggers on initial visit and also whenever the page
- * is refreshed or reloaded.
+ * EVENT MODALS SEQUENCE (POSTER & DEADLINE URGENCY)
+ * 1. After Access Granted & entering index page:
+ *    - After 3-5s (4s): Show Poster.jpeg modal
+ *    - After 10-15s (12s): Show Deadline Urgency Popup modal
+ * 2. On Page Refresh: Sequence plays cleanly again.
  * ========================================================
  */
-function initDeadlinePopup() {
+function initEventModals() {
     const path = (window.location.pathname || '').toLowerCase();
     // Do not show on registration form or admin pages
     if (path.includes('register') || path.includes('attendance') || path.includes('a1109a6e')) {
         return;
     }
 
-    // Clean up any legacy suppression flags so refresh always shows the modal
+    // Clean up any legacy suppression flags so refresh always shows both modals
     try {
         sessionStorage.removeItem('xploitx_deadline_popup_dismissed');
+        sessionStorage.removeItem('xploitx_poster_popup_dismissed');
         localStorage.removeItem('xploitx_deadline_popup_dismissed');
+        localStorage.removeItem('xploitx_poster_popup_dismissed');
     } catch (e) { }
 
-    // Check if the page is being refreshed / reloaded or revisited in this session
-    let isReload = false;
-    try {
-        const navEntries = performance.getEntriesByType('navigation');
-        if (navEntries && navEntries.length > 0) {
-            isReload = navEntries[0].type === 'reload';
-        } else if (window.performance && window.performance.navigation) {
-            isReload = window.performance.navigation.type === 1;
-        }
-    } catch (e) { }
-
-    const hasVisitedInSession = (() => {
-        try {
-            return sessionStorage.getItem('xploitx_session_active') === '1';
-        } catch (e) {
-            return false;
-        }
-    })();
-
-    try {
-        sessionStorage.setItem('xploitx_session_active', '1');
-    } catch (e) { }
-
+    const isIndex = path === '' || path.endsWith('/') || path.includes('index');
     const hasLoader = !!document.getElementById('loader-overlay');
 
-    // On page refresh / reload or subsequent page visit, show promptly right after access loader finishes (or ~1.2s without loader)
-    // On fresh initial visit, show after visitor explores the page (~15s)
-    const popupDelayMs = (isReload || hasVisitedInSession)
-        ? (hasLoader ? 2600 : 1200)
-        : 15000;
+    const startSequence = () => {
+        if (isIndex) {
+            // After 3 to 5 seconds (4s) from entering into index page: show poster.jpeg
+            setTimeout(() => {
+                showPosterPopup();
+            }, 4000);
 
-    setTimeout(() => {
-        showDeadlinePopup();
-    }, popupDelayMs);
+            // After 10 to 15 seconds (12s) from entering into index page: show deadline urgency modal
+            setTimeout(() => {
+                showDeadlinePopup();
+            }, 12000);
+        } else {
+            // On other subpages (about, rules, prizes), show deadline urgency modal after 12s
+            setTimeout(() => {
+                showDeadlinePopup();
+            }, 12000);
+        }
+    };
+
+    if (hasLoader) {
+        let sequenceStarted = false;
+        const triggerOnce = () => {
+            if (sequenceStarted) return;
+            sequenceStarted = true;
+            startSequence();
+        };
+
+        window.addEventListener('xploitx:entered_index', triggerOnce, { once: true });
+
+        // Safety fallback timer if event was already dispatched or skipped
+        setTimeout(() => {
+            const loader = document.getElementById('loader-overlay');
+            if (!loader || loader.style.display === 'none') {
+                triggerOnce();
+            }
+        }, 3200);
+    } else {
+        startSequence();
+    }
 }
 
+// Backward compatibility alias
+const initDeadlinePopup = initEventModals;
+
+/**
+ * ========================================================
+ * OFFICIAL EVENT POSTER POPUP (Poster.jpeg)
+ * ========================================================
+ */
+function showPosterPopup() {
+    if (document.getElementById('poster-popup-overlay')) {
+        const existing = document.getElementById('poster-popup-overlay');
+        existing.classList.add('active');
+        return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'poster-popup-overlay';
+    overlay.className = 'poster-popup-overlay active';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'poster-popup-title');
+
+    overlay.innerHTML = `
+        <div class="poster-popup-card">
+            <button class="poster-popup-close" id="poster-popup-close" aria-label="Close Poster">&times;</button>
+            <div class="poster-popup-badge" id="poster-popup-title">
+                <span class="poster-beacon"></span>
+                <i class="fas fa-shield-virus"></i> XPLOITX 2.0 // OFFICIAL EVENT POSTER
+            </div>
+            
+            <div class="poster-img-container">
+                <img src="Poster.jpeg" onerror="this.onerror=null;this.src='poster.jpeg';" alt="XPLOITX 2.0 BETA Official Event Poster" class="poster-img" id="poster-popup-img">
+            </div>
+
+            <div class="poster-popup-actions">
+                <a href="register.html" class="poster-btn-primary" id="poster-register-btn">
+                    <i class="fas fa-bolt"></i> SECURE YOUR TEAM SLOT NOW [₹150]
+                </a>
+                <div class="poster-btn-subrow">
+                    <a href="Poster.jpeg" target="_blank" class="poster-btn-secondary" id="poster-view-link">
+                        <i class="fas fa-expand"></i> VIEW FULL POSTER
+                    </a>
+                    <button type="button" class="poster-btn-secondary" id="poster-dismiss-btn">
+                        <i class="fas fa-times"></i> CONTINUE TO TERMINAL
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closePoster = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 350);
+    };
+
+    window.closePosterPopup = closePoster;
+
+    const closeBtn = overlay.querySelector('#poster-popup-close');
+    const dismissBtn = overlay.querySelector('#poster-dismiss-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closePoster);
+    if (dismissBtn) dismissBtn.addEventListener('click', closePoster);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePoster();
+    });
+
+    document.addEventListener('keydown', function escPosterListener(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closePoster();
+            document.removeEventListener('keydown', escPosterListener);
+        }
+    });
+}
+window.showPosterPopup = showPosterPopup;
+
+/**
+ * ========================================================
+ * DEADLINE URGENCY POPUP (SEPTEMBER 30, 2026)
+ * ========================================================
+ */
 function showDeadlinePopup() {
+    // If the poster popup is open, close it cleanly
+    if (window.closePosterPopup) {
+        window.closePosterPopup();
+    } else {
+        const posterEl = document.getElementById('poster-popup-overlay');
+        if (posterEl) {
+            posterEl.classList.remove('active');
+            setTimeout(() => {
+                if (posterEl.parentNode) posterEl.parentNode.removeChild(posterEl);
+            }, 350);
+        }
+    }
+
     if (document.getElementById('deadline-popup-overlay')) {
         const existing = document.getElementById('deadline-popup-overlay');
         existing.classList.add('active');

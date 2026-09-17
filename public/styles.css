@@ -3893,4 +3893,238 @@ body.loader-locked .register-floating-btn {
         font-size: 0.82rem;
         padding: 12px 18px;
     }
-}
+}
+
+/* ========================================================
+   OFFICIAL EVENT POSTER POPUP MODAL (Poster.jpeg)
+   ======================================================== */
+.poster-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(2, 6, 18, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999998;
+    padding: 16px;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.poster-popup-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.poster-popup-card {
+    position: relative;
+    max-width: 480px;
+    width: 100%;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(6, 20, 15, 0.96) 0%, rgba(3, 8, 14, 0.98) 100%);
+    border: 1.5px solid rgba(0, 255, 102, 0.5);
+    box-shadow: 0 0 50px rgba(0, 255, 102, 0.25), 0 0 100px rgba(0, 0, 0, 0.95), inset 0 0 30px rgba(0, 255, 102, 0.05);
+    border-radius: 16px;
+    padding: 20px 20px 16px;
+    box-sizing: border-box;
+    text-align: center;
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.poster-popup-overlay.active .poster-popup-card {
+    transform: scale(1) translateY(0);
+}
+
+.poster-popup-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff66, #00f0ff, transparent);
+    animation: posterScanline 4s linear infinite;
+}
+
+@keyframes posterScanline {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.poster-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    font-size: 1.3rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.poster-popup-close:hover {
+    background: rgba(0, 255, 102, 0.25);
+    border-color: #00ff66;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
+    transform: rotate(90deg);
+}
+
+.poster-popup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(0, 255, 102, 0.12);
+    border: 1px solid rgba(0, 255, 102, 0.4);
+    border-radius: 999px;
+    font-family: var(--font-title, 'Orbitron', 'Rajdhani', sans-serif);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #00ff66;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+}
+
+.poster-beacon {
+    width: 8px;
+    height: 8px;
+    background: #00ff66;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff66;
+    animation: beaconPulse 1.2s infinite ease-in-out;
+}
+
+.poster-img-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #030712;
+    border: 1px solid rgba(0, 255, 102, 0.25);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 255, 102, 0.1);
+}
+
+.poster-img {
+    max-width: 100%;
+    max-height: 56vh;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.poster-img:hover {
+    transform: scale(1.015);
+}
+
+.poster-popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.poster-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #00ff66 0%, #00b4d8 100%);
+    color: #04100c;
+    font-family: var(--font-title, 'Orbitron', sans-serif);
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 25px rgba(0, 255, 102, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.poster-btn-primary:hover {
+    background: linear-gradient(135deg, #33ff85 0%, #00f0ff 100%);
+    box-shadow: 0 0 35px rgba(0, 255, 102, 0.7);
+    transform: translateY(-2px);
+    color: #000000;
+}
+
+.poster-btn-subrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.poster-btn-secondary {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 4px 8px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.poster-btn-secondary:hover {
+    color: #00ff66;
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .poster-popup-card {
+        padding: 16px 14px 14px;
+        max-width: 95vw;
+        max-height: 94vh;
+    }
+    .poster-img {
+        max-height: 48vh;
+    }
+    .poster-btn-primary {
+        font-size: 0.8rem;
+        padding: 10px 16px;
+    }
+    .poster-popup-badge {
+        font-size: 0.68rem;
+        padding: 4px 10px;
+    }
+}
+
