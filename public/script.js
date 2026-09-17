@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAccordions();
     initLegacyGalleryModal();
+    initDeadlinePopup();
 });
 
 
@@ -735,6 +736,168 @@ function initLegacyGalleryModal() {
         });
     });
 }
+
+/**
+ * ========================================================
+ * DEADLINE URGENCY POPUP (SEPTEMBER 30, 2026)
+ * Triggers after visitor spends 15-20 seconds on the page.
+ * ========================================================
+ */
+function initDeadlinePopup() {
+    const path = (window.location.pathname || '').toLowerCase();
+    // Do not show on registration form or admin pages
+    if (path.includes('register') || path.includes('attendance') || path.includes('a1109a6e')) {
+        return;
+    }
+
+    try {
+        if (sessionStorage.getItem('xploitx_deadline_popup_dismissed') === '1') {
+            return;
+        }
+    } catch (e) {}
+
+    // 18 seconds timer (within requested 15-20s window)
+    const POPUP_DELAY_MS = 18000;
+
+    setTimeout(() => {
+        try {
+            if (sessionStorage.getItem('xploitx_deadline_popup_dismissed') === '1') {
+                return;
+            }
+        } catch (e) {}
+
+        showDeadlinePopup();
+    }, POPUP_DELAY_MS);
+}
+
+function showDeadlinePopup() {
+    if (document.getElementById('deadline-popup-overlay')) {
+        const existing = document.getElementById('deadline-popup-overlay');
+        existing.classList.add('active');
+        return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'deadline-popup-overlay';
+    overlay.className = 'deadline-popup-overlay active';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'deadline-popup-title');
+
+    overlay.innerHTML = `
+        <div class="deadline-popup-card">
+            <button class="deadline-popup-close" id="deadline-popup-close" aria-label="Close Announcement">&times;</button>
+            <div class="deadline-popup-badge">
+                <span class="deadline-beacon"></span>
+                <i class="fas fa-exclamation-triangle"></i> URGENT TRANSMISSION // DEADLINE ALERT
+            </div>
+            
+            <h2 class="deadline-popup-title" id="deadline-popup-title">
+                HURRY UP! REGISTRATION CLOSES ON <span class="deadline-highlight">SEPTEMBER 30, 2026</span>
+            </h2>
+            
+            <p class="deadline-popup-desc">
+                Final call for operatives! Terminals for <strong>XPLOITX 2.0 BETA</strong> (24-Hour Offline Cybersecurity CTF) are filling rapidly. Complete your squad verification before the portal locks down permanently.
+            </p>
+            
+            <div class="deadline-countdown-box">
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-days">--</span>
+                    <span class="deadline-label">DAYS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-hours">--</span>
+                    <span class="deadline-label">HOURS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-mins">--</span>
+                    <span class="deadline-label">MINS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-secs">--</span>
+                    <span class="deadline-label">SECS</span>
+                </div>
+            </div>
+
+            <div class="deadline-perks-row">
+                <span><i class="fas fa-users"></i> 2-4 Members</span>
+                <span><i class="fas fa-trophy"></i> ₹1,00,000 Prize Pool</span>
+                <span><i class="fas fa-shield-alt"></i> ₹150 Early Bird</span>
+            </div>
+            
+            <div class="deadline-popup-actions">
+                <a href="register.html" class="deadline-btn-primary" id="deadline-register-btn">
+                    <i class="fas fa-bolt"></i> SECURE YOUR TEAM SLOT NOW
+                </a>
+                <button class="deadline-btn-secondary" id="deadline-dismiss-btn">
+                    DISMISS FOR NOW
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Target: September 30, 2026, 23:59:59 IST
+    const targetDate = new Date('2026-09-30T23:59:59+05:30').getTime();
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+        if (diff <= 0) {
+            const dEl = document.getElementById('popup-days');
+            if (dEl) dEl.textContent = '00';
+            return;
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const daysEl = document.getElementById('popup-days');
+        const hoursEl = document.getElementById('popup-hours');
+        const minsEl = document.getElementById('popup-mins');
+        const secsEl = document.getElementById('popup-secs');
+
+        if (daysEl) daysEl.textContent = pad(days);
+        if (hoursEl) hoursEl.textContent = pad(hours);
+        if (minsEl) minsEl.textContent = pad(mins);
+        if (secsEl) secsEl.textContent = pad(secs);
+    }
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    const closePopup = () => {
+        overlay.classList.remove('active');
+        clearInterval(timerInterval);
+        try {
+            sessionStorage.setItem('xploitx_deadline_popup_dismissed', '1');
+        } catch (e) {}
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 350);
+    };
+
+    const closeBtn = overlay.querySelector('#deadline-popup-close');
+    const dismissBtn = overlay.querySelector('#deadline-dismiss-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closePopup);
+    if (dismissBtn) dismissBtn.addEventListener('click', closePopup);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', function escListener(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closePopup();
+            document.removeEventListener('keydown', escListener);
+        }
+    });
+}
+
 
 
 
