@@ -400,6 +400,14 @@
             text-shadow: 0 0 8px rgba(37, 211, 102, 0.6);
         }
 
+        #admin-authenticated-root {
+            display: none !important;
+        }
+
+        body.admin-authenticated #admin-authenticated-root {
+            display: block !important;
+        }
+
         #login-overlay {
             background: rgba(3, 4, 10, 0.95);
             backdrop-filter: blur(16px);
@@ -702,7 +710,36 @@
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
     <div class="cyber-grid-overlay"></div>
 
-    
+    <!-- HIGH COMMAND GATEWAY / LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-card-hud">
+            <div class="login-icon-badge">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2 class="login-title-text">ADMIN ACCESS</h2>
+            <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
+
+            <form onsubmit="event.preventDefault(); checkAdmin(); return false;">
+                <div class="login-field-group">
+                    <i class="fas fa-user login-field-icon"></i>
+                    <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
+                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                </div>
+
+                <div class="login-field-group">
+                    <i class="fas fa-lock login-field-icon"></i>
+                    <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
+                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                </div>
+
+                <button type="button" onclick="checkAdmin();" class="login-submit-btn"> UNLOCK </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ZERO-KNOWLEDGE GATED ROOT (HIDDEN BY DEFAULT) -->
+    <div id="admin-authenticated-root" style="display: none !important;">
+
     <header class="college-header-wrapper">
         <div class="college-info-block">
             <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
@@ -1077,34 +1114,6 @@
         </div>
     </div>
 
-    
-    <div id="login-overlay">
-        <div class="login-card-hud">
-            <div class="login-icon-badge">
-                <i class="fas fa-user-shield"></i>
-            </div>
-            <h2 class="login-title-text">ADMIN ACCESS</h2>
-            <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
-
-            <form onsubmit="event.preventDefault(); checkAdmin(); return false;">
-                <div class="login-field-group">
-                    <i class="fas fa-user login-field-icon"></i>
-                    <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
-                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
-                </div>
-
-                <div class="login-field-group">
-                    <i class="fas fa-lock login-field-icon"></i>
-                    <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
-                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
-                </div>
-
-                <button type="button" onclick="checkAdmin();" class="login-submit-btn"> UNLOCK </button>
-            </form>
-        </div>
-    </div>
-
-    
     <section class="organizing-nodes-section" id="coordinators">
         <div class="container">
             <div class="section-header">
@@ -1379,6 +1388,8 @@
             </div>
         </div>
     </footer>
+    </div>
+    <!-- END ZERO-KNOWLEDGE GATED ROOT -->
 
     
     <script>
@@ -1404,6 +1415,47 @@
         
         let inMemoryAdminToken = null;
         let inMemoryAdminUser = null;
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT_MS = 15 * 60 * 1000; // 15 minutes auto-lock
+
+        function resetInactivityTimer() {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            if (inMemoryAdminToken) {
+                inactivityTimer = setTimeout(() => {
+                    inMemoryAdminToken = null;
+                    inMemoryAdminUser = null;
+                    document.body.classList.remove('admin-authenticated');
+                    const authRoot = document.getElementById('admin-authenticated-root');
+                    if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
+                    const overlay = document.getElementById('login-overlay');
+                    if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+                    const passEl = document.getElementById('admin-pass');
+                    if (passEl) passEl.value = '';
+                    showCustomAlert('SECURITY TIMEOUT: Terminal auto-locked after 15 minutes of inactivity.');
+                }, INACTIVITY_LIMIT_MS);
+            }
+        }
+
+        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer, { passive: true });
+        });
+
+        // Anti-Tamper Security Watchdog:
+        // If an attacker tampers with the overlay in DevTools before authenticating, trigger fail-closed wipe!
+        const securityWatchdog = new MutationObserver(() => {
+            const overlay = document.getElementById('login-overlay');
+            const authRoot = document.getElementById('admin-authenticated-root');
+            if (!inMemoryAdminToken) {
+                const overlayGone = !overlay || overlay.style.display === 'none' || overlay.style.visibility === 'hidden';
+                const rootExposed = authRoot && (authRoot.style.display !== 'none' || document.body.classList.contains('admin-authenticated'));
+                if (overlayGone || rootExposed) {
+                    console.error('[SECURITY TRIPWIRE] Unauthorized DOM mutation detected!');
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#03040a;color:#ff3e62;font-family:monospace;text-align:center;padding:20px;"><div><h1 style="font-size:2rem;letter-spacing:2px;">[SECURITY TRIPWIRE ACTIVATED]</h1><p style="color:#94a3b8;font-size:1rem;margin-top:10px;">Unauthorized DOM mutation detected. Access terminated.</p></div></div>';
+                    setTimeout(() => { window.location.href = '/'; }, 1500);
+                }
+            }
+        });
+        securityWatchdog.observe(document.body, { childList: true, subtree: true, attributes: true });
 
         
         const originalFetch = window.fetch;
@@ -1420,6 +1472,10 @@
             if (res && res.status === 401 && inMemoryAdminToken) {
                 inMemoryAdminToken = null;
                 inMemoryAdminUser = null;
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                document.body.classList.remove('admin-authenticated');
+                const authRoot = document.getElementById('admin-authenticated-root');
+                if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
                 const overlay = document.getElementById('login-overlay');
                 if (overlay) overlay.style.setProperty('display', 'flex', 'important');
                 showCustomAlert('SESSION EXPIRED: Please authenticate again.');
@@ -1545,15 +1601,22 @@
             }
 
             if (success) {
-                
                 inMemoryAdminToken = sessionToken;
                 inMemoryAdminUser = authenticatedUser;
                 if (passEl) passEl.value = '';
+
+                document.body.classList.add('admin-authenticated');
+                const authRoot = document.getElementById('admin-authenticated-root');
+                if (authRoot) {
+                    authRoot.style.removeProperty('display');
+                }
 
                 const overlay = document.getElementById('login-overlay');
                 if (overlay) {
                     overlay.style.setProperty('display', 'none', 'important');
                 }
+
+                resetInactivityTimer();
 
                 if (authenticatedUser === 'Administrator') {
                     
@@ -1670,6 +1733,7 @@
             
             inMemoryAdminToken = null;
             inMemoryAdminUser = null;
+            if (inactivityTimer) clearTimeout(inactivityTimer);
             if (window.adminDataInterval) {
                 clearInterval(window.adminDataInterval);
                 window.adminDataInterval = null;
@@ -1678,6 +1742,10 @@
                 clearInterval(window.adminActivityInterval);
                 window.adminActivityInterval = null;
             }
+
+            document.body.classList.remove('admin-authenticated');
+            const authRoot = document.getElementById('admin-authenticated-root');
+            if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
 
             
             const statsCont = document.getElementById('admin-stats-container');

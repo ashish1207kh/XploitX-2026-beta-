@@ -537,8 +537,18 @@ app.use(helmet({
             objectSrc: ["'none'"]
         }
     },
+    frameguard: { action: 'deny' },
+    permittedCrossDomainPolicies: { permittedPolicies: 'none' },
     crossOriginEmbedderPolicy: false
 }));
+
+app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+});
 
 
 const allowedOrigins = [
@@ -581,15 +591,20 @@ app.use((req, res, next) => {
 
 const adminLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
-    message: { error: 'Too many admin login attempts. Please try again after 15 minutes.' },
+    max: 5,
+    handler: (req, res) => {
+        const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || req.socket.remoteAddress || '127.0.0.1')).replace(/^::ffff:/, '');
+        console.warn(`[SECURITY ALERT] Admin login brute-force threshold exceeded for IP: ${clientIp}`);
+        logActivity('SECURITY ALERT', `Brute-force lockout triggered on /api/admin/login from IP: ${clientIp}`);
+        res.status(429).json({ error: 'Too many failed admin login attempts. Terminal locked for 15 minutes.' });
+    },
     standardHeaders: true,
     legacyHeaders: false
 });
 
 const attendanceLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: 10,
     message: { error: 'Too many attendance login attempts. Please try again after 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false
@@ -639,7 +654,20 @@ const emailCheckLimiter = rateLimit({
 app.use((req, res, next) => {
     const reqPath = (req.path || '').toLowerCase();
 
-    
+    // Active honeypot to detect and neutralize malicious web scanners
+    const honeypotTraps = [
+        '/wp-admin', '/wp-login', '/phpmyadmin', '/pma', '/admin.php',
+        '/.env', '/.git', '/.aws', '/config.json', '/id_rsa', '/web.config',
+        '/.well-known/security.txt', '/eval-stdin.php', '/solr', '/actuator'
+    ];
+
+    if (honeypotTraps.some(trap => reqPath.includes(trap))) {
+        const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || '127.0.0.1')).replace(/^::ffff:/, '');
+        console.warn(`[HONEYPOT TRIGGERED] Intercepted hostile scan for ${req.path} from IP: ${clientIp}`);
+        logActivity('HONEYPOT INTERCEPT', `Hostile scan attempt blocked: "${req.path}" from IP: ${clientIp}`);
+        return res.status(403).json({ error: '403 Forbidden: Hostile probe detected and logged to security audit trail.' });
+    }
+
     if (
         reqPath.includes('.env') ||
         reqPath.includes('.git') ||
@@ -655,7 +683,6 @@ app.use((req, res, next) => {
         return res.status(403).json({ error: '403 Forbidden: Access to sensitive system file is strictly prohibited.' });
     }
 
-    
     if (reqPath === '/uploads' || reqPath === '/uploads/' || reqPath === '/backend' || reqPath === '/backend/') {
         return res.status(403).json({ error: '403 Forbidden: Directory browsing is prohibited.' });
     }
@@ -1643,7 +1670,6 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         const cleanUsername = username.trim();
         const cleanPassword = password.trim();
 
-        
         const adminAccounts = {
             "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
@@ -1667,23 +1693,39 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
                 if (expectedPass.startsWith('$2b$') || expectedPass.startsWith('$2a$')) {
                     isValid = bcrypt.compareSync(cleanPassword, expectedPass);
                 } else {
-                    isValid = (cleanPassword === expectedPass);
+                    // Constant-time buffer comparison to prevent timing attacks
+                    const userBuf = Buffer.from(cleanPassword);
+                    const expBuf = Buffer.from(expectedPass);
+                    if (userBuf.length === expBuf.length && crypto.timingSafeEqual(userBuf, expBuf)) {
+                        isValid = true;
+                    }
                 }
             }
+        } else {
+            // Anti-user-enumeration: perform a dummy constant-time comparison so response duration is identical
+            const dummyUser = Buffer.from(cleanPassword);
+            const dummyTarget = Buffer.from('x'.repeat(cleanPassword.length));
+            crypto.timingSafeEqual(dummyUser, dummyTarget);
         }
 
         const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || req.socket.remoteAddress || '127.0.0.1')).replace(/^::ffff:/, '');
 
         if (isValid) {
             const canonicalUser = canonicalMap[cleanUsername] || username;
-            await logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console`);
+            await logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console from IP: ${clientIp}`);
             const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '2h', algorithm: 'HS256' });
-            res.clearCookie('admin_token', { path: '/' });
-            res.clearCookie('attendance_token', { path: '/' });
-            res.json({ success: true, token: token, user: canonicalUser });
+
+            // STRICT ZERO-COOKIE POLICY: No session cookies are set. Authentication is 100% ephemeral in-memory.
+            res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+            return res.json({ success: true, token: token, user: canonicalUser });
         } else {
-            await logActivity('ADMIN LOGIN FAILED', `Operative "${username}" failed login attempt`);
-            res.status(401).json({ error: 'Invalid Credentials' });
+            await logActivity('ADMIN LOGIN FAILED', `Failed login attempt for operative "${cleanUsername}" from IP: ${clientIp}`);
+            // Jitter delay (50-120ms) to defeat automated timing analysis and brute force scrapers
+            await new Promise(r => setTimeout(r, 50 + crypto.randomInt(0, 70)));
+            res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+            return res.status(401).json({ error: 'Invalid Credentials' });
         }
     } catch (err) {
         console.error('Error in /api/admin/login:', err);
