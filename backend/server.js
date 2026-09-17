@@ -532,7 +532,7 @@ app.use(helmet({
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
             imgSrc: ["'self'", "data:", "https://raw.githubusercontent.com", "https://img.icons8.com", "https://api.qrserver.com", "blob:"],
-            connectSrc: ["'self'", "https://api.brevo.com", "https://api.resend.com", "https://api.sendgrid.com"],
+            connectSrc: ["'self'"],
             frameAncestors: ["'none'"],
             objectSrc: ["'none'"]
         }
@@ -1043,8 +1043,7 @@ const initialiseDBAndServer = async () => {
         isMongoConnected = true;
         return;
     }
-    const defaultMongoUri = 'mongodb+srv://jeshwanthv751_db_user:BqVftSj4VJzuts3h@cluster0.vy8bb6x.mongodb.net/?appName=Cluster0';
-    const mongoUri = (process.env.MONGODB_URI || defaultMongoUri).trim();
+    const mongoUri = (process.env.MONGODB_URI || '').trim();
     const isProductionEnv = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
 
     if (mongoUri) {
