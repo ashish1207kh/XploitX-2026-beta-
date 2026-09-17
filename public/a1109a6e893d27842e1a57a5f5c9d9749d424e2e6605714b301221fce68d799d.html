@@ -1920,14 +1920,15 @@
             if (team.payment_proof_data) {
                 proofUrl = team.payment_proof_data;
             } else if (team.payment_proof && team.payment_proof !== 'NOT_PROVIDED') {
+                const tokenParam = inMemoryAdminToken ? `?token=${encodeURIComponent(inMemoryAdminToken)}` : '';
                 if (team.payment_proof.startsWith('data:')) {
                     proofUrl = team.payment_proof;
                 } else if (team.payment_proof.startsWith('/uploads/')) {
-                    proofUrl = `${API_BASE_URL}${team.payment_proof}`;
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}${tokenParam}`;
                 } else if (team.payment_proof.startsWith('/')) {
-                    proofUrl = `${API_BASE_URL}${team.payment_proof}`;
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}${tokenParam}`;
                 } else {
-                    proofUrl = `${API_BASE_URL}/uploads/${team.payment_proof}`;
+                    proofUrl = `${API_BASE_URL}/uploads/${team.payment_proof}${tokenParam}`;
                 }
             }
 

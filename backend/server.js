@@ -724,6 +724,38 @@ const verifyAttendanceAuth = (req, res, next) => {
 
 
 
+const verifyAdmin = (req, res, next) => {
+    const authHeader = req.headers && req.headers['authorization'];
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : (req.query && req.query.token ? req.query.token : null);
+    const apiKey = (req.headers && (req.headers['x-api-key'] || req.headers['x-token'])) || (req.query && req.query.api_key ? req.query.api_key : null);
+
+    // Check if private API key is configured and matches
+    const configuredApiKey = (process.env.API_KEY || process.env.XPLOITX_API_KEY || '').trim();
+    const providedKey = (apiKey ? String(apiKey).trim() : null) ||
+                        (bearerToken && configuredApiKey && bearerToken === configuredApiKey ? bearerToken : null);
+
+    if (configuredApiKey && providedKey) {
+        const keyBuffer = Buffer.from(providedKey);
+        const expectedBuffer = Buffer.from(configuredApiKey);
+        if (keyBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(keyBuffer, expectedBuffer)) {
+            req.user = { username: 'API_KEY_SERVICE', role: 'admin' };
+            return next();
+        }
+    }
+
+    if (!bearerToken) {
+        return res.status(401).json({ error: 'Unauthorized: Admin authentication token or private API key required.' });
+    }
+
+    jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
+        if (err || !user || !user.username || user.role !== 'admin') {
+            return res.status(403).json({ error: 'Forbidden: Valid admin authorization required.' });
+        }
+        req.user = user;
+        next();
+    });
+};
+
 app.get(['/attendance', '/attendance.html'], (req, res) => {
     res.sendFile(path.join(__dirname, '../public/attendance.html'));
 });
@@ -757,7 +789,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+app.use('/uploads', verifyAdmin, express.static(path.join(__dirname, 'uploads'), {
     dotfiles: 'ignore',
     index: false,
     setHeaders: (res) => {
@@ -766,7 +798,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     }
 }));
 
-app.use('/uploads', express.static(path.join(os.tmpdir(), 'uploads'), {
+app.use('/uploads', verifyAdmin, express.static(path.join(os.tmpdir(), 'uploads'), {
     dotfiles: 'ignore',
     index: false,
     setHeaders: (res) => {
@@ -776,7 +808,7 @@ app.use('/uploads', express.static(path.join(os.tmpdir(), 'uploads'), {
 }));
 
 
-app.get('/uploads/:filename', async (req, res) => {
+app.get('/uploads/:filename', verifyAdmin, async (req, res) => {
     const filename = path.basename(req.params.filename);
     const ext = path.extname(filename).toLowerCase();
 
@@ -1549,24 +1581,6 @@ if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FU
 
 
 
-
-const verifyAdmin = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
-
-    if (!bearerToken) {
-        return res.status(401).json({ error: 'Unauthorized: Admin authentication token required.' });
-    }
-
-    
-    jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
-        if (err || !user || !user.username || user.role !== 'admin') {
-            return res.status(403).json({ error: 'Forbidden: Valid admin authorization required.' });
-        }
-        req.user = user;
-        next();
-    });
-};
 
 function logAdminActivity(action, details = '') {
     const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
@@ -2415,47 +2429,19 @@ app.get('/api/admin/data', verifyAdmin, async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/team/:id', async (req, res) => {
+app.get('/api/team/:id', verifyAdmin, async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
-        let isAdmin = false;
-        let operative = 'Admin';
-        if (token) {
-            try {
-                const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
-                if (decoded && decoded.role === 'admin') {
-                    isAdmin = true;
-                    if (decoded.username) operative = decoded.username;
-                }
-            } catch (e) { }
-        }
-
         const data = await getTeamDataWithMembers(req.params.id);
         if (!data) return res.status(404).json({ error: 'Team not found' });
 
-        if (isAdmin) {
-            if (operative !== 'Administrator') {
-                logActivity('DATA ACCESS', `Operative "${operative}" inspected dossier for Team [${req.params.id}]`);
-            }
-            return res.json(data);
-        } else {
-            
-            const sanitizedData = {
-                team_id: data.team_id,
-                name: data.name,
-                event: data.event,
-                day: data.day,
-                payment_verified: data.payment_verified,
-                members: (data.members || []).map(m => ({
-                    name: m.name,
-                    role: m.role,
-                    college: m.college
-                }))
-            };
-            return res.json(sanitizedData);
+        const operative = (req.user && req.user.username) ? req.user.username : 'Admin';
+        if (operative !== 'Administrator') {
+            logActivity('DATA ACCESS', `Operative "${operative}" inspected dossier for Team [${req.params.id}]`);
         }
-    } catch (e) { res.status(500).json({ error: 'Failed to retrieve team details' }); }
+        return res.json(data);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to retrieve team details' });
+    }
 });
 
 

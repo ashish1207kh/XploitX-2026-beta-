@@ -88,6 +88,9 @@ MONGODB_URI=mongodb+srv://<db_user>:<db_password>@your-cluster-url.mongodb.net/?
 # Authentication
 JWT_SECRET=your_super_secret_jwt_key_2026
 
+# Private API Access Key (Required for querying protected team endpoints like /api/team/:id)
+API_KEY=your_private_secret_api_key_here
+
 # Email Infrastructure (Brevo REST API)
 BREVO_API_KEY=your_brevo_api_key_here
 BREVO_SENDER_EMAIL=your_verified_sender@domain.com
@@ -113,7 +116,7 @@ The project is pre-configured for automated deployment to **Vercel**:
 
 1. Push your code to the `main` branch on GitHub.
 2. Vercel automatically detects `vercel.json` and builds both static frontend assets from `public/` and serverless API endpoints from `backend/server.js`.
-3. Ensure environment variables (`MONGODB_URI`, `JWT_SECRET`, `BREVO_API_KEY`) are set in your Vercel Dashboard under **Project Settings → Environment Variables**.
+3. Ensure environment variables (`MONGODB_URI`, `JWT_SECRET`, `BREVO_API_KEY`, `API_KEY`) are set in your Vercel Dashboard under **Project Settings → Environment Variables**.
 
 For detailed disaster recovery policies and production safety rules, refer to [DEPLOYMENT.md](file:///e:/Beta%202.0/XploitX-2026-beta-/DEPLOYMENT.md).
 
