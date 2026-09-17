@@ -627,6 +627,14 @@ const uploadLimiter = rateLimit({
     legacyHeaders: false
 });
 
+const emailCheckLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 25,
+    message: { error: 'Too many email checks from this IP. Please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
 
 app.use((req, res, next) => {
     const reqPath = (req.path || '').toLowerCase();
@@ -744,11 +752,17 @@ const verifyAdmin = (req, res, next) => {
     }
 
     if (!bearerToken) {
+        res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         return res.status(401).json({ error: 'Unauthorized: Admin authentication token or private API key required.' });
     }
 
     jwt.verify(bearerToken, JWT_SECRET, { algorithms: ['HS256'] }, (err, user) => {
         if (err || !user || !user.username || user.role !== 'admin') {
+            res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
             return res.status(403).json({ error: 'Forbidden: Valid admin authorization required.' });
         }
         req.user = user;
@@ -795,6 +809,9 @@ app.use('/uploads', verifyAdmin, express.static(path.join(__dirname, 'uploads'),
     setHeaders: (res) => {
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('Content-Security-Policy', "default-src 'none'");
+        res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
     }
 }));
 
@@ -804,6 +821,9 @@ app.use('/uploads', verifyAdmin, express.static(path.join(os.tmpdir(), 'uploads'
     setHeaders: (res) => {
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('Content-Security-Policy', "default-src 'none'");
+        res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
     }
 }));
 
@@ -820,14 +840,17 @@ app.get('/uploads/:filename', verifyAdmin, async (req, res) => {
 
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Content-Security-Policy', "default-src 'none'");
+    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
 
     const localPath = path.join(__dirname, 'uploads', filename);
     const tmpPath = path.join(os.tmpdir(), 'uploads', filename);
 
     if (fs.existsSync(localPath)) {
-        return res.sendFile(localPath);
+        return res.sendFile(localPath, { maxAge: 0 });
     } else if (fs.existsSync(tmpPath)) {
-        return res.sendFile(tmpPath);
+        return res.sendFile(tmpPath, { maxAge: 0 });
     }
 
     
@@ -860,7 +883,9 @@ app.get('/uploads/:filename', verifyAdmin, async (req, res) => {
                     const base64Data = matches[2];
                     const imgBuffer = Buffer.from(base64Data, 'base64');
                     res.set('Content-Type', mimeType);
-                    res.set('Cache-Control', 'public, max-age=86400');
+                    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate, max-age=0');
+                    res.setHeader('Pragma', 'no-cache');
+                    res.setHeader('Expires', '0');
                     return res.send(imgBuffer);
                 }
             }
@@ -2233,7 +2258,7 @@ app.get('/api/qr', async (req, res) => {
 
 
 
-app.get('/api/auth/check-email', async (req, res) => {
+app.get('/api/auth/check-email', emailCheckLimiter, async (req, res) => {
     try {
         const email = (req.query.email || '').trim().toLowerCase();
         if (!email || !email.includes('@')) {
@@ -2661,7 +2686,8 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             if (file.path && fs.existsSync(file.path)) {
                 const oldPath = file.path;
                 const ext = path.extname(file.originalname);
-                const newFilename = teamIdStr + ext;
+                const secretSuffix = crypto.randomBytes(8).toString('hex');
+                const newFilename = `${teamIdStr}_${secretSuffix}${ext}`;
                 const newPath = path.join(path.dirname(oldPath), newFilename);
 
                 try {
@@ -2672,7 +2698,8 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
                 }
             } else if (file.filename) {
                 const ext = path.extname(file.originalname);
-                newDbPath = '/uploads/' + teamIdStr + ext;
+                const secretSuffix = crypto.randomBytes(8).toString('hex');
+                newDbPath = '/uploads/' + teamIdStr + '_' + secretSuffix + ext;
             }
 
             await updatePaymentProof(teamIdStr, newDbPath, utrNumber, proofBase64);
@@ -2719,7 +2746,8 @@ app.post('/api/payment/upload', upload.single('paymentProof'), async (req, res) 
     let filePath = '/uploads/' + file.filename;
     if (file.path && fs.existsSync(file.path)) {
         const ext = path.extname(file.originalname);
-        const newFilename = teamId + ext;
+        const secretSuffix = crypto.randomBytes(8).toString('hex');
+        const newFilename = `${teamId}_${secretSuffix}${ext}`;
         const newPath = path.join(path.dirname(file.path), newFilename);
         try {
             fs.renameSync(file.path, newPath);
