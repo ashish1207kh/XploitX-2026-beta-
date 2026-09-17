@@ -740,7 +740,8 @@ function initLegacyGalleryModal() {
 /**
  * ========================================================
  * DEADLINE URGENCY POPUP (SEPTEMBER 30, 2026)
- * Triggers after visitor spends 15-20 seconds on the page.
+ * Triggers on initial visit and also whenever the page
+ * is refreshed or reloaded.
  * ========================================================
  */
 function initDeadlinePopup() {
@@ -750,24 +751,46 @@ function initDeadlinePopup() {
         return;
     }
 
+    // Clean up any legacy suppression flags so refresh always shows the modal
     try {
-        if (sessionStorage.getItem('xploitx_deadline_popup_dismissed') === '1') {
-            return;
+        sessionStorage.removeItem('xploitx_deadline_popup_dismissed');
+        localStorage.removeItem('xploitx_deadline_popup_dismissed');
+    } catch (e) { }
+
+    // Check if the page is being refreshed / reloaded or revisited in this session
+    let isReload = false;
+    try {
+        const navEntries = performance.getEntriesByType('navigation');
+        if (navEntries && navEntries.length > 0) {
+            isReload = navEntries[0].type === 'reload';
+        } else if (window.performance && window.performance.navigation) {
+            isReload = window.performance.navigation.type === 1;
         }
     } catch (e) { }
 
-    // 18 seconds timer (within requested 15-20s window)
-    const POPUP_DELAY_MS = 18000;
+    const hasVisitedInSession = (() => {
+        try {
+            return sessionStorage.getItem('xploitx_session_active') === '1';
+        } catch (e) {
+            return false;
+        }
+    })();
+
+    try {
+        sessionStorage.setItem('xploitx_session_active', '1');
+    } catch (e) { }
+
+    const hasLoader = !!document.getElementById('loader-overlay');
+
+    // On page refresh / reload or subsequent page visit, show promptly right after access loader finishes (or ~1.2s without loader)
+    // On fresh initial visit, show after visitor explores the page (~15s)
+    const popupDelayMs = (isReload || hasVisitedInSession)
+        ? (hasLoader ? 2600 : 1200)
+        : 15000;
 
     setTimeout(() => {
-        try {
-            if (sessionStorage.getItem('xploitx_deadline_popup_dismissed') === '1') {
-                return;
-            }
-        } catch (e) { }
-
         showDeadlinePopup();
-    }, POPUP_DELAY_MS);
+    }, popupDelayMs);
 }
 
 function showDeadlinePopup() {
@@ -873,9 +896,7 @@ function showDeadlinePopup() {
     const closePopup = () => {
         overlay.classList.remove('active');
         clearInterval(timerInterval);
-        try {
-            sessionStorage.setItem('xploitx_deadline_popup_dismissed', '1');
-        } catch (e) { }
+        // Do not persistently suppress across page reloads/refreshes
         setTimeout(() => {
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
         }, 350);
@@ -897,6 +918,9 @@ function showDeadlinePopup() {
         }
     });
 }
+
+// Expose globally for convenience and testing
+window.showDeadlinePopup = showDeadlinePopup;
 
 
 
