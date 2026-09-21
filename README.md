@@ -1,197 +1,148 @@
-# 🛡️ XPLOITX 2.0 BETA - Cybersecurity CTF & Hackathon Platform
+# ⚡ XPLOITX 2.0 BETA — 24-Hour Cybersecurity CTF & National Hackathon
 
-![XPLOITX 2.0 Banner](https://img.shields.io/badge/XPLOITX-2.0%20BETA-00FF41?style=for-the-badge&logo=matrix&logoColor=black)
-![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-00FF41?style=for-the-badge&logo=node.js)
-![Database](https://img.shields.io/badge/Database-MongoDB%20%7C%20SQLite-blue?style=for-the-badge&logo=mongodb)
-
-**XPLOITX 2.0 BETA** is an immersive, cyberpunk-themed web application built for managing the Matrix Hackathon & 24-Hour Cybersecurity CTF 2026. It features terminal-style team registration, live payment upload verification, QR code attendance tracking, admin dashboard controls, and automated email notifications.
+> **Official Cyberpunk HUD Platform for XPLOITX 2.0 BETA**  
+> Organized by the **Department of Computer Science & Engineering**, **Prathyusha Engineering College (Autonomous)**, Chennai, Tamil Nadu.
 
 ---
 
-## 📑 Table of Contents
+## 📑 Overview
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Architecture](#-project-architecture)
-- [Security Features & Hardening](#-security-features--hardening)
-- [Security Patches & Vulnerability Remediation](#-security-patches--vulnerability-remediation)
-- [Environment Variables](#-environment-variables)
-- [Installation & Local Setup](#-installation--local-setup)
-- [Deployment](#-deployment)
+**XPLOITX 2.0 BETA** is a full-stack, cyberpunk-themed web application designed for managing a high-stakes 24-hour cybersecurity Capture The Flag (CTF) competition and national hackathon. 
+
+The platform provides a complete end-to-end event management experience—from cinematic user onboarding and secure squad registration with OTP email verification, to real-time payment screenshot verification, dynamic CAPTCHA validation, and live attendance tracking for staff and student coordinators.
 
 ---
 
-## 🚀 Features
+## ⭐ Key Features
 
-- 🟢 **Cyberpunk Terminal UI**: Matrix falling green code rain animation, glitch text effects, scanner animations, and retro terminal UI styling.
-- 👥 **Team Registration Flow**: Online team registration with automated unique Team ID generation (`XCTF-26-XXXX`).
-- 💳 **Payment Proof Upload**: User upload support for UPI/Transaction screenshots with server-side validation.
-- 🔐 **Secure Admin Panel**: Dashboard for verifying/rejecting payments, managing team statuses, and inspecting logs.
-- 🎟️ **QR Code Attendance System**: Automated QR code generation for verified teams to check-in at the venue.
-- 📩 **Email Confirmation & Notifications**: Nodemailer integration sending automated confirmation emails with PDF tickets/QR codes.
-- 🕹️ **Easter Eggs & Mini-games**: Integrated terminal mini-games (DOOM theme) and interactive hackathon guides.
+### 1. 🛡️ Hardened & State-Aware Registration Flow
+- **Leader & Squad Management**: Dynamic team leader and multi-member registration supporting custom team sizing.
+- **"Same as Leader" Synchronizer**: Instant one-click syncing of institution name and district from team leader to squad members with input locking (`readOnly`).
+- **OTP Email Verification**: Serverless-compatible 6-digit OTP delivery powered by the **Brevo HTTPS REST API** with anti-spam cooldown timers.
+- **Payment Dropzone**: Custom HUD drag-and-drop proof uploader with client-side mime-type filtering, file size constraints, and ellipsis truncation for long filenames on mobile viewports.
+- **Dynamic Security Gate & CAPTCHA**: Section-level dynamic gating that automatically triggers automated robot checks and reveals CAPTCHA challenge inputs only after form completeness and proof upload.
 
----
+### 2. 📊 Live Admin & Attendance Dashboard (`attendance.html`)
+- Real-time team arrival marking with timestamp recording.
+- Instant search and filtering by Team ID, Leader Name, or Institution.
+- Payment proof inspection modal with verification state toggles (`VERIFIED` / `PENDING`).
+- Real-time audit log monitor capturing administrative actions with Kolkata (IST) timestamps.
 
-## 🛠️ Tech Stack
+### 3. 🔒 100% Production Data Persistence & Safety Gate
+- **Dual-Engine Persistence**: Primary cloud persistence via **MongoDB Atlas**, backed up locally by **SQLite3** (`hackathon.db`).
+- **Non-Destructive Initialization**: Zero database drops or table truncations on boot or redeployment.
+- **Production Guard (`checkProductionSafety`)**: High-risk operations (e.g., clearing audit logs) are blocked in `NODE_ENV=production` unless explicit approval flags are passed.
 
-### Frontend
-- **HTML5 & CSS3**: Custom CSS variables, responsive grid/flexbox layouts, 3D transform card hover effects, glitch text CSS keyframes.
-- **JavaScript (ES6+)**: Canvas API for real-time falling code matrix rain, asynchronous Fetch API for backend communication, DOM manipulation.
-- **Icons & Fonts**: Font Awesome 6.x, Google Fonts (*Share Tech Mono*, *Fira Code*).
-
-### Backend
-- **Runtime**: Node.js (v18+)
-- **Framework**: Express.js
-- **Database Layer**: Dual-database support:
-  - **Primary**: MongoDB Atlas via Mongoose
-  - **Fallback**: Local SQLite3 (`sqlite` & `sqlite3`)
-- **Authentication & Security**:
-  - `jsonwebtoken` (JWT) for secure admin sessions.
-  - `bcrypt` for salted password hashing.
-  - `cors` for Cross-Origin Resource Sharing controls.
-  - `multer` for controlled file uploads.
-
-### Utilities & Services
-- **Nodemailer**: Email delivery service for registration confirmations.
-- **PDFKit**: Server-side PDF pass / ticket generation.
-- **QRCode**: Dynamic QR code image generation for attendee passes.
-- **Body-Parser & Dotenv**: Environment configuration and HTTP payload parsing.
+### 4. 🎨 High-Fidelity Cyberpunk Design System
+- Custom CSS design system with glassmorphism, glowing HUD borders, neon accents (`#00ff66`, `#ffd700`, `#00f0ff`), and smooth micro-animations.
+- Full viewport mobile drawer with 100vw backdrop-blur blur effects, safe touch targets (min 44px–48px), and 16px input font scaling to eliminate mobile keyboard auto-zoom.
+- Responsive across all device breakpoints from **320px to 4K displays**.
 
 ---
 
-## 📁 Project Architecture
+## 🛠️ Technology Stack
 
-```
-XploitX-2026-beta/
-├── backend/
-│   ├── uploads/            # Secure storage for payment receipts
-│   ├── .env                # Server configuration & secrets
-│   ├── build.js            # Build script for backend
-│   ├── package.json        # Backend dependencies
-│   ├── server.js           # Core Express server & API endpoints
-│   └── vercel.json         # Backend Vercel deployment configuration
-├── public/
-│   ├── index.html          # Landing page with countdown timer
-│   ├── about.html          # Event details & FAQ
-│   ├── register.html       # Registration form with terminal theme
-│   ├── register.js         # Frontend registration & payment submission logic
-│   ├── prizes.html         # Prize pool & rewards breakdown
-│   ├── rules.html          # CTF rules & guidelines
-│   ├── doom.html           # Mini-game easter egg page
-│   ├── attendance.html     # Venue QR scanner / check-in page
-│   ├── styles.css          # Cyberpunk styles & keyframe animations
-│   ├── register.css        # Registration page specific styles
-│   └── script.js           # Matrix rain & UI interactivity
-├── security.md             # Security audit & remediation patch documentation
-├── DEPLOYMENT.md           # Deployment guides for Render & Vercel
-├── package.json            # Root project manifest & start script
-└── README.md               # Project documentation
+| Layer | Technology Used |
+| :--- | :--- |
+| **Frontend** | HTML5, Vanilla CSS3 (Custom HUD Tokens & Micro-Animations), JavaScript (ES6+), Font Awesome |
+| **Backend Runtime** | Node.js, Express.js, Body-Parser, Cors, Multer (Serverless Uploads) |
+| **Security & Auth** | JSONWebTokens (JWT), Bcrypt, Crypto (Secure Random OTPs), CORS Guards |
+| **Primary Database** | **MongoDB Atlas** (Cloud Persistent NoSQL Storage via Mongoose) |
+| **Backup Database** | **SQLite3** (Local / Offline Fallback Engine via `sqlite` & `sqlite3`) |
+| **Email Infrastructure**| **Brevo HTTPS REST API** (Primary Port 443 API), Resend API, Nodemailer SMTP |
+| **Deployment / CI/CD** | Vercel Serverless Platform, GitHub Actions (`ci-cd.yml`) |
+
+---
+
+## ⚡ Quick Start Guide (Local Development)
+
+### 1. Prerequisites
+- **Node.js**: v18.x or v20.x installed
+- **Git**: Installed on your system
+
+### 2. Installation
+Clone the repository and install the backend dependencies:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/XploitX-2026-beta.git
+cd XploitX-2026-beta
+
+# Install dependencies in root and backend
+npm install
+cd backend
+npm install
+cd ..
 ```
 
----
-
-## 🔒 Security Features & Hardening
-
-1. **JWT-Based Authentication**:
-   - Admin routes require a signed JSON Web Token passed in the `Authorization: Bearer <token>` header.
-   - Admin login issues time-limited JWT tokens rather than static session tokens.
-
-2. **File Upload Restrictions (`multer`)**:
-   - **MIME & Extension Filtering**: Strict regex whitelist allowing only image files (`jpeg`, `jpg`, `png`, `webp`).
-   - **Payload Size Limits**: Strict 5MB size limit enforced on all file uploads to prevent Denial of Service (DoS).
-
-3. **Database Injection Protection**:
-   - Mongoose schema validation prevents MongoDB Query Injection.
-   - Parameterized queries utilized for SQLite fallback database calls.
-
-4. **Environment Isolation**:
-   - Sensitive credentials (MongoDB URIs, JWT secrets, SMTP credentials, admin passwords) are strictly managed via `.env` variables and kept out of version control.
-
----
-
-## 🛡️ Security Patches & Vulnerability Remediation
-
-The platform has undergone security auditing to fix critical backend vulnerabilities:
-
-| Patch ID | Component | Vulnerability Fixed | Remediation Applied |
-| :--- | :--- | :--- | :--- |
-| **SEC-01** | `backend/server.js` | Unrestricted File Upload / Stored XSS | Applied MIME type validation and file extension checking to restrict uploads strictly to `jpeg/jpg/png/webp`. Added 5MB file size limit. |
-| **SEC-02** | `backend/server.js` | Admin Route Unauthorized Access | Implemented `verifyAdmin` JWT middleware across all `/api/admin/*` endpoints to enforce access control. |
-| **SEC-03** | `backend/server.js` | Weak Authentication Token | Replaced dummy static auth tokens (`token: 'admin-authorized'`) with signed JSON Web Tokens (`jwt.sign`) expiring in 12 hours. |
-| **SEC-04** | `public/admin.html` | Session Security | Updated admin dashboard to store JWTs in `sessionStorage` and automatically inject Bearer headers for API requests. |
-| **SEC-05** | `backend/server.js` | Audit Logging | Added automated audit log recording (`admin_activity.log`) for tracking administrator access timestamps. |
-
-*Detailed code patches are documented in [security.md](file:///d:/XploitX-2026-beta-/security.md).*
-
----
-
-## ⚙️ Environment Variables
-
-Create a `backend/.env` file with the following environment variables:
+### 3. Environment Configuration
+Create a `.env` file inside the `backend/` directory (or use `.env.example` as a template):
 
 ```env
 PORT=3000
-NODE_ENV=production
+NODE_ENV=development
+
+# Database Connection (MongoDB Atlas Cloud Storage)
+MONGODB_URI=mongodb+srv://<db_user>:<db_password>@your-cluster-url.mongodb.net/?appName=Cluster0
+
+# Authentication
 JWT_SECRET=your_super_secret_jwt_key_2026
-ADMIN_PASSWORD=your_secure_admin_password
 
-# Database Configuration
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/xploitx
+# Private API Access Key (Required for querying protected team endpoints like /api/team/:id)
+API_KEY=your_private_secret_api_key_here
 
-# SMTP Email Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
+# Email Infrastructure (Brevo REST API)
+BREVO_API_KEY=your_brevo_api_key_here
+BREVO_SENDER_EMAIL=your_verified_sender@domain.com
+BREVO_SENDER_NAME=XploitX 2.0 BETA
 ```
 
----
+### 4. Running the Application
+Start the Node.js development server:
 
-## 💻 Installation & Local Setup
+```bash
+# Start backend server
+npm start
+```
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [npm](https://www.npmjs.com/)
-- MongoDB Atlas account (optional, SQLite fallback available)
-
-### Steps
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/libineshr7-cyber/Xploitxbeta2.0.git
-   cd Xploitxbeta2.0
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**:
-   Copy `.env` template or set up `backend/.env` as shown above.
-
-4. **Start the Development Server**:
-   ```bash
-   npm start
-   ```
-
-5. **Access the application**:
-   - Web App: `http://localhost:3000`
-   - Health Check: `http://localhost:3000/api/health`
+Access the application in your browser at:  
+`http://localhost:3000`
 
 ---
 
-## 🌐 Deployment
+## 🚀 Production Deployment
 
-- **Render**: Configured via `render.yaml` for automatic deployment of the Node.js Express backend service.
-- **Vercel**: Configured via `vercel.json` for frontend static hosting and API rewriting.
+The project is pre-configured for automated deployment to **Vercel**:
 
-For step-by-step deployment instructions, refer to [DEPLOYMENT.md](file:///d:/XploitX-2026-beta-/DEPLOYMENT.md).
+1. Push your code to the `main` branch on GitHub.
+2. Vercel automatically detects `vercel.json` and builds both static frontend assets from `public/` and serverless API endpoints from `backend/server.js`.
+3. Ensure environment variables (`MONGODB_URI`, `JWT_SECRET`, `BREVO_API_KEY`, `API_KEY`) are set in your Vercel Dashboard under **Project Settings → Environment Variables**.
+
+For detailed disaster recovery policies and production safety rules, refer to [DEPLOYMENT.md](file:///e:/Beta%202.0/XploitX-2026-beta-/DEPLOYMENT.md).
 
 ---
 
-## 📜 License
+## 👥 Organizing Committee & Coordinators
 
-This project is created for the **Matrix Hackathon & XPLOITX 2026 CTF**. Built with ❤️ by the XPLOITX Team.
+### Patrons & HOD
+- **Mr. Jaganathan** — Chairman
+- **Mrs. Anithalakshmi** — Head of Department
+
+### Staff Coordinators
+- **Mrs. Devi** — Staff Coordinator 
+- **Mrs. Ramya** — Assistant Professor
+- **Mrs. Rama Mathrasi** — Assistant Professor
+- **Mrs. Aswini** — Assistant Professor
+
+### Student Lead Coordinators
+- **Ashish N**, **Madhumitha Narayanan** — Overall Coordinators
+- **Amuthini K** — Overall CTF Tech Head
+- **Niranjan M** — CTF Head
+- **Jesin Milesh S** — Registration & Technical Head
+- **Libinesh R U**, **Jeshwanth V** — Marketing Heads
+
+---
+
+## 📝 License
+
+Developed for **XPLOITX 2.0 BETA** @ Prathyusha Engineering College. All rights reserved.

@@ -5,60 +5,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration | XPLOITX 2.0 BETA - 24-Hour Cybersecurity CTF</title>
-    <meta name="description" content="Register your team for XPLOITX 2.0 BETA, 24-Hour Cybersecurity Capture The Flag competition at Prathyusha Engineering College on 09 October 2026.">
+    <meta name="description" content="Register your team for XPLOITX 2.0 BETA, 24-Hour Cybersecurity Capture The Flag competition at Prathyusha Engineering College on 8th - 9th October 2026.">
 
-    <!-- Google Fonts & Font Awesome -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Registration Specific Avengers Doomsday Design -->
-    <link rel="stylesheet" href="register.css?v=2.5">
-    <link rel="icon" type="image/png" href="logo_favicon.png">
-    <script src="config.js"></script>
+    
+    <link rel="stylesheet" href="styles.css?v=2.6">
+    <link rel="stylesheet" href="register.css?v=2.6">
+    <link rel="icon" type="image/jpeg" href="Favicon.jpeg">
+    <link rel="apple-touch-icon" href="Favicon.jpeg">
 </head>
 
 <body>
 
-
-
-    <!-- Interactive Background Canvas (Matrix Circuit & Starfield Particle Grid) -->
+    
     <canvas id="cyber-canvas"></canvas>
     <div class="cyber-scanline-overlay"></div>
     <div class="circuit-grid-overlay"></div>
 
-    <div class="registration-wrapper">
-        <!-- ==========================================
-             1. TOP HEADER ROW (AVENGERS HUD)
-             ========================================== -->
-        <header class="hud-top-header">
-            <!-- Top Left: College Seal & Identity -->
-            <a href="index.html" class="college-identity-group" title="Back to Home Portal">
-                <img src="PEC Logo.png" alt="Prathyusha Engineering College" class="pec-seal-logo">
-                <div class="college-identity-text">
-                    <h1 class="college-name">PRATHYUSHA ENGINEERING COLLEGE</h1>
-                    <div class="college-tagline">(AN AUTONOMOUS INSTITUTION)</div>
+    
+    <header class="college-header-wrapper">
+        <div class="college-info-block">
+            <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
+            <div class="college-text-details">
+                <h1 class="header-college-title">PRATHYUSHA ENGINEERING COLLEGE</h1>
+                <div class="header-college-subtitle">(AN AUTONOMOUS INSTITUTION)</div>
+                <div class="header-accreditation-text">
+                    Approved by AICTE & Affiliated to Anna University, NAAC "A" Grade Accredited Institution<br>
+                    National Board of Accreditation (NBA) Accredited Programmes
                 </div>
-            </a>
-
-            <!-- Top Center: Department Title -->
-            <div class="dept-title-badge">
-                <span class="dept-bracket">[</span>
-                <span class="dept-name">DEPARTMENT OF CYBER SECURITY</span>
-                <span class="dept-bracket">]</span>
             </div>
+        </div>
 
-            <!-- Top Right: Live Status Pill -->
-            <div class="reg-status-pill">
-                <span class="live-pulse-dot"></span>
-                <span class="status-label">REGISTRATION OPEN</span>
+        
+        <div class="logo-marquee-container">
+            <div class="logo-marquee-content">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
+                <img src="tag.png" alt="Accreditation Logos">
             </div>
-        </header>
+        </div>
 
-        <!-- ==========================================
-             2. HERO LOGO & EVENT SUBTITLE
-             ========================================== -->
+        
+        <div class="news-marquee-container">
+            <div class="news-marquee-content">
+                <a href="register.html">
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹150 / HEAD • REGISTRATION DEADLINE: 30 SEPTEMBER 2026 • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 08 - 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹150 / HEAD • REGISTRATION DEADLINE: 30 SEPTEMBER 2026 • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 08 - 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <ul class="nav-links" id="nav-links-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> HOME</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> ABOUT</a></li>
+                <li><a href="rules.html" class="nav-link"><i class="fas fa-gavel"></i> RULES</a></li>
+                <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> PRIZES</a></li>
+                <li><a href="register.html" class="nav-link active"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+            </ul>
+
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- DEPARTMENT OF CYBER SECURITY BANNER -->
+    <div class="department-bar">
+        <div class="container department-bar-inner">
+            <span class="dept-accent-line left"></span>
+            <div class="department-badge">
+                <i class="fas fa-shield-alt dept-shield-icon"></i>
+                <span class="dept-title">DEPARTMENT OF CYBER SECURITY</span>
+            </div>
+            <span class="dept-accent-line right"></span>
+        </div>
+    </div>
+
+    <div class="registration-wrapper">
+
+        
         <div class="hud-hero-brand">
             <div class="hero-logo-container">
                 <img src="xploitx_logo.png" alt="XPLOITX 2.0 BETA Logo" class="hud-main-logo">
@@ -68,15 +103,13 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             3. MAIN 3-COLUMN CYBER HUD BATTLEFIELD
-             ========================================== -->
+        
         <main class="hud-main-grid">
             
-            <!-- LEFT COLUMN: Mission Status & Ticket Summary -->
+            
             <aside class="hud-col hud-col-left">
                 
-                <!-- Card 1: Mission Status -->
+                
                 <div class="hud-card mission-status-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -92,7 +125,7 @@
                     
                     <div class="mission-item">
                         <div class="mission-key">DURATION</div>
-                        <div class="mission-val">24 HOURS NON-STOP</div>
+                        <div class="mission-val">24 HOURS CTF</div>
                     </div>
 
                     <div class="mission-item">
@@ -105,11 +138,11 @@
                         <div class="mission-val text-green">SOLVE. EXPLOIT. CAPTURE. CONQUER.</div>
                     </div>
 
-                    <!-- Hazard Striping -->
+                    
                     <div class="hazard-stripe-bar"></div>
                 </div>
 
-                <!-- Card 2: Fee Summary Quick Box -->
+                
                 <div class="hud-card fee-summary-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -118,24 +151,24 @@
 
                     <h4 class="hud-card-title" style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-calculator"></i> TICKET SUMMARY</h4>
                     <div class="fee-row">
-                        <span>FEE PER HEAD:</span>
-                        <strong class="text-green">₹250</strong>
+                        <span id="summary-fee-label">EARLY BIRD FEE:</span>
+                        <strong class="text-green"><span id="summary-per-head-fee">₹150</span> <span id="summary-fee-note" style="font-size: 0.72rem; color: var(--doom-gold); font-weight: normal;"></span></strong>
                     </div>
                     <div class="fee-row">
                         <span>ACTIVE MEMBERS:</span>
-                        <strong id="summary-member-count" class="text-gold">1</strong>
+                        <strong id="summary-member-count" class="text-gold">2</strong>
                     </div>
                     <div class="fee-divider"></div>
                     <div class="fee-row total-row">
                         <span>TOTAL PAYABLE:</span>
-                        <strong id="summary-total-fee" class="text-green">₹250</strong>
+                        <strong id="summary-total-fee" class="text-green">₹300</strong>
                     </div>
                 </div>
 
             </aside>
 
-            <!-- CENTER COLUMN: Comprehensive Registration Terminal -->
-            <section class="hud-col hud-col-center">
+            
+            <div class="hud-col hud-col-center">
                 <div class="hud-card registration-form-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -144,7 +177,7 @@
 
                     <h2 class="form-main-heading">TEAM REGISTRATION</h2>
 
-                    <!-- Step Tracker Bar -->
+                    
                     <div class="form-step-tracker">
                         <div class="step-item active">
                             <span class="step-num">1</span>
@@ -167,17 +200,17 @@
                         </div>
                     </div>
 
-                    <!-- Full Registration Form with OTP & Payment Proof -->
+                    
                     <form id="ctf-registration-form" enctype="multipart/form-data" novalidate>
                         
-                        <!-- SECTION 1: TEAM INFORMATION -->
+                        
                         <div class="form-section-block">
                             <div class="section-badge-title">
                                 <i class="fas fa-users-cog"></i> TEAM DETAILS
                             </div>
 
                             <div class="form-row-2col">
-                                <!-- Team Name -->
+                                
                                 <div class="form-group-hud">
                                     <label for="teamName" class="form-label-hud">
                                         <i class="fas fa-users form-icon-hud"></i> TEAM NAME <span class="req">*</span>
@@ -187,7 +220,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Event Selection -->
+                                
                                 <div class="form-group-hud">
                                     <label for="eventName" class="form-label-hud">
                                         <i class="fas fa-flag form-icon-hud"></i> EVENT FORMAT <span class="req">*</span>
@@ -199,14 +232,14 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 2: TEAM LEADER (OPERATIVE 01) -->
+                        
                         <div class="form-section-block">
                             <div class="section-badge-title">
                                 <i class="fas fa-user-shield"></i> 01 // TEAM LEADER (PRIMARY CONTACT)
                             </div>
 
                             <div class="form-row-2col">
-                                <!-- Leader Name -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderName" class="form-label-hud">
                                         <i class="fas fa-user form-icon-hud"></i> FULL NAME <span class="req">*</span>
@@ -216,7 +249,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Leader Age -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderAge" class="form-label-hud">
                                         <i class="fas fa-birthday-cake form-icon-hud"></i> AGE <span class="req">*</span>
@@ -227,7 +260,7 @@
                                 </div>
                             </div>
 
-                            <!-- Email with OTP Verification Row -->
+                            
                             <div class="form-group-hud">
                                 <label for="leaderEmail" class="form-label-hud">
                                     <i class="fas fa-envelope form-icon-hud"></i> EMAIL ADDRESS <span class="req">*</span>
@@ -240,9 +273,10 @@
                                         <i class="fas fa-paper-plane"></i> SEND OTP
                                     </button>
                                 </div>
+                                <div id="otp-feedback-outer" class="otp-feedback-msg" style="margin-top: 6px;"></div>
                             </div>
 
-                            <!-- OTP Input Sub-Row (Hidden until sent) -->
+                            
                             <div class="otp-verification-box" id="otp-box" style="display: none;">
                                 <div class="otp-instruction">
                                     <i class="fas fa-info-circle text-green"></i> Enter the OTP send to your mail
@@ -259,7 +293,7 @@
                             </div>
 
                             <div class="form-row-2col">
-                                <!-- Leader Phone -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderPhone" class="form-label-hud">
                                         <i class="fas fa-phone form-icon-hud"></i> PHONE NUMBER <span class="req">*</span>
@@ -269,7 +303,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Leader WhatsApp -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderWhatsapp" class="form-label-hud">
                                         <i class="fab fa-whatsapp form-icon-hud" style="color: #25d366;"></i> WHATSAPP NUMBER
@@ -281,7 +315,7 @@
                             </div>
 
                             <div class="form-row-2col">
-                                <!-- Leader College -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderCollege" class="form-label-hud">
                                         <i class="fas fa-university form-icon-hud"></i> COLLEGE / INSTITUTION <span class="req">*</span>
@@ -291,7 +325,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Leader District / Dept -->
+                                
                                 <div class="form-group-hud">
                                     <label for="leaderDistrict" class="form-label-hud">
                                         <i class="fas fa-map-marker-alt form-icon-hud"></i> DISTRICT / DEPARTMENT <span class="req">*</span>
@@ -303,59 +337,174 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 3: ADDITIONAL TEAM MEMBERS (UP TO 4 TOTAL) -->
+                        
                         <div class="form-section-block">
                             <div class="section-badge-title-between">
                                 <span><i class="fas fa-user-plus"></i> ADDITIONAL SQUAD MEMBERS</span>
                                 <button type="button" id="btn-add-member" class="btn-add-member-hud">
-                                    <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">1</span>/4)
+                                    <i class="fas fa-plus"></i> ADD MEMBER (<span id="member-slot-count">2</span>/4)
                                 </button>
                             </div>
 
-                            <!-- Dynamic Members Container -->
+                            
                             <div id="additional-members-container" class="additional-members-list">
-                                <!-- Dynamic member cards will be appended here -->
+                                
                             </div>
                         </div>
 
-                        <!-- SECTION 4: PAYMENT VERIFICATION & PROOF UPLOAD -->
+                        
                         <div class="form-section-block payment-section-block">
                             <div class="section-badge-title">
-                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (₹250 / HEAD)
+                                <i class="fas fa-credit-card"></i> PAYMENT VERIFICATION (<span id="payment-fee-badge">EARLY BIRD: ₹150 / HEAD</span>)
                             </div>
 
                             <div class="payment-grid-hud">
-                                <!-- QR Code & UPI Scan Box -->
+                                
                                 <div class="payment-qr-box">
-                                    <div class="qr-code-wrapper">
-                                        <img src="load.png" id="qr-code-img" alt="Payment QR Code" class="payment-qr-display">
-                                    </div>
-                                    <div class="upi-id-badge">
-                                        <span>UPI ID:</span> <strong class="text-green">prathyushactf@upi</strong>
-                                    </div>
+                                    <a id="qr-code-link" href="upi://pay?pa=8122079494@pthdfc&pn=XploitX%202.0%20CTF%20Registration&am=300&cu=INR" title="Click or Tap to open UPI App directly" style="display: inline-block; cursor: pointer;">
+                                         <div class="qr-code-wrapper">
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&ecc=H&data=upi%3A%2F%2Fpay%3Fpa%3D8122079494%40pthdfc%26pn%3DXploitX%25202.0%2520CTF%2520Registration%26am%3D300%26cu%3DINR" id="qr-code-img" alt="Scan or Click to Pay" class="payment-qr-display">
+                                            <div class="qr-center-logo">
+                                                <img src="xploitx_logo.png" alt="XploitX" class="qr-center-logo-img">
+                                            </div>
+                                        </div>
+                                    </a>
                                     <div class="amount-payable-badge">
-                                        AMOUNT: <strong id="payment-amount-display" class="text-gold">₹250</strong>
+                                        AMOUNT: <strong id="payment-amount-display" class="text-gold">₹300</strong>
                                     </div>
+                                    <a id="btn-pay-upi" href="upi://pay?pa=8122079494@pthdfc&pn=XploitX%202.0%20CTF%20Registration&am=300&cu=INR" class="btn-pay-upi-hud" style="margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 10px; background: linear-gradient(135deg, rgba(0,255,102,0.2), rgba(0,180,216,0.2)); border: 1px solid var(--border-green); color: #00ff66; font-family: var(--font-mono); font-size: 0.78rem; font-weight: bold; border-radius: 4px; text-decoration: none; transition: all 0.25s ease;">
+                                        <i class="fas fa-mobile-alt"></i> PAY VIA UPI APP
+                                    </a>
                                 </div>
 
-                                <!-- Payment Inputs (UTR & Proof Screenshot) -->
+                                
                                 <div class="payment-inputs-col">
-                                    <!-- Transaction / UTR ID -->
+                                    
                                     <div class="form-group-hud">
                                         <label for="utrNumber" class="form-label-hud">
-                                            <i class="fas fa-receipt form-icon-hud"></i> UTR / TRANSACTION ID <span class="req">*</span>
+                                            <i class="fas fa-receipt form-icon-hud"></i> UTR ID <span class="req">*</span>
                                         </label>
                                         <div class="input-wrapper-hud">
-                                            <input type="text" id="utrNumber" name="utrNumber" placeholder="12-digit UPI / Bank Ref UTR Number" maxlength="20" required autocomplete="off">
+                                            <input type="text" id="utrNumber" name="utrNumber" placeholder="Enter UTR ID" inputmode="numeric" maxlength="30" required autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                    
+                                    <div class="form-group-hud" style="margin-top: 16px;">
+                                        <label class="form-label-hud">
+                                            <i class="fas fa-file-upload form-icon-hud"></i> PAYMENT SCREENSHOT <span class="req">*</span>
+                                            <span style="font-size: 0.76rem; color: var(--doom-gold); font-weight: normal; margin-left: auto;">(&lt; 3 MB | JPG, JPEG, PNG)</span>
+                                        </label>
+                                        <div class="input-wrapper-hud">
+                                            
+                                            <input type="file" id="paymentProof" name="paymentProof" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required style="display: none;">
+
+                                            
+                                            <label for="paymentProof" class="hud-file-dropzone" id="hud-file-dropzone">
+                                                <div class="dropzone-corners">
+                                                    <span class="corner top-left"></span>
+                                                    <span class="corner top-right"></span>
+                                                    <span class="corner bottom-left"></span>
+                                                    <span class="corner bottom-right"></span>
+                                                </div>
+
+                                                
+                                                <div class="dropzone-default-content" id="dropzone-default">
+                                                    <div class="dropzone-icon-ring">
+                                                        <i class="fas fa-cloud-upload-alt"></i>
+                                                    </div>
+                                                    <div class="dropzone-text-primary">CHOOSE SCREENSHOT OR DRAG &amp; DROP HERE</div>
+                                                    <div class="dropzone-text-sub">SUPPORTED FORMATS: JPG, JPEG, PNG | MAX SIZE: 3 MB</div>
+                                                    <span class="btn-browse-hud">[ SELECT FILE ]</span>
+                                                </div>
+
+                                                
+                                                <div class="dropzone-preview-content" id="dropzone-preview" style="display: none;">
+                                                    <div class="preview-thumbnail-wrapper">
+                                                        <img id="preview-thumbnail-img" src="" alt="Payment Screenshot Preview">
+                                                    </div>
+                                                    <div class="preview-info-col">
+                                                        <div class="preview-badge-status"><i class="fas fa-check-circle"></i> SCREENSHOT ATTACHED</div>
+                                                        <div class="preview-filename" id="preview-filename">screenshot.png</div>
+                                                        <div class="preview-filesize" id="preview-filesize">0 KB / 1.00 MB</div>
+                                                    </div>
+                                                    <button type="button" class="btn-remove-file" id="btn-remove-file" title="Remove Screenshot">
+                                                        <i class="fas fa-trash-alt"></i> REMOVE
+                                                    </button>
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
+                        <!-- MISSION READINESS & CAPTCHA UNLOCK STATUS -->
+                        <div class="form-section-block" id="mission-readiness-block" style="background: rgba(4, 12, 28, 0.7); border: 1px dashed rgba(255, 215, 0, 0.4); padding: 14px 18px; border-radius: 6px; margin-bottom: 20px; transition: all 0.3s ease;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+                                <div style="font-family: var(--font-mono); font-size: 0.86rem; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-tasks text-gold"></i>
+                                    <span id="readiness-title">REGISTRATION CHECKLIST (COMPLETE TO UNLOCK CAPTCHA)</span>
+                                </div>
+                                <div id="readiness-badge" style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 3px; background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;">
+                                    PENDING REQUIREMENTS
+                                </div>
+                            </div>
+                            <div id="readiness-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; font-family: var(--font-mono); font-size: 0.78rem;">
+                                <!-- Items rendered dynamically by register.js -->
+                            </div>
+                        </div>
+
+                        <!-- CAPTCHA VERIFICATION BLOCK (Revealed when all details are complete) -->
+                        <div class="form-section-block captcha-section-block" id="captcha-section-block" style="display: none; animation: fadeIn 0.4s ease;">
+                            <div class="section-badge-title">
+                                <i class="fas fa-shield-alt"></i> CAPTCHA VERIFICATION <span class="req">*</span>
+                            </div>
+
+                            <div class="captcha-container-hud" style="margin-top: 14px; display: flex; flex-direction: column; gap: 14px;">
+                                
+                                <div id="robot-check-card" class="robot-check-box-hud" style="background: rgba(0, 255, 102, 0.08); border: 1px dashed var(--doom-green); padding: 14px 18px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; transition: all 0.3s ease;">
+                                    <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.92rem; font-weight: 700; color: #00ff66;">
+                                        <i class="fas fa-user-check" style="font-size: 1.1rem; color: #00ff66;"></i>
+                                        <span>AUTOMATIC ROBOT VERIFICATION: HUMAN DETECTED ✓</span>
+                                    </div>
+                                    <div style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; color: #00ff66; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-check-circle"></i> VERIFIED HUMAN • CAPTCHA UNLOCKED
+                                    </div>
+                                </div>
+
+                                
+                                <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px; background: rgba(0, 20, 10, 0.4); border: 1px solid rgba(0, 255, 102, 0.25); border-radius: 6px;">
+                                    <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                                        
+                                        <div class="captcha-box" id="captchaBox" style="background: rgba(0, 20, 10, 0.9); border: 1.5px dashed var(--doom-green); padding: 10px 22px; border-radius: 6px; font-family: 'Share Tech Mono', monospace; font-size: 1.4rem; font-weight: 900; color: #00ff66; letter-spacing: 5px; text-shadow: 0 0 12px var(--doom-green-glow); display: inline-flex; align-items: center; justify-content: center; user-select: none; box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.15);">
+                                            <span id="captchaCodeDisplay">XXXXXX</span>
+                                        </div>
+
+                                        <button type="button" id="btnRefreshCaptcha" class="btn-refresh-captcha" style="background: rgba(255, 215, 0, 0.1); border: 1px solid var(--doom-gold); color: #ffd700; padding: 10px 16px; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s ease;">
+                                            <i class="fas fa-sync-alt"></i> REFRESH CAPTCHA
+                                        </button>
+                                    </div>
+
+                                    <div class="form-group-hud" style="max-width: 380px; margin-bottom: 0;">
+                                        <label for="captchaInput" class="form-label-hud">
+                                            <i class="fas fa-keyboard form-icon-hud"></i> ENTER CAPTCHA CODE <span class="req">*</span>
+                                        </label>
+                                        <div class="input-wrapper-hud">
+                                            <input type="text" id="captchaInput" placeholder="Enter the code shown above" maxlength="6" autocomplete="off" required style="letter-spacing: 3px; text-transform: uppercase; font-weight: 700; font-family: 'Share Tech Mono', monospace;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="captchaStatusMessage" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: #ff4757; display: flex; align-items: center; gap: 8px; transition: all 0.25s ease;">
+                                    <i class="fas fa-lock" id="captchaStatusIcon"></i> <span id="captchaStatusText">VERIFY CAPTCHA CODE TO UNLOCK SUBMIT BUTTON</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        
                         <div class="form-action-hud">
-                            <button type="submit" class="hud-register-btn" id="submit-btn">
+                            <button type="submit" class="hud-register-btn" id="submit-btn" disabled style="opacity: 0.4; cursor: not-allowed; filter: grayscale(0.8);">
                                 <span class="btn-glow-layer"></span>
                                 <span class="btn-text">SUBMIT REGISTRATION</span>
                                 <i class="fas fa-arrow-right btn-arrow-icon"></i>
@@ -364,12 +513,12 @@
 
                     </form>
                 </div>
-            </section>
+            </div>
 
-            <!-- RIGHT COLUMN: Event Intel & Secure Channel -->
+            
             <aside class="hud-col hud-col-right">
 
-                <!-- Card 1: Event Directives -->
+                
                 <div class="hud-card event-details-card">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -378,18 +527,18 @@
 
                     <h3 class="hud-card-title"><i class="fas fa-info-circle"></i> EVENT INTEL</h3>
 
-                    <!-- Event Date -->
+                    
                     <div class="event-meta-row">
                         <div class="meta-icon-box">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                         <div class="meta-text-box">
                             <div class="meta-label">EVENT DATE</div>
-                            <div class="meta-value">09 OCTOBER 2026</div>
+                            <div class="meta-value">08 - 09 OCTOBER 2026</div>
                         </div>
                     </div>
 
-                    <!-- Mode -->
+                    
                     <div class="event-meta-row">
                         <div class="meta-icon-box text-gold">
                             <i class="fas fa-map-marker-alt"></i>
@@ -400,18 +549,18 @@
                         </div>
                     </div>
 
-                    <!-- Registration Fee -->
+                    
                     <div class="event-meta-row">
                         <div class="meta-icon-box text-green">
                             <i class="fas fa-ticket-alt"></i>
                         </div>
                         <div class="meta-text-box">
-                            <div class="meta-label">ENTRY FEE</div>
-                            <div class="meta-value text-green">₹250 / HEAD</div>
+                            <div class="meta-label">ENTRY FEE (EARLY BIRD)</div>
+                            <div class="meta-value text-green">₹150 / HEAD</div>
                         </div>
                     </div>
 
-                    <!-- Status -->
+                    
                     <div class="event-meta-row">
                         <div class="meta-icon-box text-green">
                             <i class="fas fa-shield-alt"></i>
@@ -421,9 +570,19 @@
                             <div class="meta-value text-green">REGISTRATION OPEN</div>
                         </div>
                     </div>
+
+                    <div class="event-meta-row">
+                        <div class="meta-icon-box text-gold">
+                            <i class="fas fa-hourglass-end"></i>
+                        </div>
+                        <div class="meta-text-box">
+                            <div class="meta-label">REGISTRATION DEADLINE</div>
+                            <div class="meta-value text-gold">30 SEPTEMBER 2026</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Card 2: Help & Support Hub -->
+                
                 <div class="hud-card support-info-card" style="border: 1px solid rgba(0, 240, 255, 0.4); box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);">
                     <div class="hud-card-corner top-left"></div>
                     <div class="hud-card-corner top-right"></div>
@@ -445,9 +604,7 @@
 
         </main>
 
-        <!-- ==========================================
-             4. BOTTOM FOOTER DIRECTIVES
-             ========================================== -->
+        
         <footer class="hud-bottom-footer">
             <div class="footer-directives">
                 <span>EXCELLENCE</span>
@@ -460,16 +617,16 @@
 
     </div>
 
-    <!-- Interactive Registration Feedback Modal -->
+    
     <div class="hud-modal-overlay" id="success-modal">
         <div class="hud-modal-card">
             <div class="modal-icon-glow">
                 <i class="fas fa-check-circle"></i>
             </div>
             <h3 class="modal-title">MISSION REGISTRATION CONFIRMED</h3>
-            <p class="modal-msg">Your strike team <strong id="modal-team-name" class="text-green"></strong> is now enrolled for <strong>XPLOITX 2.0 BETA</strong> on 09 October 2026.</p>
+            <p class="modal-msg">Your strike team <strong id="modal-team-name" class="text-green"></strong> is now enrolled for <strong>XPLOITX 2.0 BETA</strong> on 08 - 09 October 2026.</p>
             <div class="modal-details-hud">
-                <div><span>TEAM ID:</span> <strong id="modal-team-id" class="text-gold">XB2026-0001</strong></div>
+                <div><span>TEAM ID:</span> <strong id="modal-team-id" class="text-gold">XCTF-26-0001</strong></div>
                 <div><span>TEAM LEADER:</span> <strong id="modal-leader-name"></strong></div>
                 <div><span>LEADER EMAIL:</span> <strong id="modal-email"></strong></div>
                 <div><span>MODE & VENUE:</span> <strong class="text-gold">OFFLINE @ Prathyusha Engineering College</strong></div>
@@ -482,9 +639,23 @@
         </div>
     </div>
 
-    <!-- Core Application Script & Registration Logic Script -->
+    
+    <div class="hud-modal-overlay" id="custom-alert-modal">
+        <div class="hud-modal-card alert-modal-card">
+            <div class="modal-icon-glow alert-icon-glow" style="color: #ffd700; text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);">
+                <i class="fas fa-exclamation-triangle" id="custom-alert-icon"></i>
+            </div>
+            <h3 class="modal-title" id="custom-alert-title" style="letter-spacing: 2px;">SYSTEM ALERT</h3>
+            <p class="modal-msg" id="custom-alert-msg" style="font-family: var(--font-body); font-weight: 600; line-height: 1.5; color: var(--text-muted);"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-close" onclick="closeCustomAlert()" style="background: var(--neon-gold, #ffd700); color: #000; font-weight: 900; border: none; padding: 11px 28px;">[ ACKNOWLEDGE ]</button>
+            </div>
+        </div>
+    </div>
+
+    
     <script src="script.js"></script>
-    <script src="register.js?v=2.5"></script>
+    <script src="register.js?v=2.7"></script>
 </body>
 
 </html>

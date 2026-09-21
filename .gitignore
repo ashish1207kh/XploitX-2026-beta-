@@ -2,6 +2,23 @@ node_modules/
 .vscode
 
 *.db
+**/*.db
 *.log
+**/*.log
 *.env
+.env*
+**/.env*
+uploads/
+**/uploads/
+database_backup.json
+**/database_backup.json
+hackathon_backup.db
+**/hackathon_backup.db
 data.json
+**/data.json
+activity_log.txt
+**/activity_log.txt
+admin_activity.log
+**/admin_activity.log
+tunnel.log
+**/tunnel.log

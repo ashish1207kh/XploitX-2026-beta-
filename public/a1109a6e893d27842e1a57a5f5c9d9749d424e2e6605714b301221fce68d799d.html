@@ -8,7 +8,7 @@
     <meta name="description"
         content="Administrative Command Console & Verification Overwatch for XPLOITX 2.0 BETA 24-Hour Cybersecurity CTF at Prathyusha Engineering College.">
 
-    <!-- Google Fonts & Font Awesome -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,15 +16,13 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Core Design System -->
-    <link rel="stylesheet" href="styles.css?v=3.0">
-    <link rel="icon" type="image/png" href="logo_favicon.png">
-    <script src="config.js"></script>
+    
+    <link rel="stylesheet" href="styles.css?v=3.1">
+    <link rel="icon" type="image/jpeg" href="Favicon.jpeg">
+    <link rel="apple-touch-icon" href="Favicon.jpeg">
 
     <style>
-        /* ========================================================
-           ADMIN COMMAND CONSOLE SPECIFIC HUD STYLING
-           ======================================================== */
+        
         body {
             padding: 0;
             background-color: var(--bg-deep);
@@ -39,7 +37,6 @@
             z-index: 10;
         }
 
-        /* --- STAT METRIC CARDS --- */
         .admin-stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -106,7 +103,6 @@
             text-transform: uppercase;
         }
 
-        /* --- CONTROL BAR & FILTER PANELS --- */
         .admin-controls-panel {
             background: var(--bg-glass);
             border: 1px solid var(--border-hud);
@@ -209,7 +205,6 @@
             box-shadow: 0 0 15px var(--magenta-glow);
         }
 
-        /* Search Box Input */
         .search-box-wrapper {
             position: relative;
             min-width: 280px;
@@ -250,7 +245,6 @@
             pointer-events: none;
         }
 
-        /* Action Buttons */
         .action-btns-group {
             display: flex;
             gap: 10px;
@@ -317,7 +311,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- TABLE DESIGN --- */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -361,11 +354,11 @@
             background: rgba(0, 255, 102, 0.04);
         }
 
-        /* Member Card formatting */
         .member-row-card {
             border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
             margin-bottom: 8px;
             padding-bottom: 8px;
+            min-width: 210px;
         }
 
         .member-row-card:last-child {
@@ -407,7 +400,14 @@
             text-shadow: 0 0 8px rgba(37, 211, 102, 0.6);
         }
 
-        /* --- LOGIN OVERLAY AESTHETICS --- */
+        #admin-authenticated-root {
+            display: none !important;
+        }
+
+        body.admin-authenticated #admin-authenticated-root {
+            display: block !important;
+        }
+
         #login-overlay {
             background: rgba(3, 4, 10, 0.95);
             backdrop-filter: blur(16px);
@@ -419,7 +419,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2147483647 !important;
+            z-index: 999999;
         }
 
         .login-card-hud {
@@ -533,7 +533,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- MODALS GENERAL STYLING --- */
         .modal-overlay-hud {
             display: none;
             position: fixed;
@@ -626,7 +625,6 @@
             box-shadow: 0 0 10px var(--doom-green-glow);
         }
 
-        /* --- PRINT STYLING OVERRIDES --- */
         @media print {
 
             button,
@@ -706,20 +704,42 @@
 
 <body>
 
-    <!-- Floating Register Button -->
-    <a href="register.html" class="register-floating-btn" id="floating-reg-btn" title="Enlist for XPLOITX 2.0 BETA">
-        <span class="reg-btn-status"><span class="pulse-dot"></span> REGISTRATION OPEN</span>
-        <span class="reg-btn-label">[ REGISTER NOW ] <i class="fas fa-arrow-right"></i></span>
-    </a>
 
-    <!-- Background Layers: Matrix Canvas & Cyber Grid Overlay -->
+    
     <canvas id="matrix-bg"
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
     <div class="cyber-grid-overlay"></div>
 
-    <!-- ==========================================
-         TOP ROW: COLLEGE DETAILS & ACCREDITATION
-         ========================================== -->
+    <!-- HIGH COMMAND GATEWAY / LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-card-hud">
+            <div class="login-icon-badge">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2 class="login-title-text">ADMIN ACCESS</h2>
+            <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
+
+            <form onsubmit="event.preventDefault(); checkAdmin(); return false;">
+                <div class="login-field-group">
+                    <i class="fas fa-user login-field-icon"></i>
+                    <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
+                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                </div>
+
+                <div class="login-field-group">
+                    <i class="fas fa-lock login-field-icon"></i>
+                    <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
+                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                </div>
+
+                <button type="button" onclick="checkAdmin();" class="login-submit-btn"> UNLOCK </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ZERO-KNOWLEDGE GATED ROOT (HIDDEN BY DEFAULT) -->
+    <div id="admin-authenticated-root" style="display: none !important;">
+
     <header class="college-header-wrapper">
         <div class="college-info-block">
             <img src="PEC Logo.png" alt="Prathyusha Engineering College Logo" class="pec-logo-img">
@@ -733,7 +753,7 @@
             </div>
         </div>
 
-        <!-- Tag Strip Marquee -->
+        
         <div class="logo-marquee-container">
             <div class="logo-marquee-content">
                 <img src="tag.png" alt="Accreditation Logos">
@@ -743,54 +763,65 @@
             </div>
         </div>
 
-        <!-- Live News Strip -->
+        
         <div class="news-marquee-container">
             <div class="news-marquee-content">
                 <a href="register.html">
-                    <span>⚡ MULTIVERSE INCURSION DETECTED ... XPLOITX 2.0 BETA ... COMMAND OVERWATCH ACTIVE ... VERIFICATION PORTAL ENGAGED ... </span>
-                    <span>⚡ MULTIVERSE INCURSION DETECTED ... XPLOITX 2.0 BETA ... COMMAND OVERWATCH ACTIVE ... VERIFICATION PORTAL ENGAGED ... </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹150 / HEAD • REGISTRATION DEADLINE: 30 SEPTEMBER 2026 • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 08 - 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
+                    <span>🔥 EARLY BIRD OFFER IS LIVE: ₹150 / HEAD • REGISTRATION DEADLINE: 30 SEPTEMBER 2026 • XPLOITX 2.0 BETA • 24-HOUR OFFLINE CYBERSECURITY CTF • 08 - 09 OCTOBER 2026 • PRATHYUSHA ENGINEERING COLLEGE • REGISTER NOW • </span>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- ==========================================
-         NAVIGATION BAR
-         ========================================== -->
+    
     <nav class="navbar" id="navbar">
-        <div class="container nav-container">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center;">
             <ul class="nav-links" id="nav-links-menu">
                 <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> HOME</a></li>
                 <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> ABOUT</a></li>
                 <li><a href="rules.html" class="nav-link"><i class="fas fa-gavel"></i> RULES</a></li>
                 <li><a href="prizes.html" class="nav-link"><i class="fas fa-trophy"></i> PRIZES</a></li>
                 <li><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li><a href="doom.html" class="nav-link active"><i class="fas fa-user-shield"></i> ADMIN CONSOLE</a></li>
             </ul>
 
-            <button class="hamburger-btn" id="mobile-menu-open" aria-label="Toggle navigation">
-                <i class="fas fa-ellipsis-v"></i>
-            </button>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="top-nav-logout-btn" onclick="logoutAdmin()" class="action-btn-hud action-btn-magenta" style="padding: 8px 18px; font-size: 0.88rem; box-shadow: 0 0 12px rgba(255, 0, 102, 0.4);">
+                    <i class="fas fa-sign-out-alt"></i> LOGOUT
+                </button>
+                <button class="hamburger-btn" id="mobile-menu-open" aria-label="Toggle navigation">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- ==========================================
-         MAIN ADMIN COMMAND CONSOLE
-         ========================================== -->
+    <!-- DEPARTMENT OF CYBER SECURITY BANNER -->
+    <div class="department-bar">
+        <div class="container department-bar-inner">
+            <span class="dept-accent-line left"></span>
+            <div class="department-badge">
+                <i class="fas fa-shield-alt dept-shield-icon"></i>
+                <span class="dept-title">DEPARTMENT OF CYBER SECURITY</span>
+            </div>
+            <span class="dept-accent-line right"></span>
+        </div>
+    </div>
+    
     <main class="admin-container">
-        <!-- Hero Title Banner -->
+        
         <div class="hero-content" style="text-align: center; margin-bottom: 30px;">
-            <div class="status-indicator-badge">
+            <div class="status-indicator-badge" id="admin-hero-badge">
                 <span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]
             </div>
-            <h1 class="hero-main-title">&gt;_ DOOMSDAY COMMAND CONSOLE</h1>
-            <p style="font-family: var(--font-mono); color: var(--text-muted); font-size: 1rem; letter-spacing: 1px;">
+            <h1 class="hero-main-title" id="admin-hero-title">&gt;_ DOOMSDAY COMMAND CONSOLE</h1>
+            <p id="admin-hero-desc" style="font-family: var(--font-mono); color: var(--text-muted); font-size: 1rem; letter-spacing: 1px;">
                 Central Administrative Verification, Strike Team Auditing & Roster Management System
             </p>
         </div>
 
-        <!-- Metric Stat Cards Bar -->
-        <div class="admin-stats-grid">
+        
+        <div class="admin-stats-grid" id="admin-stats-container">
             <div class="stat-card">
                 <div class="stat-value text-green" id="stat-total">0</div>
                 <div class="stat-label">TOTAL TEAMS</div>
@@ -809,30 +840,30 @@
             </div>
         </div>
 
-        <!-- Controls & Filter Toolbar -->
-        <div class="admin-controls-panel hud-panel">
-            <!-- Row 1: Event Filter -->
+        
+        <div class="admin-controls-panel hud-panel" id="admin-controls-container">
+            
             <div class="control-row">
                 <div class="filter-section-title"><i class="fas fa-filter text-green"></i> EVENT ARENA:</div>
                 <div class="filter-pills">
-                    <button class="filter-btn active" id="filter-ev-all" onclick="filterEvent('ALL', this)">[ ALL TEAMS ]</button>
-                    <button class="filter-btn" id="filter-ev-ctf" onclick="filterEvent('CTF', this)">[ 24-HOUR CTF ]</button>
+                    <button class="filter-btn active" id="filter-ev-all" onclick="filterEvent('ALL', this)">ALL TEAMS</button>
+                    <button class="filter-btn" id="filter-ev-ctf" onclick="filterEvent('CTF', this)">24-HOUR CTF</button>
                 </div>
             </div>
 
-            <!-- Row 2: Status Filter -->
+            
             <div class="control-row">
                 <div class="filter-section-title"><i class="fas fa-shield-alt text-gold"></i> STATUS TRACK:</div>
                 <div class="filter-pills">
-                    <button class="filter-btn active-gold" id="filter-st-all" onclick="filterStatus('ALL_STATUS', this)">[ SHOW ALL ]</button>
-                    <button class="filter-btn" id="filter-st-ready" onclick="filterStatus('READY', this)">[ READY / VERIFIED ]</button>
-                    <button class="filter-btn" id="filter-st-standby" onclick="filterStatus('STANDBY', this)">[ STANDBY / REVIEW ]</button>
-                    <button class="filter-btn" id="filter-st-pending" onclick="filterStatus('PENDING', this)">[ PENDING PAYMENT ]</button>
-                    <button class="filter-btn" id="filter-st-untracked" onclick="filterStatus('UNTRACKED', this)">[ WRONG DETAILS ]</button>
+                    <button class="filter-btn active-gold" id="filter-st-all" onclick="filterStatus('ALL_STATUS', this)">SHOW ALL</button>
+                    <button class="filter-btn" id="filter-st-ready" onclick="filterStatus('READY', this)">READY / VERIFIED</button>
+                    <button class="filter-btn" id="filter-st-standby" onclick="filterStatus('STANDBY', this)">STANDBY / REVIEW</button>
+                    <button class="filter-btn" id="filter-st-pending" onclick="filterStatus('PENDING', this)">PENDING PAYMENT</button>
+                    <button class="filter-btn" id="filter-st-untracked" onclick="filterStatus('UNTRACKED', this)">WRONG DETAILS</button>
                 </div>
             </div>
 
-            <!-- Row 3: Search Box & Actions Bar -->
+            
             <div class="control-row" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
                 <div class="search-box-wrapper">
                     <i class="fas fa-search search-icon-inside"></i>
@@ -842,23 +873,23 @@
 
                 <div class="action-btns-group">
                     <button onclick="openCSVModal()" class="action-btn-hud action-btn-green">
-                        <i class="fas fa-file-csv"></i> [ DOWNLOAD CSV ]
+                        <i class="fas fa-file-csv"></i> DOWNLOAD CSV
                     </button>
                     <button onclick="openPrintModal()" class="action-btn-hud action-btn-cyan">
-                        <i class="fas fa-print"></i> [ PRINT / SAVE PDF ]
+                        <i class="fas fa-print"></i> PRINT / SAVE PDF
                     </button>
                     <button id="format-btn" onclick="openFormatModal()" class="action-btn-hud action-btn-magenta" style="display:none;">
-                        <i class="fas fa-file-invoice"></i> [ FORMAT REPORT ]
+                        <i class="fas fa-file-invoice"></i> FORMAT REPORT
                     </button>
                     <button id="activity-log-btn" onclick="openLogModal()" class="action-btn-hud action-btn-cyan" style="display:none;">
-                        <i class="fas fa-list-alt"></i> [ ACTIVITY LOG ]
+                        <i class="fas fa-list-alt"></i> ACTIVITY LOG
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Table Display Container -->
-        <div class="table-responsive">
+        
+        <div class="table-responsive" id="admin-table-container">
             <table id="teams-table">
                 <thead>
                     <tr>
@@ -874,7 +905,7 @@
                         <th>Delete</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="teams-table-body">
                     <tr>
                         <td colspan="10" style="text-align:center; padding: 30px; font-family: var(--font-mono); color: var(--text-muted);">
                             <i class="fas fa-spinner fa-spin text-green" style="font-size: 1.5rem; margin-bottom: 10px; display:block;"></i>
@@ -884,63 +915,134 @@
                 </tbody>
             </table>
         </div>
+
+        
+        <div id="administrator-activity-dashboard" style="display: none; margin-top: 10px;">
+            <div class="hud-panel" style="padding: 24px; border: 1.5px solid var(--neon-cyan); background: rgba(3, 7, 18, 0.95); box-shadow: 0 0 25px rgba(0, 210, 255, 0.15); border-radius: 8px;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 16px; margin-bottom: 20px;">
+                    <div>
+                        <div style="display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-brand); font-size: 1.25rem; color: #fff; letter-spacing: 1px;">
+                            <i class="fas fa-shield-alt text-cyan"></i>
+                            <span>HIGH COMMAND AUDIT &amp; SURVEILLANCE FEED</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem; margin-top: 4px;">
+                            <i class="fas fa-satellite-dish text-green"></i> Live Access Logging, User Authentications, and Field-Level Data Modification Diffs (Old ➔ New)
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span class="status-indicator-badge" style="margin: 0; font-size: 0.8rem;">
+                            <span class="pulse-dot"></span> LIVE SURVEILLANCE ACTIVE
+                        </span>
+                        <span id="admin-log-total-count" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--doom-gold); background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">
+                            TOTAL LOGS: 0
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+                    
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                            <i class="fas fa-filter text-green"></i> FILTER:
+                        </span>
+                        <div class="filter-pills" style="margin: 0; flex-wrap: wrap; gap: 6px;">
+                            <button class="filter-btn active" id="log-filter-all" onclick="filterActivityLogs('ALL', this)">ALL LOGS</button>
+                            <button class="filter-btn" id="log-filter-login" onclick="filterActivityLogs('LOGIN', this)">LOGINS</button>
+                            <button class="filter-btn" id="log-filter-otp" onclick="filterActivityLogs('OTP', this)">OTP &amp; EMAILS</button>
+                            <button class="filter-btn" id="log-filter-reg" onclick="filterActivityLogs('REGISTRATION', this)">REGISTRATIONS</button>
+                            <button class="filter-btn" id="log-filter-modified" onclick="filterActivityLogs('MODIFIED', this)">DATA MODIFIED</button>
+                            <button class="filter-btn" id="log-filter-status" onclick="filterActivityLogs('STATUS', this)">STATUS CHANGES</button>
+                            <button class="filter-btn" id="log-filter-access" onclick="filterActivityLogs('ACCESS', this)">DATA ACCESS</button>
+                            <button class="filter-btn" id="log-filter-attendance" onclick="filterActivityLogs('ATTENDANCE', this)">ATTENDANCE</button>
+                            <button class="filter-btn" id="log-filter-delete" onclick="filterActivityLogs('DELETE', this)">DELETIONS</button>
+                        </div>
+                    </div>
+
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div class="search-box-wrapper" style="flex: 1; min-width: 260px;">
+                            <i class="fas fa-search search-icon-inside"></i>
+                            <input type="text" id="admin-log-search-input" class="search-input-field"
+                                placeholder="Search logs by operative, team ID, diff details, or action..."
+                                oninput="renderActivityLogFeed()">
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button onclick="loadAdminActivityLogs()" class="action-btn-hud action-btn-cyan" style="padding: 8px 14px; font-size: 0.82rem;">
+                                <i class="fas fa-sync-alt"></i> REFRESH
+                            </button>
+                            <button onclick="exportActivityLogText()" class="action-btn-hud action-btn-green" style="padding: 8px 14px; font-size: 0.82rem;">
+                                <i class="fas fa-file-download"></i> EXPORT TXT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="admin-activity-log-stream" style="background: rgba(1, 4, 9, 0.95); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; max-height: 65vh; overflow-y: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                        <i class="fas fa-circle-notch fa-spin text-cyan" style="font-size: 1.8rem; margin-bottom: 12px; display: block;"></i>
+                        LOADING HIGH COMMAND AUDIT TELEMETRY...
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- ==========================================
-         MODALS SYSTEM
-         ========================================== -->
+    
 
-    <!-- CSV SELECTION MODAL -->
+    
     <div id="csv-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
                 <div class="modal-title-hud"><i class="fas fa-file-csv text-green"></i> SELECT EVENT FOR CSV DOWNLOAD</div>
-                <button onclick="closeCSVModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <button onclick="closeCSVModal()" class="modal-close-btn">✕ CLOSE</button>
             </div>
             <div style="display:flex; flex-direction: column; gap:12px; margin-bottom: 25px;">
-                <button onclick="executeCSVDownload('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">[ ALL TEAMS ]</button>
-                <button onclick="executeCSVDownload('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">[ 24-HOUR CTF TEAMS ]</button>
+                <button onclick="executeCSVDownload('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">ALL TEAMS</button>
+                <button onclick="executeCSVDownload('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">24-HOUR CTF TEAMS</button>
             </div>
-            <button onclick="closeCSVModal()" class="modal-close-btn" style="width: 100%;">[ CANCEL ]</button>
+            <button onclick="closeCSVModal()" class="modal-close-btn" style="width: 100%;">CANCEL</button>
         </div>
     </div>
 
-    <!-- PRINT SELECTION MODAL -->
+    
     <div id="print-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
                 <div class="modal-title-hud"><i class="fas fa-print text-cyan"></i> SELECT EVENT TO PRINT / SAVE PDF</div>
-                <button onclick="closePrintModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <button onclick="closePrintModal()" class="modal-close-btn">✕ CLOSE</button>
             </div>
             <div style="display:flex; flex-direction: column; gap:12px; margin-bottom: 25px;">
-                <button onclick="executePrint('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">[ ALL TEAMS ]</button>
-                <button onclick="executePrint('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">[ 24-HOUR CTF TEAMS ]</button>
+                <button onclick="executePrint('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">ALL TEAMS</button>
+                <button onclick="executePrint('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">24-HOUR CTF TEAMS</button>
             </div>
-            <button onclick="closePrintModal()" class="modal-close-btn" style="width: 100%;">[ CANCEL ]</button>
+            <button onclick="closePrintModal()" class="modal-close-btn" style="width: 100%;">CANCEL</button>
         </div>
     </div>
 
-    <!-- FORMAT REPORT SELECTION MODAL -->
+    
     <div id="format-modal" class="modal-overlay-hud">
         <div class="modal-content-hud">
             <div class="modal-header-hud">
                 <div class="modal-title-hud"><i class="fas fa-file-invoice text-magenta"></i> SELECT EVENT FOR FORMAT REPORT</div>
-                <button onclick="closeFormatModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <button onclick="closeFormatModal()" class="modal-close-btn">✕ CLOSE</button>
             </div>
             <div style="display:flex; flex-direction: column; gap:12px; margin-bottom: 25px;">
-                <button onclick="executeFormat('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">[ ALL TEAMS ]</button>
-                <button onclick="executeFormat('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">[ 24-HOUR CTF TEAMS ]</button>
+                <button onclick="executeFormat('ALL')" class="btn btn-primary" style="width:100%; justify-content:center;">ALL TEAMS</button>
+                <button onclick="executeFormat('CTF')" class="btn btn-secondary" style="width:100%; justify-content:center;">24-HOUR CTF TEAMS</button>
             </div>
-            <button onclick="closeFormatModal()" class="modal-close-btn" style="width: 100%;">[ CANCEL ]</button>
+            <button onclick="closeFormatModal()" class="modal-close-btn" style="width: 100%;">CANCEL</button>
         </div>
     </div>
 
-    <!-- VERIFY PAYMENT MODAL -->
+    
     <div id="verify-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 600px; text-align: center;">
             <div class="modal-header-hud">
                 <div class="modal-title-hud"><i class="fas fa-shield-check text-gold"></i> VERIFY PAYMENT & AUDIT PROOF</div>
-                <button onclick="closeVerifyModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <button onclick="closeVerifyModal()" class="modal-close-btn">✕ CLOSE</button>
             </div>
 
             <div style="margin-bottom: 15px; font-family: var(--font-mono); font-size: 1.1rem; color: #fff;">
@@ -951,23 +1053,23 @@
             </div>
 
             <div id="verify-img-container" style="margin-bottom: 25px; min-height: 200px; background: rgba(0,0,0,0.6); border: 1px dashed var(--border-subtle); border-radius: 6px; display:flex; align-items:center; justify-content:center; padding: 10px;">
-                <!-- Image output -->
+                
             </div>
 
             <div style="display:flex; justify-content:center; gap:12px; flex-wrap: wrap;">
-                <button onclick="closeVerifyModal()" class="modal-close-btn" style="flex:1;">[ CANCEL ]</button>
-                <button id="do-reject-btn" class="action-btn-hud action-btn-magenta" style="flex:1; justify-content:center;">[ WRONG DETAILS ]</button>
-                <button id="do-verify-btn" class="action-btn-hud action-btn-green" style="flex:1; justify-content:center;">[ VERIFY & MAIL ]</button>
+                <button onclick="closeVerifyModal()" class="modal-close-btn" style="flex:1;">CANCEL</button>
+                <button id="do-reject-btn" class="action-btn-hud action-btn-magenta" style="flex:1; justify-content:center;">WRONG DETAILS</button>
+                <button id="do-verify-btn" class="action-btn-hud action-btn-green" style="flex:1; justify-content:center;">VERIFY & MAIL</button>
             </div>
         </div>
     </div>
 
-    <!-- EDIT TEAM DATA MODAL -->
+    
     <div id="edit-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 850px;">
             <div class="modal-header-hud">
                 <div class="modal-title-hud"><i class="fas fa-edit text-green"></i> EDIT STRIKE TEAM ROSTER</div>
-                <button onclick="closeEditModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <button onclick="closeEditModal()" class="modal-close-btn">✕ CLOSE</button>
             </div>
             <input type="hidden" id="edit-team-db-id">
 
@@ -988,56 +1090,30 @@
                 &gt;_ MEMBERS ROSTER
             </h3>
             <div id="edit-members-container" style="max-height: 420px; overflow-y: auto; padding-right: 5px;">
-                <!-- Dynamically injected member inputs -->
+                
             </div>
 
             <div style="margin-top:25px; border-top: 1px solid var(--border-subtle); padding-top: 20px; display:flex; justify-content:flex-end; gap:12px;">
-                <button onclick="closeEditModal()" class="modal-close-btn">[ CANCEL ]</button>
-                <button type="button" onclick="addNewMember()" class="action-btn-hud action-btn-cyan">[ + ADD MEMBER ]</button>
-                <button id="save-changes-btn" onclick="saveEditChanges()" class="action-btn-hud action-btn-green">[ SAVE CHANGES ]</button>
+                <button onclick="closeEditModal()" class="modal-close-btn">CANCEL</button>
+                <button type="button" onclick="addNewMember()" class="action-btn-hud action-btn-cyan">+ ADD MEMBER</button>
+                <button id="save-changes-btn" onclick="saveEditChanges()" class="action-btn-hud action-btn-green">SAVE CHANGES</button>
             </div>
         </div>
     </div>
 
-    <!-- ACTIVITY LOG MODAL -->
+    
     <div id="log-modal" class="modal-overlay-hud">
         <div class="modal-content-hud" style="max-width: 850px; height: 80vh; display: flex; flex-direction: column;">
-            <div class="modal-header-hud">
+            <div class="modal-header-hud" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="modal-title-hud"><i class="fas fa-list-alt text-cyan"></i> SERVER ACTIVITY AUDIT LOG</div>
-                <button onclick="closeLogModal()" class="modal-close-btn">[ ✕ CLOSE ]</button>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button onclick="closeLogModal()" class="modal-close-btn" style="font-size: 0.8rem; padding: 4px 10px;">✕ CLOSE</button>
+                </div>
             </div>
             <pre id="log-content" style="flex: 1; overflow-y: auto; color: var(--doom-green); font-family: 'Share Tech Mono', monospace; font-size: 0.88rem; background: rgba(0,5,10,0.95); padding: 18px; border: 1px solid var(--border-subtle); border-radius: 6px; white-space: pre-wrap; margin: 0;"></pre>
         </div>
     </div>
 
-    <!-- LOGIN OVERLAY MODAL -->
-    <div id="login-overlay">
-        <div class="login-card-hud">
-            <div class="login-icon-badge">
-                <i class="fas fa-user-shield"></i>
-            </div>
-            <h2 class="login-title-text">ADMIN ACCESS</h2>
-            <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
-
-            <div class="login-field-group">
-                <i class="fas fa-user login-field-icon"></i>
-                <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
-                    onkeypress="handleLoginKey(event)" autocomplete="username">
-            </div>
-
-            <div class="login-field-group">
-                <i class="fas fa-lock login-field-icon"></i>
-                <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
-                    onkeypress="handleLoginKey(event)" autocomplete="current-password">
-            </div>
-
-            <button onclick="checkAdmin()" class="login-submit-btn"> UNLOCK </button>
-        </div>
-    </div>
-
-    <!-- ==========================================
-         ORGANIZING NODES & FOOTER
-         ========================================== -->
     <section class="organizing-nodes-section" id="coordinators">
         <div class="container">
             <div class="section-header">
@@ -1046,14 +1122,14 @@
                 <p class="section-subtitle">Connect directly with student command leads and faculty coordinators.</p>
             </div>
 
-            <!-- TWO-COLUMN ORGANIZERS TABLE GRID -->
+            
             <div class="organizers-table-grid">
-                <!-- STAFF COORDINATORS BLOCK -->
+                
                 <div class="organizer-section-block">
                     <h3 class="organizer-category-title"><i class="fas fa-id-card-alt"></i> STAFF COORDINATORS</h3>
 
                     <div class="organizer-vertical-list">
-                        <!-- Mrs. Anithalakshmi -->
+                        
                         <div class="organizer-person-box hod-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1066,14 +1142,14 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. S Devi -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
-                                    <img src="Devi Mam.jpeg" alt="Mrs. S Devi" class="organizer-person-avatar-img">
+                                    <img src="Devi Mam.jpeg" alt="Mrs. Devi" class="organizer-person-avatar-img">
                                 </div>
                                 <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Mrs. S Devi</div>
+                                    <div class="organizer-person-name">Mrs. Devi</div>
                                     <div class="organizer-person-role">Staff Coordinator</div>
                                 </div>
                             </div>
@@ -1082,33 +1158,33 @@
                             </a>
                         </div>
 
-                        <!-- Mrs. G Ramya -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
-                                    <img src="Ramya Mam.jpeg" alt="Mrs. G Ramya" class="organizer-person-avatar-img">
+                                    <img src="Ramya Mam.jpeg" alt="Mrs. Ramya" class="organizer-person-avatar-img">
                                 </div>
                                 <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Mrs. G Ramya</div>
+                                    <div class="organizer-person-name">Mrs. Ramya</div>
                                     <div class="organizer-person-role">Assistant Professor</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Mrs. S Rama Mathrasi -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
-                                    <img src="Rama Mam.jpeg" alt="Mrs. S Rama Mathrasi" class="organizer-person-avatar-img">
+                                    <img src="Rama Mam.jpeg" alt="Mrs. Rama Mathrasi" class="organizer-person-avatar-img">
                                 </div>
                                 <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Mrs. S Rama Mathrasi</div>
+                                    <div class="organizer-person-name">Mrs. Rama Mathrasi</div>
                                     <div class="organizer-person-role">Assistant Professor</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Mrs. Aswini -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1121,7 +1197,7 @@
                             </div>
                         </div>
 
-                        <!-- Mr. Kalaimani -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1134,7 +1210,7 @@
                             </div>
                         </div>
 
-                        <!-- Mrs. Keerthana -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1149,12 +1225,12 @@
                     </div>
                 </div>
 
-                <!-- STUDENT COORDINATORS BLOCK -->
+                
                 <div class="organizer-section-block">
                     <h3 class="organizer-category-title"><i class="fas fa-user-shield"></i> STUDENT COORDINATORS</h3>
 
                     <div class="organizer-vertical-list">
-                        <!-- N Ashish -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1162,7 +1238,7 @@
                                 </div>
                                 <div class="organizer-person-details">
                                     <div class="organizer-person-name">N Ashish</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
+                                    <div class="organizer-person-role">Overall Coordinator</div>
                                 </div>
                             </div>
                             <a href="tel:+918122079494" class="organizer-person-phone">
@@ -1170,7 +1246,7 @@
                             </a>
                         </div>
 
-                        <!-- Madhumitha Narayanan -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1178,7 +1254,7 @@
                                 </div>
                                 <div class="organizer-person-details">
                                     <div class="organizer-person-name">Madhumitha Narayanan</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
+                                    <div class="organizer-person-role">Overall Coordinator</div>
                                 </div>
                             </div>
                             <a href="tel:+917305456171" class="organizer-person-phone">
@@ -1186,55 +1262,7 @@
                             </a>
                         </div>
 
-                        <!-- M Jesin Milesh -->
-                        <div class="organizer-person-box hud-panel">
-                            <div class="organizer-person-left">
-                                <div class="organizer-person-avatar-wrap">
-                                    <img src="Jesin Milesh.png" alt="M Jesin Milesh" class="organizer-person-avatar-img">
-                                </div>
-                                <div class="organizer-person-details">
-                                    <div class="organizer-person-name">M Jesin Milesh</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
-                                </div>
-                            </div>
-                            <a href="tel:+917418431480" class="organizer-person-phone">
-                                <i class="fas fa-phone-alt"></i> +91 74184 31480
-                            </a>
-                        </div>
-
-                        <!-- Jeswanth V -->
-                        <div class="organizer-person-box hud-panel">
-                            <div class="organizer-person-left">
-                                <div class="organizer-person-avatar-wrap">
-                                    <img src="Jeswanth.jpeg" alt="Jeswanth V" class="organizer-person-avatar-img">
-                                </div>
-                                <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Jeswanth V</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
-                                </div>
-                            </div>
-                            <a href="tel:+917200355299" class="organizer-person-phone">
-                                <i class="fas fa-phone-alt"></i> +91 72003 55299
-                            </a>
-                        </div>
-
-                        <!-- Libinesh R U -->
-                        <div class="organizer-person-box hud-panel">
-                            <div class="organizer-person-left">
-                                <div class="organizer-person-avatar-wrap">
-                                    <img src="Libinesh.png" alt="Libinesh R U" class="organizer-person-avatar-img">
-                                </div>
-                                <div class="organizer-person-details">
-                                    <div class="organizer-person-name">Libinesh R U</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
-                                </div>
-                            </div>
-                            <a href="tel:+919514159632" class="organizer-person-phone">
-                                <i class="fas fa-phone-alt"></i> +91 95141 59632
-                            </a>
-                        </div>
-
-                        <!-- Amuthini K -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1242,7 +1270,7 @@
                                 </div>
                                 <div class="organizer-person-details">
                                     <div class="organizer-person-name">Amuthini K</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
+                                    <div class="organizer-person-role">Overall CTF Tech Head</div>
                                 </div>
                             </div>
                             <a href="tel:+916383898745" class="organizer-person-phone">
@@ -1250,7 +1278,7 @@
                             </a>
                         </div>
 
-                        <!-- Niranjan M -->
+                        
                         <div class="organizer-person-box hud-panel">
                             <div class="organizer-person-left">
                                 <div class="organizer-person-avatar-wrap">
@@ -1258,63 +1286,68 @@
                                 </div>
                                 <div class="organizer-person-details">
                                     <div class="organizer-person-name">Niranjan M</div>
-                                    <div class="organizer-person-role">Student Coordinator</div>
+                                    <div class="organizer-person-role">CTF Head</div>
                                 </div>
                             </div>
                             <a href="tel:+918667365915" class="organizer-person-phone">
                                 <i class="fas fa-phone-alt"></i> +91 86673 65915
                             </a>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- REGISTRATION LEADS BLOCK -->
-            <div class="organizer-section-block" style="margin-bottom: 0;">
-                <h3 class="organizer-category-title"><i class="fas fa-clipboard-check"></i> REGISTRATION LEADS</h3>
-
-                <div class="organizer-vertical-list">
-                    <!-- Mr. Harish -->
-                    <div class="organizer-person-box hud-panel">
-                        <div class="organizer-person-left">
-                            <div class="organizer-person-avatar-wrap">
-                                <div class="organizer-person-avatar-icon">
-                                    <i class="fas fa-user-shield"></i>
+                        
+                        <div class="organizer-person-box hud-panel">
+                            <div class="organizer-person-left">
+                                <div class="organizer-person-avatar-wrap">
+                                    <img src="Jesin Milesh.png" alt="M Jesin Milesh" class="organizer-person-avatar-img">
+                                </div>
+                                <div class="organizer-person-details">
+                                    <div class="organizer-person-name">M Jesin Milesh</div>
+                                    <div class="organizer-person-role">Registration & Technical Head</div>
                                 </div>
                             </div>
-                            <div class="organizer-person-details">
-                                <div class="organizer-person-name">Mr. Harish</div>
-                                <div class="organizer-person-role">Security Analyst / Registration Lead</div>
-                            </div>
+                            <a href="tel:+917418431480" class="organizer-person-phone">
+                                <i class="fas fa-phone-alt"></i> +91 74184 31480
+                            </a>
                         </div>
-                        <a href="tel:+916380807046" class="organizer-person-phone">
-                            <i class="fas fa-phone-alt"></i> +91 63808 07046
-                        </a>
-                    </div>
 
-                    <!-- Ms. Ramya -->
-                    <div class="organizer-person-box hud-panel">
-                        <div class="organizer-person-left">
-                            <div class="organizer-person-avatar-wrap">
-                                <div class="organizer-person-avatar-icon">
-                                    <i class="fas fa-user-shield"></i>
+                        
+                        <div class="organizer-person-box hud-panel">
+                            <div class="organizer-person-left">
+                                <div class="organizer-person-avatar-wrap">
+                                    <img src="Libinesh.png" alt="Libinesh R U" class="organizer-person-avatar-img">
+                                </div>
+                                <div class="organizer-person-details">
+                                    <div class="organizer-person-name">Libinesh R U</div>
+                                    <div class="organizer-person-role">Marketing Head</div>
                                 </div>
                             </div>
-                            <div class="organizer-person-details">
-                                <div class="organizer-person-name">Ms. Ramya</div>
-                                <div class="organizer-person-role">Security Analyst / Registration Lead</div>
-                            </div>
+                            <a href="tel:+919514159632" class="organizer-person-phone">
+                                <i class="fas fa-phone-alt"></i> +91 95141 59632
+                            </a>
                         </div>
-                        <a href="tel:+919025330718" class="organizer-person-phone">
-                            <i class="fas fa-phone-alt"></i> +91 90253 30718
-                        </a>
+
+                        
+                        <div class="organizer-person-box hud-panel">
+                            <div class="organizer-person-left">
+                                <div class="organizer-person-avatar-wrap">
+                                    <img src="Jeswanth.jpeg" alt="Jeshwanth V" class="organizer-person-avatar-img">
+                                </div>
+                                <div class="organizer-person-details">
+                                    <div class="organizer-person-name">Jeshwanth V</div>
+                                    <div class="organizer-person-role">Marketing Head</div>
+                                </div>
+                            </div>
+                            <a href="tel:+917200355299" class="organizer-person-phone">
+                                <i class="fas fa-phone-alt"></i> +91 72003 55299
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
+    
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -1355,39 +1388,102 @@
             </div>
         </div>
     </footer>
+    </div>
+    <!-- END ZERO-KNOWLEDGE GATED ROOT -->
 
-    <!-- ==========================================
-         ADMINISTRATIVE JAVASCRIPT LOGIC
-         ========================================== -->
+    
     <script>
-        // API Base URL Resolution
-        const isLocal = window.location.protocol === 'file:' ||
-            window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1';
+        
+        let API_BASE_URL = '';
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const port = window.location.port;
 
-        const API_BASE_URL = (typeof window.API_BASE_URL !== 'undefined' && window.API_BASE_URL) ? window.API_BASE_URL : (isLocal ? 'http://localhost:3000' : '');
+        if (protocol === 'file:') {
+            API_BASE_URL = 'http://localhost:3000';
+        } else if (port && port !== '3000' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+            API_BASE_URL = `http://${hostname}:3000`;
+        } else {
+            API_BASE_URL = '';
+        }
         console.log("Admin Panel API_BASE_URL:", API_BASE_URL);
 
-        // Active State Tracking
+        
         window.currentStatusFilter = 'ALL_STATUS';
         window.currentEventFilter = 'ALL';
 
-        // JWT Token Injection
+        
+        let inMemoryAdminToken = null;
+        let inMemoryAdminUser = null;
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT_MS = 15 * 60 * 1000; // 15 minutes auto-lock
+
+        function resetInactivityTimer() {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            if (inMemoryAdminToken) {
+                inactivityTimer = setTimeout(() => {
+                    inMemoryAdminToken = null;
+                    inMemoryAdminUser = null;
+                    document.body.classList.remove('admin-authenticated');
+                    const authRoot = document.getElementById('admin-authenticated-root');
+                    if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
+                    const overlay = document.getElementById('login-overlay');
+                    if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+                    const passEl = document.getElementById('admin-pass');
+                    if (passEl) passEl.value = '';
+                    showCustomAlert('SECURITY TIMEOUT: Terminal auto-locked after 15 minutes of inactivity.');
+                }, INACTIVITY_LIMIT_MS);
+            }
+        }
+
+        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer, { passive: true });
+        });
+
+        // Anti-Tamper Security Watchdog:
+        // If an attacker tampers with the overlay in DevTools before authenticating, trigger fail-closed wipe!
+        const securityWatchdog = new MutationObserver(() => {
+            const overlay = document.getElementById('login-overlay');
+            const authRoot = document.getElementById('admin-authenticated-root');
+            if (!inMemoryAdminToken) {
+                const overlayGone = !overlay || overlay.style.display === 'none' || overlay.style.visibility === 'hidden';
+                const rootExposed = authRoot && (authRoot.style.display !== 'none' || document.body.classList.contains('admin-authenticated'));
+                if (overlayGone || rootExposed) {
+                    console.error('[SECURITY TRIPWIRE] Unauthorized DOM mutation detected!');
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#03040a;color:#ff3e62;font-family:monospace;text-align:center;padding:20px;"><div><h1 style="font-size:2rem;letter-spacing:2px;">[SECURITY TRIPWIRE ACTIVATED]</h1><p style="color:#94a3b8;font-size:1rem;margin-top:10px;">Unauthorized DOM mutation detected. Access terminated.</p></div></div>';
+                    setTimeout(() => { window.location.href = '/'; }, 1500);
+                }
+            }
+        });
+        securityWatchdog.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+        
         const originalFetch = window.fetch;
         window.fetch = async function () {
             let [resource, config] = arguments;
-            if (typeof resource === 'string' && resource.includes('/api/admin/') && !resource.includes('/login')) {
+            if (typeof resource === 'string' && (resource.includes('/api/admin/') || resource.includes('/api/team/')) && !resource.includes('/login')) {
                 if (!config) config = {};
                 if (!config.headers) config.headers = {};
-                const token = sessionStorage.getItem('admin_token');
-                if (token) {
-                    config.headers['Authorization'] = 'Bearer ' + token;
+                if (inMemoryAdminToken) {
+                    config.headers['Authorization'] = 'Bearer ' + inMemoryAdminToken;
                 }
             }
-            return await originalFetch(resource, config);
+            const res = await originalFetch(resource, config);
+            if (res && res.status === 401 && inMemoryAdminToken) {
+                inMemoryAdminToken = null;
+                inMemoryAdminUser = null;
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                document.body.classList.remove('admin-authenticated');
+                const authRoot = document.getElementById('admin-authenticated-root');
+                if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+                showCustomAlert('SESSION EXPIRED: Please authenticate again.');
+            }
+            return res;
         };
 
-        // Custom Alerts System
+        
         window.currentAlertCallback = null;
         window.closeCustomAlert = function () {
             const overlay = document.getElementById('custom-alert-overlay');
@@ -1405,12 +1501,12 @@
                 overlay = document.createElement('div');
                 overlay.id = 'custom-alert-overlay';
                 overlay.className = 'modal-overlay-hud';
-                overlay.style.zIndex = '100000';
+                overlay.style.zIndex = '2147483647';
                 overlay.innerHTML = `
                     <div class="modal-content-hud" style="max-width: 420px; text-align: center;">
                         <h2 style="color: var(--doom-green); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 18px; font-family: var(--font-brand); font-size: 1.2rem;">&gt;_ SYSTEM_ALERT</h2>
                         <div id="custom-alert-msg" style="color: #fff; margin-bottom: 24px; font-family: var(--font-mono); font-size: 1.05rem;"></div>
-                        <button onclick="window.closeCustomAlert()" class="action-btn-hud action-btn-green" style="width: 100%; justify-content: center;">[ ACKNOWLEDGE ]</button>
+                        <button onclick="window.closeCustomAlert()" class="action-btn-hud action-btn-green" style="width: 100%; justify-content: center;">ACKNOWLEDGE</button>
                     </div>
                 `;
                 document.body.appendChild(overlay);
@@ -1437,7 +1533,7 @@
                 overlay = document.createElement('div');
                 overlay.id = 'custom-confirm-overlay';
                 overlay.className = 'modal-overlay-hud';
-                overlay.style.zIndex = '100001';
+                overlay.style.zIndex = '2147483647';
                 document.body.appendChild(overlay);
             }
             overlay.innerHTML = `
@@ -1445,31 +1541,37 @@
                     <h2 style="color: var(--deep-magenta); border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 18px; font-family: var(--font-brand); font-size: 1.3rem;">&gt;_ DANGER_ZONE</h2>
                     <div id="custom-confirm-msg" style="color: #fff; margin-bottom: 24px; font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.5;">${message}</div>
                     <div style="display: flex; gap: 12px; justify-content: center;">
-                        <button onclick="window.closeCustomConfirm()" class="modal-close-btn" style="flex: 1;">[ CANCEL ]</button>
-                        <button onclick="if(window.currentConfirmCallback) window.currentConfirmCallback(); window.closeCustomConfirm();" class="action-btn-hud action-btn-magenta" style="flex: 1; justify-content: center;">[ ${btnText} ]</button>
+                        <button onclick="window.closeCustomConfirm()" class="modal-close-btn" style="flex: 1;">CANCEL</button>
+                        <button onclick="if(window.currentConfirmCallback) window.currentConfirmCallback(); window.closeCustomConfirm();" class="action-btn-hud action-btn-magenta" style="flex: 1; justify-content: center;">${btnText}</button>
                     </div>
                 </div>
             `;
             overlay.style.display = 'flex';
         };
 
-        // Authentication & Login
+        
         async function checkAdmin() {
-            const u = document.getElementById('admin-user').value.trim();
-            const p = document.getElementById('admin-pass').value.trim();
+            const userEl = document.getElementById('admin-user');
+            const passEl = document.getElementById('admin-pass');
+            const u = userEl ? userEl.value.trim() : '';
+            const p = passEl ? passEl.value.trim() : '';
             const btn = document.querySelector('.login-submit-btn');
+
             if (!u || !p) {
                 showCustomAlert('ACCESS DENIED: Please enter both username and password.');
                 return;
             }
-            const originalText = btn.innerText;
 
-            btn.innerText = "AUTHENTICATING...";
-            btn.disabled = true;
+            const originalText = btn ? btn.innerText : 'UNLOCK';
+            if (btn) {
+                btn.innerText = "AUTHENTICATING...";
+                btn.disabled = true;
+            }
 
             let success = false;
             let authenticatedUser = 'Administrator';
             let sessionToken = '';
+            let errorMessage = 'Invalid Username or Password.';
 
             try {
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
@@ -1478,64 +1580,132 @@
                     body: JSON.stringify({ username: u, password: p })
                 });
 
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        success = true;
-                        authenticatedUser = data.user;
-                        sessionToken = data.token;
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.success) {
+                    success = true;
+                    authenticatedUser = data.user;
+                    sessionToken = data.token;
+                } else {
+                    if (data.error) {
+                        errorMessage = data.error;
+                    } else if (res.status === 429) {
+                        errorMessage = 'Too many login attempts. Please wait a few minutes before trying again.';
+                    } else if (res.status) {
+                        errorMessage = `HTTP ${res.status}: Failed to authenticate with server.`;
                     }
                 }
             } catch (e) {
-                console.warn("Server auth attempt failed, checking client credentials:", e);
-            }
-
-            // Fallback verification for local / offline mode
-            if (!success) {
-                const cleanU = u.trim().toLowerCase();
-                const cleanP = p.trim();
-                const localAdmins = {
-                    "Administrator": ["Administrator@Beta2026"],
-                    "Jesin Milesh": ["Jesin@Beta2026"],
-                    "Ashish": ["Ashish@Beta2026"]
-                };
-
-                const matchedKey = Object.keys(localAdmins).find(
-                    key => key.toLowerCase() === cleanU
-                );
-
-                const validPasses = matchedKey ? localAdmins[matchedKey] : [];
-                if (validPasses.includes(cleanP)) {
-                    success = true;
-                    authenticatedUser = matchedKey;
-                    sessionToken = 'local_session_' + Date.now();
-                }
+                console.warn("Backend authentication request failed:", e);
+                errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
             }
 
             if (success) {
-                document.getElementById('login-overlay').style.display = 'none';
+                inMemoryAdminToken = sessionToken;
+                inMemoryAdminUser = authenticatedUser;
+                if (passEl) passEl.value = '';
+
+                document.body.classList.add('admin-authenticated');
+                const authRoot = document.getElementById('admin-authenticated-root');
+                if (authRoot) {
+                    authRoot.style.removeProperty('display');
+                }
+
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) {
+                    overlay.style.setProperty('display', 'none', 'important');
+                }
+
+                resetInactivityTimer();
+
+                if (authenticatedUser === 'Administrator') {
+                    
+                    
+                    
+                    
+                    const statsCont = document.getElementById('admin-stats-container');
+                    if (statsCont) statsCont.style.display = 'none';
+                    const ctrlCont = document.getElementById('admin-controls-container');
+                    if (ctrlCont) ctrlCont.style.display = 'none';
+                    const tblCont = document.getElementById('admin-table-container');
+                    if (tblCont) tblCont.style.display = 'none';
+                    const coordSec = document.getElementById('coordinators');
+                    if (coordSec) coordSec.style.display = 'none';
+
+                    
+                    const heroTitle = document.getElementById('admin-hero-title');
+                    if (heroTitle) heroTitle.innerText = '>_ HIGH COMMAND AUDIT & SURVEILLANCE CONSOLE';
+                    const heroDesc = document.getElementById('admin-hero-desc');
+                    if (heroDesc) heroDesc.innerText = 'Exclusive Real-time Activity Logs: Operative Access, Logins, and Old ➔ New Data Modifications';
+                    const heroBadge = document.getElementById('admin-hero-badge');
+                    if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ HIGH COMMAND EXCLUSIVE • AUDIT LOG SYSTEM ]';
+
+                    
+                    const actDash = document.getElementById('administrator-activity-dashboard');
+                    if (actDash) actDash.style.display = 'block';
+
+                    
+                    if (window.adminDataInterval) {
+                        clearInterval(window.adminDataInterval);
+                        window.adminDataInterval = null;
+                    }
+
+                    
+                    loadAdminActivityLogs();
+                    if (window.adminActivityInterval) clearInterval(window.adminActivityInterval);
+                    window.adminActivityInterval = setInterval(loadAdminActivityLogs, 3000);
+                } else {
+                    
+                    
+                    
+                    
+                    const statsCont = document.getElementById('admin-stats-container');
+                    if (statsCont) statsCont.style.display = 'grid';
+                    const ctrlCont = document.getElementById('admin-controls-container');
+                    if (ctrlCont) ctrlCont.style.display = 'block';
+                    const tblCont = document.getElementById('admin-table-container');
+                    if (tblCont) tblCont.style.display = 'block';
+                    const coordSec = document.getElementById('coordinators');
+                    if (coordSec) coordSec.style.display = 'block';
+
+                    const heroTitle = document.getElementById('admin-hero-title');
+                    if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
+                    const heroDesc = document.getElementById('admin-hero-desc');
+                    if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
+                    const heroBadge = document.getElementById('admin-hero-badge');
+                    if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
+
+                    
+                    const actDash = document.getElementById('administrator-activity-dashboard');
+                    if (actDash) actDash.style.display = 'none';
+
+                    if (window.adminActivityInterval) {
+                        clearInterval(window.adminActivityInterval);
+                        window.adminActivityInterval = null;
+                    }
+
+                    const logBtn = document.getElementById('activity-log-btn');
+                    if (logBtn) logBtn.style.display = 'none';
+
+                    const formatBtn = document.getElementById('format-btn');
+                    if (formatBtn) formatBtn.style.display = 'inline-flex';
+
+                    loadData();
+
+                    if (!window.adminDataInterval) {
+                        window.adminDataInterval = setInterval(loadData, 6000);
+                    }
+                }
+
                 showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
-
-                if (sessionToken) {
-                    sessionStorage.setItem('admin_token', sessionToken);
-                    sessionStorage.setItem('admin_user', authenticatedUser);
-                }
-
-                const logBtn = document.getElementById('activity-log-btn');
-                if (logBtn) {
-                    logBtn.style.display = (authenticatedUser === 'Administrator') ? 'inline-flex' : 'none';
-                }
-
-                const formatBtn = document.getElementById('format-btn');
-                if (formatBtn) formatBtn.style.display = 'inline-flex';
-
-                loadData();
             } else {
-                showCustomAlert('ACCESS DENIED: Invalid Username or Password.');
+                showCustomAlert('ACCESS DENIED: ' + errorMessage);
             }
 
-            btn.innerText = originalText;
-            btn.disabled = false;
+            if (btn) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         function handleLoginKey(event) {
@@ -1544,12 +1714,77 @@
             }
         }
 
-        // Render Table & Metrics Dashboard
+        function logoutAdmin() {
+            
+            const tokenToLogout = inMemoryAdminToken;
+            const userToLogout = inMemoryAdminUser;
+            if (tokenToLogout || userToLogout) {
+                fetch(`${API_BASE_URL}/api/admin/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
+                    },
+                    body: JSON.stringify({ username: userToLogout || 'Admin' }),
+                    keepalive: true
+                }).catch(() => {});
+            }
+
+            
+            inMemoryAdminToken = null;
+            inMemoryAdminUser = null;
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            if (window.adminDataInterval) {
+                clearInterval(window.adminDataInterval);
+                window.adminDataInterval = null;
+            }
+            if (window.adminActivityInterval) {
+                clearInterval(window.adminActivityInterval);
+                window.adminActivityInterval = null;
+            }
+
+            document.body.classList.remove('admin-authenticated');
+            const authRoot = document.getElementById('admin-authenticated-root');
+            if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
+
+            
+            const statsCont = document.getElementById('admin-stats-container');
+            if (statsCont) statsCont.style.display = 'grid';
+            const ctrlCont = document.getElementById('admin-controls-container');
+            if (ctrlCont) ctrlCont.style.display = 'block';
+            const tblCont = document.getElementById('admin-table-container');
+            if (tblCont) tblCont.style.display = 'block';
+            const coordSec = document.getElementById('coordinators');
+            if (coordSec) coordSec.style.display = 'block';
+            const actDash = document.getElementById('administrator-activity-dashboard');
+            if (actDash) actDash.style.display = 'none';
+
+            const heroTitle = document.getElementById('admin-hero-title');
+            if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
+            const heroDesc = document.getElementById('admin-hero-desc');
+            if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
+            const heroBadge = document.getElementById('admin-hero-badge');
+            if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
+
+            const tbody = document.getElementById('teams-table-body');
+            if (tbody) tbody.innerHTML = '';
+            const userIn = document.getElementById('admin-user');
+            const passIn = document.getElementById('admin-pass');
+            if (userIn) userIn.value = '';
+            if (passIn) passIn.value = '';
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) {
+                overlay.style.setProperty('display', 'flex', 'important');
+            }
+            showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
+        }
+
+        
         function renderTable(data) {
             const tbody = document.querySelector('#teams-table tbody');
             tbody.innerHTML = '';
 
-            // Update Header & Metric Cards
+            
             if (window.teamsData) {
                 const total = window.teamsData.length;
                 const verified = window.teamsData.filter(t => parseInt(t.payment_verified, 10) === 1).length;
@@ -1578,12 +1813,11 @@
 
             data.forEach(t => {
                 const leader = t.members.find(m => m.role === 'LEADER') || t.members[0];
-                const waLink = leader && leader.whatsapp ? `<a href="https://wa.me/${leader.whatsapp}" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> [WA]</a>` : '';
+                const waLink = leader && leader.whatsapp ? `<a href="https://wa.me/${leader.whatsapp}" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WA</a>` : '';
 
                 let proofHtml = '<span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem;">No File</span>';
-                if (t.payment_proof && t.payment_proof !== 'NOT_PROVIDED') {
-                    const proofUrl = `${API_BASE_URL}${t.payment_proof}`;
-                    proofHtml = `<a href="${proofUrl}" target="_blank" style="color: var(--doom-green); font-family: var(--font-mono); font-weight: bold; text-decoration: none;"><i class="fas fa-eye"></i> [ VIEW ]</a>`;
+                if ((t.payment_proof && t.payment_proof !== 'NOT_PROVIDED') || t.payment_proof_data) {
+                    proofHtml = `<button onclick="openVerifyModal('${t.team_id}')" style="background:none; border:none; color: var(--doom-green); font-family: var(--font-mono); font-weight: bold; cursor: pointer; text-decoration: none;"><i class="fas fa-eye"></i> VIEW</button>`;
                 } else if (t.transaction_id) {
                     proofHtml = `<span style="color: var(--doom-gold); font-family: var(--font-mono); font-size: 0.85rem;"><i class="fas fa-receipt"></i> UTR Recorded</span>`;
                 }
@@ -1593,33 +1827,44 @@
                     const isLeader = m.role === 'LEADER';
                     membersHtml += `
                         <div class="member-row-card">
-                            <strong style="color: #ffffff;">${m.name}</strong> 
-                            <span class="member-role-badge ${isLeader ? 'leader' : ''}">${m.role || 'MEMBER'}</span><br>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">
-                                <i class="fas fa-phone-alt" style="font-size:0.75rem;"></i> ${m.phone || 'N/A'} | 
-                                <i class="fas fa-envelope" style="font-size:0.75rem;"></i> <span style="color: var(--electric-blue);">${m.email || 'N/A'}</span><br>
-                                <i class="fas fa-university" style="font-size:0.75rem;"></i> ${m.college || 'N/A'} (${m.district || 'N/A'})
-                            </span>
+                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px;">
+                                <strong style="color: #ffffff;">${m.name}</strong> 
+                                <span class="member-role-badge ${isLeader ? 'leader' : ''}">${m.role || 'MEMBER'}</span>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 0.85rem; display: flex; flex-direction: column; gap: 3px; margin-top: 4px;">
+                                <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <i class="fas fa-phone-alt" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center;"></i> 
+                                    <span>${m.phone || 'N/A'}</span>
+                                </div>
+                                <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--electric-blue); white-space: nowrap;">
+                                    <i class="fas fa-envelope" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center; color: var(--text-muted);"></i> 
+                                    <span style="color: var(--electric-blue); white-space: nowrap;">${m.email || 'N/A'}</span>
+                                </div>
+                                <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <i class="fas fa-university" style="font-size:0.75rem; flex-shrink: 0; width: 14px; text-align: center;"></i> 
+                                    <span>${m.college || 'N/A'} (${m.district || 'N/A'})</span>
+                                </div>
+                            </div>
                         </div>`;
                 });
 
-                // Status Button Logic
+                
                 const verifiedStatus = parseInt(t.payment_verified, 10);
                 let checkBtnHtml = '';
                 if (!isNaN(verifiedStatus) && verifiedStatus === 1) {
                     checkBtnHtml = `<span style="color: var(--doom-green); font-weight: bold; font-family: var(--font-mono); font-size: 0.85rem;"><i class="fas fa-check-circle"></i> VERIFIED</span><br>
                                     <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; justify-content:center;">
-                                        <button onclick="downloadODLetter('${t.team_id}')" class="action-btn-hud action-btn-green" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-file-pdf"></i> [ OD PDF ]</button>
-                                        <button onclick="resendPaymentVerification('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-paper-plane"></i> [ RESEND ]</button>
+                                        <button onclick="downloadODLetter('${t.team_id}')" class="action-btn-hud action-btn-green" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-file-pdf"></i> OD PDF</button>
+                                        <button onclick="resendPaymentVerification('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-paper-plane"></i> RESEND</button>
                                     </div>`;
                 } else if (verifiedStatus === -1) {
                     checkBtnHtml = `<span style="color: var(--deep-magenta); font-weight: bold; font-family: var(--font-mono); font-size: 0.85rem;"><i class="fas fa-exclamation-triangle"></i> WRONG DETAILS</span><br>
-                                     <button onclick="performRestore('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 4px 8px; font-size: 0.75rem; margin-top: 6px;">[ RESTORE ]</button>`;
+                                     <button onclick="performRestore('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 4px 8px; font-size: 0.75rem; margin-top: 6px;">RESTORE</button>`;
                 } else {
-                    checkBtnHtml = `<button onclick="openVerifyModal('${t.team_id}')" class="action-btn-hud action-btn-green" style="padding: 6px 12px; font-size: 0.8rem;">[ CHECK ]</button>`;
+                    checkBtnHtml = `<button onclick="openVerifyModal('${t.team_id}')" class="action-btn-hud action-btn-green" style="padding: 6px 12px; font-size: 0.8rem;">VERIFY</button>`;
                 }
 
-                // Event Badge Color
+                
                 const evStr = t.event || 'N/A';
 
                 const tr = document.createElement('tr');
@@ -1636,19 +1881,19 @@
                     </td>
                     <td>${membersHtml}</td>
                     <td style="text-align:center;">${checkBtnHtml}</td>
-                    <td><button onclick="openEditModal('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 5px 10px; font-size:0.8rem;">[ EDIT ]</button></td>
-                    <td><button onclick="deleteTeam('${t.team_id}')" class="action-btn-hud action-btn-magenta" style="padding: 5px 10px; font-size:0.8rem;">[ DELETE ]</button></td>
+                    <td><button onclick="openEditModal('${t.team_id}')" class="action-btn-hud action-btn-cyan" style="padding: 5px 10px; font-size:0.8rem;">EDIT</button></td>
+                    <td><button onclick="deleteTeam('${t.team_id}')" class="action-btn-hud action-btn-magenta" style="padding: 5px 10px; font-size:0.8rem;">DELETE</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Filtering Pipeline
+        
         function applyFilters() {
             if (!window.teamsData) return;
             let filtered = [...window.teamsData];
 
-            // 1. Apply Status Filter
+            
             if (window.currentStatusFilter === 'READY') {
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === 1);
             } else if (window.currentStatusFilter === 'STANDBY') {
@@ -1659,7 +1904,7 @@
                 filtered = filtered.filter(t => parseInt(t.payment_verified, 10) === -1);
             }
 
-            // 2. Apply Event Filter
+            
             if (window.currentEventFilter !== 'ALL') {
                 const evKey = window.currentEventFilter.toLowerCase();
                 if (evKey === 'ctf') {
@@ -1681,7 +1926,7 @@
                 }
             }
 
-            // 3. Apply Search Query
+            
             const query = document.getElementById('admin-search-input').value.toLowerCase().trim();
             if (query) {
                 filtered = filtered.filter(t => {
@@ -1728,18 +1973,33 @@
                 const res = await fetch(`${API_BASE_URL}/api/admin/data`);
                 window.teamsData = await res.json();
             } catch (e) {
-                console.error("Error loading data:", e);
-                return;
+                console.warn("Error loading data from server:", e);
+                if (!window.teamsData) window.teamsData = [];
             }
             applyFilters();
         }
 
-        // Verify Modal Logic
+        
         function openVerifyModal(teamId) {
             const team = window.teamsData.find(t => t.team_id === teamId);
             if (!team) return;
 
-            const proofUrl = team.payment_proof ? `${API_BASE_URL}${team.payment_proof}` : null;
+            let proofUrl = null;
+            if (team.payment_proof_data) {
+                proofUrl = team.payment_proof_data;
+            } else if (team.payment_proof && team.payment_proof !== 'NOT_PROVIDED') {
+                const tokenParam = inMemoryAdminToken ? `?token=${encodeURIComponent(inMemoryAdminToken)}` : '';
+                if (team.payment_proof.startsWith('data:')) {
+                    proofUrl = team.payment_proof;
+                } else if (team.payment_proof.startsWith('/uploads/')) {
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}${tokenParam}`;
+                } else if (team.payment_proof.startsWith('/')) {
+                    proofUrl = `${API_BASE_URL}${team.payment_proof}${tokenParam}`;
+                } else {
+                    proofUrl = `${API_BASE_URL}/uploads/${team.payment_proof}${tokenParam}`;
+                }
+            }
+
             document.getElementById('verify-team-id').innerText = team.team_id;
             document.getElementById('verify-utr').innerText = team.transaction_id || "NOT PROVIDED";
 
@@ -1749,9 +2009,15 @@
                 const img = document.createElement('img');
                 img.src = proofUrl;
                 img.style.maxWidth = "100%";
-                img.style.maxHeight = "350px";
+                img.style.maxHeight = "420px";
+                img.style.objectFit = "contain";
+                img.style.display = "block";
+                img.style.margin = "0 auto";
                 img.style.borderRadius = "6px";
                 img.style.border = "1.5px solid var(--doom-green)";
+                img.onerror = () => {
+                    imgContainer.innerHTML = `<span style="color:var(--deep-magenta); font-family:var(--font-mono); font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> FILE EXPIRED / NOT FOUND ON DISK</span>`;
+                };
                 imgContainer.appendChild(img);
             } else {
                 imgContainer.innerHTML = `<span style="color:var(--deep-magenta); font-family:var(--font-mono); font-weight:bold;">NO PAYMENT PROOF UPLOADED YET</span>`;
@@ -1766,28 +2032,265 @@
             document.getElementById('verify-modal').style.display = 'none';
         }
 
-        async function openLogModal() {
-            const modal = document.getElementById('log-modal');
-            const content = document.getElementById('log-content');
-            content.innerText = "Connecting to server activity log stream...";
-            modal.style.display = 'flex';
+        
+        
+        
+        let rawActivityLogs = [];
+        let currentActivityLogFilter = 'ALL';
+
+        async function loadAdminActivityLogs() {
+            const stream = document.getElementById('admin-activity-log-stream');
+            const token = inMemoryAdminToken;
+            if (!token) return;
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`);
+                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 if (res.ok) {
                     const data = await res.json();
-                    content.innerText = data.log || "[SYSTEM AUDIT LOG]\nNo activity recorded yet.";
-                } else {
-                    const errData = await res.json().catch(() => ({}));
-                    content.innerText = "SYSTEM AUDIT ERROR (" + res.status + "): " + (errData.error || "Access Denied");
+                    if (data && data.log) {
+                        const lines = data.log.split('\n').map(l => l.trim()).filter(Boolean);
+                        rawActivityLogs = lines;
+                        renderActivityLogFeed();
+                        return;
+                    }
+                } else if (res.status === 403) {
+                    if (stream) stream.innerHTML = `<div style="color:var(--deep-magenta); padding:30px; text-align:center; font-family:var(--font-mono);"><i class="fas fa-lock" style="font-size:1.8rem; margin-bottom:10px; display:block;"></i> ACCESS DENIED: High Command Administrator clearance required.</div>`;
+                    return;
                 }
             } catch (e) {
-                content.innerText = "OFFLINE MODE / ERROR: " + e.message;
+                console.warn('Error loading activity logs:', e);
+            }
+
+            if (rawActivityLogs.length === 0 && stream) {
+                const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+                rawActivityLogs = [`[${now} IST] ADMIN LOGIN: Operative "${inMemoryAdminUser || 'Administrator'}" logged into Admin Console`];
+                renderActivityLogFeed();
             }
         }
 
+        window.filterActivityLogs = function(category, btnEl) {
+            currentActivityLogFilter = category;
+            const buttons = document.querySelectorAll('.filter-pills .filter-btn');
+            buttons.forEach(b => b.classList.remove('active', 'active-gold', 'active-cyan'));
+            if (btnEl) btnEl.classList.add('active');
+            renderActivityLogFeed();
+        };
+
+        function renderActivityLogFeed() {
+            const stream = document.getElementById('admin-activity-log-stream');
+            const counter = document.getElementById('admin-log-total-count');
+            const searchInput = document.getElementById('admin-log-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            if (!stream) return;
+
+            let filtered = [...rawActivityLogs];
+
+            
+            if (currentActivityLogFilter === 'LOGIN') {
+                filtered = filtered.filter(l => l.includes('LOGIN') || l.includes('LOGOUT'));
+            } else if (currentActivityLogFilter === 'OTP') {
+                filtered = filtered.filter(l => l.includes('OTP') || l.includes('EMAIL') || l.includes('DISPATCH'));
+            } else if (currentActivityLogFilter === 'REGISTRATION') {
+                filtered = filtered.filter(l => l.includes('REGISTRATION'));
+            } else if (currentActivityLogFilter === 'MODIFIED') {
+                filtered = filtered.filter(l => l.includes('DATA MODIFIED') || l.includes('MODIFY TEAM'));
+            } else if (currentActivityLogFilter === 'STATUS') {
+                filtered = filtered.filter(l => l.includes('STATUS MODIFIED') || l.includes('PAYMENT VERIFIED') || l.includes('REJECT PAYMENT') || l.includes('RESTORE PAYMENT'));
+            } else if (currentActivityLogFilter === 'ACCESS') {
+                filtered = filtered.filter(l => l.includes('DATA ACCESS') || l.includes('DOWNLOAD OD PDF'));
+            } else if (currentActivityLogFilter === 'ATTENDANCE') {
+                filtered = filtered.filter(l => l.includes('ATTENDANCE'));
+            } else if (currentActivityLogFilter === 'DELETE') {
+                filtered = filtered.filter(l => l.includes('DATA DELETED') || l.includes('DELETE TEAM') || l.includes('DELETE'));
+            }
+
+            
+            if (query) {
+                filtered = filtered.filter(l => l.toLowerCase().includes(query));
+            }
+
+            if (counter) counter.innerText = `TOTAL LOGS: ${filtered.length}`;
+
+            if (filtered.length === 0) {
+                stream.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                        <i class="fas fa-search-minus text-gold" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                        NO ACTIVITY LOGS MATCH CURRENT FILTER OR QUERY
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(line => {
+                
+                const match = line.match(/^\[(.*?)\]\s*([^:]+):\s*(.*)$/);
+                let timeStr = '';
+                let action = 'LOG';
+                let details = line;
+
+                if (match) {
+                    timeStr = match[1];
+                    action = match[2].trim();
+                    details = match[3].trim();
+                }
+
+                
+                let badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.1);';
+                let actionIcon = '<i class="fas fa-terminal"></i>';
+
+                if (action.includes('ATTENDANCE')) {
+                    badgeStyle = 'border:1px solid #b84dff; color:#b84dff; background:rgba(184,77,255,0.18);';
+                    if (action.includes('LOGOUT')) actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                    else if (action.includes('LOGIN')) actionIcon = '<i class="fas fa-sign-in-alt"></i>';
+                    else actionIcon = '<i class="fas fa-clipboard-check"></i>';
+                } else if (action.includes('OTP DISPATCHED') || action.includes('SEND OTP')) {
+                    badgeStyle = 'border:1px solid #00ff66; color:#00ff66; background:rgba(0,255,102,0.18); box-shadow:0 0 10px rgba(0,255,102,0.25);';
+                    actionIcon = '<i class="fas fa-paper-plane"></i>';
+                } else if (action.includes('OTP VERIFIED')) {
+                    badgeStyle = 'border:1px solid #00ffff; color:#00ffff; background:rgba(0,255,255,0.18); box-shadow:0 0 10px rgba(0,255,255,0.25);';
+                    actionIcon = '<i class="fas fa-check-circle"></i>';
+                } else if (action.includes('OTP FAILED') || action.includes('OTP DISPATCH FAILED')) {
+                    badgeStyle = 'border:1px solid #ff3366; color:#ff3366; background:rgba(255,51,102,0.18); box-shadow:0 0 10px rgba(255,51,102,0.25);';
+                    actionIcon = '<i class="fas fa-exclamation-triangle"></i>';
+                } else if (action.includes('EMAIL DISPATCHED') || action.includes('RESEND CONFIRMATION')) {
+                    badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.18);';
+                    actionIcon = '<i class="fas fa-envelope-open-text"></i>';
+                } else if (action.includes('REGISTRATION')) {
+                    badgeStyle = 'border:1px solid #ffd700; color:#ffd700; background:rgba(255,215,0,0.18); box-shadow:0 0 10px rgba(255,215,0,0.25);';
+                    actionIcon = '<i class="fas fa-id-card"></i>';
+                } else if (action.includes('LOGOUT')) {
+                    badgeStyle = 'border:1px solid #ff9900; color:#ff9900; background:rgba(255,153,0,0.18);';
+                    actionIcon = '<i class="fas fa-sign-out-alt"></i>';
+                } else if (action.includes('LOGIN FAILED')) {
+                    badgeStyle = 'border:1px solid #ff4757; color:#ff4757; background:rgba(255,71,87,0.18);';
+                    actionIcon = '<i class="fas fa-user-times"></i>';
+                } else if (action.includes('LOGIN')) {
+                    badgeStyle = 'border:1px solid #00d2ff; color:#00d2ff; background:rgba(0,210,255,0.15);';
+                    actionIcon = '<i class="fas fa-user-shield"></i>';
+                } else if (action.includes('DATA MODIFIED') || action.includes('MODIFY')) {
+                    badgeStyle = 'border:1px solid #ffaa00; color:#ffaa00; background:rgba(255,170,0,0.18);';
+                    actionIcon = '<i class="fas fa-edit"></i>';
+                } else if (action.includes('STATUS')) {
+                    badgeStyle = 'border:1px solid #00ff66; color:#00ff66; background:rgba(0,255,102,0.15);';
+                    actionIcon = '<i class="fas fa-exchange-alt"></i>';
+                } else if (action.includes('ACCESS')) {
+                    badgeStyle = 'border:1px solid #ffd700; color:#ffd700; background:rgba(255,215,0,0.15);';
+                    actionIcon = '<i class="fas fa-eye"></i>';
+                } else if (action.includes('DELETE')) {
+                    badgeStyle = 'border:1px solid #ff0066; color:#ff0066; background:rgba(255,0,102,0.18);';
+                    actionIcon = '<i class="fas fa-trash-alt"></i>';
+                }
+
+                
+                let safeDetails = details
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+
+                
+                safeDetails = safeDetails.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<span style="color:#00e5ff; font-weight:bold; background:rgba(0,229,255,0.12); padding:2px 7px; border-radius:3px; border:1px solid rgba(0,229,255,0.25);"><i class="fas fa-envelope" style="font-size:0.75rem; margin-right:4px;"></i>$1</span>');
+
+                
+                safeDetails = safeDetails.replace(/Operative &quot;([^&]+)&quot;/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
+                safeDetails = safeDetails.replace(/Operative "([^"]+)"/g, '<span style="color:var(--doom-gold); font-weight:bold;">Operative "$1"</span>');
+                safeDetails = safeDetails.replace(/\bby ([A-Za-z0-9\s]+?)(?=(\s*\(|$))/g, 'by <span style="color:var(--doom-gold); font-weight:bold;">$1</span>');
+
+                
+                safeDetails = safeDetails.replace(/Team ID:\s*([A-Za-z0-9-]+)/g, 'Team ID: <span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">$1</span>');
+                safeDetails = safeDetails.replace(/\[([A-Za-z0-9-]+)\]/g, '<span style="color:var(--neon-cyan); font-weight:bold; background:rgba(0,210,255,0.12); padding:2px 7px; border-radius:3px;">[$1]</span>');
+
+                
+                safeDetails = safeDetails.replace(/\(Leader:\s*([^)]+)\)/g, '(<span style="color:var(--doom-gold); font-weight:bold;">Leader: $1</span>)');
+
+                
+                safeDetails = safeDetails.replace(/"([^"]+)"\s*➔\s*"([^"]+)"/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
+                safeDetails = safeDetails.replace(/&quot;([^&]+)&quot;\s*➔\s*&quot;([^&]+)&quot;/g, '<span style="color:#ff6b6b; text-decoration:line-through; font-style:italic; padding:1px 4px; background:rgba(255,107,107,0.1); border-radius:3px;">"$1"</span> <span style="color:var(--doom-gold); font-weight:bold; font-size:1.15em;">➔</span> <span style="color:var(--doom-green); font-weight:bold; padding:1px 4px; background:rgba(0,255,102,0.1); border-radius:3px;">"$2"</span>');
+
+                
+                safeDetails = safeDetails.replace(/dispatched and sent successfully/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>dispatched and sent successfully</span>');
+                safeDetails = safeDetails.replace(/successfully verified/gi, '<span style="color:#00ff66; font-weight:bold;"><i class="fas fa-check-circle" style="font-size:0.75rem; margin-right:3px;"></i>successfully verified</span>');
+                safeDetails = safeDetails.replace(/logged into Admin Console/gi, '<span style="color:#00d2ff; font-weight:bold;"><i class="fas fa-shield-alt" style="font-size:0.75rem; margin-right:3px;"></i>logged into Admin Console</span>');
+
+                html += `
+                    <div style="display:flex; align-items:flex-start; gap:12px; padding:11px 15px; background:rgba(5,12,24,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,210,255,0.05)'" onmouseout="this.style.background='rgba(5,12,24,0.7)'">
+                        <div style="white-space:nowrap; color:var(--text-muted); font-size:0.8rem; padding-top:2px; min-width:165px;">
+                            <i class="far fa-clock"></i> ${timeStr || 'LIVE'}
+                        </div>
+                        <div style="white-space:nowrap;">
+                            <span style="display:inline-flex; align-items:center; gap:5px; font-size:0.75rem; font-weight:bold; padding:3px 9px; border-radius:4px; ${badgeStyle}">
+                                ${actionIcon} ${action}
+                            </span>
+                        </div>
+                        <div style="flex:1; color:#e2e8f0; word-break:break-word; font-size:0.88rem; line-height:1.5;">
+                            ${safeDetails}
+                        </div>
+                    </div>
+                `;
+            });
+
+            stream.innerHTML = html;
+        }
+
+        function exportActivityLogText() {
+            if (rawActivityLogs.length === 0) {
+                showCustomAlert("No logs available to export.");
+                return;
+            }
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const content = `==========================================================\n` +
+                            `XPLOITX 2.0 BETA - HIGH COMMAND AUDIT & ACTIVITY LOG\n` +
+                            `Export Date: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST\n` +
+                            `Total Entries: ${rawActivityLogs.length}\n` +
+                            `==========================================================\n\n` +
+                            rawActivityLogs.join('\n');
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `XploitX_HighCommand_ActivityLog_${dateStr}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+
+
+        async function openLogModal() {
+            const modal = document.getElementById('log-modal');
+            if (modal) modal.style.display = 'flex';
+            await fetchActivityLogs();
+        }
+
+        async function fetchActivityLogs() {
+            const content = document.getElementById('log-content');
+            if (!content) return;
+            content.innerText = "Connecting to server activity log stream...";
+            const token = inMemoryAdminToken;
+            const currentUser = inMemoryAdminUser || 'Administrator';
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/admin/activity-log`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.log && data.log.trim().length > 0) {
+                        content.innerText = data.log;
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
+            content.innerText = `[${now} IST] ADMIN LOGIN: Operative "${currentUser}" logged into Admin Console`;
+        }
+
         function closeLogModal() {
-            document.getElementById('log-modal').style.display = 'none';
+            const modal = document.getElementById('log-modal');
+            if (modal) modal.style.display = 'none';
         }
 
         function performVerification(teamId) {
@@ -1795,10 +2298,10 @@
                 "Are you sure you want to VERIFY payment?\nThis will CONFIRM registration and automatically send the OD Letter PDF and QR Code email.",
                 async () => {
                     const btn = document.getElementById('do-verify-btn');
-                    let orig = "[ VERIFY & MAIL ]";
+                    let orig = "VERIFY & MAIL";
                     if (btn) {
                         orig = btn.innerHTML;
-                        btn.innerHTML = "[ VERIFYING... ]";
+                        btn.innerHTML = "VERIFYING...";
                         btn.disabled = true;
                     }
 
@@ -1811,7 +2314,7 @@
                         const data = await res.json();
 
                         if (data.success) {
-                            showCustomAlert("REGISTRATION CONFIRMED! Verification Email with OD Letter PDF sent successfully.");
+                            showCustomAlert(data.message || "Team verified and OD letter sent successfully.");
                             closeVerifyModal();
                             loadData();
                         } else {
@@ -1831,7 +2334,7 @@
         }
 
         function downloadODLetter(teamId) {
-            const token = sessionStorage.getItem('admin_token');
+            const token = inMemoryAdminToken;
             const url = `${API_BASE_URL}/api/admin/od_letter/${teamId}`;
 
             fetch(url, {
@@ -1868,7 +2371,8 @@
                         const data = await res.json();
 
                         if (data.success) {
-                            showCustomAlert("REGISTRATION CONFIRMATION EMAIL & OD LETTER RESENT SUCCESSFULLY!");
+                            showCustomAlert(data.message || "Team verified and OD letter sent successfully.");
+                            loadData();
                         } else {
                             showCustomAlert("ERROR: " + data.error);
                         }
@@ -1886,7 +2390,7 @@
                 let orig = "";
                 if (btn) {
                     orig = btn.innerText;
-                    btn.innerText = "[ PROCESSING... ]";
+                    btn.innerText = "PROCESSING...";
                     btn.disabled = true;
                 }
 
@@ -1909,7 +2413,7 @@
                     showCustomAlert("Network Error");
                 } finally {
                     if (btn) {
-                        btn.innerText = orig || "[ WRONG DETAILS ]";
+                        btn.innerText = orig || "WRONG DETAILS";
                         btn.disabled = false;
                     }
                 }
@@ -1938,7 +2442,7 @@
             }, "YES, RESTORE");
         }
 
-        // Edit Modal Operations
+        
         function checkEmailChange(input) {
             const parent = input.parentElement;
             const btn = parent.querySelector('.resend-mail-btn');
@@ -1963,8 +2467,8 @@
 
             if (!email) return;
 
-            const originalText = "[ RESEND CONFIRMATION TO NEW EMAIL ]";
-            btn.innerText = "[ SENDING... ]";
+            const originalText = "RESEND CONFIRMATION TO NEW EMAIL";
+            btn.innerText = "SENDING...";
             btn.disabled = true;
 
             try {
@@ -1977,7 +2481,7 @@
 
                 if (data.success) {
                     showCustomAlert(`CONFIRMATION EMAIL SENT TO ${email}`);
-                    btn.innerText = "[ SENT! ]";
+                    btn.innerText = "SENT!";
                     emailInput.dataset.orig = email;
 
                     setTimeout(() => {
@@ -1987,13 +2491,13 @@
                     }, 2000);
                 } else {
                     showCustomAlert("Error: " + data.error);
-                    btn.innerText = "[ RETRY ]";
+                    btn.innerText = "RETRY";
                     btn.disabled = false;
                 }
             } catch (e) {
                 console.error(e);
                 showCustomAlert("Network Error");
-                btn.innerText = "[ ERROR ]";
+                btn.innerText = "ERROR";
                 btn.disabled = false;
             }
         }
@@ -2025,7 +2529,7 @@
                         <input type="text" class="edit-m-age" placeholder="Age" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.age || ''}">
                         <div style="position:relative;">
                             <input type="email" class="edit-m-email" placeholder="Email" maxlength="40" value="${m.email || ''}" data-orig="${m.email || ''}" oninput="checkEmailChange(this)">
-                            <button class="resend-mail-btn action-btn-hud action-btn-green" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:8px; font-size:0.75rem;">[ RESEND MAIL ]</button>
+                            <button class="resend-mail-btn action-btn-hud action-btn-green" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:8px; font-size:0.75rem;">RESEND MAIL</button>
                         </div>
                         <input type="text" class="edit-m-phone" placeholder="Phone" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.phone || ''}">
                         <input type="text" class="edit-m-whatsapp" placeholder="WhatsApp" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${m.whatsapp || ''}">
@@ -2068,14 +2572,14 @@
             div.innerHTML = `
                 <div style="font-weight:bold; color:var(--doom-green); margin-bottom:8px; font-family:var(--font-brand); font-size: 0.95rem;">
                     MEMBER ${idx + 1} (MEMBER) 
-                    <span style="float:right; color:var(--deep-magenta); cursor:pointer; font-size:0.8rem;" onclick="this.parentElement.parentElement.remove()">[ REMOVE ]</span>
+                    <span style="float:right; color:var(--deep-magenta); cursor:pointer; font-size:0.8rem;" onclick="this.parentElement.parentElement.remove()">REMOVE</span>
                 </div>
                 <div class="edit-grid-layout">
                     <input type="text" class="edit-m-name" placeholder="Name" value="">
                     <input type="text" class="edit-m-age" placeholder="Age" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
                     <div style="position:relative;">
                         <input type="email" class="edit-m-email" placeholder="Email" maxlength="40" value="" data-orig="" oninput="checkEmailChange(this)">
-                        <button class="resend-mail-btn action-btn-hud action-btn-green" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:8px; font-size:0.75rem;">[ RESEND MAIL ]</button>
+                        <button class="resend-mail-btn action-btn-hud action-btn-green" onclick="triggerResendMail(this)" style="display:none; width:100%; margin-top:8px; font-size:0.75rem;">RESEND MAIL</button>
                     </div>
                     <input type="text" class="edit-m-phone" placeholder="Phone" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
                     <input type="text" class="edit-m-whatsapp" placeholder="WhatsApp" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="">
@@ -2115,29 +2619,31 @@
 
         async function saveEditChanges() {
             const btn = document.getElementById('save-changes-btn');
-            const originalText = btn ? btn.innerText : "[ SAVE CHANGES ]";
+            const originalText = btn ? btn.innerText : "SAVE CHANGES";
             if (btn) {
-                btn.innerText = "[ SAVING... ]";
+                btn.innerText = "SAVING...";
                 btn.disabled = true;
             }
 
-            const teamId = document.getElementById('edit-team-db-id').value;
-            const name = document.getElementById('edit-team-name').value;
-            const event = document.getElementById('edit-team-event').value;
+            const teamId = document.getElementById('edit-team-db-id').value.trim();
+            const name = document.getElementById('edit-team-name').value.trim();
+            const event = document.getElementById('edit-team-event').value.trim();
 
             const memberDivs = document.querySelectorAll('#edit-members-container > div');
             const members = [];
 
             try {
                 memberDivs.forEach(div => {
+                    const rawAge = (div.querySelector('.edit-m-age').value || '').trim();
+                    const parsedAge = rawAge && !isNaN(parseInt(rawAge, 10)) ? parseInt(rawAge, 10) : '';
                     members.push({
-                        name: div.querySelector('.edit-m-name').value,
-                        age: div.querySelector('.edit-m-age').value,
-                        email: div.querySelector('.edit-m-email').value,
-                        phone: div.querySelector('.edit-m-phone').value,
-                        whatsapp: div.querySelector('.edit-m-whatsapp').value,
-                        college: div.querySelector('.edit-m-college').value,
-                        district: div.querySelector('.edit-m-district').value,
+                        name: (div.querySelector('.edit-m-name').value || '').trim(),
+                        age: parsedAge,
+                        email: (div.querySelector('.edit-m-email').value || '').trim(),
+                        phone: (div.querySelector('.edit-m-phone').value || '').trim(),
+                        whatsapp: (div.querySelector('.edit-m-whatsapp').value || '').trim(),
+                        college: (div.querySelector('.edit-m-college').value || '').trim(),
+                        district: (div.querySelector('.edit-m-district').value || '').trim(),
                         role: div.querySelector('.edit-m-role').value
                     });
                 });
@@ -2177,7 +2683,7 @@
             }
         }
 
-        // Modals Open/Close Functions
+        
         function openCSVModal() { document.getElementById('csv-modal').style.display = 'flex'; }
         function closeCSVModal() { document.getElementById('csv-modal').style.display = 'none'; }
         function executeCSVDownload(category) { downloadCSV(category); closeCSVModal(); }
@@ -2185,11 +2691,11 @@
         function openPrintModal() { document.getElementById('print-modal').style.display = 'flex'; }
         function closePrintModal() { document.getElementById('print-modal').style.display = 'none'; }
         function executePrint(category) {
-            filterEvent(category);
+            window.filterEvent(category);
             closePrintModal();
             setTimeout(() => {
                 window.print();
-                setTimeout(() => { filterEvent('ALL'); }, 500);
+                setTimeout(() => { window.filterEvent('ALL'); }, 500);
             }, 500);
         }
 
@@ -2224,6 +2730,7 @@
             const printWindow = window.open('', '_blank');
             let html = `
             <html><head><title>Format Report - ${eventCategory}</title>
+            <link rel="icon" type="image/jpeg" href="Favicon.jpeg">
             <style>
                 body { font-family: sans-serif; padding: 20px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; word-wrap: break-word; }
@@ -2311,7 +2818,7 @@
             printWindow.document.close();
         }
 
-        // CSV Exporter
+        
         function downloadCSV(eventType = 'ALL') {
             if (!window.teamsData || window.teamsData.length === 0) return;
 
@@ -2387,7 +2894,7 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Global Key Listener for ESC Modal Closing
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeVerifyModal();
@@ -2401,7 +2908,7 @@
             }
         });
 
-        // Matrix Background Animation
+        
         const canvas = document.getElementById('matrix-bg');
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -2442,6 +2949,19 @@
                 canvas.height = window.innerHeight;
             });
         }
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const userEl = document.getElementById('admin-user');
+            const passEl = document.getElementById('admin-pass');
+            if (userEl) userEl.value = '';
+            if (passEl) passEl.value = '';
+
+            const loginOverlay = document.getElementById('login-overlay');
+            if (loginOverlay) {
+                loginOverlay.style.setProperty('display', 'flex', 'important');
+            }
+        });
     </script>
     <script src="script.js"></script>
 </body>

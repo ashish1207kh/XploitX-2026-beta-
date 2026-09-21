@@ -1,54 +1,66 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "installCommand": "echo 'No install needed'",
-  "buildCommand": "node build.js",
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://xploitx-backend.onrender.com/api/:path*"
-    },
-    {
-      "source": "/uploads/:path*",
-      "destination": "https://xploitx-backend.onrender.com/uploads/:path*"
-    }
-  ],
   "headers": [
     {
+      "source": "/uploads/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/attendance",
+      "destination": "/public/attendance.html"
+    },
+    {
+      "source": "/attendance-login",
+      "destination": "/public/attendance.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/public/register.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/public/about.html"
+    },
+    {
+      "source": "/rules",
+      "destination": "/public/rules.html"
+    },
+    {
+      "source": "/prizes",
+      "destination": "/public/prizes.html"
+    },
+    {
+      "source": "/White-hub.jpeg",
+      "destination": "/public/White-Hub.jpeg"
+    },
+    {
+      "source": "/white-hub.jpeg",
+      "destination": "/public/White-Hub.jpeg"
+    },
+    {
       "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).(jpg|jpeg|png|gif|webp|svg|ico|pdf)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).(css|js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
-      ]
+      "destination": "/public/$1"
     }
   ]
 }
