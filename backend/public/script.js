@@ -34,15 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 function initAccessLoader() {
     let loaderOverlay = document.getElementById('loader-overlay');
-
-    // The loader is ONLY for index.html. If no loader-overlay element exists, exit immediately.
-    if (!loaderOverlay) return;
-    
-    document.documentElement.classList.add('loader-locked');
-    document.body.classList.add('loader-locked');
-    
-    loaderOverlay.className = 'xploitx-access-loader';
-    loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
+    if (loaderOverlay) {
+        loaderOverlay.style.display = 'none';
+    }
+    document.documentElement.classList.remove('loader-locked');
+    document.body.classList.remove('loader-locked');
+    return;
+}
 
     // Build Loader Content
     loaderOverlay.innerHTML = `
