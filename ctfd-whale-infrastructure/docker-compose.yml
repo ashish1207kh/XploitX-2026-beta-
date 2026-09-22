@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  ctfd:
+    build:
+      context: .
+      dockerfile: Dockerfile.ctfd
+    user: root
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${CTFD_SECRET_KEY:-xploitx_secret_ctfd_key_2026_super_secure}
+      - DATABASE_URL=mysql+pymysql://ctfd:ctfd_secure_password_2026@db/ctfd
+      - REDIS_URL=redis://cache:6379
+      - UPLOAD_FOLDER=/var/uploads
+      - REVERSE_PROXY=true
+      - WORKERS=4
+    volumes:
+      - ./data/CTFd/logs:/var/log/CTFd
+      - ./data/CTFd/uploads:/var/uploads
+      - ./plugins:/opt/CTFd/CTFd/plugins
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+      - cache
+    networks:
+      - default
+      - ctfd_frp_containers
+
+  db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=xploitx_root_db_pass_2026
+      - MYSQL_USER=ctfd
+      - MYSQL_PASSWORD=ctfd_secure_password_2026
+      - MYSQL_DATABASE=ctfd
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+    networks:
+      - default
+
+  cache:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - default
+
+  frps:
+    image: snowdreamtech/frps:latest
+    restart: always
+    ports:
+      - "7000:7000"
+      - "8080:8080"
+      - "20000-20050:20000-20050"
+    volumes:
+      - ./conf/frps.ini:/etc/frp/frps.ini
+    networks:
+      - default
+      - ctfd_frp_containers
+
+networks:
+  default:
+    driver: bridge
+  ctfd_frp_containers:
+    external: true

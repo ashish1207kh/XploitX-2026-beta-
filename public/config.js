@@ -9,7 +9,9 @@
  */
 window.XPLOITX_CONFIG = {
     // Production Render backend URL
-    RENDER_BACKEND_URL: 'https://xploitx-backend.onrender.com'
+    RENDER_BACKEND_URL: 'https://xploitx-backend.onrender.com',
+    // CTFd Competition Arena URL (CTFd + CTFd-Whale instance)
+    CTFD_ARENA_URL: 'https://arena.xploitxctf.me'
 };
 
 (function () {
@@ -29,6 +31,7 @@ window.XPLOITX_CONFIG = {
     }
 
     window.API_BASE_URL = resolvedApiBase;
+    window.CTFD_ARENA_URL = (window.XPLOITX_CONFIG && window.XPLOITX_CONFIG.CTFD_ARENA_URL) ? window.XPLOITX_CONFIG.CTFD_ARENA_URL.trim() : 'https://arena.xploitxctf.me';
 
     // Fast Keep-Alive / Pre-warm ping for Render free-tier
     // Pings /api/health asynchronously on initial page load so Render is awake
