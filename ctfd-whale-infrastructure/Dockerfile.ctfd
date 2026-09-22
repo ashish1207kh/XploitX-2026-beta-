@@ -1,8 +1,0 @@
-FROM ctfd/ctfd:latest
-
-USER root
-
-# Install system dependencies and python docker sdk for CTFd-Whale
-RUN pip install --no-cache-dir docker requests
-
-USER 1001

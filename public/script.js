@@ -26,15 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAccordions();
     initLegacyGalleryModal();
     initEventModals();
-    initArenaLinks();
 });
-
-function initArenaLinks() {
-    const arenaUrl = (window.XPLOITX_CONFIG && window.XPLOITX_CONFIG.CTFD_ARENA_URL) || window.CTFD_ARENA_URL || 'https://arena.xploitxctf.me';
-    document.querySelectorAll('.ctf-arena-link, #nav-ctf-arena, #hero-arena-btn').forEach(el => {
-        if (el) el.href = arenaUrl;
-    });
-}
 
 
 
