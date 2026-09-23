@@ -1704,8 +1704,7 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
             "Ashish": process.env.ADMIN_PASS_ASHISH,
             "Madhu": process.env.ADMIN_PASS_MADHU,
-            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
-            "jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026"
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH
         };
 
         const canonicalMap = {
@@ -1713,8 +1712,7 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
             "Jesin Milesh": "Jesin Milesh",
             "Ashish": "Ashish",
             "Madhu": "Madhu",
-            "Jeshwanth": "Jeshwanth",
-            "jeshwanth": "Jeshwanth"
+            "Jeshwanth": "Jeshwanth"
         };
 
         let isValid = false;
@@ -3312,8 +3310,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
             "Ashish": process.env.ADMIN_PASS_ASHISH,
             "Madhu": process.env.ADMIN_PASS_MADHU,
-            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
-            "jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH,
             "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR
         };
 
@@ -3323,7 +3320,6 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Ashish": "Ashish",
             "Madhu": "Madhu",
             "Jeshwanth": "Jeshwanth",
-            "jeshwanth": "Jeshwanth",
             "attendance": "Attendance Officer"
         };
 
