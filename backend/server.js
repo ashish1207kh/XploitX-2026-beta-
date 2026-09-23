@@ -80,6 +80,16 @@ function getKolkataTimestamp() {
     }
 }
 
+function escapeHtml(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 async function logActivity(action, details = '') {
     const timestamp = getKolkataTimestamp();
     const cleanAction = String(action || '').replace(/[\r\n\t]/g, ' ').trim().toUpperCase();
@@ -516,13 +526,23 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
+// Enforce HTTPS redirection in production behind reverse proxies
+app.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        const proto = req.headers['x-forwarded-proto'];
+        if (proto && proto.toLowerCase() !== 'https') {
+            return res.redirect(301, `https://${req.headers.host}${req.url}`);
+        }
+    }
+    next();
+});
+
 app.use((req, res, next) => {
     if (req.url && req.url.includes('/api/auth/')) {
         console.log(`[AUTH API] ${req.method} ${req.url} from ${req.ip} (Origin: ${req.headers.origin || 'none'})`);
     }
     next();
 });
-
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -531,22 +551,31 @@ app.use(helmet({
             scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "https://use.fontawesome.com"],
-            imgSrc: ["'self'", "data:", "https://raw.githubusercontent.com", "https://img.icons8.com", "https://api.qrserver.com", "blob:"],
-            connectSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "https://raw.githubusercontent.com", "https://img.icons8.com", "https://api.qrserver.com", "https://quickchart.io", "blob:"],
+            connectSrc: ["'self'", "https://xploitx-backend.onrender.com", "https://quickchart.io"],
             frameAncestors: ["'none'"],
-            objectSrc: ["'none'"]
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"]
         }
     },
     frameguard: { action: 'deny' },
+    hsts: {
+        maxAge: 100,
+        includeSubDomains: false,
+        preload: false
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     permittedCrossDomainPolicies: { permittedPolicies: 'none' },
     crossOriginEmbedderPolicy: false
 }));
 
 app.use((req, res, next) => {
+    res.setHeader('Strict-Transport-Security', 'max-age=100');
     res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     next();
 });
 
@@ -2443,7 +2472,7 @@ async function sendRegistrationVerificationEmail(leader, teamName) {
         ${getEmailHeaderHtml('DEPARTMENT OF CYBER SECURITY')}
 
         <div class="email-content-card" style="background: rgba(2, 6, 18, 0.9); padding: 20px; border-radius: 6px; border-left: 4px solid #00ff66; margin-bottom: 20px; line-height: 1.6; color: #d1d5db; font-size: 14px; box-sizing: border-box;">
-            <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${leader.name}</b>,</p>
+            <p style="color: #ffffff; font-size: 15px; margin-top: 0;">Dear <b>${escapeHtml(leader.name)}</b>,</p>
 
             <p>Greetings from Team XploitX!</p>
 
@@ -2639,27 +2668,62 @@ app.post('/api/team/:id/update', verifyAdmin, async (req, res) => {
     } catch (e) { res.status(500).json({ error: 'Failed to update team record' }); }
 });
 
+const memberValidationSchema = z.object({
+    name: z.string().min(2, 'Member name must be at least 2 characters').max(60, 'Member name too long').trim(),
+    email: z.string().email('Invalid member email format').max(100).trim().toLowerCase(),
+    phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be a valid 10-digit number').trim(),
+    college: z.string().min(2, 'College name must be at least 2 characters').max(120, 'College name too long').trim(),
+    role: z.string().optional().default('Member')
+});
+
+const registrationPayloadSchema = z.object({
+    teamName: z.string().min(2, 'Team name must be at least 2 characters').max(50, 'Team name cannot exceed 50 characters').trim(),
+    email: z.string().email('Invalid primary email format').max(100).trim().toLowerCase(),
+    event: z.string().max(100).optional().default('24-Hour Hackathon'),
+    day: z.string().max(50).optional().default('Day 1'),
+    utrNumber: z.string().min(6, 'UTR / Transaction ID must be at least 6 characters').max(40, 'UTR / Transaction ID too long').regex(/^[a-zA-Z0-9_\-\s]+$/, 'UTR contains invalid characters').trim(),
+    members: z.array(memberValidationSchema).min(2, 'Team size must be between 2 and 4 members (1 Leader + 1 to 3 Squad Members).').max(4, 'Team cannot exceed 4 members.')
+});
+
 app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('paymentProof'), async (req, res) => {
     try {
         const { teamName, email, event, utrNumber } = req.body;
-        let members;
+        let parsedMembers;
         try {
-            members = JSON.parse(req.body.members);
+            parsedMembers = JSON.parse(req.body.members);
         } catch (e) {
             return res.status(400).json({ error: 'Invalid members data format' });
         }
 
-        const file = req.file;
-        if (!teamName || !members) return res.status(400).json({ error: 'Missing required fields' });
+        const validation = registrationPayloadSchema.safeParse({
+            teamName,
+            email,
+            event: req.body.event,
+            day: req.body.day,
+            utrNumber,
+            members: parsedMembers
+        });
 
-        if (!Array.isArray(members) || members.length < 2 || members.length > 4) {
-            return res.status(400).json({ error: 'Team size must be between 2 and 4 members (1 Leader + 1 to 3 Squad Members).' });
+        if (!validation.success) {
+            const firstError = validation.error.errors[0]?.message || 'Invalid registration data';
+            return res.status(400).json({ error: firstError });
         }
 
-        const existingTeamName = await findTeamByName(teamName);
+        const validData = validation.data;
+        const validTeamName = validData.teamName;
+        const validEmail = validData.email;
+        const validUtr = validData.utrNumber;
+        const members = validData.members;
+
+        // Server-Side Pricing Authority: Never trust client-supplied fee.
+        // Price is strictly calculated by server based on squad count (₹150 per member).
+        const serverCalculatedFee = members.length * 150;
+
+        const file = req.file;
+
+        const existingTeamName = await findTeamByName(validTeamName);
         if (existingTeamName) return res.status(400).json({ error: 'Team Name taken.' });
 
-        
         const squadEmails = new Set();
         for (const m of members) {
             const mEmail = (m.email || '').trim().toLowerCase();
@@ -2672,12 +2736,10 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             squadEmails.add(mEmail);
         }
 
-        const primaryEmail = (email || '').trim().toLowerCase();
-        if (primaryEmail && !squadEmails.has(primaryEmail)) {
-            squadEmails.add(primaryEmail);
+        if (validEmail && !squadEmails.has(validEmail)) {
+            squadEmails.add(validEmail);
         }
 
-        
         for (const mEmail of squadEmails) {
             const existingReg = await findRegistrationByEmail(mEmail);
             if (existingReg) {
@@ -2687,8 +2749,8 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             }
         }
 
-        if (utrNumber) {
-            const existingUTR = await findTeamByUTR(utrNumber);
+        if (validUtr) {
+            const existingUTR = await findTeamByUTR(validUtr);
             if (existingUTR) {
                 return res.status(400).json({ error: 'UTR already used.' });
             }
@@ -2709,11 +2771,12 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
 
         const initialFilePath = file ? ('/uploads/' + file.filename) : 'NOT_PROVIDED';
         const record = await createTeamRecord({
-            teamName,
-            email,
-            event,
-            day: req.body.day,
-            transactionId: utrNumber,
+            teamName: validTeamName,
+            email: validEmail,
+            event: validData.event,
+            day: validData.day,
+            transactionId: validUtr,
+            amount: serverCalculatedFee,
             paymentProof: initialFilePath,
             paymentProofData: proofBase64,
             members
@@ -2860,7 +2923,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
             const recipientEmails = Array.from(new Set(members.map(m => m.email).concat([teamData.email]).filter(e => e && e.includes('@'))));
 
             const membersListText = members.map((m, i) => `${i + 1}. ${m.name} – ${m.college || leader.college || 'Prathyusha Engineering College'}`).join('\n');
-            const membersListHtml = members.map(m => `<li><b>${m.name}</b> – ${m.college || leader.college || 'Prathyusha Engineering College'}</li>`).join('');
+            const membersListHtml = members.map(m => `<li><b>${escapeHtml(m.name)}</b> – ${escapeHtml(m.college || leader.college || 'Prathyusha Engineering College')}</li>`).join('');
 
             const textContent = `Dear Participants,\n\nGreetings from Team XploitX!\n\nWe are pleased to inform you that your payment for XploitX 2.0 Beta CTF has been successfully verified.\n\nYour team’s registration is now officially confirmed for the event.\n\nTEAM & REGISTRATION DETAILS\n\nTeam ID: ${teamId}\nTeam Name: ${teamData.name}\nTeam Leader: ${leader.name}\nPayment Status: VERIFIED\nRegistration Status: CONFIRMED\n\nTEAM MEMBERS\n\n${membersListText}\n\nEVENT DETAILS\n\nEvent: XploitX 2.0 Beta CTF\nDate & Time: 8th October 2026, 10:00 AM to 9th October 2026, 10:00 AM\nVenue: Prathyusha Engineering College, Tiruvallur\nOrganized By: Department of Cybersecurity\nInstitution: Prathyusha Engineering College\n\nYour payment has been successfully verified, and your team is officially confirmed to participate in XploitX 2.0 Beta CTF.\n\nClick Here ( ${whatsappLink} ) to join the official participant WhatsApp group.\n\nPlease keep this email for your future reference and ensure that all team members are informed about the event details.\n\nThank you for participating in XploitX 2.0 Beta CTF.\n\nWe look forward to welcoming your team and wish you the very best for the competition!\n\nRegards,\nTeam XploitX\nPrathyusha Engineering College\nDepartment of Cyber Security`;
 
@@ -2880,8 +2943,8 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                         <div class="email-detail-box" style="background-color: #02040a; padding: 15px; border-radius: 5px; border: 1px solid #00ff66; margin: 20px 0; box-sizing: border-box;">
                             <h4 style="color: #ffd700; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">TEAM & REGISTRATION DETAILS</h4>
                             <p style="margin: 3px 0;"><b>Team ID:</b> <span style="color: #00ff66; font-weight: bold;">${teamId}</span></p>
-                            <p style="margin: 3px 0;"><b>Team Name:</b> ${teamData.name}</p>
-                            <p style="margin: 3px 0;"><b>Team Leader:</b> ${leader.name}</p>
+                            <p style="margin: 3px 0;"><b>Team Name:</b> ${escapeHtml(teamData.name)}</p>
+                            <p style="margin: 3px 0;"><b>Team Leader:</b> ${escapeHtml(leader.name)}</p>
                             <p style="margin: 3px 0;"><b>Payment Status:</b> <span style="color: #00ff66; font-weight: bold;">VERIFIED</span></p>
                             <p style="margin: 3px 0;"><b>Registration Status:</b> <span style="color: #00ff66; font-weight: bold;">CONFIRMED</span></p>
                         </div>
