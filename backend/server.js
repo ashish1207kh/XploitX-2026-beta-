@@ -317,7 +317,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
     const recipient = Array.isArray(to) ? to.join(',') : to;
     console.log(`[Email] Dispatching email to: ${recipient.split('@')[1] || 'recipient'}`);
 
-    
+
     if (html && typeof html === 'string') {
         const antiTrimNonce = `<span style="display:none !important; opacity:0; color:transparent; font-size:1px; line-height:1px; max-height:0px; max-width:0px; overflow:hidden; mso-hide:all;">[ID:${Date.now()}-${Math.floor(Math.random() * 10000)}]</span>`;
         if (html.includes('</div>')) {
@@ -335,7 +335,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
     const senderName = (process.env.BREVO_SENDER_NAME || 'XploitX 2.0 BETA').trim();
     const fromAddress = senderEmail.includes('<') ? senderEmail : `"${senderName}" <${senderEmail}>`;
 
-    
+
     if (brevoApiKey) {
         console.log('[EmailService] Using Brevo HTTPS Email API (Vercel Serverless Ready)');
         try {
@@ -390,7 +390,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    
+
     if (resendApiKey) {
         console.log('[EmailService] Using Resend HTTPS Email API');
         try {
@@ -432,7 +432,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    
+
     if (sendgridApiKey) {
         console.log('[EmailService] Using SendGrid HTTPS Email API');
         try {
@@ -467,7 +467,7 @@ async function sendEmail({ to, subject, text, html = null, attachments = [] }) {
         }
     }
 
-    
+
     console.log('[EmailService] Using Nodemailer SMTP Transport');
     const smtpConfig = process.env.SMTP_HOST ? {
         host: process.env.SMTP_HOST,
@@ -796,7 +796,7 @@ const verifyAdmin = (req, res, next) => {
     // Check if private API key is configured and matches
     const configuredApiKey = (process.env.API_KEY || process.env.XPLOITX_API_KEY || '').trim();
     const providedKey = (apiKey ? String(apiKey).trim() : null) ||
-                        (bearerToken && configuredApiKey && bearerToken === configuredApiKey ? bearerToken : null);
+        (bearerToken && configuredApiKey && bearerToken === configuredApiKey ? bearerToken : null);
 
     if (configuredApiKey && providedKey) {
         const keyBuffer = Buffer.from(providedKey);
@@ -888,7 +888,7 @@ app.get('/uploads/:filename', verifyAdmin, async (req, res) => {
     const filename = path.basename(req.params.filename);
     const ext = path.extname(filename).toLowerCase();
 
-    
+
     const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.pdf'];
     if (!allowedExtensions.includes(ext)) {
         return res.status(403).json({ error: '403 Forbidden: File type execution or access prohibited.' });
@@ -909,7 +909,7 @@ app.get('/uploads/:filename', verifyAdmin, async (req, res) => {
         return res.sendFile(tmpPath, { maxAge: 0 });
     }
 
-    
+
     try {
         const teamIdMatch = path.basename(filename).split('.')[0].replace(/[^a-zA-Z0-9_-]/g, '');
         const escapedFilename = filename.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -1297,12 +1297,12 @@ async function findRegistrationByEmail(email) {
 
     if (isDbMongo()) {
         try {
-            
+
             const team = await Team.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
             if (team) {
                 return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
             }
-            
+
             const member = await Member.findOne({ email: new RegExp('^' + cleanEmail.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }).lean();
             if (member) {
                 const parentTeam = await Team.findOne({ team_id: member.team_id }).lean();
@@ -1320,12 +1320,12 @@ async function findRegistrationByEmail(email) {
     }
     if (db) {
         try {
-            
+
             const team = await db.get('SELECT team_id, name, email FROM teams WHERE LOWER(email) = ?', [cleanEmail]);
             if (team) {
                 return { registered: true, teamId: team.team_id, teamName: team.name, role: 'LEADER', email: team.email };
             }
-            
+
             const member = await db.get(`
                 SELECT m.email, m.role, t.team_id, t.name as team_name 
                 FROM members m 
@@ -1786,14 +1786,14 @@ app.post('/api/admin/logout', async (req, res) => {
 
 function extractLogTimestamp(line) {
     if (!line) return 0;
-    
+
     const m1 = String(line).match(/^\[(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})/);
     if (m1) {
         const pad = (n) => String(n).padStart(2, '0');
         const d = new Date(`${m1[1]}-${m1[2]}-${m1[3]}T${pad(m1[4])}:${m1[5]}:${m1[6]}+05:30`);
         return d.getTime() || 0;
     }
-    
+
     const m2 = String(line).match(/^\[(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2}):(\d{2})\s*(am|pm)?/i);
     if (m2) {
         let hr = parseInt(m2[4], 10);
@@ -1804,7 +1804,7 @@ function extractLogTimestamp(line) {
         const d = new Date(`${m2[3]}-${pad(m2[2])}-${pad(m2[1])}T${pad(hr)}:${m2[5]}:${m2[6]}+05:30`);
         return d.getTime() || 0;
     }
-    
+
     const m3 = String(line).match(/^\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
     if (m3) {
         const d = new Date(m3[1]);
@@ -1822,7 +1822,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
         }
         let logs = [];
 
-        
+
         const backupPaths = [
             path.join(__dirname, 'database_backup.json'),
             path.join(__dirname, '../database_backup.json'),
@@ -1846,7 +1846,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             }
         }
 
-        
+
         try {
             const mongoUri = (process.env.MONGODB_URI || "").trim();
             if (mongoUri) {
@@ -1870,7 +1870,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             console.warn('MongoDB Atlas activity log query warning:', err.message);
         }
 
-        
+
         if (typeof db !== 'undefined' && db && db.all) {
             try {
                 const dbLogs = await db.all('SELECT formatted, timestamp, action, details FROM activity_logs ORDER BY id ASC LIMIT 500');
@@ -1885,7 +1885,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             } catch (err) { }
         }
 
-        
+
         const adminLogPaths = [
             process.env.VERCEL ? path.join(os.tmpdir(), 'admin_activity.log') : path.join(__dirname, 'admin_activity.log'),
             path.join(process.cwd(), 'admin_activity.log'),
@@ -1926,7 +1926,7 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             }
         }
 
-        
+
         if (global.activityLogs && global.activityLogs.length > 0) {
             global.activityLogs.forEach(line => {
                 if (line && !logs.includes(line)) {
@@ -1935,13 +1935,13 @@ app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
             });
         }
 
-        
+
         logs = logs.map(line => String(line).replace(/\s*from IP:\s*[^\n\r]+/gi, '').trim()).filter(Boolean);
 
-        
+
         logs = Array.from(new Set(logs));
 
-        
+
         logs.sort((a, b) => {
             const timeA = extractLogTimestamp(a);
             const timeB = extractLogTimestamp(b);
@@ -2261,15 +2261,15 @@ async function generateQrWithLogo(qrData) {
             const logoBuffer = fs.readFileSync(logoPath);
             const logoPng = PNG.sync.read(logoBuffer);
 
-            
+
             const targetW = 110;
-            const targetH = Math.round(targetW / (logoPng.width / logoPng.height)); 
+            const targetH = Math.round(targetW / (logoPng.width / logoPng.height));
             const pad = 3;
 
             const startX = Math.round((qrPng.width - targetW) / 2);
             const startY = Math.round((qrPng.height - targetH) / 2);
 
-            
+
             for (let y = -pad; y < targetH + pad; y++) {
                 for (let x = -pad; x < targetW + pad; x++) {
                     const px = startX + x;
@@ -2284,7 +2284,7 @@ async function generateQrWithLogo(qrData) {
                 }
             }
 
-            
+
             for (let y = 0; y < targetH; y++) {
                 for (let x = 0; x < targetW; x++) {
                     const srcX = Math.floor((x / targetW) * logoPng.width);
@@ -2371,7 +2371,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
             });
         }
 
-        const otp = generateSecureOtp(); 
+        const otp = generateSecureOtp();
         verificationOtps[email] = otp;
         await saveOtp({ email, otp, durationMinutes: 10, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
 
@@ -2403,7 +2403,7 @@ app.post('/api/auth/send-verification-otp', otpRequestLimiter, async (req, res) 
 
         const text = `XPLOITX 2.0 BETA - Email Verification\n\nDear ${recipientName},\n\nUse the code below to verify your email address:\n\n${otp}\n\nThis OTP is valid for 10 minutes.\n\nPrathyusha Engineering College - Department of Cyber Security`;
 
-        
+
         const hasEmailProvider = !!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY || (process.env.EMAIL_USER && !process.env.EMAIL_USER.includes('your-email')));
         if (hasEmailProvider) {
             const result = await sendEmail({ to: email, subject, text, html });
@@ -2435,7 +2435,7 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
         }
         const { email, otp } = validation.data;
 
-        
+
         if (verificationOtps[email] && verificationOtps[email] === otp) {
             delete verificationOtps[email];
             await deleteOtp(email, { isMongoConnected: isDbMongo(), OtpModel: Otp, db });
@@ -2443,7 +2443,7 @@ app.post('/api/auth/verify-email-otp', otpVerifyLimiter, async (req, res) => {
             return res.json({ success: true });
         }
 
-        
+
         const result = await verifyOtp({ email, inputOtp: otp, isMongoConnected: isDbMongo(), OtpModel: Otp, db });
         if (result.success) {
             delete verificationOtps[email];
@@ -2786,7 +2786,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
 
         const teamIdStr = record.teamId;
 
-        
+
         if (file) {
             let newDbPath = initialFilePath;
             if (file.path && fs.existsSync(file.path)) {
@@ -2811,7 +2811,7 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
             await updatePaymentProof(teamIdStr, newDbPath, utrNumber, proofBase64);
         }
 
-        
+
         const leaderObj = members[0] || { name: teamName, email: email };
         await sendRegistrationVerificationEmail(leaderObj, teamName);
 
@@ -2884,14 +2884,14 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
         if (leader) {
             await addAttendanceRecord(teamId, teamData.name, leader.name, leader.phone);
 
-            
-            
+
+
             const qrData = JSON.stringify({ teamId, teamName: teamData.name, leaderName: leader.name });
             const qrImage = await generateQrWithLogo(qrData);
 
-            
-            
-            
+
+
+
             const logoUrl = 'https://raw.githubusercontent.com/ashish1207kh/XploitX-2026-beta-/main/public/xploitx_logo.png';
             let publicQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&centerImageUrl=${encodeURIComponent(logoUrl)}&ecLevel=H&size=350&centerImageSizeRatio=0.32`;
             const hostUrl = process.env.APP_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null);
@@ -2899,7 +2899,7 @@ app.post('/api/admin/verify_payment', verifyAdmin, async (req, res) => {
                 publicQrUrl = `${hostUrl}/api/qr?data=${encodeURIComponent(qrData)}`;
             }
 
-            
+
             let odPdfBuffer = null;
             try {
                 odPdfBuffer = await generateODPdfInternal(teamData);
@@ -3103,7 +3103,7 @@ async function generateODPdfInternal(teamObj) {
             const pecLogoPath = path.join(publicDir, 'PEC Logo.png');
             const sealImgPath = path.join(publicDir, 'Seal.jpeg');
 
-            
+
             let headerY = 32;
             if (fs.existsSync(pecLogoPath)) {
                 doc.image(pecLogoPath, 42, headerY - 5, { width: 62, height: 62 });
@@ -3124,13 +3124,13 @@ async function generateODPdfInternal(teamObj) {
 
             doc.font('Times-Roman').fontSize(9.5).text('Date: __________________', 390, 109, { width: 170, align: 'right' });
 
-            
+
             let currentY = 126;
             doc.font('Times-Bold').fontSize(12).text('ON-DUTY (OD) LETTER', 35, currentY, { align: 'center', underline: true });
             currentY += 20;
             doc.font('Times-Bold').fontSize(10).text('TO WHOMSOEVER IT MAY CONCERN', 35, currentY, { align: 'center' });
 
-            
+
             currentY += 24;
             doc.font('Times-Roman').fontSize(9.5).fillColor('#000000');
 
@@ -3152,14 +3152,14 @@ async function generateODPdfInternal(teamObj) {
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
             currentY += 30;
 
-            
+
             doc.font('Times-Bold').fontSize(10).text('TEAM DETAILS', 35, currentY, { align: 'center' });
             currentY += 16;
 
             doc.font('Times-Bold').fontSize(9.5).text(`Team ID: ${teamObj.team_id || teamObj.id}`, 35, currentY);
             currentY += 16;
 
-            
+
             const colWidths = [30, 70, 115, 75, 115, 65, 55];
             const headers = ['S. No.', 'Role', 'Name of the Participant', 'Register /\nID No.', 'College /\nInstitution', 'Department', 'Year'];
             const startX = 35;
@@ -3189,7 +3189,7 @@ async function generateODPdfInternal(teamObj) {
                 doc.rect(startX, currentY, 525, rowHeight).stroke();
                 let xPos = startX;
 
-                
+
                 const rowData = [
                     (idx + 1).toString(),
                     idx === 0 ? 'Team Leader' : 'Team Member',
@@ -3218,7 +3218,7 @@ async function generateODPdfInternal(teamObj) {
 
             currentY += 22;
 
-            
+
             doc.font('Times-Bold').fontSize(10).text('EVENT DETAILS', 35, currentY, { align: 'center' });
             currentY += 18;
 
@@ -3243,11 +3243,11 @@ async function generateODPdfInternal(teamObj) {
 
             currentY += 16;
 
-            
+
             doc.font('Times-Roman').fontSize(9.5).text('This letter is issued for the purpose of granting On-Duty permission to the above-mentioned participants for attending and participating in the ', 35, currentY, { continued: true });
             doc.font('Times-Bold').text('XploitX 2.0 Beta CTF.');
 
-            
+
             const sigY = 715;
 
             doc.moveTo(55, sigY).lineTo(165, sigY).lineWidth(0.8).strokeColor('#000000').stroke();
@@ -3304,7 +3304,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
         const cleanUsername = username.trim();
         const cleanPassword = password.trim();
 
-        
+
         const adminAccounts = {
             "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
@@ -3323,7 +3323,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "attendance": "Attendance Officer"
         };
 
-        
+
         const operationalKey = process.env.ATTENDANCE_SECURITY_KEY || process.env.ATTENDANCE_KEY;
         if (operationalKey && cleanUsername === 'attendance') {
             adminAccounts['attendance'] = operationalKey;
@@ -3353,7 +3353,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
                 { expiresIn: '2h', algorithm: 'HS256' }
             );
 
-            
+
             res.clearCookie('attendance_token', { path: '/' });
 
             return res.json({
@@ -3447,10 +3447,10 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             const isPresent = item.status === 'PRESENT';
             if (isPresent) anyPresent = true;
 
-            
+
             if (isDbMongo()) {
                 let updated = false;
-                
+
                 if (item.id && typeof item.id === 'string' && item.id.length === 24 && /^[0-9a-fA-F]{24}$/.test(item.id)) {
                     const resMongo = await Member.updateOne(
                         { _id: item.id },
@@ -3464,7 +3464,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
                     if (resMongo.matchedCount > 0) updated = true;
                 }
 
-                
+
                 if (!updated && (item.name || item.id)) {
                     await Member.updateOne(
                         { team_id: teamId, name: item.name || item.id },
@@ -3478,7 +3478,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
                 }
             }
 
-            
+
             if (db) {
                 try {
                     if (item.id && !isNaN(parseInt(item.id))) {
@@ -3498,7 +3498,7 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
             }
         }
 
-        
+
         const overallStatus = anyPresent ? 'PRESENT' : 'ABSENT';
         if (isDbMongo()) {
             await Attendance.updateOne(
