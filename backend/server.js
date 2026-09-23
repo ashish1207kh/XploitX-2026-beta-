@@ -1703,14 +1703,18 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
             "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
             "Ashish": process.env.ADMIN_PASS_ASHISH,
-            "Madhu": process.env.ADMIN_PASS_MADHU
+            "Madhu": process.env.ADMIN_PASS_MADHU,
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
+            "jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026"
         };
 
         const canonicalMap = {
             "Administrator": "Administrator",
             "Jesin Milesh": "Jesin Milesh",
             "Ashish": "Ashish",
-            "Madhu": "Madhu"
+            "Madhu": "Madhu",
+            "Jeshwanth": "Jeshwanth",
+            "jeshwanth": "Jeshwanth"
         };
 
         let isValid = false;
@@ -1815,7 +1819,7 @@ function extractLogTimestamp(line) {
 app.get('/api/admin/activity-log', verifyAdmin, async (req, res) => {
     try {
         const currentUser = req.user ? req.user.username : '';
-        if (!currentUser || (currentUser !== 'Administrator' && currentUser !== 'Jesin Milesh' && req.user.role !== 'admin')) {
+        if (!currentUser || (currentUser !== 'Administrator' && currentUser !== 'Jesin Milesh' && currentUser !== 'Jeshwanth' && req.user.role !== 'admin')) {
             return res.status(403).json({ error: 'Access Denied: High Command Administrator clearance required.' });
         }
         let logs = [];
@@ -3308,6 +3312,8 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
             "Ashish": process.env.ADMIN_PASS_ASHISH,
             "Madhu": process.env.ADMIN_PASS_MADHU,
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
+            "jeshwanth": process.env.ADMIN_PASS_JESHWANTH || "Jeshwanth@Beta2026",
             "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR
         };
 
@@ -3316,6 +3322,8 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Jesin Milesh": "Jesin Milesh",
             "Ashish": "Ashish",
             "Madhu": "Madhu",
+            "Jeshwanth": "Jeshwanth",
+            "jeshwanth": "Jeshwanth",
             "attendance": "Attendance Officer"
         };
 
