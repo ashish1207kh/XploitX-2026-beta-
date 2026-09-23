@@ -767,6 +767,11 @@ function initEventModals() {
 
     const startSequence = () => {
         if (isIndex) {
+            // After 3 to 5 seconds (4s) from entering into index page: show poster.jpeg
+            setTimeout(() => {
+                showPosterPopup();
+            }, 4000);
+
             // After 10 to 15 seconds (12s) from entering into index page: show deadline urgency modal
             setTimeout(() => {
                 showDeadlinePopup();
@@ -806,15 +811,79 @@ const initDeadlinePopup = initEventModals;
 
 /**
  * ========================================================
- * OFFICIAL EVENT POSTER POPUP (Disabled)
+ * OFFICIAL EVENT POSTER POPUP (Poster.jpeg)
  * ========================================================
  */
 function showPosterPopup() {
-    // Disabled poster popup as requested
-    return;
+    if (document.getElementById('poster-popup-overlay')) {
+        const existing = document.getElementById('poster-popup-overlay');
+        existing.classList.add('active');
+        return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'poster-popup-overlay';
+    overlay.className = 'poster-popup-overlay active';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'poster-popup-title');
+
+    overlay.innerHTML = `
+        <div class="poster-popup-card">
+            <button class="poster-popup-close" id="poster-popup-close" aria-label="Close Poster">&times;</button>
+            <div class="poster-popup-badge" id="poster-popup-title">
+                <span class="poster-beacon"></span>
+                <i class="fas fa-shield-virus"></i> XPLOITX 2.0 // OFFICIAL EVENT POSTER
+            </div>
+            
+            <div class="poster-img-container">
+                <img src="Poster.jpeg" onerror="this.onerror=null;this.src='poster.jpeg';" alt="XPLOITX 2.0 BETA Official Event Poster" class="poster-img" id="poster-popup-img">
+            </div>
+
+            <div class="poster-popup-actions">
+                <a href="register.html" class="poster-btn-primary" id="poster-register-btn">
+                    <i class="fas fa-bolt"></i> SECURE YOUR TEAM SLOT NOW [₹150]
+                </a>
+                <div class="poster-btn-subrow">
+                    <a href="Poster.jpeg" target="_blank" class="poster-btn-secondary" id="poster-view-link">
+                        <i class="fas fa-expand"></i> VIEW FULL POSTER
+                    </a>
+                    <button type="button" class="poster-btn-secondary" id="poster-dismiss-btn">
+                        <i class="fas fa-times"></i> CONTINUE TO TERMINAL
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closePoster = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 350);
+    };
+
+    window.closePosterPopup = closePoster;
+
+    const closeBtn = overlay.querySelector('#poster-popup-close');
+    const dismissBtn = overlay.querySelector('#poster-dismiss-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closePoster);
+    if (dismissBtn) dismissBtn.addEventListener('click', closePoster);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePoster();
+    });
+
+    document.addEventListener('keydown', function escPosterListener(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closePoster();
+            document.removeEventListener('keydown', escPosterListener);
+        }
+    });
 }
 window.showPosterPopup = showPosterPopup;
-window.closePosterPopup = function() {};
 
 /**
  * ========================================================
