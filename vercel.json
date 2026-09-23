@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -38,39 +39,35 @@
     },
     {
       "source": "/attendance",
-      "destination": "/public/attendance.html"
+      "destination": "/attendance.html"
     },
     {
       "source": "/attendance-login",
-      "destination": "/public/attendance.html"
+      "destination": "/attendance.html"
     },
     {
       "source": "/register",
-      "destination": "/public/register.html"
+      "destination": "/register.html"
     },
     {
       "source": "/about",
-      "destination": "/public/about.html"
+      "destination": "/about.html"
     },
     {
       "source": "/rules",
-      "destination": "/public/rules.html"
+      "destination": "/rules.html"
     },
     {
       "source": "/prizes",
-      "destination": "/public/prizes.html"
+      "destination": "/prizes.html"
     },
     {
       "source": "/White-hub.jpeg",
-      "destination": "/public/White-Hub.jpeg"
+      "destination": "/White-Hub.jpeg"
     },
     {
       "source": "/white-hub.jpeg",
-      "destination": "/public/White-Hub.jpeg"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/public/$1"
+      "destination": "/White-Hub.jpeg"
     }
   ]
 }
