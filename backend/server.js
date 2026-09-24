@@ -2674,9 +2674,12 @@ const memberValidationSchema = z.object({
     name: z.string().min(2, 'Member name must be at least 2 characters').max(60, 'Member name too long').trim(),
     email: z.string().email('Invalid member email format').max(100).trim().toLowerCase(),
     phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be a valid 10-digit number').trim(),
+    whatsapp: z.string().trim().optional(),
     college: z.string().min(2, 'College name must be at least 2 characters').max(120, 'College name too long').trim(),
+    district: z.string().optional(),
+    age: z.any().optional(),
     role: z.string().optional().default('Member')
-});
+}).passthrough();
 
 const registrationPayloadSchema = z.object({
     teamName: z.string().min(2, 'Team name must be at least 2 characters').max(50, 'Team name cannot exceed 50 characters').trim(),
@@ -2716,6 +2719,11 @@ app.post('/api/auth/register-with-payment', registrationLimiter, upload.single('
         const validEmail = validData.email;
         const validUtr = validData.utrNumber;
         const members = validData.members;
+
+        const leader = members[0];
+        if (!leader || !leader.whatsapp || !/^[0-9]{10}$/.test(String(leader.whatsapp).trim())) {
+            return res.status(400).json({ error: 'Team Leader WhatsApp number is required and must be a valid 10-digit number.' });
+        }
 
         // Server-Side Pricing Authority: Never trust client-supplied fee.
         // Price is strictly calculated by server based on squad count (₹150 per member).

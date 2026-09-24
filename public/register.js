@@ -1000,6 +1000,15 @@ function getPendingRequirements() {
         pending.push({ id: 'leaderPhone', label: 'Leader Mobile', done: true });
     }
 
+    // 5b. Leader WhatsApp
+    const leaderWhatsappInput = document.getElementById('leaderWhatsapp');
+    const leaderWhatsapp = leaderWhatsappInput ? leaderWhatsappInput.value.trim() : '';
+    if (!validatePhone(leaderWhatsapp)) {
+        pending.push({ id: 'leaderWhatsapp', label: 'Leader 10-digit WhatsApp', done: false });
+    } else {
+        pending.push({ id: 'leaderWhatsapp', label: 'Leader WhatsApp', done: true });
+    }
+
     // 6. Leader College & District
     const leaderCollegeInput = document.getElementById('leaderCollege');
     const leaderDistrictInput = document.getElementById('leaderDistrict');
@@ -1487,7 +1496,7 @@ function initFormSubmission() {
 
         
         const leaderWhatsapp = leaderWhatsappInput.value.trim();
-        if (leaderWhatsapp && !validatePhone(leaderWhatsapp)) {
+        if (!leaderWhatsapp || !validatePhone(leaderWhatsapp)) {
             setError(leaderWhatsappInput, 'Enter a valid 10-digit WhatsApp number.');
         }
 
@@ -1508,7 +1517,7 @@ function initFormSubmission() {
                 age: parseInt(leaderAge) || 20,
                 email: leaderEmail,
                 phone: leaderPhone,
-                whatsapp: leaderWhatsapp || leaderPhone,
+                whatsapp: leaderWhatsapp,
                 college: leaderCollege,
                 district: leaderDistrict,
                 role: 'LEADER'
