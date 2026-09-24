@@ -1086,6 +1086,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/attendance/login`, {
                     method: 'POST',
+                    credentials: 'omit',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: u, password: p })
                 });
@@ -1096,8 +1097,11 @@
                     inMemoryAttendanceToken = data.token;
                     inMemoryAttendanceUser = data.user;
                     try {
-                        sessionStorage.setItem('xploitx_active_session', data.token);
-                        sessionStorage.setItem('xploitx_active_user', data.user || 'OPERATIVE');
+                        sessionStorage.removeItem('xploitx_active_session');
+                        sessionStorage.removeItem('xploitx_active_user');
+                        localStorage.removeItem('xploitx_active_session');
+                        localStorage.removeItem('xploitx_active_user');
+                        document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     } catch (e) { }
 
                     if (btn) {
@@ -1189,6 +1193,9 @@
             try {
                 sessionStorage.removeItem('xploitx_active_session');
                 sessionStorage.removeItem('xploitx_active_user');
+                localStorage.removeItem('xploitx_active_session');
+                localStorage.removeItem('xploitx_active_user');
+                document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             } catch (e) { }
             stopScanner();
 
@@ -1226,20 +1233,23 @@
         }
 
         async function logoutAttendance() {
-            const userToLogout = inMemoryAttendanceUser || sessionStorage.getItem('xploitx_active_user') || 'Operative';
-            const tokenToLogout = inMemoryAttendanceToken || sessionStorage.getItem('xploitx_active_session');
+            const userToLogout = inMemoryAttendanceUser || 'Operative';
+            const tokenToLogout = inMemoryAttendanceToken;
 
             inMemoryAttendanceToken = null;
             inMemoryAttendanceUser = null;
             try {
                 sessionStorage.removeItem('xploitx_active_session');
                 sessionStorage.removeItem('xploitx_active_user');
+                localStorage.removeItem('xploitx_active_session');
+                localStorage.removeItem('xploitx_active_user');
+                document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             } catch (e) { }
 
             try {
                 await fetch(`${API_BASE_URL}/api/attendance/logout`, {
                     method: 'POST',
-                    credentials: 'include',
+                    credentials: 'omit',
                     headers: {
                         'Content-Type': 'application/json',
                         ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
@@ -1522,8 +1532,16 @@
 
         function onScanSuccess(decodedText) {
             if (!isScanning) return;
-            if (html5QrCode) html5QrCode.pause();
             isScanning = false;
+
+            try {
+                if (html5QrCode && typeof html5QrCode.pause === 'function') {
+                    // Pause decoding without freezing video (false keeps stream smooth and avoids 'Scanner paused' message)
+                    html5QrCode.pause(false);
+                }
+            } catch (e) {
+                console.warn("Scanner pause warning:", e);
+            }
 
             let teamId = decodedText;
             try {
@@ -1549,7 +1567,7 @@
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/attendance/scan_info/${teamId}`, {
-                    credentials: 'include',
+                    credentials: 'omit',
                     headers: getAuthHeaders()
                 });
                 if (response.status === 401) {
@@ -1618,7 +1636,7 @@
                 const response = await fetch(`${API_BASE_URL}/api/attendance/mark_members`, {
                     method: 'POST',
                     headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-                    credentials: 'include',
+                    credentials: 'omit',
                     body: JSON.stringify({ teamId, memberStatuses })
                 });
                 if (response.status === 401) {
@@ -1639,24 +1657,34 @@
             }
         }
 
-        function resumeScanning() {
+        async function resumeScanning() {
             const resBox = document.getElementById('result');
             if (resBox) resBox.style.display = 'none';
-            isScanning = true;
+
+            let resumed = false;
             try {
                 if (html5QrCode && typeof html5QrCode.getState === 'function') {
-                    // Html5QrcodeScannerState.PAUSED = 2
-                    if (html5QrCode.getState() === 2) {
+                    const state = html5QrCode.getState();
+                    // State 3 = PAUSED, State 2 = SCANNING
+                    if (state === 3) {
                         html5QrCode.resume();
-                        return;
+                        resumed = true;
+                    } else if (state === 2) {
+                        resumed = true;
                     }
                 }
-                if (!html5QrCode || !html5QrCode.isScanning) {
-                    startScanner();
-                }
-            } catch (e) {
-                console.warn("Resume scanning fallback:", e);
-                startScanner();
+            } catch (err) {
+                console.warn("Resume call failed:", err);
+                resumed = false;
+            }
+
+            if (!resumed) {
+                await stopScanner();
+                await startScanner();
+            } else {
+                setTimeout(() => {
+                    isScanning = true;
+                }, 300);
             }
         }
 
@@ -1681,7 +1709,7 @@
                 doc.text(`Department of Cyber Security | Generated: ${new Date().toLocaleString()}`, 105, 28, null, null, "center");
 
                 const res = await fetch(`${API_BASE_URL}/api/attendance/all`, {
-                    credentials: 'include',
+                    credentials: 'omit',
                     headers: getAuthHeaders()
                 });
                 if (res.status === 401) {
@@ -1746,7 +1774,7 @@
 
             try {
                 const res = await fetch(`${API_BASE_URL}/api/attendance/all`, {
-                    credentials: 'include',
+                    credentials: 'omit',
                     headers: getAuthHeaders()
                 });
                 if (res.status === 401 || res.status === 403) {
@@ -1839,32 +1867,41 @@
         window.onload = () => {
             setupPasswordToggle();
 
-            let savedToken = null;
-            let savedUser = null;
+            // Enforce clean state on page load / refresh: no stored tokens, no cookies, always logged out
+            inMemoryAttendanceToken = null;
+            inMemoryAttendanceUser = null;
             try {
-                savedToken = sessionStorage.getItem('xploitx_active_session');
-                savedUser = sessionStorage.getItem('xploitx_active_user');
+                sessionStorage.removeItem('xploitx_active_session');
+                sessionStorage.removeItem('xploitx_active_user');
+                localStorage.removeItem('xploitx_active_session');
+                localStorage.removeItem('xploitx_active_user');
+                document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             } catch (e) { }
 
-            if (savedToken) {
-                inMemoryAttendanceToken = savedToken;
-                inMemoryAttendanceUser = savedUser || 'OPERATIVE';
-                unlockTerminal(inMemoryAttendanceUser);
-            } else {
-                const termContent = document.getElementById('terminal-content');
-                if (termContent) termContent.style.display = 'none';
+            const termContent = document.getElementById('terminal-content');
+            if (termContent) termContent.style.display = 'none';
 
-                const statusBadge = document.getElementById('terminal-status-badge');
-                if (statusBadge) statusBadge.style.display = 'none';
+            const statusBadge = document.getElementById('terminal-status-badge');
+            if (statusBadge) statusBadge.style.display = 'none';
 
-                const overlay = document.getElementById('login-overlay');
-                if (overlay) overlay.style.setProperty('display', 'flex', 'important');
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) overlay.style.setProperty('display', 'flex', 'important');
 
-                resetAttendanceLoginForm();
-                const userEl = document.getElementById('attendance-user');
-                if (userEl) userEl.focus();
-            }
+            resetAttendanceLoginForm();
+            const userEl = document.getElementById('attendance-user');
+            if (userEl) userEl.focus();
         };
+
+        window.addEventListener('beforeunload', () => {
+            inMemoryAttendanceToken = null;
+            inMemoryAttendanceUser = null;
+            try {
+                sessionStorage.removeItem('xploitx_active_session');
+                sessionStorage.removeItem('xploitx_active_user');
+                document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            } catch (e) { }
+            stopScanner();
+        });
 
     </script>
 </body>
