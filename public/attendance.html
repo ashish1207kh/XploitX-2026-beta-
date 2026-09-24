@@ -382,6 +382,32 @@
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
         }
 
+        .action-btn-green {
+            border-color: var(--doom-green);
+            color: var(--doom-green);
+            background: rgba(0, 255, 102, 0.15);
+        }
+
+        .action-btn-green:hover {
+            border-color: var(--doom-green);
+            color: #fff;
+            background: rgba(0, 255, 102, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+        }
+
+        .camera-error-card {
+            background: rgba(26, 4, 12, 0.94);
+            border: 1.5px solid var(--deep-magenta);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 15px auto;
+            max-width: 520px;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.25);
+            animation: fadeIn 0.3s ease-in-out;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
         .table-wrapper {
             overflow-x: auto;
             border: 1px solid rgba(0, 255, 102, 0.2);
@@ -778,25 +804,56 @@
                 <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #8b9bb4;">SYSTEM VERIFICATION ACTIVE</span>
             </div>
 
-            <p style="color: #8b9bb4; font-size: 0.9rem; margin-bottom: 20px; text-align: center;">
-                Position participant QR entry pass within the scanner frame.
+            <p style="color: #8b9bb4; font-size: 0.9rem; margin-bottom: 16px; text-align: center;">
+                Position participant QR entry pass within scanner frame, or use photo/manual fallback.
             </p>
+
+            <!-- Scanner Controls Toolbar -->
+            <div class="scanner-toolbar" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+                <select id="camera-select" onchange="onCameraSelectChange()" class="search-input-hud" style="display: none; max-width: 240px; padding: 7px 12px; font-size: 0.85rem; height: auto;">
+                    <option value="">Detecting cameras...</option>
+                </select>
+                <button type="button" onclick="requestCameraPermissionAndStart()" class="action-btn-hud" style="font-size: 0.82rem; padding: 7px 14px;" title="Restart camera video stream">
+                    <i class="fas fa-camera"></i> [ RESTART CAMERA ]
+                </button>
+                <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.82rem; padding: 7px 14px;" title="Scan QR code from an image or photo">
+                    <i class="fas fa-image"></i> [ SCAN PHOTO / FILE ]
+                </button>
+                <input type="file" id="qr-file-input" accept="image/*" capture="environment" style="display: none;" onchange="handleQrFileUpload(event)">
+            </div>
 
             <div id="scanner-wrapper">
                 <div id="reader"></div>
             </div>
 
-            <div id="error-msg"
-                style="display: none; color: var(--deep-magenta); margin-top: 15px; font-family: var(--font-mono); text-align: center;">
-            </div>
+            <div id="error-msg" style="display: none; margin-top: 15px;"></div>
 
-            
+            <!-- Verification / Attendance Marking Section -->
             <div id="result">
                 <div id="scan-feedback"></div>
                 <div id="team-details"></div>
                 <div style="margin-top: 15px; text-align: center;">
                     <button onclick="resumeScanning()" class="action-btn-hud action-btn-gold" style="font-size: 0.85rem;">
                         <i class="fas fa-redo"></i> [ SCAN ANOTHER PASS ]
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Entry Override Card -->
+            <div class="manual-checkin-hud" style="max-width: 520px; margin: 25px auto 0; padding: 18px 20px; background: rgba(4, 9, 22, 0.9); border: 1px solid rgba(0, 255, 102, 0.25); border-radius: 6px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-family: var(--font-brand); font-size: 0.88rem; color: var(--doom-gold); letter-spacing: 1px;">
+                        <i class="fas fa-keyboard"></i> MANUAL SQUAD PASS OVERRIDE
+                    </span>
+                    <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #8b9bb4;">DIRECT VERIFICATION</span>
+                </div>
+                <p style="font-family: var(--font-mono); font-size: 0.8rem; color: #8b9bb4; margin-bottom: 12px;">
+                    If camera permission is blocked or QR is damaged, enter the Team ID to pull squad verification:
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="manual-team-id" class="search-input-hud" placeholder="Enter Team ID (e.g. XPLOIT-XXXX)" style="font-size: 0.9rem;" onkeydown="if(event.key==='Enter'){event.preventDefault(); submitManualTeamId();}">
+                    <button type="button" onclick="submitManualTeamId()" class="action-btn-hud action-btn-green" style="white-space: nowrap; font-size: 0.85rem; padding: 8px 16px;">
+                        <i class="fas fa-check-circle"></i> VERIFY
                     </button>
                 </div>
             </div>
@@ -871,6 +928,8 @@
     <script>
         let html5QrCode = null;
         let isScanning = false;
+        let selectedCameraId = null;
+        let availableCameras = [];
         let attendanceRawData = [];
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
@@ -1224,15 +1283,51 @@
 
         function initScannerLib() {
             try {
-                if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode("reader");
+                }
             } catch (e) {
                 console.error("Lib Init Failed", e);
-                const errorEl = document.getElementById('error-msg');
-                if (errorEl) {
-                    errorEl.innerText = "Scanner initialization failed. Please verify camera permissions.";
-                    errorEl.style.display = 'block';
-                }
+                displayCameraError(e);
             }
+        }
+
+        async function updateCameraList() {
+            const select = document.getElementById('camera-select');
+            if (!select) return;
+            try {
+                if (typeof Html5Qrcode === 'undefined' || !Html5Qrcode.getCameras) return;
+                const devices = await Html5Qrcode.getCameras();
+                availableCameras = devices || [];
+                select.innerHTML = '';
+                if (availableCameras.length > 0) {
+                    availableCameras.forEach((cam, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = cam.id;
+                        opt.innerText = cam.label || `Camera ${idx + 1}`;
+                        select.appendChild(opt);
+                    });
+
+                    if (!selectedCameraId) {
+                        const backCam = availableCameras.find(c => /back|rear|environment/i.test(c.label));
+                        selectedCameraId = backCam ? backCam.id : availableCameras[0].id;
+                    }
+                    select.value = selectedCameraId;
+                    select.style.display = availableCameras.length > 1 ? 'inline-block' : 'none';
+                } else {
+                    select.style.display = 'none';
+                }
+            } catch (e) {
+                console.warn("Camera list query suppressed", e);
+            }
+        }
+
+        async function onCameraSelectChange() {
+            const select = document.getElementById('camera-select');
+            if (!select) return;
+            selectedCameraId = select.value;
+            await stopScanner();
+            await startScanner();
         }
 
         function switchTab(tab) {
@@ -1259,31 +1354,183 @@
             }
         }
 
+        function isPermissionError(err) {
+            const msg = (err && (err.message || err.name || err.toString())) || '';
+            return /NotAllowedError|Permission denied|Permission dismissed|denied|permission/i.test(msg);
+        }
+
+        function displayCameraError(err) {
+            const errorEl = document.getElementById('error-msg');
+            if (!errorEl) return;
+
+            const errStr = (err && (err.message || err.name || err.toString())) || '';
+            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            const isInsecure = (!window.isSecureContext && !isLocal) || errStr === 'INSECURE_CONTEXT';
+            const isPermDenied = isPermissionError(err);
+            const isNotFound = /NotFoundError|DevicesNotFoundError|NO_CAMERA_FOUND/i.test(errStr);
+            const isNotReadable = /NotReadableError|TrackStartError|already in use|device busy/i.test(errStr);
+
+            let title = "CAMERA ACCESS ERROR";
+            let details = "";
+            let guide = "";
+
+            if (isInsecure) {
+                title = "SECURE CONTEXT REQUIRED (HTTPS / LOCALHOST)";
+                details = "Modern browsers strictly block live camera video over insecure HTTP.";
+                guide = `
+                    <div style="text-align: left; margin: 10px 0; font-size: 0.82rem; line-height: 1.5; color: #cbd5e1;">
+                        • Access via <strong>localhost</strong> on this machine, or<br>
+                        • Serve the application over <strong>HTTPS</strong>, or<br>
+                        • Use the <strong>[ Scan from Photo ]</strong> or <strong>Manual Entry</strong> options below.
+                    </div>
+                `;
+            } else if (isPermDenied) {
+                title = "CAMERA PERMISSION DENIED";
+                details = "Camera access was blocked by your browser or operating system settings.";
+                guide = `
+                    <div style="text-align: left; margin: 10px 0; font-size: 0.82rem; line-height: 1.5; color: #cbd5e1;">
+                        <strong>How to unblock camera access:</strong><br>
+                        1. Click the <strong>lock 🔒 or tune/settings icon</strong> in your browser address bar.<br>
+                        2. Under Permissions, set <strong>Camera</strong> to <strong>Allow</strong>.<br>
+                        3. If your OS (Windows / Android / iOS) prompts for camera permissions, tap <strong>Allow</strong>.<br>
+                        4. Click <strong>[ REQUEST PERMISSION & RETRY ]</strong> below.
+                    </div>
+                `;
+            } else if (isNotFound) {
+                title = "NO CAMERA DEVICE DETECTED";
+                details = "No webcam or video capture device was found on this system.";
+                guide = `<div style="text-align: left; margin: 10px 0; font-size: 0.82rem; color: #cbd5e1;">Please connect a camera or use the Manual Squad Pass Override below.</div>`;
+            } else if (isNotReadable) {
+                title = "CAMERA HARDWARE BUSY";
+                details = "Camera is currently locked or in use by another app (e.g. Teams, Zoom, or another tab).";
+                guide = `<div style="text-align: left; margin: 10px 0; font-size: 0.82rem; color: #cbd5e1;">Close other applications using your webcam and click Retry.</div>`;
+            } else {
+                title = "CAMERA INITIALIZATION ERROR";
+                details = errStr || "Unable to acquire video stream from camera.";
+            }
+
+            errorEl.innerHTML = `
+                <div class="camera-error-card">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--deep-magenta); font-weight: bold; font-size: 0.95rem; margin-bottom: 8px;">
+                        <i class="fas fa-exclamation-triangle"></i> ${title}
+                    </div>
+                    <p style="color: #ff99bb; font-size: 0.85rem; margin-bottom: 8px;">${details}</p>
+                    ${guide}
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px;">
+                        <button type="button" onclick="requestCameraPermissionAndStart()" class="action-btn-hud action-btn-green" style="font-size: 0.8rem; padding: 8px 14px;">
+                            <i class="fas fa-sync"></i> [ REQUEST PERMISSION & RETRY ]
+                        </button>
+                        <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.8rem; padding: 8px 14px;">
+                            <i class="fas fa-upload"></i> [ SCAN PHOTO / FILE ]
+                        </button>
+                    </div>
+                </div>
+            `;
+            errorEl.style.display = 'block';
+        }
+
+        async function requestCameraPermissionAndStart() {
+            const errorEl = document.getElementById('error-msg');
+            if (errorEl) {
+                errorEl.innerHTML = '<div style="color: var(--electric-blue); font-family: var(--font-mono); text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Requesting camera authorization...</div>';
+                errorEl.style.display = 'block';
+            }
+
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            } catch (permErr) {
+                console.warn("Direct getUserMedia test failed", permErr);
+            }
+
+            await stopScanner();
+            await startScanner();
+        }
+
         async function startScanner() {
             try {
                 if (html5QrCode && html5QrCode.isScanning) return;
-                if (!html5QrCode) {
-                    initScannerLib();
-                    if (!html5QrCode) return;
-                }
+                initScannerLib();
+                if (!html5QrCode) return;
+
                 const errorEl = document.getElementById('error-msg');
                 if (errorEl) errorEl.style.display = 'none';
 
-                await html5QrCode.start(
-                    { facingMode: "environment" },
-                    config,
-                    onScanSuccess,
-                    onScanFailure
-                );
-                isScanning = true;
+                const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+                if (!window.isSecureContext && !isLocal) {
+                    throw new Error("INSECURE_CONTEXT");
+                }
+
+                // Strategy 1: Specific camera selected
+                if (selectedCameraId) {
+                    await html5QrCode.start(
+                        selectedCameraId,
+                        config,
+                        onScanSuccess,
+                        onScanFailure
+                    );
+                    isScanning = true;
+                    await updateCameraList();
+                    return;
+                }
+
+                // Strategy 2: facingMode environment (back camera)
+                try {
+                    await html5QrCode.start(
+                        { facingMode: "environment" },
+                        config,
+                        onScanSuccess,
+                        onScanFailure
+                    );
+                    isScanning = true;
+                    await updateCameraList();
+                    return;
+                } catch (envErr) {
+                    if (isPermissionError(envErr)) throw envErr;
+                    console.warn("Environment camera failed, trying user camera...", envErr);
+                }
+
+                // Strategy 3: facingMode user (front camera / laptop webcam)
+                try {
+                    await html5QrCode.start(
+                        { facingMode: "user" },
+                        config,
+                        onScanSuccess,
+                        onScanFailure
+                    );
+                    isScanning = true;
+                    await updateCameraList();
+                    return;
+                } catch (userErr) {
+                    if (isPermissionError(userErr)) throw userErr;
+                    console.warn("User camera failed, trying enumerated device...", userErr);
+                }
+
+                // Strategy 4: Enumerate cameras and pick first
+                if (typeof Html5Qrcode !== 'undefined' && Html5Qrcode.getCameras) {
+                    const cameras = await Html5Qrcode.getCameras();
+                    if (cameras && cameras.length > 0) {
+                        selectedCameraId = cameras[0].id;
+                        await html5QrCode.start(
+                            selectedCameraId,
+                            config,
+                            onScanSuccess,
+                            onScanFailure
+                        );
+                        isScanning = true;
+                        await updateCameraList();
+                        return;
+                    }
+                }
+
+                throw new Error("NO_CAMERA_FOUND");
+
             } catch (err) {
                 console.error("Camera start failed", err);
-                const errorEl = document.getElementById('error-msg');
-                if (errorEl) {
-                    errorEl.innerText = "Camera Access Error: " + (err.message || err);
-                    errorEl.style.display = 'block';
-                }
                 isScanning = false;
+                displayCameraError(err);
             }
         }
 
@@ -1296,6 +1543,62 @@
                 console.warn("Scanner stop failed", err);
             }
             isScanning = false;
+        }
+
+        async function handleQrFileUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const errorEl = document.getElementById('error-msg');
+            if (errorEl) {
+                errorEl.innerHTML = '<div style="color: var(--electric-blue); font-family: var(--font-mono); text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Processing QR image pass...</div>';
+                errorEl.style.display = 'block';
+            }
+
+            try {
+                initScannerLib();
+                if (!html5QrCode) throw new Error("Scanner engine not initialized");
+
+                if (isScanning && html5QrCode.isScanning) {
+                    try { await html5QrCode.stop(); } catch(e){}
+                    isScanning = false;
+                }
+
+                const decodedText = await html5QrCode.scanFile(file, true);
+                if (errorEl) errorEl.style.display = 'none';
+                onScanSuccess(decodedText);
+            } catch (err) {
+                console.error("QR File Scan Error:", err);
+                if (errorEl) {
+                    errorEl.innerHTML = `
+                        <div class="camera-error-card" style="border-color: var(--doom-gold);">
+                            <div style="color: var(--doom-gold); font-weight: bold; margin-bottom: 6px;">
+                                <i class="fas fa-search"></i> QR DECODE FAILED
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 10px;">
+                                No readable QR code was found in this photo. Please make sure the pass is well-lit and not blurry, or use the Manual Squad Pass Override below.
+                            </p>
+                            <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.8rem; padding: 6px 12px;">
+                                <i class="fas fa-image"></i> TRY ANOTHER PHOTO
+                            </button>
+                        </div>
+                    `;
+                    errorEl.style.display = 'block';
+                }
+            } finally {
+                event.target.value = '';
+            }
+        }
+
+        function submitManualTeamId() {
+            const input = document.getElementById('manual-team-id');
+            if (!input) return;
+            const teamId = input.value.trim();
+            if (!teamId) {
+                showCustomAlert("Please enter a Team ID or Pass Code to verify.");
+                return;
+            }
+            processAttendance(teamId);
         }
 
         function onScanSuccess(decodedText) {
@@ -1420,8 +1723,24 @@
         function resumeScanning() {
             const resBox = document.getElementById('result');
             if (resBox) resBox.style.display = 'none';
+            const manualInput = document.getElementById('manual-team-id');
+            if (manualInput) manualInput.value = '';
             isScanning = true;
-            if (html5QrCode) html5QrCode.resume();
+            try {
+                if (html5QrCode && typeof html5QrCode.getState === 'function') {
+                    // Html5QrcodeScannerState.PAUSED = 2
+                    if (html5QrCode.getState() === 2) {
+                        html5QrCode.resume();
+                        return;
+                    }
+                }
+                if (!html5QrCode || !html5QrCode.isScanning) {
+                    startScanner();
+                }
+            } catch (e) {
+                console.warn("Resume scanning fallback:", e);
+                startScanner();
+            }
         }
 
         async function downloadPDF() {

@@ -572,7 +572,7 @@ app.use(helmet({
 app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=100');
     res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Permissions-Policy', 'camera=(self), microphone=(), geolocation=()');
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
