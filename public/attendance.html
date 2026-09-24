@@ -1285,22 +1285,31 @@
             try {
                 if (typeof Html5Qrcode === 'undefined' || !Html5Qrcode.getCameras) return;
                 const devices = await Html5Qrcode.getCameras();
-                availableCameras = devices || [];
+                // Filter strictly for back/rear cameras only, excluding front/user/selfie cameras
+                const backCameras = (devices || []).filter(cam => {
+                    const label = (cam.label || '').toLowerCase();
+                    return !/front|user|selfie|face|facetime/i.test(label);
+                });
+
+                availableCameras = backCameras.length > 0 ? backCameras : [];
                 select.innerHTML = '';
-                if (availableCameras.length > 0) {
+                if (availableCameras.length > 1) {
                     availableCameras.forEach((cam, idx) => {
                         const opt = document.createElement('option');
                         opt.value = cam.id;
-                        opt.innerText = cam.label || `Camera ${idx + 1}`;
+                        opt.innerText = cam.label || `Back Camera ${idx + 1}`;
                         select.appendChild(opt);
                     });
 
-                    if (!selectedCameraId) {
+                    if (!selectedCameraId || !availableCameras.some(c => c.id === selectedCameraId)) {
                         const backCam = availableCameras.find(c => /back|rear|environment/i.test(c.label));
                         selectedCameraId = backCam ? backCam.id : availableCameras[0].id;
                     }
                     select.value = selectedCameraId;
-                    select.style.display = availableCameras.length > 1 ? 'inline-block' : 'none';
+                    select.style.display = 'inline-block';
+                } else if (availableCameras.length === 1) {
+                    selectedCameraId = availableCameras[0].id;
+                    select.style.display = 'none';
                 } else {
                     select.style.display = 'none';
                 }
@@ -1355,6 +1364,7 @@
             const isInsecure = (!window.isSecureContext && !isLocal) || errStr === 'INSECURE_CONTEXT';
             const isPermDenied = isPermissionError(err);
             const isNotFound = /NotFoundError|DevicesNotFoundError|NO_CAMERA_FOUND/i.test(errStr);
+            const isNoBackCam = /NO_BACK_CAMERA_FOUND/i.test(errStr);
             const isNotReadable = /NotReadableError|TrackStartError|already in use|device busy/i.test(errStr);
 
             let title = "CAMERA ACCESS ERROR";
@@ -1382,6 +1392,10 @@
                         4. Click <strong>[ REQUEST PERMISSION & RETRY ]</strong> below.
                     </div>
                 `;
+            } else if (isNoBackCam) {
+                title = "NO BACK CAMERA DETECTED";
+                details = "Front camera scanning is disabled. No rear/back camera was found on this device.";
+                guide = `<div style="text-align: left; margin: 10px 0; font-size: 0.82rem; color: #cbd5e1;">Please connect or switch to a device equipped with a rear-facing camera.</div>`;
             } else if (isNotFound) {
                 title = "NO CAMERA DEVICE DETECTED";
                 details = "No webcam or video capture device was found on this system.";
@@ -1415,13 +1429,13 @@
         async function requestCameraPermissionAndStart() {
             const errorEl = document.getElementById('error-msg');
             if (errorEl) {
-                errorEl.innerHTML = '<div style="color: var(--electric-blue); font-family: var(--font-mono); text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Requesting camera authorization...</div>';
+                errorEl.innerHTML = '<div style="color: var(--electric-blue); font-family: var(--font-mono); text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Requesting back camera authorization...</div>';
                 errorEl.style.display = 'block';
             }
 
             try {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                     stream.getTracks().forEach(track => track.stop());
                 }
             } catch (permErr) {
@@ -1446,7 +1460,7 @@
                     throw new Error("INSECURE_CONTEXT");
                 }
 
-                // Strategy 1: Specific camera selected
+                // Strategy 1: Specific camera selected from back cameras list
                 if (selectedCameraId) {
                     await html5QrCode.start(
                         selectedCameraId,
@@ -1459,7 +1473,7 @@
                     return;
                 }
 
-                // Strategy 2: facingMode environment (back camera)
+                // Strategy 2: facingMode environment (back camera only)
                 try {
                     await html5QrCode.start(
                         { facingMode: "environment" },
@@ -1472,43 +1486,32 @@
                     return;
                 } catch (envErr) {
                     if (isPermissionError(envErr)) throw envErr;
-                    console.warn("Environment camera failed, trying user camera...", envErr);
+                    console.warn("facingMode 'environment' direct start failed, searching device list for rear camera...", envErr);
                 }
 
-                // Strategy 3: facingMode user (front camera / laptop webcam)
-                try {
-                    await html5QrCode.start(
-                        { facingMode: "user" },
-                        config,
-                        onScanSuccess,
-                        onScanFailure
-                    );
-                    isScanning = true;
-                    await updateCameraList();
-                    return;
-                } catch (userErr) {
-                    if (isPermissionError(userErr)) throw userErr;
-                    console.warn("User camera failed, trying enumerated device...", userErr);
-                }
-
-                // Strategy 4: Enumerate cameras and pick first
+                // Strategy 3: Enumerate cameras and find dedicated back/rear camera device
                 if (typeof Html5Qrcode !== 'undefined' && Html5Qrcode.getCameras) {
                     const cameras = await Html5Qrcode.getCameras();
                     if (cameras && cameras.length > 0) {
-                        selectedCameraId = cameras[0].id;
-                        await html5QrCode.start(
-                            selectedCameraId,
-                            config,
-                            onScanSuccess,
-                            onScanFailure
-                        );
-                        isScanning = true;
-                        await updateCameraList();
-                        return;
+                        const backCam = cameras.find(c => /back|rear|environment/i.test(c.label)) 
+                            || cameras.find(c => !/front|user|selfie|face|facetime/i.test(c.label));
+
+                        if (backCam) {
+                            selectedCameraId = backCam.id;
+                            await html5QrCode.start(
+                                selectedCameraId,
+                                config,
+                                onScanSuccess,
+                                onScanFailure
+                            );
+                            isScanning = true;
+                            await updateCameraList();
+                            return;
+                        }
                     }
                 }
 
-                throw new Error("NO_CAMERA_FOUND");
+                throw new Error("NO_BACK_CAMERA_FOUND");
 
             } catch (err) {
                 console.error("Camera start failed", err);
