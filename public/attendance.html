@@ -805,7 +805,7 @@
             </div>
 
             <p style="color: #8b9bb4; font-size: 0.9rem; margin-bottom: 16px; text-align: center;">
-                Position participant QR entry pass within scanner frame, or use photo/manual fallback.
+                Position participant QR entry pass within the scanner frame.
             </p>
 
             <!-- Scanner Controls Toolbar -->
@@ -816,10 +816,6 @@
                 <button type="button" onclick="requestCameraPermissionAndStart()" class="action-btn-hud" style="font-size: 0.82rem; padding: 7px 14px;" title="Restart camera video stream">
                     <i class="fas fa-camera"></i> [ RESTART CAMERA ]
                 </button>
-                <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.82rem; padding: 7px 14px;" title="Scan QR code from an image or photo">
-                    <i class="fas fa-image"></i> [ SCAN PHOTO / FILE ]
-                </button>
-                <input type="file" id="qr-file-input" accept="image/*" capture="environment" style="display: none;" onchange="handleQrFileUpload(event)">
             </div>
 
             <div id="scanner-wrapper">
@@ -835,25 +831,6 @@
                 <div style="margin-top: 15px; text-align: center;">
                     <button onclick="resumeScanning()" class="action-btn-hud action-btn-gold" style="font-size: 0.85rem;">
                         <i class="fas fa-redo"></i> [ SCAN ANOTHER PASS ]
-                    </button>
-                </div>
-            </div>
-
-            <!-- Manual Entry Override Card -->
-            <div class="manual-checkin-hud" style="max-width: 520px; margin: 25px auto 0; padding: 18px 20px; background: rgba(4, 9, 22, 0.9); border: 1px solid rgba(0, 255, 102, 0.25); border-radius: 6px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-family: var(--font-brand); font-size: 0.88rem; color: var(--doom-gold); letter-spacing: 1px;">
-                        <i class="fas fa-keyboard"></i> MANUAL SQUAD PASS OVERRIDE
-                    </span>
-                    <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #8b9bb4;">DIRECT VERIFICATION</span>
-                </div>
-                <p style="font-family: var(--font-mono); font-size: 0.8rem; color: #8b9bb4; margin-bottom: 12px;">
-                    If camera permission is blocked or QR is damaged, enter the Team ID to pull squad verification:
-                </p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="manual-team-id" class="search-input-hud" placeholder="Enter Team ID (e.g. XPLOIT-XXXX)" style="font-size: 0.9rem;" onkeydown="if(event.key==='Enter'){event.preventDefault(); submitManualTeamId();}">
-                    <button type="button" onclick="submitManualTeamId()" class="action-btn-hud action-btn-green" style="white-space: nowrap; font-size: 0.85rem; padding: 8px 16px;">
-                        <i class="fas fa-check-circle"></i> VERIFY
                     </button>
                 </div>
             </div>
@@ -1380,8 +1357,7 @@
                 guide = `
                     <div style="text-align: left; margin: 10px 0; font-size: 0.82rem; line-height: 1.5; color: #cbd5e1;">
                         • Access via <strong>localhost</strong> on this machine, or<br>
-                        • Serve the application over <strong>HTTPS</strong>, or<br>
-                        • Use the <strong>[ Scan from Photo ]</strong> or <strong>Manual Entry</strong> options below.
+                        • Serve the application over <strong>HTTPS</strong>.
                     </div>
                 `;
             } else if (isPermDenied) {
@@ -1399,7 +1375,7 @@
             } else if (isNotFound) {
                 title = "NO CAMERA DEVICE DETECTED";
                 details = "No webcam or video capture device was found on this system.";
-                guide = `<div style="text-align: left; margin: 10px 0; font-size: 0.82rem; color: #cbd5e1;">Please connect a camera or use the Manual Squad Pass Override below.</div>`;
+                guide = `<div style="text-align: left; margin: 10px 0; font-size: 0.82rem; color: #cbd5e1;">Please connect a camera to scan entry passes.</div>`;
             } else if (isNotReadable) {
                 title = "CAMERA HARDWARE BUSY";
                 details = "Camera is currently locked or in use by another app (e.g. Teams, Zoom, or another tab).";
@@ -1419,9 +1395,6 @@
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px;">
                         <button type="button" onclick="requestCameraPermissionAndStart()" class="action-btn-hud action-btn-green" style="font-size: 0.8rem; padding: 8px 14px;">
                             <i class="fas fa-sync"></i> [ REQUEST PERMISSION & RETRY ]
-                        </button>
-                        <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.8rem; padding: 8px 14px;">
-                            <i class="fas fa-upload"></i> [ SCAN PHOTO / FILE ]
                         </button>
                     </div>
                 </div>
@@ -1545,61 +1518,7 @@
             isScanning = false;
         }
 
-        async function handleQrFileUpload(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
 
-            const errorEl = document.getElementById('error-msg');
-            if (errorEl) {
-                errorEl.innerHTML = '<div style="color: var(--electric-blue); font-family: var(--font-mono); text-align: center; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Processing QR image pass...</div>';
-                errorEl.style.display = 'block';
-            }
-
-            try {
-                initScannerLib();
-                if (!html5QrCode) throw new Error("Scanner engine not initialized");
-
-                if (isScanning && html5QrCode.isScanning) {
-                    try { await html5QrCode.stop(); } catch(e){}
-                    isScanning = false;
-                }
-
-                const decodedText = await html5QrCode.scanFile(file, true);
-                if (errorEl) errorEl.style.display = 'none';
-                onScanSuccess(decodedText);
-            } catch (err) {
-                console.error("QR File Scan Error:", err);
-                if (errorEl) {
-                    errorEl.innerHTML = `
-                        <div class="camera-error-card" style="border-color: var(--doom-gold);">
-                            <div style="color: var(--doom-gold); font-weight: bold; margin-bottom: 6px;">
-                                <i class="fas fa-search"></i> QR DECODE FAILED
-                            </div>
-                            <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 10px;">
-                                No readable QR code was found in this photo. Please make sure the pass is well-lit and not blurry, or use the Manual Squad Pass Override below.
-                            </p>
-                            <button type="button" onclick="document.getElementById('qr-file-input').click()" class="action-btn-hud action-btn-gold" style="font-size: 0.8rem; padding: 6px 12px;">
-                                <i class="fas fa-image"></i> TRY ANOTHER PHOTO
-                            </button>
-                        </div>
-                    `;
-                    errorEl.style.display = 'block';
-                }
-            } finally {
-                event.target.value = '';
-            }
-        }
-
-        function submitManualTeamId() {
-            const input = document.getElementById('manual-team-id');
-            if (!input) return;
-            const teamId = input.value.trim();
-            if (!teamId) {
-                showCustomAlert("Please enter a Team ID or Pass Code to verify.");
-                return;
-            }
-            processAttendance(teamId);
-        }
 
         function onScanSuccess(decodedText) {
             if (!isScanning) return;
@@ -1723,8 +1642,6 @@
         function resumeScanning() {
             const resBox = document.getElementById('result');
             if (resBox) resBox.style.display = 'none';
-            const manualInput = document.getElementById('manual-team-id');
-            if (manualInput) manualInput.value = '';
             isScanning = true;
             try {
                 if (html5QrCode && typeof html5QrCode.getState === 'function') {
