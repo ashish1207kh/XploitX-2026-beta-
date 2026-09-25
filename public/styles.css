@@ -4148,7 +4148,7 @@ body.loader-locked .register-floating-btn {
     background: rgba(4, 10, 16, 0.85);
     border: 1.5px solid var(--doom-green);
     border-radius: 10px;
-    padding: 22px 6px 16px 6px;
+    padding: 20px 4px 16px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -4205,15 +4205,20 @@ body.loader-locked .register-floating-btn {
 
 .track-title {
     font-family: var(--font-brand);
-    font-size: 0.75rem;
+    font-size: 0.70rem;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
     text-align: center;
     line-height: 1.2;
     transition: color 0.3s ease;
-    word-break: break-word;
+    white-space: nowrap;
+}
+
+.track-title-long {
+    font-size: clamp(0.58rem, 0.76vw, 0.65rem);
+    letter-spacing: 0.15px;
 }
 
 .track-card:hover .track-title {
@@ -4235,7 +4240,7 @@ body.loader-locked .register-floating-btn {
     }
     .track-card {
         min-height: 105px;
-        padding: 16px 4px 12px 4px;
+        padding: 16px 3px 12px 3px;
         gap: 10px;
     }
     .track-icon {
@@ -4243,8 +4248,12 @@ body.loader-locked .register-floating-btn {
         height: 32px;
     }
     .track-title {
-        font-size: 0.68rem;
-        letter-spacing: 0.4px;
+        font-size: 0.66rem;
+        letter-spacing: 0.2px;
+    }
+    .track-title-long {
+        font-size: 0.58rem;
+        letter-spacing: 0.1px;
     }
 }
 
