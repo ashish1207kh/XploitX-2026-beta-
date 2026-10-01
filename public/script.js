@@ -9,7 +9,7 @@ const EVENT_CONFIG = {
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
 
     eventDate: "2026-10-08T09:30:00+05:30",
-    registrationDeadline: "October 07, 2026 (Extended)",
+    registrationDeadline: "October 04, 2026 (Extended)",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
     teamSize: "2 - 4 Members",
@@ -818,7 +818,7 @@ window.closePosterPopup = function() {};
 
 /**
  * ========================================================
- * DEADLINE URGENCY POPUP (OCTOBER 07, 2026)
+ * DEADLINE URGENCY POPUP (OCTOBER 04, 2026)
  * ========================================================
  */
 function showDeadlinePopup() {
@@ -857,11 +857,11 @@ function showDeadlinePopup() {
             </div>
             
             <h2 class="deadline-popup-title" id="deadline-popup-title">
-                REGISTRATION DEADLINE EXTENDED TO <span class="deadline-highlight">OCTOBER 07, 2026</span>
+                REGISTRATION DEADLINE EXTENDED TO <span class="deadline-highlight">OCTOBER 04, 2026</span>
             </h2>
             
             <p class="deadline-popup-desc">
-                Due to high demand from operative squads, registration and Early Bird pricing have been officially <strong>EXTENDED to October 07, 2026</strong>! Complete your squad verification before terminals permanently lock down.
+                Due to high demand from operative squads, registration and Early Bird pricing have been officially <strong>EXTENDED to October 04, 2026</strong>! Complete your squad verification before terminals permanently lock down.
             </p>
             
             <div class="deadline-countdown-box">
@@ -905,8 +905,8 @@ function showDeadlinePopup() {
 
     document.body.appendChild(overlay);
 
-    // Target: October 07, 2026, 23:59:59 IST
-    const targetDate = new Date('2026-10-07T23:59:59+05:30').getTime();
+    // Target: October 04, 2026, 23:59:59 IST
+    const targetDate = new Date('2026-10-04T23:59:59+05:30').getTime();
     function updateCountdown() {
         const now = new Date().getTime();
         const diff = targetDate - now;
