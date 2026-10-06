@@ -64,7 +64,7 @@ if (currentProtocol === 'file:') {
 }
 
 let memberCount = 1; 
-const MIN_MEMBERS = 2;
+const MIN_MEMBERS = 1;
 const MAX_MEMBERS = 4;
 let PER_HEAD_FEE = 150;
 let isEmailVerified = false;
@@ -525,6 +525,23 @@ function createMemberCard(memberIndex) {
     return memberCard;
 }
 
+function reindexMembers() {
+    const cards = document.querySelectorAll('.member-card-hud');
+    cards.forEach((card, idx) => {
+        const memberNum = idx + 2;
+        card.id = `member-card-${memberNum}`;
+        const headerSpan = card.querySelector('.member-card-header span');
+        if (headerSpan) {
+            headerSpan.textContent = `◈ OPERATIVE 0${memberNum} // SQUAD MEMBER`;
+        }
+        const removeBtn = card.querySelector('.btn-remove-member');
+        if (removeBtn) {
+            removeBtn.setAttribute('onclick', `removeMember(${memberNum})`);
+        }
+    });
+}
+window.reindexMembers = reindexMembers;
+
 function addMemberSlot() {
     const container = document.getElementById('additional-members-container');
     if (!container) return;
@@ -537,6 +554,7 @@ function addMemberSlot() {
     memberCount++;
     const card = createMemberCard(memberCount);
     container.appendChild(card);
+    reindexMembers();
     initRealtimeInputSanitizers();
     updateFeeCalculations();
     if (window.updateSubmitButtonState) window.updateSubmitButtonState();
@@ -549,22 +567,18 @@ function initMemberManagement() {
     if (!btnAdd || !container) return;
 
     btnAdd.addEventListener('click', addMemberSlot);
-
-    
-    if (container.children.length === 0) {
-        addMemberSlot();
-    }
 }
 
 function removeMember(index) {
     if (memberCount <= MIN_MEMBERS) {
-        showCyberAlert(`Minimum team size requirement is ${MIN_MEMBERS} members (Team Leader + 1 Squad Member).`, 'ROSTER REQUIREMENT');
+        showCyberAlert(`Minimum team size requirement is ${MIN_MEMBERS} member (Solo).`, 'ROSTER REQUIREMENT');
         return;
     }
     const card = document.getElementById(`member-card-${index}`);
     if (card) {
         card.remove();
         memberCount--;
+        reindexMembers();
         updateFeeCalculations();
         if (window.updateSubmitButtonState) window.updateSubmitButtonState();
     }
@@ -1069,7 +1083,7 @@ function getPendingRequirements() {
     if (!membersDone) {
         pending.push({ id: 'squadMembers', label: memberDetail || 'Squad Members Complete', done: false });
     } else {
-        pending.push({ id: 'squadMembers', label: 'Squad Members Complete', done: true });
+        pending.push({ id: 'squadMembers', label: extraCards.length > 0 ? 'Squad Members Complete' : 'Squad Details Verified (Solo Operative)', done: true });
     }
 
     // 8. UTR ID

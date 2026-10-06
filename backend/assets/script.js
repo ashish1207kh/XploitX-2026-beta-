@@ -7,12 +7,13 @@ const EVENT_CONFIG = {
     eventName: "XPLOITX 2.0 BETA",
     eventEdition: "24-HOUR OFFLINE CTF",
     eventFormat: "24-HOUR OFFLINE CYBERSECURITY CAPTURE THE FLAG COMPETITION",
-    
+
     eventDate: "2026-10-08T09:30:00+05:30",
+    registrationDeadline: "October 07, 2026 (Extended)",
     venue: "Prathyusha Engineering College (Offline In-Person)",
     registrationLink: "register.html",
-    teamSize: "2 - 4 Members",
-    prizePool: "[TBA - Awaiting Official Release]",
+    teamSize: "1 - 4 Members",
+    prizePool: "Worth up to ₹1,00,000",
     registrationFee: "₹150 per head (Early Bird Offer)"
 };
 
@@ -23,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavbarScroll();
     initMobileNav();
     initAccordions();
+    initLegacyGalleryModal();
+    initEventModals();
 });
 
 
@@ -31,16 +34,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function initAccessLoader() {
     let loaderOverlay = document.getElementById('loader-overlay');
 
-    
+
     if (!loaderOverlay) return;
-    
+
     document.documentElement.classList.add('loader-locked');
     document.body.classList.add('loader-locked');
-    
+
     loaderOverlay.className = 'xploitx-access-loader';
     loaderOverlay.setAttribute('aria-label', 'Security Access Gateway');
 
-    
+
     loaderOverlay.innerHTML = `
         <div class="loader-bg-grid"></div>
         <div class="loader-scanline"></div>
@@ -77,7 +80,7 @@ function initAccessLoader() {
         </div>
     `;
 
-    
+
     document.documentElement.classList.add('loader-locked');
     document.body.classList.add('loader-locked');
 
@@ -104,15 +107,16 @@ function initAccessLoader() {
             if (loaderOverlay && loaderOverlay.parentNode) {
                 loaderOverlay.style.display = 'none';
             }
+            window.dispatchEvent(new CustomEvent('xploitx:entered_index'));
         }, 450);
     }
 
-    
+
     if (skipBtn) {
         skipBtn.addEventListener('click', dismissLoader);
     }
-    
-    
+
+
     function handleKeyDown(e) {
         if (e.key === 'Escape' || e.key === 'Enter') {
             dismissLoader();
@@ -121,7 +125,7 @@ function initAccessLoader() {
     }
     document.addEventListener('keydown', handleKeyDown);
 
-    
+
     if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
@@ -180,14 +184,14 @@ function initAccessLoader() {
         return;
     }
 
-    
+
     setProgress(20);
-    
-    schedule(() => { 
+
+    schedule(() => {
         if (stepLabel) stepLabel.textContent = "AUTHENTICATING";
         if (statusDetail) statusDetail.textContent = "OPERATIVE CREDENTIALS...";
         if (stateIcon) stateIcon.className = "fas fa-user-shield loader-state-icon";
-        setProgress(55); 
+        setProgress(55);
     }, 320);
 
     schedule(() => {
@@ -279,7 +283,7 @@ function initParticleSystem() {
     const canvas = document.getElementById('particles-bg');
     if (!canvas) return;
 
-    
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         canvas.style.display = 'none';
         return;
@@ -297,15 +301,15 @@ function initParticleSystem() {
     resize();
     window.addEventListener('resize', resize);
 
-    
+
     const isMobile = window.innerWidth < 768;
     const particleCount = isMobile ? 25 : 65;
 
     const colors = [
-        'rgba(0, 210, 255, ',   
-        'rgba(157, 78, 221, ',  
-        'rgba(247, 37, 133, ',  
-        'rgba(255, 158, 0, '    
+        'rgba(0, 210, 255, ',
+        'rgba(157, 78, 221, ',
+        'rgba(247, 37, 133, ',
+        'rgba(255, 158, 0, '
     ];
 
     class Particle {
@@ -331,13 +335,13 @@ function initParticleSystem() {
             this.x += this.vx;
             this.y += this.vy;
 
-            
+
             if (this.x < 0) this.x = width;
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
             if (this.y > height) this.y = 0;
 
-            
+
             if (!isMobile && mouse.x !== null) {
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
@@ -371,7 +375,7 @@ function initParticleSystem() {
     function animate() {
         ctx.clearRect(0, 0, width, height);
 
-        
+
         for (let a = 0; a < particles.length; a++) {
             for (let b = a + 1; b < particles.length; b++) {
                 let dx = particles[a].x - particles[b].x;
@@ -414,7 +418,7 @@ function initNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
 
-        
+
         let currentSection = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop - 120;
@@ -444,7 +448,7 @@ function initMobileNav() {
 
     if (!hamburger || !navMenu) return;
 
-    
+
     let backdrop = document.getElementById('mobile-nav-backdrop');
     if (!backdrop) {
         backdrop = document.createElement('div');
@@ -453,7 +457,7 @@ function initMobileNav() {
         document.body.appendChild(backdrop);
     }
 
-    
+
     let drawerHeader = navMenu.querySelector('.mobile-drawer-header');
     if (!drawerHeader) {
         drawerHeader = document.createElement('div');
@@ -470,7 +474,7 @@ function initMobileNav() {
         navMenu.insertBefore(drawerHeader, navMenu.firstChild);
     }
 
-    
+
     let drawerFooter = navMenu.querySelector('.mobile-drawer-footer');
     if (!drawerFooter) {
         drawerFooter = document.createElement('div');
@@ -526,7 +530,7 @@ function initMobileNav() {
         backdrop.addEventListener('click', closeMenu);
     }
 
-    
+
     const navLinks = navMenu.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -534,7 +538,7 @@ function initMobileNav() {
         });
     });
 
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu.classList.contains('open')) {
             closeMenu();
@@ -554,7 +558,7 @@ function initAccordions() {
             const body = item.querySelector('.accordion-body');
             const isActive = item.classList.contains('active');
 
-            
+
             const group = item.closest('.accordion-group');
             if (group) {
                 group.querySelectorAll('.accordion-item').forEach(sibling => {
@@ -615,12 +619,12 @@ function showCyberAlert(msg, title = 'SYSTEM ALERT', callback = null) {
         `;
         document.body.appendChild(alertModal);
     }
-    
+
     const msgEl = alertModal.querySelector('#custom-alert-msg');
     const titleEl = alertModal.querySelector('#custom-alert-title');
     if (titleEl) titleEl.textContent = title;
     if (msgEl) msgEl.textContent = msg;
-    
+
     alertModal.classList.add('active');
 }
 
@@ -674,5 +678,291 @@ document.addEventListener('keydown', (e) => {
         }
     }, true);
 })();
+
+function initLegacyGalleryModal() {
+    const cards = document.querySelectorAll('.legacy-card');
+    if (!cards.length) return;
+
+    let lightbox = document.getElementById('legacy-lightbox-modal');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'legacy-lightbox-modal';
+        lightbox.className = 'legacy-lightbox';
+        lightbox.innerHTML = `
+            <div class="legacy-lightbox-content">
+                <img src="" alt="Enlarged Legacy Photo" class="legacy-lightbox-img" id="legacy-lightbox-img">
+                <div class="legacy-lightbox-bar">
+                    <div class="legacy-lightbox-title" id="legacy-lightbox-title">A Glimpse into Our Legacy</div>
+                    <button class="legacy-lightbox-close" id="legacy-lightbox-close" aria-label="Close Preview">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const closeBtn = lightbox.querySelector('#legacy-lightbox-close');
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+        };
+
+        if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    const lightImg = document.getElementById('legacy-lightbox-img');
+    const lightTitle = document.getElementById('legacy-lightbox-title');
+
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const img = card.querySelector('img');
+            const caption = card.querySelector('.legacy-caption');
+            if (img && lightImg) {
+                lightImg.src = img.src;
+                lightImg.alt = img.alt || 'Legacy Archive Preview';
+            }
+            if (caption && lightTitle) {
+                lightTitle.textContent = caption.textContent;
+            }
+            if (lightbox) {
+                lightbox.classList.add('active');
+            }
+        });
+    });
+}
+
+/**
+ * ========================================================
+ * EVENT MODALS SEQUENCE (POSTER & DEADLINE URGENCY)
+ * 1. After Access Granted & entering index page:
+ *    - After 3-5s (4s): Show Poster.jpeg modal
+ *    - After 10-15s (12s): Show Deadline Urgency Popup modal
+ * 2. On Page Refresh: Sequence plays cleanly again.
+ * ========================================================
+ */
+function initEventModals() {
+    const path = (window.location.pathname || '').toLowerCase();
+    // Do not show on registration form or admin pages
+    if (path.includes('register') || path.includes('attendance') || path.includes('a1109a6e')) {
+        return;
+    }
+
+    // Clean up any legacy suppression flags so refresh always shows both modals
+    try {
+        sessionStorage.removeItem('xploitx_deadline_popup_dismissed');
+        sessionStorage.removeItem('xploitx_poster_popup_dismissed');
+        localStorage.removeItem('xploitx_deadline_popup_dismissed');
+        localStorage.removeItem('xploitx_poster_popup_dismissed');
+    } catch (e) { }
+
+    const isIndex = path === '' || path.endsWith('/') || path.includes('index');
+    const hasLoader = !!document.getElementById('loader-overlay');
+
+    const startSequence = () => {
+        if (isIndex) {
+            // After 10 to 15 seconds (12s) from entering into index page: show deadline urgency modal
+            setTimeout(() => {
+                showDeadlinePopup();
+            }, 12000);
+        } else {
+            // On other subpages (about, rules, prizes), show deadline urgency modal after 12s
+            setTimeout(() => {
+                showDeadlinePopup();
+            }, 12000);
+        }
+    };
+
+    if (hasLoader) {
+        let sequenceStarted = false;
+        const triggerOnce = () => {
+            if (sequenceStarted) return;
+            sequenceStarted = true;
+            startSequence();
+        };
+
+        window.addEventListener('xploitx:entered_index', triggerOnce, { once: true });
+
+        // Safety fallback timer if event was already dispatched or skipped
+        setTimeout(() => {
+            const loader = document.getElementById('loader-overlay');
+            if (!loader || loader.style.display === 'none') {
+                triggerOnce();
+            }
+        }, 3200);
+    } else {
+        startSequence();
+    }
+}
+
+// Backward compatibility alias
+const initDeadlinePopup = initEventModals;
+
+/**
+ * ========================================================
+ * OFFICIAL EVENT POSTER POPUP (Disabled)
+ * ========================================================
+ */
+function showPosterPopup() {
+    // Disabled poster popup as requested
+    return;
+}
+window.showPosterPopup = showPosterPopup;
+window.closePosterPopup = function() {};
+
+/**
+ * ========================================================
+ * DEADLINE URGENCY POPUP (OCTOBER 07, 2026)
+ * ========================================================
+ */
+function showDeadlinePopup() {
+    // If the poster popup is open, close it cleanly
+    if (window.closePosterPopup) {
+        window.closePosterPopup();
+    } else {
+        const posterEl = document.getElementById('poster-popup-overlay');
+        if (posterEl) {
+            posterEl.classList.remove('active');
+            setTimeout(() => {
+                if (posterEl.parentNode) posterEl.parentNode.removeChild(posterEl);
+            }, 350);
+        }
+    }
+
+    if (document.getElementById('deadline-popup-overlay')) {
+        const existing = document.getElementById('deadline-popup-overlay');
+        existing.classList.add('active');
+        return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'deadline-popup-overlay';
+    overlay.className = 'deadline-popup-overlay active';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'deadline-popup-title');
+
+    overlay.innerHTML = `
+        <div class="deadline-popup-card">
+            <button class="deadline-popup-close" id="deadline-popup-close" aria-label="Close Announcement">&times;</button>
+            <div class="deadline-popup-badge">
+                <span class="deadline-beacon"></span>
+                <i class="fas fa-bullhorn"></i> URGENT TRANSMISSION // REGISTRATION DEADLINE EXTENDED
+            </div>
+            
+            <h2 class="deadline-popup-title" id="deadline-popup-title">
+                REGISTRATION DEADLINE EXTENDED TO <span class="deadline-highlight">OCTOBER 07, 2026</span>
+            </h2>
+            
+            <p class="deadline-popup-desc">
+                Due to high demand from operative squads, registration and Early Bird pricing have been officially <strong>EXTENDED to October 07, 2026</strong>! Complete your squad verification before terminals permanently lock down.
+            </p>
+            
+            <div class="deadline-countdown-box">
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-days">--</span>
+                    <span class="deadline-label">DAYS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-hours">--</span>
+                    <span class="deadline-label">HOURS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-mins">--</span>
+                    <span class="deadline-label">MINS</span>
+                </div>
+                <div class="deadline-colon">:</div>
+                <div class="deadline-countdown-unit">
+                    <span class="deadline-digit" id="popup-secs">--</span>
+                    <span class="deadline-label">SECS</span>
+                </div>
+            </div>
+
+            <div class="deadline-perks-row">
+                <span><i class="fas fa-users"></i> 1-4 Members</span>
+                <span><i class="fas fa-trophy"></i> ₹1,00,000 Prize Pool</span>
+                <span><i class="fas fa-shield-alt"></i> ₹150 Early Bird</span>
+            </div>
+            
+            <div class="deadline-popup-actions">
+                <a href="register.html" class="deadline-btn-primary" id="deadline-register-btn">
+                    <i class="fas fa-bolt"></i> SECURE YOUR TEAM SLOT NOW
+                </a>
+                <button class="deadline-btn-secondary" id="deadline-dismiss-btn">
+                    DISMISS FOR NOW
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Target: October 07, 2026, 23:59:59 IST
+    const targetDate = new Date('2026-10-07T23:59:59+05:30').getTime();
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+        if (diff <= 0) {
+            const dEl = document.getElementById('popup-days');
+            if (dEl) dEl.textContent = '00';
+            return;
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const daysEl = document.getElementById('popup-days');
+        const hoursEl = document.getElementById('popup-hours');
+        const minsEl = document.getElementById('popup-mins');
+        const secsEl = document.getElementById('popup-secs');
+
+        if (daysEl) daysEl.textContent = pad(days);
+        if (hoursEl) hoursEl.textContent = pad(hours);
+        if (minsEl) minsEl.textContent = pad(mins);
+        if (secsEl) secsEl.textContent = pad(secs);
+    }
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+
+    const closePopup = () => {
+        overlay.classList.remove('active');
+        clearInterval(timerInterval);
+        // Do not persistently suppress across page reloads/refreshes
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 350);
+    };
+
+    const closeBtn = overlay.querySelector('#deadline-popup-close');
+    const dismissBtn = overlay.querySelector('#deadline-dismiss-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closePopup);
+    if (dismissBtn) dismissBtn.addEventListener('click', closePopup);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', function escListener(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closePopup();
+            document.removeEventListener('keydown', escListener);
+        }
+    });
+}
+
+// Expose globally for convenience and testing
+window.showDeadlinePopup = showDeadlinePopup;
+
+
 
 
