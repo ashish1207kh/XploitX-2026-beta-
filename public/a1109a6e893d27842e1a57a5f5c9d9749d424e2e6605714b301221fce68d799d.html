@@ -508,6 +508,8 @@
         }
 
         .login-submit-btn {
+            position: relative;
+            z-index: 10;
             width: 100%;
             padding: 15px;
             margin-top: 10px;
@@ -523,6 +525,17 @@
             cursor: pointer;
             transition: all 0.25s ease;
             box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .login-submit-btn *,
+        #top-nav-logout-btn * {
+            pointer-events: none;
         }
 
         .login-submit-btn:hover {
@@ -531,6 +544,17 @@
             color: #ffffff;
             box-shadow: 0 0 30px var(--doom-green-glow), 0 0 15px var(--doom-gold-glow);
             transform: translateY(-2px);
+        }
+
+        .login-submit-btn:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: 0 0 15px var(--doom-green);
+        }
+
+        .login-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .modal-overlay-hud {
@@ -719,20 +743,23 @@
             <h2 class="login-title-text">ADMIN ACCESS</h2>
             <div class="login-sub-text">AUTHENTICATE HIGH COMMAND CLEARANCE</div>
 
-            <form onsubmit="event.preventDefault(); checkAdmin(); return false;">
+            <form id="admin-login-form" onsubmit="event.preventDefault(); event.stopPropagation(); checkAdmin(); return false;">
                 <div class="login-field-group">
                     <i class="fas fa-user login-field-icon"></i>
                     <input type="text" id="admin-user" class="login-input-field" placeholder="Enter Username"
-                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                        autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAdmin();}">
                 </div>
 
                 <div class="login-field-group">
                     <i class="fas fa-lock login-field-icon"></i>
                     <input type="password" id="admin-pass" class="login-input-field" placeholder="Enter Password"
-                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); checkAdmin();}">
+                        autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAdmin();}">
                 </div>
 
-                <button type="button" onclick="checkAdmin();" class="login-submit-btn"> UNLOCK </button>
+                <button type="submit" id="admin-login-btn" onclick="checkAdmin();" class="login-submit-btn">
+                    <i class="fas fa-unlock-alt"></i> UNLOCK
+                </button>
+                <div id="admin-login-feedback" style="margin-top: 14px; font-family: var(--font-mono); font-size: 0.85rem; text-align: center; display: none;"></div>
             </form>
         </div>
     </div>
@@ -1395,14 +1422,16 @@
     <script>
         
         let API_BASE_URL = '';
-        const hostname = window.location.hostname;
-        const protocol = window.location.protocol;
-        const port = window.location.port;
+        const currentHostname = window.location.hostname;
+        const currentProtocol = window.location.protocol;
+        const currentPort = window.location.port;
 
-        if (protocol === 'file:') {
+        if (currentProtocol === 'file:') {
             API_BASE_URL = 'http://localhost:3000';
-        } else if (port && port !== '3000' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
-            API_BASE_URL = `http://${hostname}:3000`;
+        } else if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+            API_BASE_URL = (currentPort === '3000' || !currentPort) ? '' : 'http://localhost:3000';
+        } else if (currentHostname.startsWith('192.168.') || currentHostname.startsWith('10.') || currentHostname.startsWith('172.')) {
+            API_BASE_URL = currentPort === '3000' ? '' : `http://${currentHostname}:3000`;
         } else {
             API_BASE_URL = '';
         }
@@ -1553,18 +1582,32 @@
         async function checkAdmin() {
             const userEl = document.getElementById('admin-user');
             const passEl = document.getElementById('admin-pass');
+            const feedbackEl = document.getElementById('admin-login-feedback');
             const u = userEl ? userEl.value.trim() : '';
             const p = passEl ? passEl.value.trim() : '';
-            const btn = document.querySelector('.login-submit-btn');
+            const btn = document.getElementById('admin-login-btn') || document.querySelector('.login-submit-btn');
+
+            if (feedbackEl) {
+                feedbackEl.style.display = 'none';
+                feedbackEl.innerText = '';
+            }
 
             if (!u || !p) {
-                showCustomAlert('ACCESS DENIED: Please enter both username and password.');
+                const msg = 'ACCESS DENIED: Please enter both username and password.';
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'block';
+                    feedbackEl.style.color = 'var(--deep-magenta)';
+                    feedbackEl.innerText = msg;
+                }
+                showCustomAlert(msg);
+                if (!u && userEl) userEl.focus();
+                else if (!p && passEl) passEl.focus();
                 return;
             }
 
-            const originalText = btn ? btn.innerText : 'UNLOCK';
+            const originalHtml = btn ? btn.innerHTML : '<i class="fas fa-unlock-alt"></i> UNLOCK';
             if (btn) {
-                btn.innerText = "AUTHENTICATING...";
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
                 btn.disabled = true;
             }
 
@@ -1574,11 +1617,16 @@
             let errorMessage = 'Invalid Username or Password.';
 
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
                 const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: u, password: p })
+                    body: JSON.stringify({ username: u, password: p }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
 
                 const data = await res.json().catch(() => ({}));
 
@@ -1597,13 +1645,28 @@
                 }
             } catch (e) {
                 console.warn("Backend authentication request failed:", e);
-                errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
+                if (e.name === 'AbortError') {
+                    errorMessage = "Request timed out. Backend server took too long to respond.";
+                } else {
+                    errorMessage = "Cannot connect to backend server. Ensure backend server is running.";
+                }
+            } finally {
+                if (btn && !success) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
             }
 
             if (success) {
                 inMemoryAdminToken = sessionToken;
                 inMemoryAdminUser = authenticatedUser;
                 if (passEl) passEl.value = '';
+
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'block';
+                    feedbackEl.style.color = 'var(--doom-green)';
+                    feedbackEl.innerText = '✓ ACCESS GRANTED: WELCOME ' + authenticatedUser.toUpperCase();
+                }
 
                 document.body.classList.add('admin-authenticated');
                 const authRoot = document.getElementById('admin-authenticated-root');
@@ -1619,10 +1682,6 @@
                 resetInactivityTimer();
 
                 if (authenticatedUser === 'Administrator') {
-                    
-                    
-                    
-                    
                     const statsCont = document.getElementById('admin-stats-container');
                     if (statsCont) statsCont.style.display = 'none';
                     const ctrlCont = document.getElementById('admin-controls-container');
@@ -1632,7 +1691,6 @@
                     const coordSec = document.getElementById('coordinators');
                     if (coordSec) coordSec.style.display = 'none';
 
-                    
                     const heroTitle = document.getElementById('admin-hero-title');
                     if (heroTitle) heroTitle.innerText = '>_ HIGH COMMAND AUDIT & SURVEILLANCE CONSOLE';
                     const heroDesc = document.getElementById('admin-hero-desc');
@@ -1640,25 +1698,18 @@
                     const heroBadge = document.getElementById('admin-hero-badge');
                     if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ HIGH COMMAND EXCLUSIVE • AUDIT LOG SYSTEM ]';
 
-                    
                     const actDash = document.getElementById('administrator-activity-dashboard');
                     if (actDash) actDash.style.display = 'block';
 
-                    
                     if (window.adminDataInterval) {
                         clearInterval(window.adminDataInterval);
                         window.adminDataInterval = null;
                     }
 
-                    
                     loadAdminActivityLogs();
                     if (window.adminActivityInterval) clearInterval(window.adminActivityInterval);
                     window.adminActivityInterval = setInterval(loadAdminActivityLogs, 3000);
                 } else {
-                    
-                    
-                    
-                    
                     const statsCont = document.getElementById('admin-stats-container');
                     if (statsCont) statsCont.style.display = 'grid';
                     const ctrlCont = document.getElementById('admin-controls-container');
@@ -1675,7 +1726,6 @@
                     const heroBadge = document.getElementById('admin-hero-badge');
                     if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
 
-                    
                     const actDash = document.getElementById('administrator-activity-dashboard');
                     if (actDash) actDash.style.display = 'none';
 
@@ -1699,14 +1749,47 @@
 
                 showCustomAlert('ACCESS GRANTED: WELCOME OPERATIVE ' + authenticatedUser.toUpperCase());
             } else {
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'block';
+                    feedbackEl.style.color = 'var(--deep-magenta)';
+                    feedbackEl.innerText = errorMessage;
+                }
                 showCustomAlert('ACCESS DENIED: ' + errorMessage);
-            }
-
-            if (btn) {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                if (passEl) passEl.value = '';
             }
         }
+        window.checkAdmin = checkAdmin;
+
+        function bindAdminLoginEvents() {
+            const form = document.getElementById('admin-login-form');
+            const btn = document.getElementById('admin-login-btn') || document.querySelector('.login-submit-btn');
+            const logoutBtn = document.getElementById('top-nav-logout-btn');
+            if (form && !form.dataset.bound) {
+                form.dataset.bound = "true";
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    checkAdmin();
+                });
+            }
+            if (btn && !btn.dataset.bound) {
+                btn.dataset.bound = "true";
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    checkAdmin();
+                });
+            }
+            if (logoutBtn && !logoutBtn.dataset.bound) {
+                logoutBtn.dataset.bound = "true";
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    logoutAdmin();
+                });
+            }
+        }
+        bindAdminLoginEvents();
 
         function handleLoginKey(event) {
             if (event.key === 'Enter') {
@@ -1715,69 +1798,73 @@
         }
 
         function logoutAdmin() {
-            
-            const tokenToLogout = inMemoryAdminToken;
-            const userToLogout = inMemoryAdminUser;
-            if (tokenToLogout || userToLogout) {
-                fetch(`${API_BASE_URL}/api/admin/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
-                    },
-                    body: JSON.stringify({ username: userToLogout || 'Admin' }),
-                    keepalive: true
-                }).catch(() => {});
+            try {
+                const tokenToLogout = inMemoryAdminToken;
+                const userToLogout = inMemoryAdminUser;
+                if (tokenToLogout || userToLogout) {
+                    fetch(`${API_BASE_URL}/api/admin/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
+                        },
+                        body: JSON.stringify({ username: userToLogout || 'Admin' }),
+                        keepalive: true
+                    }).catch(() => {});
+                }
+
+                inMemoryAdminToken = null;
+                inMemoryAdminUser = null;
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                if (window.adminDataInterval) {
+                    clearInterval(window.adminDataInterval);
+                    window.adminDataInterval = null;
+                }
+                if (window.adminActivityInterval) {
+                    clearInterval(window.adminActivityInterval);
+                    window.adminActivityInterval = null;
+                }
+
+                document.body.classList.remove('admin-authenticated');
+                const authRoot = document.getElementById('admin-authenticated-root');
+                if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
+
+                const statsCont = document.getElementById('admin-stats-container');
+                if (statsCont) statsCont.style.display = 'grid';
+                const ctrlCont = document.getElementById('admin-controls-container');
+                if (ctrlCont) ctrlCont.style.display = 'block';
+                const tblCont = document.getElementById('admin-table-container');
+                if (tblCont) tblCont.style.display = 'block';
+                const coordSec = document.getElementById('coordinators');
+                if (coordSec) coordSec.style.display = 'block';
+                const actDash = document.getElementById('administrator-activity-dashboard');
+                if (actDash) actDash.style.display = 'none';
+
+                const heroTitle = document.getElementById('admin-hero-title');
+                if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
+                const heroDesc = document.getElementById('admin-hero-desc');
+                if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
+                const heroBadge = document.getElementById('admin-hero-badge');
+                if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
+
+                const tbody = document.getElementById('teams-table-body');
+                if (tbody) tbody.innerHTML = '';
+                const userIn = document.getElementById('admin-user');
+                const passIn = document.getElementById('admin-pass');
+                if (userIn) userIn.value = '';
+                if (passIn) passIn.value = '';
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) {
+                    overlay.style.setProperty('display', 'flex', 'important');
+                }
+                showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
+            } catch (err) {
+                console.error("Logout error:", err);
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.style.setProperty('display', 'flex', 'important');
             }
-
-            
-            inMemoryAdminToken = null;
-            inMemoryAdminUser = null;
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-            if (window.adminDataInterval) {
-                clearInterval(window.adminDataInterval);
-                window.adminDataInterval = null;
-            }
-            if (window.adminActivityInterval) {
-                clearInterval(window.adminActivityInterval);
-                window.adminActivityInterval = null;
-            }
-
-            document.body.classList.remove('admin-authenticated');
-            const authRoot = document.getElementById('admin-authenticated-root');
-            if (authRoot) authRoot.style.setProperty('display', 'none', 'important');
-
-            
-            const statsCont = document.getElementById('admin-stats-container');
-            if (statsCont) statsCont.style.display = 'grid';
-            const ctrlCont = document.getElementById('admin-controls-container');
-            if (ctrlCont) ctrlCont.style.display = 'block';
-            const tblCont = document.getElementById('admin-table-container');
-            if (tblCont) tblCont.style.display = 'block';
-            const coordSec = document.getElementById('coordinators');
-            if (coordSec) coordSec.style.display = 'block';
-            const actDash = document.getElementById('administrator-activity-dashboard');
-            if (actDash) actDash.style.display = 'none';
-
-            const heroTitle = document.getElementById('admin-hero-title');
-            if (heroTitle) heroTitle.innerText = '>_ DOOMSDAY COMMAND CONSOLE';
-            const heroDesc = document.getElementById('admin-hero-desc');
-            if (heroDesc) heroDesc.innerText = 'Central Administrative Verification, Strike Team Auditing & Roster Management System';
-            const heroBadge = document.getElementById('admin-hero-badge');
-            if (heroBadge) heroBadge.innerHTML = '<span class="pulse-dot"></span> [ LATVERIAN PROTOCOL • HIGH COMMAND OVERWATCH ]';
-
-            const tbody = document.getElementById('teams-table-body');
-            if (tbody) tbody.innerHTML = '';
-            const userIn = document.getElementById('admin-user');
-            const passIn = document.getElementById('admin-pass');
-            if (userIn) userIn.value = '';
-            if (passIn) passIn.value = '';
-            const overlay = document.getElementById('login-overlay');
-            if (overlay) {
-                overlay.style.setProperty('display', 'flex', 'important');
-            }
-            showCustomAlert('LOGGED OUT: Admin session terminated successfully.');
         }
+        window.logoutAdmin = logoutAdmin;
 
         
         function renderTable(data) {
@@ -2805,13 +2892,13 @@
             html += `
                 </tbody>
             </table>
-            <script>
+            ` + '<' + `script>
                 window.onload = function() {
                     setTimeout(function() {
                         window.print();
                     }, 500);
-                }
-            <\/script>
+                };
+            ` + '<' + `/script>
             </body></html>
             `;
             printWindow.document.write(html);
@@ -2960,6 +3047,9 @@
             const loginOverlay = document.getElementById('login-overlay');
             if (loginOverlay) {
                 loginOverlay.style.setProperty('display', 'flex', 'important');
+            }
+            if (typeof bindAdminLoginEvents === 'function') {
+                bindAdminLoginEvents();
             }
         });
     </script>

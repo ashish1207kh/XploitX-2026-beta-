@@ -621,6 +621,7 @@ app.use((req, res, next) => {
 const adminLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
+    skip: () => process.env.NODE_ENV !== 'production',
     handler: (req, res) => {
         const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || req.socket.remoteAddress || '127.0.0.1')).replace(/^::ffff:/, '');
         console.warn(`[SECURITY ALERT] Admin login brute-force threshold exceeded for IP: ${clientIp}`);
@@ -634,6 +635,7 @@ const adminLoginLimiter = rateLimit({
 const attendanceLoginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
+    skip: () => process.env.NODE_ENV !== 'production',
     message: { error: 'Too many attendance login attempts. Please try again after 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false
@@ -1105,7 +1107,7 @@ const initialiseDBAndServer = async () => {
     if (mongoUri) {
         try {
             await mongoose.connect(mongoUri, {
-                serverSelectionTimeoutMS: 5000
+                serverSelectionTimeoutMS: 15000
             });
             isMongoConnected = true;
             console.log('✅ Connected to MongoDB Atlas successfully!');
@@ -1382,22 +1384,35 @@ async function findTeamByUTR(utr) {
 
 async function getAllTeamsData() {
     if (isDbMongo()) {
-        const teams = await Team.find().lean();
-        const fullData = [];
-        for (const t of teams) {
-            const members = await Member.find({ team_id: t.team_id }).lean();
-            fullData.push({ ...t, id: t._id.toString(), members });
+        const [teams, allMembers] = await Promise.all([
+            Team.find({}, { payment_proof_data: 0 }).lean(),
+            Member.find().lean()
+        ]);
+        const memberMap = new Map();
+        for (const m of allMembers) {
+            if (!memberMap.has(m.team_id)) memberMap.set(m.team_id, []);
+            memberMap.get(m.team_id).push(m);
         }
-        return fullData;
+        return teams.map(t => ({
+            ...t,
+            id: t._id.toString(),
+            members: memberMap.get(t.team_id) || []
+        }));
     }
     if (db) {
-        const teams = await db.all(`SELECT * FROM teams`);
-        const fullData = [];
-        for (const team of teams) {
-            const members = await db.all(`SELECT * FROM members WHERE team_db_id = ?`, [team.id]);
-            fullData.push({ ...team, members });
+        const [teams, allMembers] = await Promise.all([
+            db.all(`SELECT id, team_id, name, email, event, transaction_id, created_at, payment_proof, payment_verified, day FROM teams`),
+            db.all(`SELECT * FROM members`)
+        ]);
+        const memberMap = new Map();
+        for (const m of allMembers) {
+            if (!memberMap.has(m.team_db_id)) memberMap.set(m.team_db_id, []);
+            memberMap.get(m.team_db_id).push(m);
         }
-        return fullData;
+        return teams.map(team => ({
+            ...team,
+            members: memberMap.get(team.id) || []
+        }));
     }
     return [];
 }
@@ -1700,11 +1715,11 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         const cleanPassword = password.trim();
 
         const adminAccounts = {
-            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
-            "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
-            "Ashish": process.env.ADMIN_PASS_ASHISH,
-            "Madhu": process.env.ADMIN_PASS_MADHU,
-            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || (process.env.NODE_ENV !== 'production' ? "Administrator@Beta2026" : undefined),
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || (process.env.NODE_ENV !== 'production' ? "Jesin@Beta2026" : undefined),
+            "Ashish": process.env.ADMIN_PASS_ASHISH || (process.env.NODE_ENV !== 'production' ? "Ashish@Beta2026" : undefined),
+            "Madhu": process.env.ADMIN_PASS_MADHU || (process.env.NODE_ENV !== 'production' ? "Madhu@Beta2026" : undefined),
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || (process.env.NODE_ENV !== 'production' ? "Jeshwanth@Beta2026" : undefined)
         };
 
         const canonicalMap = {
@@ -1716,7 +1731,8 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         };
 
         let isValid = false;
-        let expectedPass = adminAccounts[cleanUsername];
+        const matchedKey = Object.keys(adminAccounts).find(k => k.toLowerCase() === cleanUsername.toLowerCase());
+        let expectedPass = matchedKey ? adminAccounts[matchedKey] : null;
 
         if (expectedPass && typeof expectedPass === 'string') {
             expectedPass = expectedPass.replace(/^["']|["']$/g, '').trim();
@@ -1742,7 +1758,7 @@ app.post('/api/admin/login', adminLoginLimiter, async (req, res) => {
         const clientIp = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : (req.ip || req.socket.remoteAddress || '127.0.0.1')).replace(/^::ffff:/, '');
 
         if (isValid) {
-            const canonicalUser = canonicalMap[cleanUsername] || username;
+            const canonicalUser = matchedKey ? (canonicalMap[matchedKey] || matchedKey) : cleanUsername;
             await logActivity('ADMIN LOGIN', `Operative "${canonicalUser}" logged into Admin Console from IP: ${clientIp}`);
             const token = jwt.sign({ username: canonicalUser, role: 'admin' }, JWT_SECRET, { expiresIn: '2h', algorithm: 'HS256' });
 
@@ -3314,12 +3330,12 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
 
 
         const adminAccounts = {
-            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR,
-            "Jesin Milesh": process.env.ADMIN_PASS_JESIN,
-            "Ashish": process.env.ADMIN_PASS_ASHISH,
-            "Madhu": process.env.ADMIN_PASS_MADHU,
-            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH,
-            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR
+            "Administrator": process.env.ADMIN_PASS_ADMINISTRATOR || (process.env.NODE_ENV !== 'production' ? "Administrator@Beta2026" : undefined),
+            "Jesin Milesh": process.env.ADMIN_PASS_JESIN || (process.env.NODE_ENV !== 'production' ? "Jesin@Beta2026" : undefined),
+            "Ashish": process.env.ADMIN_PASS_ASHISH || (process.env.NODE_ENV !== 'production' ? "Ashish@Beta2026" : undefined),
+            "Madhu": process.env.ADMIN_PASS_MADHU || (process.env.NODE_ENV !== 'production' ? "Madhu@Beta2026" : undefined),
+            "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || (process.env.NODE_ENV !== 'production' ? "Jeshwanth@Beta2026" : undefined),
+            "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || (process.env.NODE_ENV !== 'production' ? "Attendance@Beta2026" : undefined)
         };
 
         const canonicalMap = {
@@ -3333,13 +3349,14 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
 
 
         const operationalKey = process.env.ATTENDANCE_SECURITY_KEY || process.env.ATTENDANCE_KEY;
-        if (operationalKey && cleanUsername === 'attendance') {
+        if (operationalKey && cleanUsername.toLowerCase() === 'attendance') {
             adminAccounts['attendance'] = operationalKey;
             canonicalMap['attendance'] = 'Attendance Officer';
         }
 
         let isValid = false;
-        let expectedPass = adminAccounts[cleanUsername];
+        const matchedKey = Object.keys(adminAccounts).find(k => k.toLowerCase() === cleanUsername.toLowerCase());
+        let expectedPass = matchedKey ? adminAccounts[matchedKey] : null;
 
         if (expectedPass && typeof expectedPass === 'string') {
             expectedPass = expectedPass.replace(/^["']|["']$/g, '').trim();
@@ -3353,7 +3370,7 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
         }
 
         if (isValid) {
-            const canonicalUser = canonicalMap[cleanUsername] || username;
+            const canonicalUser = matchedKey ? (canonicalMap[matchedKey] || matchedKey) : cleanUsername;
             logActivity('ATTENDANCE LOGIN', `Operative "${canonicalUser}" authenticated into Attendance Terminal`);
             const token = jwt.sign(
                 { username: canonicalUser, role: 'admin', scope: 'attendance' },

@@ -20,9 +20,9 @@
     <link rel="apple-touch-icon" href="Favicon.jpeg">
 
     
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js" defer></script>
 
     <style>
         :root {
@@ -155,6 +155,10 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .nav-btn * {
+            pointer-events: none;
         }
 
         .nav-btn:hover {
@@ -631,6 +635,8 @@
         }
 
         .login-submit-btn {
+            position: relative;
+            z-index: 10;
             width: 100%;
             padding: 14px;
             margin-top: 10px;
@@ -651,6 +657,12 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .login-submit-btn * {
+            pointer-events: none;
         }
 
         .login-submit-btn:hover {
@@ -658,6 +670,11 @@
             border-color: var(--doom-gold);
             box-shadow: 0 0 28px rgba(0, 255, 102, 0.5), 0 0 15px rgba(255, 215, 0, 0.4);
             transform: translateY(-2px);
+        }
+
+        .login-submit-btn:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: 0 0 15px var(--doom-green);
         }
 
         .login-submit-btn:disabled {
@@ -722,9 +739,8 @@
             <h2 class="login-title-text">ATTENDANCE ACCESS</h2>
             <div class="login-sub-text">AUTHENTICATE OPERATIVE CLEARANCE</div>
 
-            <form id="attendance-login-form" action="javascript:void(0);" onsubmit="checkAttendanceLogin(); return false;" autocomplete="off">
+            <form id="attendance-login-form" onsubmit="event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;" autocomplete="off">
 
-                
                 <div class="login-field-group">
                     <i class="fas fa-user-astronaut login-field-icon"></i>
                     <input type="text" id="attendance-user" class="login-input-field" placeholder="Enter Operative Name (e.g. admin)"
@@ -732,7 +748,6 @@
                         onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); checkAttendanceLogin(); return false;}">
                 </div>
 
-                
                 <div class="login-field-group" style="position: relative;">
                     <i class="fas fa-lock login-field-icon"></i>
                     <input type="password" id="attendance-pass" class="login-input-field"
@@ -745,8 +760,7 @@
                     </button>
                 </div>
 
-                
-                <button type="button" onclick="checkAttendanceLogin();" class="login-submit-btn" id="login-btn">
+                <button type="submit" onclick="checkAttendanceLogin();" class="login-submit-btn" id="login-btn">
                     <i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE
                 </button>
                 <div id="login-feedback" style="margin-top: 14px; font-family: var(--font-mono); font-size: 0.85rem; text-align: center; display: none;"></div>
@@ -777,7 +791,7 @@
         </div>
         <div class="nav-links">
             <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> [ PORTAL HOME ]</a>
-            <button onclick="logoutAttendance()" class="nav-btn"
+            <button id="attendance-logout-btn" onclick="logoutAttendance()" class="nav-btn"
                 style="background: rgba(255,0,85,0.15); border-color: var(--deep-magenta); color: #ff6b8b; cursor: pointer;">
                 <i class="fas fa-sign-out-alt"></i> [ LOGOUT ]
             </button>
@@ -805,8 +819,18 @@
             </div>
 
             <p style="color: #8b9bb4; font-size: 0.9rem; margin-bottom: 16px; text-align: center;">
-                Position participant QR entry pass within the scanner frame.
+                Position participant QR entry pass within the scanner frame, or enter Team ID manually below.
             </p>
+
+            <!-- Manual Team ID Input Bar -->
+            <div style="display: flex; gap: 10px; max-width: 480px; margin: 0 auto 18px auto; justify-content: center; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="manual-team-id-input" class="search-input-hud" placeholder="Enter Team ID (e.g. XCTF-26-0001)"
+                    style="text-transform: uppercase; padding: 9px 14px; font-size: 0.9rem;"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault(); lookupManualTeamId();}">
+                <button type="button" id="manual-lookup-btn" onclick="lookupManualTeamId()" class="action-btn-hud action-btn-green" style="padding: 9px 18px; font-size: 0.88rem;">
+                    <i class="fas fa-search"></i> VERIFY SQUAD
+                </button>
+            </div>
 
             <!-- Scanner Controls Toolbar -->
             <div class="scanner-toolbar" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
@@ -1083,13 +1107,18 @@
                 btn.disabled = true;
             }
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/attendance/login`, {
                     method: 'POST',
                     credentials: 'omit',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: u, password: p })
+                    body: JSON.stringify({ username: u, password: p }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
 
                 const data = await response.json().catch(() => ({}));
 
@@ -1141,24 +1170,70 @@
                     btn.style.background = 'linear-gradient(135deg, rgba(255, 0, 85, 0.4) 0%, rgba(180, 0, 60, 0.6) 100%)';
                     btn.style.borderColor = 'var(--deep-magenta)';
                 }
-                const connMsg = `Unable to reach backend server at ${API_BASE_URL || 'http://localhost:3000'}. Please ensure the server is running ('npm start').`;
+                const connMsg = err.name === 'AbortError'
+                    ? "Connection timed out. Backend server took too long to respond."
+                    : `Unable to reach backend server at ${API_BASE_URL || 'http://localhost:3000'}. Please ensure the server is running ('npm start').`;
                 if (feedbackEl) {
                     feedbackEl.style.display = 'block';
                     feedbackEl.style.color = 'var(--deep-magenta)';
                     feedbackEl.innerText = connMsg;
                 }
                 showCustomAlert(connMsg);
+            } finally {
+                clearTimeout(timeoutId);
+                setTimeout(() => {
+                    if (btn && !inMemoryAttendanceToken) {
+                        btn.innerHTML = '<i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE';
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                    }
+                }, 1800);
             }
-
-            setTimeout(() => {
-                if (btn) {
-                    btn.innerHTML = '<i class="fas fa-unlock-alt"></i> UNLOCK ATTENDANCE';
-                    btn.disabled = false;
-                    btn.style.background = '';
-                    btn.style.borderColor = '';
-                }
-            }, 1800);
         }
+        window.checkAttendanceLogin = checkAttendanceLogin;
+
+        function bindAttendanceLoginEvents() {
+            const form = document.getElementById('attendance-login-form');
+            const btn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('attendance-logout-btn');
+            if (form && !form.dataset.bound) {
+                form.dataset.bound = "true";
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    checkAttendanceLogin();
+                });
+            }
+            if (btn && !btn.dataset.bound) {
+                btn.dataset.bound = "true";
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    checkAttendanceLogin();
+                });
+            }
+            if (logoutBtn && !logoutBtn.dataset.bound) {
+                logoutBtn.dataset.bound = "true";
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    logoutAttendance();
+                });
+            }
+        }
+        bindAttendanceLoginEvents();
+
+        function lookupManualTeamId() {
+            const input = document.getElementById('manual-team-id-input');
+            const val = input ? input.value.trim().toUpperCase() : '';
+            if (!val) {
+                showCustomAlert('Please enter a valid Team ID (e.g. XCTF-26-0001).');
+                return;
+            }
+            processAttendance(val);
+        }
+        window.lookupManualTeamId = lookupManualTeamId;
 
         function unlockTerminal(user) {
             const overlay = document.getElementById('login-overlay');
@@ -1232,33 +1307,40 @@
             }
         }
 
-        async function logoutAttendance() {
-            const userToLogout = inMemoryAttendanceUser || 'Operative';
-            const tokenToLogout = inMemoryAttendanceToken;
-
-            inMemoryAttendanceToken = null;
-            inMemoryAttendanceUser = null;
+        function logoutAttendance() {
             try {
-                sessionStorage.removeItem('xploitx_active_session');
-                sessionStorage.removeItem('xploitx_active_user');
-                localStorage.removeItem('xploitx_active_session');
-                localStorage.removeItem('xploitx_active_user');
-                document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            } catch (e) { }
+                const userToLogout = inMemoryAttendanceUser || 'Operative';
+                const tokenToLogout = inMemoryAttendanceToken;
 
-            try {
-                await fetch(`${API_BASE_URL}/api/attendance/logout`, {
-                    method: 'POST',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
-                    },
-                    body: JSON.stringify({ username: userToLogout })
-                });
-            } catch (e) { }
-            handleAuthExpired(true);
+                inMemoryAttendanceToken = null;
+                inMemoryAttendanceUser = null;
+                try {
+                    sessionStorage.removeItem('xploitx_active_session');
+                    sessionStorage.removeItem('xploitx_active_user');
+                    localStorage.removeItem('xploitx_active_session');
+                    localStorage.removeItem('xploitx_active_user');
+                    document.cookie = "attendance_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                } catch (e) { }
+
+                if (tokenToLogout || userToLogout) {
+                    fetch(`${API_BASE_URL}/api/attendance/logout`, {
+                        method: 'POST',
+                        credentials: 'omit',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(tokenToLogout ? { 'Authorization': `Bearer ${tokenToLogout}` } : {})
+                        },
+                        body: JSON.stringify({ username: userToLogout }),
+                        keepalive: true
+                    }).catch(() => { });
+                }
+                handleAuthExpired(true);
+            } catch (err) {
+                console.error("Attendance logout error:", err);
+                handleAuthExpired(true);
+            }
         }
+        window.logoutAttendance = logoutAttendance;
 
         function getAuthHeaders(extraHeaders = {}) {
             const headers = { ...extraHeaders };
@@ -1270,6 +1352,10 @@
 
         function initScannerLib() {
             try {
+                if (typeof Html5Qrcode === 'undefined') {
+                    console.warn("Html5Qrcode library not loaded yet");
+                    return;
+                }
                 if (!html5QrCode) {
                     html5QrCode = new Html5Qrcode("reader");
                 }
@@ -1494,7 +1580,8 @@
                     const cameras = await Html5Qrcode.getCameras();
                     if (cameras && cameras.length > 0) {
                         const backCam = cameras.find(c => /back|rear|environment/i.test(c.label)) 
-                            || cameras.find(c => !/front|user|selfie|face|facetime/i.test(c.label));
+                            || cameras.find(c => !/front|user|selfie|face|facetime/i.test(c.label))
+                            || cameras[0];
 
                         if (backCam) {
                             selectedCameraId = backCam.id;
@@ -1511,7 +1598,7 @@
                     }
                 }
 
-                throw new Error("NO_BACK_CAMERA_FOUND");
+                throw new Error("NO_CAMERA_FOUND");
 
             } catch (err) {
                 console.error("Camera start failed", err);
@@ -1869,6 +1956,9 @@
 
         window.onload = () => {
             setupPasswordToggle();
+            if (typeof bindAttendanceLoginEvents === 'function') {
+                bindAttendanceLoginEvents();
+            }
 
             // Enforce clean state on page load / refresh: no stored tokens, no cookies, always logged out
             inMemoryAttendanceToken = null;
