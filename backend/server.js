@@ -3335,6 +3335,9 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Ashish": process.env.ADMIN_PASS_ASHISH || (process.env.NODE_ENV !== 'production' ? "Ashish@Beta2026" : undefined),
             "Madhu": process.env.ADMIN_PASS_MADHU || (process.env.NODE_ENV !== 'production' ? "Madhu@Beta2026" : undefined),
             "Jeshwanth": process.env.ADMIN_PASS_JESHWANTH || (process.env.NODE_ENV !== 'production' ? "Jeshwanth@Beta2026" : undefined),
+            "Rubika": process.env.ATTENDANCE_PASS_RUBIKA || (process.env.NODE_ENV !== 'production' ? "Rubika@Beta2026" : undefined),
+            "Subashini": process.env.ATTENDANCE_PASS_SUBASHINI || (process.env.NODE_ENV !== 'production' ? "Subashini@Beta2026" : undefined),
+            "Tharun": process.env.ATTENDANCE_PASS_THARUN || (process.env.NODE_ENV !== 'production' ? "Tharun@Beta2026" : undefined),
             "attendance": process.env.ATTENDANCE_SECURITY_KEY || process.env.ADMIN_PASS_ADMINISTRATOR || (process.env.NODE_ENV !== 'production' ? "Attendance@Beta2026" : undefined)
         };
 
@@ -3344,6 +3347,9 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
             "Ashish": "Ashish",
             "Madhu": "Madhu",
             "Jeshwanth": "Jeshwanth",
+            "Rubika": "Rubika",
+            "Subashini": "Subashini",
+            "Tharun": "Tharun",
             "attendance": "Attendance Officer"
         };
 
@@ -3372,8 +3378,12 @@ app.post('/api/attendance/login', attendanceLoginLimiter, (req, res) => {
         if (isValid) {
             const canonicalUser = matchedKey ? (canonicalMap[matchedKey] || matchedKey) : cleanUsername;
             logActivity('ATTENDANCE LOGIN', `Operative "${canonicalUser}" authenticated into Attendance Terminal`);
+            
+            const adminUsers = ["Administrator", "Admin", "Jesin Milesh", "Jesin", "Ashish", "Madhu", "Jeshwanth", "Jeswanth"];
+            const assignedRole = adminUsers.includes(canonicalUser) ? 'admin' : 'attendance_operative';
+
             const token = jwt.sign(
-                { username: canonicalUser, role: 'admin', scope: 'attendance' },
+                { username: canonicalUser, role: assignedRole, scope: 'attendance' },
                 JWT_SECRET,
                 { expiresIn: '2h', algorithm: 'HS256' }
             );
@@ -3571,6 +3581,62 @@ app.post('/api/attendance/mark_members', verifyAttendanceAuth, async (req, res) 
     } catch (e) {
         console.error('[Mark Members Error]:', e);
         res.status(500).json({ error: 'Failed to update attendance records' });
+    }
+});
+
+app.post('/api/attendance/toggle_member', verifyAttendanceAuth, async (req, res) => {
+    const { teamId, memberId, memberName, newStatus } = req.body;
+    try {
+        const targetStatus = newStatus === 'PRESENT' ? 'PRESENT' : 'ABSENT';
+        const now = new Date();
+        const entryTime = targetStatus === 'PRESENT' ? now : null;
+
+        if (isDbMongo()) {
+            let updated = false;
+            if (memberId && typeof memberId === 'string' && /^[0-9a-fA-F]{24}$/.test(memberId)) {
+                const r = await Member.updateOne(
+                    { _id: memberId },
+                    { $set: { attendance_status: targetStatus, entry_time: entryTime } }
+                );
+                if (r.matchedCount > 0) updated = true;
+            }
+            if (!updated && (memberName || memberId)) {
+                await Member.updateOne(
+                    { team_id: teamId, name: memberName || memberId },
+                    { $set: { attendance_status: targetStatus, entry_time: entryTime } }
+                );
+            }
+            const presentCount = await Member.countDocuments({ team_id: teamId, attendance_status: 'PRESENT' });
+            const overallStatus = presentCount > 0 ? 'PRESENT' : 'ABSENT';
+            await Attendance.updateOne(
+                { team_id: teamId },
+                { $set: { status: overallStatus, ...(presentCount > 0 ? { entry_time: now } : {}) } },
+                { upsert: true }
+            );
+        } else if (db) {
+            if (memberId && !isNaN(parseInt(memberId))) {
+                await db.run(
+                    `UPDATE members SET attendance_status = ?, entry_time = ? WHERE id = ?`,
+                    [targetStatus, entryTime ? entryTime.toISOString() : null, memberId]
+                );
+            } else {
+                await db.run(
+                    `UPDATE members SET attendance_status = ?, entry_time = ? WHERE team_db_id = (SELECT id FROM teams WHERE team_id = ?) AND name = ?`,
+                    [targetStatus, entryTime ? entryTime.toISOString() : null, teamId, memberName || memberId]
+                );
+            }
+            const row = await db.get(`SELECT COUNT(*) as c FROM members WHERE team_db_id = (SELECT id FROM teams WHERE team_id = ?) AND attendance_status = 'PRESENT'`, [teamId]);
+            const overallStatus = (row && row.c > 0) ? 'PRESENT' : 'ABSENT';
+            await db.run(`UPDATE attendance SET status = ?, entry_time = ? WHERE team_id = ?`, [overallStatus, overallStatus === 'PRESENT' ? now.toISOString() : null, teamId]);
+        }
+
+        const operative = req.user ? req.user.username : 'Attendance Officer';
+        await logActivity('ATTENDANCE TOGGLE', `Member [${memberName || memberId}] (Team ${teamId}) status set to "${targetStatus}" by ${operative}`);
+
+        res.json({ success: true, status: targetStatus, entry_time: entryTime });
+    } catch (e) {
+        console.error('[Toggle Member Error]:', e);
+        res.status(500).json({ error: 'Failed to update member attendance' });
     }
 });
 
